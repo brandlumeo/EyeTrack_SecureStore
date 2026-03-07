@@ -1,10 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Welcome to Eyetrack Secure Store 🔥</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Eyetrack Solutions{% endblock %}
+{% block content %}
+<section class="hero-premium hero-live mb-4">
+    <div class="hero-live-bg" aria-hidden="true">
+        <span class="orb orb-a"></span>
+        <span class="orb orb-b"></span>
+        <span class="orb orb-c"></span>
+        <span class="beam"></span>
+    </div>
+    <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+            <p class="eyebrow mb-2">Enterprise-Grade Security Commerce</p>
+            <h1 class="display-title mb-3">Professional CCTV store and installation ecosystem.</h1>
+            <p class="lead-copy mb-4">Discover premium surveillance hardware, compare trusted brands, and move from purchase to installation with one seamless flow.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'product_list' %}" class="btn btn-premium-cta px-4">Enter Store</a>
+                <a href="{% url 'services_page' %}" class="btn btn-outline-light px-4">Explore Services</a>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="premium-stats-grid">
+                <div class="premium-stat-card"><h3>4K</h3><p>Ready Devices</p></div>
+                <div class="premium-stat-card"><h3>24/7</h3><p>Support Access</p></div>
+                <div class="premium-stat-card"><h3>Secure</h3><p>Checkout Flow</p></div>
+                <div class="premium-stat-card"><h3>AMC</h3><p>Maintenance Plans</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-3">
+    <div class="col-md-4"><div class="mini-info-card h-100"><h6>Premium Hardware</h6><p>Curated CCTV cameras for home, retail, and industrial monitoring.</p></div></div>
+    <div class="col-md-4"><div class="mini-info-card h-100"><h6>Installation Support</h6><p>From site planning to deployment and training, handled by experts.</p></div></div>
+    <div class="col-md-4"><div class="mini-info-card h-100"><h6>Long-Term Reliability</h6><p>Warranty-backed equipment with maintenance and troubleshooting support.</p></div></div>
+</section>
+{% endblock %}

@@ -1,64 +1,232 @@
 {% extends 'base.html' %}
+{% block title %}Premium CCTV Store | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Browse premium CCTV cameras, compare features, and choose surveillance products with professional installation support from Eyetrack Solutions.{% endblock %}
+{% block meta_robots %}{% if q or min_price or max_price or in_stock or sort != 'featured' %}noindex, follow{% else %}index, follow{% endif %}{% endblock %}
+{% block og_title %}Premium CCTV Store | Eyetrack Solutions{% endblock %}
+{% block og_description %}Shop enterprise-grade CCTV products with secure checkout and installation support.{% endblock %}
+{% block twitter_title %}Premium CCTV Store | Eyetrack Solutions{% endblock %}
+{% block twitter_description %}Shop enterprise-grade CCTV products with secure checkout and installation support.{% endblock %}
 {% block content %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Eyetrack Solutions - CCTV Store</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-
-<div class="container mt-4">
-
-    <h1 class="mb-4 text-center">Eyetrack Solutions - CCTV Store 🔥</h1>
-
-    <div class="row">
-
-        <!-- Categories Sidebar -->
-        <div class="col-md-3">
-            <h4>Categories</h4>
-            <ul class="list-group">
-                {% for category in categories %}
-                    <li class="list-group-item">
-                      <a href="{% url 'products_by_category' category.slug %}" class="text-decoration-none">
-                        {{ category.name }}
-                      </a>
-                    </li>
-                {% endfor %}
-            </ul>
+<section class="hero-premium hero-live mb-4 reveal">
+    <div class="hero-live-bg" aria-hidden="true">
+        <span class="orb orb-a"></span>
+        <span class="orb orb-b"></span>
+        <span class="orb orb-c"></span>
+        <span class="beam"></span>
+    </div>
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <p class="eyebrow mb-2">Secure Living. Smarter Monitoring.</p>
+            <h1 class="display-title mb-3">Ultra-premium CCTV eCommerce experience for homes and businesses.</h1>
+            <p class="lead-copy mb-4">Browse enterprise-grade surveillance cameras, compare by use case, and checkout with a safe placeholder payment flow you can replace later.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="#catalog" class="btn btn-premium-cta px-4">Explore Products</a>
+                <a href="{% url 'services_page' %}" class="btn btn-outline-light px-4">Installation Plans</a>
+            </div>
+            <div class="d-flex flex-wrap gap-2 mt-3">
+                <span class="trust-chip"><i class="bi bi-check-circle"></i>Verified Brands</span>
+                <span class="trust-chip"><i class="bi bi-building-check"></i>Business-ready</span>
+                <span class="trust-chip"><i class="bi bi-shield-check"></i>Secure Checkout</span>
+            </div>
         </div>
+        <div class="col-lg-5">
+            <div class="premium-stats-grid">
+                <div class="premium-stat-card">
+                    <h3>{{ result_count }}</h3>
+                    <p>Products Matched</p>
+                </div>
+                <div class="premium-stat-card">
+                    <h3>24/7</h3>
+                    <p>Remote Monitoring</p>
+                </div>
+                <div class="premium-stat-card">
+                    <h3>4K</h3>
+                    <p>Ultra HD Ready</p>
+                </div>
+                <div class="premium-stat-card">
+                    <h3>99.9%</h3>
+                    <p>Uptime Target</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-        <!-- Products Section -->
-        <div class="col-md-9">
-            <div class="row">
-                {% for product in products %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" class="card-img-top" style="height:200px; object-fit:cover;">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                  <a href="{% url 'product_detail' product.slug %}" class="text-decoration-none">
-                                    {{ product.name }}
-                                  </a>
-                                </h5>
-                                <p class="card-text">{{ product.description|truncatechars:80 }}</p>
-                                <strong class="text-primary">₹ {{ product.price }}</strong>
-                                <p class="small mt-2">Stock: {{ product.stock }}</p>
-                            </div>
+<section id="catalog" class="mb-4">
+    <div class="mb-3">
+        <button id="filtersToggleBtn" class="btn btn-outline-light w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilters" aria-expanded="true" aria-controls="mobileFilters">
+            <span class="d-inline-flex align-items-center gap-2">
+                <i class="bi bi-sliders"></i>Filter & Sort
+                <span class="filter-count-badge d-lg-none" id="mobileFilterCount">0</span>
+            </span>
+            <i class="bi bi-chevron-up" id="filtersToggleIcon"></i>
+        </button>
+    </div>
+    <div class="row g-4">
+        <aside id="mobileFilters" class="col-lg-3 filter-dock collapse show">
+            <div class="glass-card p-3 mb-3 reveal">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Search & Filter</h5>
+                    <a href="{% if category %}{% url 'products_by_category' category.slug %}{% else %}{% url 'product_list' %}{% endif %}" class="small text-decoration-none filter-reset-link">Reset</a>
+                </div>
+                <form method="get" class="d-grid gap-3" id="catalogFilterForm">
+                    <div>
+                        <label class="form-label small text-secondary">Keyword</label>
+                        <input type="text" class="form-control premium-input" name="q" value="{{ q }}" placeholder="Camera, AI, outdoor...">
+                    </div>
+                    <div>
+                        <label class="form-label small text-secondary">Sort By</label>
+                        <select name="sort" class="form-select premium-input">
+                            <option value="featured" {% if sort == 'featured' %}selected{% endif %}>Featured</option>
+                            <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option>
+                            <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>Name: A-Z</option>
+                        </select>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label small text-secondary">Min &#8377;</label>
+                            <input type="number" class="form-control premium-input" min="0" name="min_price" value="{{ min_price }}" placeholder="{{ min_catalog_price }}">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small text-secondary">Max &#8377;</label>
+                            <input type="number" class="form-control premium-input" min="0" name="max_price" value="{{ max_price }}" placeholder="{{ max_catalog_price }}">
                         </div>
                     </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="1" id="stockCheck" name="in_stock" {% if in_stock %}checked{% endif %}>
+                        <label class="form-check-label" for="stockCheck">Show in-stock only</label>
+                    </div>
+                    <button type="submit" class="btn btn-premium-cta w-100">Apply Filters</button>
+                </form>
+            </div>
+
+            <div class="glass-card p-3 mb-3 reveal">
+                <h5 class="mb-3">Categories</h5>
+                <a class="category-pill {% if not category %}active{% endif %}" href="{% url 'product_list' %}">All Products</a>
+                {% for cat in categories %}
+                    <a class="category-pill {% if category and category.slug == cat.slug %}active{% endif %}" href="{% url 'products_by_category' cat.slug %}">
+                        {{ cat.name }} <span>{{ cat.product_count }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <div class="glass-card p-3 reveal">
+                <h6 class="mb-2">Why Eyetrack?</h6>
+                <ul class="premium-list mb-0">
+                    <li>Certified installation teams</li>
+                    <li>Transparent warranty matrix</li>
+                    <li>Easy future payment gateway swap</li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="col-lg-9" id="catalogGridCol">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h4 class="mb-0">{% if category %}{{ category.name }}{% else %}All CCTV Products{% endif %}</h4>
+                <small class="text-secondary">{{ result_count }} product{{ result_count|pluralize }} found</small>
+            </div>
+            {% if q or min_price or max_price or in_stock or sort != 'featured' %}
+            <div class="active-filters mb-3">
+                {% if q %}<span class="active-filter-chip">Keyword: {{ q }}</span>{% endif %}
+                {% if min_price %}<span class="active-filter-chip">Min: &#8377; {{ min_price }}</span>{% endif %}
+                {% if max_price %}<span class="active-filter-chip">Max: &#8377; {{ max_price }}</span>{% endif %}
+                {% if in_stock %}<span class="active-filter-chip">In-stock only</span>{% endif %}
+                {% if sort != 'featured' %}<span class="active-filter-chip">Sort: {{ sort|title }}</span>{% endif %}
+                <a href="{% if category %}{% url 'products_by_category' category.slug %}{% else %}{% url 'product_list' %}{% endif %}" class="active-filter-clear">Clear all</a>
+            </div>
+            {% endif %}
+
+            <div class="row g-3">
+                {% for product in products %}
+                <div class="col-md-6 col-xl-4">
+                    <article class="product-card h-100 d-flex flex-column reveal" data-href="{% url 'product_detail' product.slug %}" tabindex="0" aria-label="Open {{ product.name }} details">
+                        <a href="{% url 'product_detail' product.slug %}" class="product-image-wrap">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                            {% else %}
+                                <div class="product-image placeholder-image">No Image</div>
+                            {% endif %}
+                        </a>
+                        <div class="p-3 d-flex flex-column flex-grow-1">
+                            {% if product.stock > 0 %}
+                                <span class="stock-pill in mb-2">In Stock</span>
+                            {% else %}
+                                <span class="stock-pill out mb-2">Out of Stock</span>
+                            {% endif %}
+                            <p class="small text-secondary mb-1">{{ product.category.name }}</p>
+                            <h6 class="product-title"><a href="{% url 'product_detail' product.slug %}">{{ product.name }}</a></h6>
+                            <p class="small text-secondary mb-3">{{ product.description|truncatechars:88 }}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <div>
+                                    <p class="product-price mb-0">&#8377; {{ product.price }}</p>
+                                    <small class="text-secondary">Stock: {{ product.stock }}</small>
+                                </div>
+                                <div class="d-flex flex-wrap justify-content-end gap-2">
+                                    <button type="button" class="btn btn-outline-light btn-sm quick-view-btn" data-product-id="{{ product.id }}">View</button>
+                                    <form method="post" action="{% url 'add_to_cart' product.id %}" class="m-0">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <button type="submit" class="btn btn-premium-cta btn-sm px-3">Add</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 mt-2">
+                                <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 wishlist-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}"><i class="bi bi-heart me-1"></i>Wishlist</button>
+                                <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 compare-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}"><i class="bi bi-diagram-3 me-1"></i>Compare</button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
                 {% empty %}
-                    <p>No products available.</p>
+                <div class="col-12">
+                    <div class="glass-card p-4 text-center">
+                        <h5>No products matched your filters.</h5>
+                        <p class="text-secondary mb-0">Try resetting price range, keyword, or stock options.</p>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
         </div>
-
     </div>
-
+</section>
+<div class="mobile-filter-dock d-lg-none">
+    <button class="btn btn-outline-light flex-grow-1 d-inline-flex align-items-center justify-content-center gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilters" aria-expanded="false" aria-controls="mobileFilters">
+        <i class="bi bi-funnel"></i>Filters
+        <span class="filter-count-badge" id="mobileFilterCountDock">0</span>
+    </button>
+    <a href="{% if category %}{% url 'products_by_category' category.slug %}{% else %}{% url 'product_list' %}{% endif %}" class="btn btn-premium-cta">Clear</a>
 </div>
 
-</body>
-</html>
+<section class="row g-3">
+    <div class="col-lg-6">
+        <div class="glass-card p-3 h-100 reveal">
+            <h5 class="mb-3">Featured Picks</h5>
+            <div class="row g-2">
+                {% for product in featured_products %}
+                <div class="col-6">
+                    <a href="{% url 'product_detail' product.slug %}" class="compact-product">
+                        <span>{{ product.name|truncatechars:24 }}</span>
+                        <strong>&#8377; {{ product.price }}</strong>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="glass-card p-3 h-100 reveal">
+            <h5 class="mb-3">Fast-Moving Inventory</h5>
+            <div class="d-grid gap-2">
+                {% for product in top_sellers|slice:":4" %}
+                    <a href="{% url 'product_detail' product.slug %}" class="compact-row">
+                        <span>{{ product.name }}</span>
+                        <strong>&#8377; {{ product.price }}</strong>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

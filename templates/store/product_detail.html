@@ -1,40 +1,190 @@
 {% extends 'base.html' %}
+{% block title %}{{ product.name }} | Eyetrack Solutions{% endblock %}
+{% block meta_description %}{{ product.description|truncatechars:150 }}{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block og_title %}{{ product.name }} | Eyetrack Solutions{% endblock %}
+{% block og_description %}{{ product.description|truncatechars:150 }}{% endblock %}
+{% block twitter_title %}{{ product.name }} | Eyetrack Solutions{% endblock %}
+{% block twitter_description %}{{ product.description|truncatechars:150 }}{% endblock %}
+{% block social_image_meta %}
+{% if product.image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}">
+<meta property="og:image:alt" content="{{ product.name }}">
+{% endif %}
+{% endblock %}
+{% block twitter_image_meta %}
+{% if product.image %}
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}">
+{% endif %}
+{% endblock %}
+{% block extra_head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ product.name|escapejs }}",
+  "description": "{{ product.description|truncatechars:220|escapejs }}",
+  {% if product.image %}"image": ["{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}"],{% endif %}
+  "brand": {
+    "@type": "Brand",
+    "name": "Eyetrack Solutions"
+  },
+  "sku": "ETS-{{ product.id }}",
+  "category": "{{ product.category.name|escapejs }}",
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'product_detail' product.slug %}",
+    "priceCurrency": "INR",
+    "price": "{{ product.price }}",
+    "availability": "{% if product.stock > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "itemCondition": "https://schema.org/NewCondition"
+  }
+}
+</script>
+{% endblock %}
 {% block content %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ product.name }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+<div class="product-detail-page">
+<section class="mb-4">
+    <a href="{% url 'product_list' %}" class="text-decoration-none text-secondary small"><i class="bi bi-arrow-left"></i> Back to catalog</a>
+</section>
 
-<div class="container mt-5">
-
-    <a href="/" class="btn btn-secondary mb-4">← Back to Store</a>
-
-    <div class="row">
-        <div class="col-md-6">
-            <img src="{{ product.image.url }}" class="img-fluid">
-        </div>
-
-        <div class="col-md-6">
-            <h2>{{ product.name }}</h2>
-            <p class="text-muted">Category: {{ product.category.name }}</p>
-            <h3 class="text-primary">₹ {{ product.price }}</h3>
-            <p>Stock: {{ product.stock }}</p>
-
-            <hr>
-
-            <p>{{ product.description }}</p>
-
-            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success">
-                Add to Cart
-            </a>
+<section class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="glass-card p-3 h-100">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" class="w-100 detail-image" alt="{{ product.name }}">
+            {% else %}
+                <div class="detail-image placeholder-image">No Image</div>
+            {% endif %}
         </div>
     </div>
+    <div class="col-lg-6">
+        <div class="glass-card p-4 h-100 d-flex flex-column">
+            <p class="eyebrow mb-2">{{ product.category.name }}</p>
+            <h1 class="h2 mb-2">{{ product.name }}</h1>
+            <p class="text-secondary mb-3">{{ product.description }}</p>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="trust-chip"><i class="bi bi-award"></i>Premium Quality</span>
+                <span class="trust-chip"><i class="bi bi-tools"></i>Installation Support</span>
+            </div>
+            <p class="detail-price mb-1">&#8377; {{ product.price }}</p>
+            <p class="small {% if product.stock > 0 %}text-success{% else %}text-danger{% endif %}">Stock status: {{ product.stock }} unit{{ product.stock|pluralize }}</p>
+            <div class="d-flex flex-wrap gap-2 my-3">
+                {% for spec in specs %}
+                    <span class="spec-chip">{{ spec }}</span>
+                {% endfor %}
+            </div>
+            <div class="d-flex gap-2 mt-auto">
+                <form method="post" action="{% url 'add_to_cart' product.id %}" class="flex-grow-1 m-0">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" class="btn btn-premium-cta w-100">Add to Cart</button>
+                </form>
+                <a href="{% url 'cart' %}" class="btn btn-outline-light flex-grow-1">Go to Cart</a>
+            </div>
+            <div class="d-flex gap-2 mt-2">
+                <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 wishlist-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}"><i class="bi bi-heart me-1"></i>Wishlist</button>
+                <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 compare-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}"><i class="bi bi-diagram-3 me-1"></i>Compare</button>
+            </div>
+        </div>
+    </div>
+</section>
 
+<section class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="mini-info-card">
+            <h6>Warranty</h6>
+            <p>Brand warranty support with installation guidance.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="mini-info-card">
+            <h6>Delivery</h6>
+            <p>Secure packaging and fast dispatch tracking updates.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="mini-info-card">
+            <h6>Support</h6>
+            <p>Setup assistance and troubleshooting from expert team.</p>
+        </div>
+    </div>
+</section>
+
+<section class="glass-card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h4 class="mb-0">Technical Specifications</h4>
+        <small class="text-secondary">Structured for professional comparison</small>
+    </div>
+    <div class="table-responsive">
+        <table class="table premium-table align-middle mb-0">
+            <tbody>
+                <tr><th>Camera Type</th><td>{{ product_specs.camera_type }}</td><th>Resolution</th><td>{{ product_specs.resolution_mp }}</td></tr>
+                <tr><th>Lens</th><td>{{ product_specs.lens_mm }}</td><th>Field of View</th><td>{{ product_specs.field_of_view_deg }}</td></tr>
+                <tr><th>Night Vision Range</th><td>{{ product_specs.night_vision_range_m }}</td><th>Frame Rate</th><td>{{ product_specs.frame_rate_fps }}</td></tr>
+                <tr><th>Weatherproof</th><td>{{ product_specs.weatherproof_rating }}</td><th>Connectivity</th><td>{{ product_specs.connectivity }}</td></tr>
+                <tr><th>Power Source</th><td>{{ product_specs.power_source }}</td><th>Storage Support</th><td>{{ product_specs.storage_support }}</td></tr>
+                <tr><th>Audio Support</th><td>{{ product_specs.audio_support }}</td><th>AI Detection</th><td>{{ product_specs.ai_detection }}</td></tr>
+                <tr><th>Warranty</th><td>{{ product_specs.warranty_years }}</td><th>Stock</th><td>{{ product.stock }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Related Products</h4>
+        <a href="{% url 'product_list' %}" class="small text-decoration-none">View all</a>
+    </div>
+    <div class="row g-3">
+        {% for item in related_products %}
+        <div class="col-md-6 col-xl-3">
+            <article class="product-card h-100">
+                <a href="{% url 'product_detail' item.slug %}" class="product-image-wrap">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="product-image">
+                    {% else %}
+                        <div class="product-image placeholder-image">No Image</div>
+                    {% endif %}
+                </a>
+                <div class="p-3">
+                    <h6 class="product-title"><a href="{% url 'product_detail' item.slug %}">{{ item.name }}</a></h6>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="product-price">&#8377; {{ item.price }}</span>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-light btn-sm quick-view-btn" data-product-id="{{ item.id }}">View</button>
+                            <form method="post" action="{% url 'add_to_cart' item.id %}" class="m-0">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button type="submit" class="btn btn-premium-cta btn-sm">Add</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 wishlist-btn" data-product-id="{{ item.id }}" data-product-name="{{ item.name }}" data-product-price="{{ item.price }}" data-product-url="{% url 'product_detail' item.slug %}" data-product-image="{% if item.image %}{{ item.image.url }}{% endif %}"><i class="bi bi-heart me-1"></i>Wishlist</button>
+                        <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 compare-btn" data-product-id="{{ item.id }}" data-product-name="{{ item.name }}" data-product-price="{{ item.price }}" data-product-url="{% url 'product_detail' item.slug %}" data-product-image="{% if item.image %}{{ item.image.url }}{% endif %}"><i class="bi bi-diagram-3 me-1"></i>Compare</button>
+                    </div>
+                </div>
+            </article>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="glass-card p-3 text-secondary">No related products available yet.</div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
 </div>
-
-</body>
-</html>
+<div class="sticky-detail-bar">
+    <div class="sticky-detail-meta d-none d-md-block">
+        <strong>{{ product.name|truncatechars:34 }}</strong>
+        <span>&#8377; {{ product.price }}</span>
+    </div>
+    <form method="post" action="{% url 'add_to_cart' product.id %}" class="flex-grow-1 m-0">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" class="btn btn-premium-cta w-100">Add to Cart</button>
+    </form>
+    <a href="tel:+917994357565" class="btn btn-outline-light flex-grow-1">Call</a>
+</div>
 {% endblock %}

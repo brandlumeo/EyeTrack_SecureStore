@@ -1,76 +1,109 @@
 {% extends 'base.html' %}
+{% block title %}Your Cart | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
 {% block content %}
+<section class="mb-4">
+    <h1 class="h3 mb-2">Your Cart</h1>
+    <p class="text-secondary mb-0">Review products, adjust quantity, and move to secure checkout.</p>
+</section>
 
-<div class="mt-4">
+<section class="mb-4">
+    <div class="row g-3">
+        <div class="col-md-4"><div class="mini-info-card"><h6>Secure Checkout</h6><p>SSL encrypted order flow.</p></div></div>
+        <div class="col-md-4"><div class="mini-info-card"><h6>Professional Install</h6><p>Book installation after purchase.</p></div></div>
+        <div class="col-md-4"><div class="mini-info-card"><h6>Warranty Included</h6><p>Transparent product coverage.</p></div></div>
+    </div>
+</section>
 
-    <h2 class="mb-4">🛒 Your Cart</h2>
-
-    {% if products %}
-        <div class="card shadow-sm">
-            <div class="card-body">
-
-                <table class="table align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Subtotal</th>
-                            <th>Action</th>
-                        </tr>
+{% if products %}
+<section class="row g-4">
+    <div class="col-lg-8">
+        <div class="glass-card p-3 p-md-4">
+            <div class="table-responsive">
+                <table class="table premium-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {% for product in products %}
-                        <tr>
-                            <td>
-                                <strong>{{ product.name }}</strong>
-                            </td>
-                            <td>₹ {{ product.price }}</td>
-                            <td>
-                                <a href="{% url 'update_cart' product.id 'decrease' %}"
-                                   class="btn btn-outline-secondary btn-sm">-</a>
-
-                                <span class="mx-2">{{ product.quantity }}</span>
-
-                                <a href="{% url 'update_cart' product.id 'increase' %}"
-                                   class="btn btn-outline-secondary btn-sm">+</a>
-                            </td>
-                            <td class="fw-bold">₹ {{ product.subtotal }}</td>
-                            <td>
-                                <a href="{% url 'remove_from_cart' product.id %}"
-                                   class="btn btn-danger btn-sm">
-                                    Remove
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
+                    {% for product in products %}
+                    <tr>
+                        <td>
+                            <strong>{{ product.name }}</strong>
+                            <div class="small text-secondary">{{ product.category.name }}</div>
+                        </td>
+                        <td>&#8377; {{ product.price }}</td>
+                        <td>
+                            <div class="qty-controls">
+                                <form method="post" action="{% url 'update_cart' product.id 'decrease' %}" class="m-0">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button type="submit" class="qty-btn">-</button>
+                                </form>
+                                <span>{{ product.quantity }}</span>
+                                <form method="post" action="{% url 'update_cart' product.id 'increase' %}" class="m-0">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button type="submit" class="qty-btn">+</button>
+                                </form>
+                            </div>
+                        </td>
+                        <td><strong>&#8377; {{ product.subtotal }}</strong></td>
+                        <td>
+                            <form method="post" action="{% url 'remove_from_cart' product.id %}" class="m-0">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
-
-                <!-- Total Section -->
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                    <h4>Total: <span class="text-primary">₹ {{ total }}</span></h4>
-
-                    <a href="{% url 'checkout' %}" class="btn btn-success">
-                        Proceed to Checkout →
-                    </a>
-                </div>
-
             </div>
         </div>
 
-    {% else %}
-        <div class="alert alert-info">
-            Your cart is empty.
+        {% if recommended_products %}
+        <div class="glass-card p-3 p-md-4 mt-4">
+            <h5 class="mb-3">Recommended Add-ons</h5>
+            <div class="row g-2">
+                {% for product in recommended_products %}
+                <div class="col-md-6 col-xl-3">
+                    <a href="{% url 'product_detail' product.slug %}" class="compact-product h-100">
+                        <span>{{ product.name|truncatechars:30 }}</span>
+                        <strong>&#8377; {{ product.price }}</strong>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-    {% endif %}
-
-    <div class="mt-4">
-        <a href="/" class="btn btn-secondary">
-            ← Continue Shopping
-        </a>
+        {% endif %}
     </div>
 
-</div>
-
+    <div class="col-lg-4">
+        <div class="glass-card p-4 sticky-summary">
+            <h5 class="mb-3">Order Summary</h5>
+            <div class="summary-line"><span>Subtotal</span><strong>&#8377; {{ total }}</strong></div>
+            <div class="summary-line"><span>Shipping</span><strong>&#8377; {{ shipping }}</strong></div>
+            <div class="summary-line"><span>Tax (18%)</span><strong>&#8377; {{ tax|floatformat:2 }}</strong></div>
+            <hr>
+            <div class="summary-line mb-3"><span>Total Payable</span><strong class="h5 mb-0">&#8377; {{ grand_total|floatformat:2 }}</strong></div>
+            <a href="{% url 'checkout' %}" class="btn btn-premium-cta w-100 mb-2">Proceed to Checkout</a>
+            <a href="{% url 'product_list' %}" class="btn btn-outline-light w-100">Continue Shopping</a>
+            <p class="small text-secondary mt-3 mb-0"><i class="bi bi-shield-check me-1"></i>SSL protected checkout and editable placeholder payment integration.</p>
+        </div>
+    </div>
+</section>
+{% else %}
+<section class="glass-card p-5 text-center">
+    <h4 class="mb-2">Your cart is empty</h4>
+    <p class="text-secondary mb-3">Explore premium CCTV collections and build your secure setup.</p>
+    <a href="{% url 'product_list' %}" class="btn btn-premium-cta">Start Shopping</a>
+</section>
+{% endif %}
 {% endblock %}
