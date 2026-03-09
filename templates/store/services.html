@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% block title %}Installation Services | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Explore CCTV installation services from Eyetrack Solutions, including site planning, setup, and post-installation support for homes and businesses.{% endblock %}
+{% block content %}
+<div class="services-page">
+<section class="hero-premium page-section">
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-8">
+            <p class="eyebrow mb-2">Professional Installation</p>
+            <h1 class="display-title mb-3">Ultra-premium CCTV deployment services for every site scale.</h1>
+            <p class="lead-copy mb-3">From camera planning to post-install optimization, Eyetrack Solutions delivers turnkey security rollouts for homes, retail, offices, warehouses, and enterprise campuses.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'product_list' %}" class="btn btn-premium-cta px-4">Browse Hardware</a>
+                <a href="{% url 'support_page' %}" class="btn btn-outline-light px-4">Talk to Support</a>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="premium-stats-grid">
+                <div class="premium-stat-card">
+                    <h3>500+</h3>
+                    <p>Installations</p>
+                </div>
+                <div class="premium-stat-card">
+                    <h3>98%</h3>
+                    <p>Client Satisfaction</p>
+                </div>
+                <div class="premium-stat-card">
+                    <h3>24h</h3>
+                    <p>Deployment Start SLA</p>
+                </div>
+                <div class="premium-stat-card">
+                    <h3>AMC</h3>
+                    <p>Maintenance Plans</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <article class="service-tier-card h-100">
+                <p class="tier-tag">Starter</p>
+                <h4>Home Secure Pack</h4>
+                <p>1-4 camera setup with app onboarding, recording configuration, and user handover.</p>
+                <ul class="service-list">
+                    <li>Camera angle calibration</li>
+                    <li>Mobile app pairing</li>
+                    <li>Basic alert setup</li>
+                </ul>
+            </article>
+        </div>
+        <div class="col-md-4">
+            <article class="service-tier-card h-100 featured">
+                <p class="tier-tag">Business</p>
+                <h4>Retail & Office Shield</h4>
+                <p>5-16 camera layout with DVR/NVR tuning, role-based access, and performance hardening.</p>
+                <ul class="service-list">
+                    <li>Live + playback optimization</li>
+                    <li>Entry/exit analytics setup</li>
+                    <li>Multi-user permission controls</li>
+                </ul>
+            </article>
+        </div>
+        <div class="col-md-4">
+            <article class="service-tier-card h-100">
+                <p class="tier-tag">Enterprise</p>
+                <h4>Multi-Site Command Vision</h4>
+                <p>High-capacity architecture for plants, campuses, and warehouse networks.</p>
+                <ul class="service-list">
+                    <li>Central command dashboard</li>
+                    <li>Zone-based surveillance policy</li>
+                    <li>Failover-ready architecture</li>
+                </ul>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="glass-card p-4 page-section">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h3 class="h4 mb-0">Implementation Workflow</h3>
+        <span class="small text-secondary">Structured delivery from planning to handover</span>
+    </div>
+    <div class="service-timeline">
+        <div class="timeline-item">
+            <span>01</span>
+            <h6>Site Audit</h6>
+            <p>Threat mapping, blind-spot analysis, and camera positioning blueprint.</p>
+        </div>
+        <div class="timeline-item">
+            <span>02</span>
+            <h6>Solution Design</h6>
+            <p>Device selection, storage architecture, and network planning.</p>
+        </div>
+        <div class="timeline-item">
+            <span>03</span>
+            <h6>Installation</h6>
+            <p>Precision deployment, wiring integrity checks, and load balancing.</p>
+        </div>
+        <div class="timeline-item">
+            <span>04</span>
+            <h6>Go-Live + Training</h6>
+            <p>Team onboarding, SOP handover, and monitoring best practices.</p>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 page-section align-items-start">
+    <div class="col-lg-7">
+        <div class="glass-card p-4 h-100">
+            <h3 class="h4 mb-3">Service Coverage Matrix</h3>
+            <div class="table-responsive">
+                <table class="table premium-table align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Capability</th>
+                        <th>Starter</th>
+                        <th>Business</th>
+                        <th>Enterprise</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr><td>Installation</td><td><i class="bi bi-check-lg text-success"></i></td><td><i class="bi bi-check-lg text-success"></i></td><td><i class="bi bi-check-lg text-success"></i></td></tr>
+                    <tr><td>Remote Monitoring Setup</td><td><i class="bi bi-check-lg text-success"></i></td><td><i class="bi bi-check-lg text-success"></i></td><td><i class="bi bi-check-lg text-success"></i></td></tr>
+                    <tr><td>Analytics Tuning</td><td>-</td><td><i class="bi bi-check-lg text-success"></i></td><td><i class="bi bi-check-lg text-success"></i></td></tr>
+                    <tr><td>Central Command Dashboard</td><td>-</td><td>-</td><td><i class="bi bi-check-lg text-success"></i></td></tr>
+                    <tr><td>Preventive Maintenance</td><td>Optional</td><td>Included</td><td>Included</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="glass-card p-4">
+            <h3 class="h4 mb-3">Customer Outcomes</h3>
+            <div class="mini-info-card mb-3">
+                <h6>Retail Chain Upgrade</h6>
+                <p>Reduced incident response time by 41% with centralized multi-store feeds.</p>
+            </div>
+            <div class="mini-info-card mb-3">
+                <h6>Warehouse 24x7 Vision</h6>
+                <p>Improved night-shift visibility with long-range cameras and alert logic.</p>
+            </div>
+            <div class="mini-info-card">
+                <h6>Residential Smart Watch</h6>
+                <p>Delivered remote phone monitoring with secure family access controls.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-3 page-section">
+    <div class="col-md-4">
+        <div class="quote-card h-100">
+            <p>"Installation was clean and zero-downtime. The team trained our staff perfectly."</p>
+            <small>Operations Manager, Retail Client</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="quote-card h-100">
+            <p>"We moved from basic cameras to a proper command center in one rollout."</p>
+            <small>Facility Head, Manufacturing</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="quote-card h-100">
+            <p>"Great support and clarity. They treated our home setup like enterprise quality."</p>
+            <small>Homeowner, Premium Residence</small>
+        </div>
+    </div>
+</section>
+
+<section class="glass-card p-4 p-md-5 service-cta page-section">
+    <div class="row g-3 align-items-center">
+        <div class="col-lg-8">
+            <p class="eyebrow mb-2">Ready to Deploy?</p>
+            <h3 class="h2 mb-2">Build your CCTV stack with professional implementation.</h3>
+            <p class="text-secondary mb-0">Choose your devices now, and coordinate installation scheduling right after checkout.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end d-grid gap-2">
+            <a href="{% url 'product_list' %}" class="btn btn-premium-cta btn-lg">Start Shopping</a>
+            <a href="{% url 'faq_page' %}" class="btn btn-outline-light">Read FAQ</a>
+        </div>
+    </div>
+</section>
+</div>
+{% endblock %}

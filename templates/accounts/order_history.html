@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Order History | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<div class="orders-page">
+<section class="hero-premium page-section">
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-8">
+            <p class="eyebrow mb-2">Order Command Center</p>
+            <h1 class="display-title mb-3">Track purchases, statuses, and spending in one premium dashboard.</h1>
+            <p class="lead-copy mb-3">View every order lifecycle from pending to completed, with quick access to purchased products and future reorders.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'product_list' %}" class="btn btn-premium-cta px-4">Continue Shopping</a>
+                <a href="{% url 'support_page' %}" class="btn btn-outline-light px-4">Need Help?</a>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="premium-stats-grid">
+                <div class="premium-stat-card"><h3>{{ order_summary.total_orders|default:0 }}</h3><p>Total Orders</p></div>
+                <div class="premium-stat-card"><h3>&#8377; {{ order_summary.total_spend|default:0|floatformat:0 }}</h3><p>Total Spend</p></div>
+                <div class="premium-stat-card"><h3>{{ status_counts.completed }}</h3><p>Completed</p></div>
+                <div class="premium-stat-card"><h3>{{ status_counts.pending }}</h3><p>Pending</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if latest_order %}
+<section class="page-section">
+    <div class="row g-3">
+        <div class="col-md-6 col-xl-3"><div class="mini-info-card"><h6>Latest Order</h6><p>#{{ latest_order.id }} on {{ latest_order.created_at|date:"M d, Y" }}</p></div></div>
+        <div class="col-md-6 col-xl-3"><div class="mini-info-card"><h6>Latest Value</h6><p>&#8377; {{ latest_order.total|floatformat:2 }}</p></div></div>
+        <div class="col-md-6 col-xl-3"><div class="mini-info-card"><h6>Processing</h6><p>{{ status_counts.processing }} order{{ status_counts.processing|pluralize }}</p></div></div>
+        <div class="col-md-6 col-xl-3"><div class="mini-info-card"><h6>Cancelled</h6><p>{{ status_counts.cancelled }} order{{ status_counts.cancelled|pluralize }}</p></div></div>
+    </div>
+</section>
+{% endif %}
+
+{% if orders %}
+<section class="glass-card p-3 p-md-4 page-section">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h3 class="h4 mb-0">Order Timeline</h3>
+        <span class="small text-secondary">Newest orders shown first</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table premium-table align-middle mb-0">
+            <thead>
+            <tr>
+                <th>Order</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Items</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.created_at|date:"M d, Y" }}</td>
+                <td>
+                    {% if order.status == 'Pending' %}
+                        <span class="status-pill pending">Pending</span>
+                    {% elif order.status == 'Processing' %}
+                        <span class="status-pill processing">Processing</span>
+                    {% elif order.status == 'Completed' %}
+                        <span class="status-pill completed">Completed</span>
+                    {% else %}
+                        <span class="status-pill cancelled">Cancelled</span>
+                    {% endif %}
+                </td>
+                <td><strong>&#8377; {{ order.total|floatformat:2 }}</strong></td>
+                <td>
+                    {% for item in order.items.all %}
+                        <div class="small order-item-row">{{ item.quantity }}x {{ item.product.name }}</div>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% else %}
+<section class="glass-card p-5 text-center page-section">
+    <h4 class="mb-2">No orders yet</h4>
+    <p class="text-secondary mb-3">Start by exploring premium camera collections.</p>
+    <a href="{% url 'product_list' %}" class="btn btn-premium-cta">Go to Shop</a>
+</section>
+{% endif %}
+</div>
+{% endblock %}

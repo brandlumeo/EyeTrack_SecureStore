@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /accounts/login/
+Disallow: /accounts/register/
+Disallow: /accounts/orders/
+Disallow: /accounts/logout/
+Disallow: /accounts/password-reset/
+Disallow: /accounts/reset/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /payment/
+Disallow: /order-success/
+
+Sitemap: {{ request.scheme }}://{{ request.get_host }}{% url 'sitemap' %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Simulated Payment | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<section class="row justify-content-center">
+    <div class="col-lg-7 col-xl-6">
+        <div class="glass-card p-4 p-md-5 text-center">
+            <p class="eyebrow mb-2">Payment Gateway Placeholder</p>
+            <h1 class="h3 mb-3">Order #{{ order.id }}</h1>
+            <p class="text-secondary mb-2">Amount to pay</p>
+            <p class="display-amount mb-3">&#8377; {{ order.total|floatformat:2 }}</p>
+            <div class="info-note mb-4">
+                No real payment is processed. This screen simulates successful transaction flow so your e-commerce journey is complete for frontend/demo.
+            </div>
+            <form method="post" class="d-grid gap-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-premium-cta btn-lg">Simulate Payment Success</button>
+                <a href="{% url 'order_history' %}" class="btn btn-outline-danger">Cancel and View Orders</a>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Register | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<section class="auth-wrap row justify-content-center">
+    <div class="col-lg-5">
+        <div class="glass-card p-4 p-md-5">
+            <h1 class="h4 mb-3">Create Account</h1>
+            <p class="text-secondary small mb-4">Save addresses, view order history, and enjoy faster secure checkout.</p>
+            <form method="post" class="d-grid gap-3">
+                {% csrf_token %}
+                {% for field in form %}
+                <div>
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <div class="text-secondary small mt-1">{{ field.help_text|safe }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-premium-cta">Register</button>
+            </form>
+            <p class="small mt-3 mb-0">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

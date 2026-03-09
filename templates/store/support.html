@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Support Center | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Contact Eyetrack Solutions support for CCTV setup help, warranty guidance, troubleshooting, and rapid assistance.{% endblock %}
+{% block content %}
+<div class="support-page">
+<section class="hero-premium page-section">
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-8">
+            <p class="eyebrow mb-2">Support Center</p>
+            <h1 class="display-title mb-3">Need help with setup, order, warranty, or monitoring?</h1>
+            <p class="lead-copy mb-3">Our technical support team helps with CCTV onboarding, performance tuning, alert optimization, and post-installation troubleshooting for every plan size.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'faq_page' %}" class="btn btn-premium-cta px-4">Open FAQ</a>
+                <a href="{% url 'services_page' %}" class="btn btn-outline-light px-4">View Service Plans</a>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="premium-stats-grid">
+                <div class="premium-stat-card"><h3>24/7</h3><p>Critical Support</p></div>
+                <div class="premium-stat-card"><h3>2h</h3><p>Escalation SLA</p></div>
+                <div class="premium-stat-card"><h3>98%</h3><p>Ticket Closure</p></div>
+                <div class="premium-stat-card"><h3>L2/L3</h3><p>Expert Team</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="page-section">
+    <div class="row g-3">
+        <div class="col-md-6"><div class="mini-info-card"><h6>Email Support</h6><p>info@eyetrack-tech.com</p></div></div>
+        <div class="col-md-6"><div class="mini-info-card"><h6>Phone Support</h6><p>+91 7994357565</p></div></div>
+        <div class="col-md-6"><div class="mini-info-card"><h6>Location</h6><p>Payyoli-Perambra Rd, Kozhikode, Kerala 673522</p></div></div>
+        <div class="col-md-6"><div class="mini-info-card"><h6>Business Hours</h6><p>Mon-Sat, 9:00 AM - 6:00 PM</p></div></div>
+        <div class="col-md-6"><div class="mini-info-card"><h6>WhatsApp</h6><p><a href="https://wa.me/917994357565" class="text-decoration-none" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></p></div></div>
+    </div>
+</section>
+
+<section class="glass-card p-4 page-section">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h3 class="h4 mb-0">Support Priority Matrix</h3>
+        <span class="small text-secondary">Transparent response expectations</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table premium-table align-middle mb-0">
+            <thead>
+            <tr>
+                <th>Priority</th>
+                <th>Use Case</th>
+                <th>Initial Response</th>
+                <th>Resolution Target</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td>P1 - Critical</td><td>Live monitoring outage</td><td>Within 2 hours</td><td>Same day</td></tr>
+            <tr><td>P2 - High</td><td>Recording/performance degradation</td><td>Within 4 hours</td><td>24 hours</td></tr>
+            <tr><td>P3 - Medium</td><td>Configuration adjustments</td><td>Within 8 hours</td><td>2 business days</td></tr>
+            <tr><td>P4 - Low</td><td>General guidance/training</td><td>Within 24 hours</td><td>3 business days</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="row g-4 page-section align-items-start">
+    <div class="col-lg-7">
+        <div class="glass-card p-4">
+            <h3 class="h4 mb-3">Troubleshooting Workflow</h3>
+            <div class="support-flow">
+                <div class="timeline-item">
+                    <span>01</span>
+                    <h6>Report Issue</h6>
+                    <p>Share order ID, device model, and symptoms via email or phone.</p>
+                </div>
+                <div class="timeline-item">
+                    <span>02</span>
+                    <h6>Remote Diagnosis</h6>
+                    <p>Engineers validate power/network/storage and event logs.</p>
+                </div>
+                <div class="timeline-item">
+                    <span>03</span>
+                    <h6>Action Plan</h6>
+                    <p>Receive fix instructions, firmware steps, or visit recommendation.</p>
+                </div>
+                <div class="timeline-item">
+                    <span>04</span>
+                    <h6>Close & Verify</h6>
+                    <p>Issue closure with verification checklist and prevention tips.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="glass-card p-4">
+            <h3 class="h4 mb-3">Self-Help Resources</h3>
+            <a href="{% url 'faq_page' %}" class="compact-row mb-2"><span>Frequently Asked Questions</span><strong>Open</strong></a>
+            <a href="{% url 'order_history' %}" class="compact-row mb-2"><span>Track Recent Orders</span><strong>View</strong></a>
+            <a href="{% url 'product_list' %}" class="compact-row mb-2"><span>Browse Replacement Devices</span><strong>Shop</strong></a>
+            <a href="{% url 'services_page' %}" class="compact-row"><span>Installation Plans</span><strong>Explore</strong></a>
+            <div class="info-note mt-3">
+                <i class="bi bi-info-circle me-1"></i>For urgent site-wide incidents, call support directly for rapid triage.
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="glass-card p-4 p-md-5 service-cta page-section">
+    <div class="row g-3 align-items-center">
+        <div class="col-lg-8">
+            <p class="eyebrow mb-2">Need Immediate Assistance?</p>
+            <h3 class="h2 mb-2">Get expert guidance to restore security operations quickly.</h3>
+            <p class="text-secondary mb-0">Our specialists can guide remote fixes or schedule onsite support based on your plan and urgency.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end d-grid gap-2 support-cta-stack">
+            <a href="mailto:info@eyetrack-tech.com" class="btn btn-premium-cta support-primary-cta">Email Support</a>
+            <a href="tel:+917994357565" class="btn btn-outline-light">Call Support</a>
+            <a href="https://wa.me/917994357565" class="btn btn-success" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a>
+        </div>
+    </div>
+</section>
+</div>
+{% endblock %}

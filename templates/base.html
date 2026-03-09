@@ -1,27 +1,35 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>document.documentElement.classList.add('ui-booting');</script>
     <title>{% block title %}Eyetrack Solutions{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}Eyetrack Solutions offers premium CCTV cameras, installation services, and secure online checkout for homes and businesses.{% endblock %}">
-    <meta name="keywords" content="{% block meta_keywords %}CCTV cameras, surveillance systems, security cameras, CCTV installation, Eyetrack Solutions{% endblock %}">
+    <meta name="description"
+        content="{% block meta_description %}Eyetrack Solutions offers premium CCTV cameras, installation services, and secure online checkout for homes and businesses.{% endblock %}">
+    <meta name="keywords"
+        content="{% block meta_keywords %}CCTV cameras, surveillance systems, security cameras, CCTV installation, Eyetrack Solutions{% endblock %}">
     <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
-    <link rel="canonical" href="{% block canonical_url %}{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% endblock %}">
+    <link rel="canonical"
+        href="{% block canonical_url %}{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% endblock %}">
 
     <meta property="og:site_name" content="Eyetrack Solutions">
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-    <meta property="og:title" content="{% block og_title %}{% block og_title_fallback %}Eyetrack Solutions{% endblock %}{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}{% block og_description_fallback %}Premium CCTV products, installation support, and secure commerce experience.{% endblock %}{% endblock %}">
+    <meta property="og:title"
+        content="{% block og_title %}{% block og_title_fallback %}Eyetrack Solutions{% endblock %}{% endblock %}">
+    <meta property="og:description"
+        content="{% block og_description %}{% block og_description_fallback %}Premium CCTV products, installation support, and secure commerce experience.{% endblock %}{% endblock %}">
     <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
     <meta property="og:locale" content="en_US">
     {% block social_image_meta %}{% endblock %}
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{% block twitter_title %}{% block twitter_title_fallback %}Eyetrack Solutions{% endblock %}{% endblock %}">
-    <meta name="twitter:description" content="{% block twitter_description %}{% block twitter_description_fallback %}Premium CCTV products, installation support, and secure commerce experience.{% endblock %}{% endblock %}">
+    <meta name="twitter:title"
+        content="{% block twitter_title %}{% block twitter_title_fallback %}Eyetrack Solutions{% endblock %}{% endblock %}">
+    <meta name="twitter:description"
+        content="{% block twitter_description %}{% block twitter_description_fallback %}Premium CCTV products, installation support, and secure commerce experience.{% endblock %}{% endblock %}">
     {% block twitter_image_meta %}{% endblock %}
     <meta name="author" content="Eyetrack Solutions">
     <meta name="theme-color" content="#08111f">
@@ -30,10 +38,12 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="{% static 'css/site.css' %}" rel="stylesheet">
+    <link href="{% static 'css/site.css' %}?v=8" rel="stylesheet">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -54,436 +64,448 @@
     </script>
     {% block extra_head %}{% endblock %}
 </head>
+
 <body>
-<div class="site-bg"></div>
-<div class="scroll-progress" aria-hidden="true">
-    <span id="scrollProgressBar"></span>
-</div>
-<div class="topbar-shell">
-    <div class="container d-flex flex-wrap justify-content-between gap-2 py-2">
-        <div class="small topbar-text"><i class="bi bi-shield-lock me-1"></i>Enterprise CCTV Commerce Platform</div>
-        <div class="small topbar-text d-flex gap-3">
-            <span><i class="bi bi-headset me-1"></i>24/7 Support</span>
-            <span><i class="bi bi-patch-check me-1"></i>Warranty Assured</span>
-        </div>
+    <div class="site-bg"></div>
+    <div class="scroll-progress" aria-hidden="true">
+        <span id="scrollProgressBar"></span>
     </div>
-</div>
-<header class="header-shell sticky-top" id="siteHeader">
-    <nav class="navbar navbar-expand-lg premium-nav">
-        <div class="container py-2">
-            <a class="navbar-brand brand-mark" href="{% url 'product_list' %}">
-                <img src="{% static 'img/company-logo.png' %}" alt="Eyetrack Solutions logo" class="brand-logo">
-                <span><span class="brand-accent">EYETRACK</span> SOLUTIONS</span>
-            </a>
-            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="bi bi-list text-light fs-3"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="siteNav">
-                {% with current=request.resolver_match.url_name %}
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                    <li class="nav-item"><a class="nav-link premium-link {% if current == 'product_list' or current == 'products_by_category' or current == 'product_detail' %}active{% endif %}" href="{% url 'product_list' %}">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link premium-link {% if current == 'services_page' %}active{% endif %}" href="{% url 'services_page' %}">Installations</a></li>
-                    <li class="nav-item"><a class="nav-link premium-link {% if current == 'support_page' %}active{% endif %}" href="{% url 'support_page' %}">Support</a></li>
-                    <li class="nav-item"><a class="nav-link premium-link {% if current == 'faq_page' %}active{% endif %}" href="{% url 'faq_page' %}">FAQ</a></li>
-                    {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link premium-link {% if current == 'order_history' %}active{% endif %}" href="{% url 'order_history' %}">Orders</a></li>
-                    <li class="nav-item">
-                        <form action="{% url 'logout' %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-link nav-link premium-link text-decoration-none p-0">Logout</button>
-                        </form>
-                    </li>
-                    {% else %}
-                    <li class="nav-item"><a class="nav-link premium-link {% if current == 'login' %}active{% endif %}" href="{% url 'login' %}">Login</a></li>
-                    <li class="nav-item"><a class="nav-link premium-link {% if current == 'register' %}active{% endif %}" href="{% url 'register' %}">Register</a></li>
-                    {% endif %}
-                    <li class="nav-item ms-lg-2">
-                        <a href="{% url 'cart' %}" class="btn btn-premium-cta btn-sm px-3 cart-btn">
-                            <i class="bi bi-cart3 me-1"></i>Cart <span class="badge rounded-pill cart-count-badge ms-1" data-cart-count>{{ cart_count }}</span>
-                        </a>
-                    </li>
-                </ul>
-                {% endwith %}
+    <div class="topbar-shell">
+        <div class="container d-flex flex-wrap justify-content-between gap-2 py-2">
+            <div class="small topbar-text"><i class="bi bi-shield-lock me-1"></i>Enterprise CCTV Commerce Platform</div>
+            <div class="small topbar-text d-flex gap-3">
+                <span><i class="bi bi-headset me-1"></i>24/7 Support</span>
+                <span><i class="bi bi-patch-check me-1"></i>Warranty Assured</span>
             </div>
         </div>
-    </nav>
-</header>
-<main class="pb-5 main-shell">
-    <div class="container pt-4">
-        {% if messages %}
+    </div>
+    <header class="header-shell sticky-top" id="siteHeader">
+        <nav class="navbar navbar-expand-lg premium-nav">
+            <div class="container py-2">
+                <a class="navbar-brand brand-mark" href="{% url 'product_list' %}">
+                    <img src="{% static 'img/company-logo.png' %}" alt="Eyetrack Solutions logo" class="brand-logo">
+                    <span><span class="brand-accent">EYETRACK</span> SOLUTIONS</span>
+                </a>
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <i class="bi bi-list text-light fs-3"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="siteNav">
+                    {% with current=request.resolver_match.url_name %}
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                        <li class="nav-item"><a
+                                class="nav-link premium-link {% if current == 'product_list' or current == 'products_by_category' or current == 'product_detail' %}active{% endif %}"
+                                href="{% url 'product_list' %}">Shop</a></li>
+                        <li class="nav-item"><a
+                                class="nav-link premium-link {% if current == 'services_page' %}active{% endif %}"
+                                href="{% url 'services_page' %}">Installations</a></li>
+                        <li class="nav-item"><a
+                                class="nav-link premium-link {% if current == 'support_page' %}active{% endif %}"
+                                href="{% url 'support_page' %}">Support</a></li>
+                        <li class="nav-item"><a
+                                class="nav-link premium-link {% if current == 'faq_page' %}active{% endif %}"
+                                href="{% url 'faq_page' %}">FAQ</a></li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item"><a
+                                class="nav-link premium-link {% if current == 'order_history' %}active{% endif %}"
+                                href="{% url 'order_history' %}">Orders</a></li>
+                        <li class="nav-item">
+                            <form action="{% url 'logout' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit"
+                                    class="btn btn-link nav-link premium-link text-decoration-none p-0">Logout</button>
+                            </form>
+                        </li>
+                        {% else %}
+                        <li class="nav-item"><a
+                                class="nav-link premium-link {% if current == 'login' %}active{% endif %}"
+                                href="{% url 'login' %}">Login</a></li>
+                        <li class="nav-item"><a
+                                class="nav-link premium-link {% if current == 'register' %}active{% endif %}"
+                                href="{% url 'register' %}">Register</a></li>
+                        {% endif %}
+                        <li class="nav-item ms-lg-2">
+                            <a href="{% url 'cart' %}" class="btn btn-premium-cta btn-sm px-3 cart-btn">
+                                <i class="bi bi-cart3 me-1"></i>Cart <span class="badge rounded-pill cart-count-badge ms-1" data-cart-count>{{ cart_count }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                    {% endwith %}
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="pb-5 main-shell">
+        <div class="container pt-4">
+            {% if messages %}
             <div class="mb-3">
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags|default:'info' }} mb-2">{{ message }}</div>
+                <div class="alert alert-{{ message.tags|default:'info' }} mb-2">{{ message }}</div>
                 {% endfor %}
             </div>
-        {% endif %}
-        {% block content %}{% endblock %}
-    </div>
-</main>
-{% if request.resolver_match.url_name != 'support_page' %}
-<section class="pre-footer-contact">
-    <div class="container">
-        <div class="pre-footer-contact-card">
-            <div>
-                <p class="eyebrow mb-2">Need Assistance?</p>
-                <h2 class="h3 mb-2">Contact our team directly before checkout.</h2>
-                <p class="text-secondary mb-0">Get expert guidance on camera selection, installation planning, and warranty support.</p>
-            </div>
-            <div class="pre-footer-actions">
-                <a href="tel:+917994357565" class="btn btn-premium-cta"><i class="bi bi-telephone me-2"></i>Call Us</a>
-                <a href="mailto:info@eyetrack-tech.com" class="btn btn-outline-light"><i class="bi bi-envelope me-2"></i>Email</a>
-            </div>
+            {% endif %}
+            {% block content %}{% endblock %}
         </div>
-    </div>
-</section>
-{% endif %}
-<footer class="footer-shell mt-5">
-    <div class="container py-5">
-        <div class="row g-4">
-            <div class="col-lg-4">
-                <h5 class="mb-2">Eyetrack Solutions</h5>
-                <p class="small text-secondary mb-3">Enterprise-grade CCTV commerce with professional installation and long-term support.</p>
-                <div class="d-flex flex-wrap gap-2">
-                    <span class="trust-chip"><i class="bi bi-shield-lock"></i>Secure</span>
-                    <span class="trust-chip"><i class="bi bi-camera-video"></i>Surveillance</span>
-                    <span class="trust-chip"><i class="bi bi-tools"></i>Installation</span>
+    </main>
+    {% if request.resolver_match.url_name != 'support_page' %}
+    <section class="pre-footer-contact">
+        <div class="container">
+            <div class="pre-footer-contact-card">
+                <div>
+                    <p class="eyebrow mb-2">Need Assistance?</p>
+                    <h2 class="h3 mb-2">Contact our team directly before checkout.</h2>
+                    <p class="text-secondary mb-0">Get expert guidance on camera selection, installation planning, and
+                        warranty support.</p>
                 </div>
-            </div>
-            <div class="col-6 col-lg-2">
-                <h6>Company</h6>
-                <a href="{% url 'about_page' %}" class="footer-link d-block ms-0 mb-2">About</a>
-                <a href="{% url 'services_page' %}" class="footer-link d-block ms-0 mb-2">Services</a>
-                <a href="{% url 'support_page' %}" class="footer-link d-block ms-0">Support</a>
-            </div>
-            <div class="col-6 col-lg-2">
-                <h6>Resources</h6>
-                <a href="{% url 'faq_page' %}" class="footer-link d-block ms-0 mb-2">FAQ</a>
-                {% if user.is_authenticated %}
-                <a href="{% url 'order_history' %}" class="footer-link d-block ms-0 mb-2">Orders</a>
-                {% else %}
-                <a href="{% url 'login' %}" class="footer-link d-block ms-0 mb-2">Login</a>
-                {% endif %}
-                <a href="{% url 'product_list' %}" class="footer-link d-block ms-0 mb-2">Store</a>
-                <a href="{% url 'wishlist_page' %}" class="footer-link d-block ms-0 mb-2">Wishlist</a>
-                <a href="{% url 'compare_page' %}" class="footer-link d-block ms-0 mb-2">Compare</a>
-                <a href="{% url 'privacy_policy_page' %}" class="footer-link d-block ms-0 mb-2">Privacy</a>
-                <a href="{% url 'terms_page' %}" class="footer-link d-block ms-0 mb-2">Terms</a>
-                <a href="{% url 'refund_policy_page' %}" class="footer-link d-block ms-0 mb-2">Refunds</a>
-                <a href="{% url 'shipping_policy_page' %}" class="footer-link d-block ms-0">Shipping</a>
-            </div>
-            <div class="col-lg-4">
-                <h6>Contact</h6>
-                <p class="small text-secondary mb-1">info@eyetrack-tech.com</p>
-                <p class="small text-secondary mb-1">+91 7994357565</p>
-                <p class="small text-secondary mb-1">Payyoli-Perambra Rd, Kozhikode, Kerala 673522</p>
-                <p class="small text-secondary mb-0">Mon-Sat, 9:00 AM - 6:00 PM</p>
-            </div>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <div class="container d-flex flex-wrap justify-content-between gap-2 py-3">
-            <small class="text-secondary">© 2026 Eyetrack Solutions. All rights reserved.</small>
-            <small class="text-secondary">Built for secure commerce and scalable surveillance operations.</small>
-        </div>
-    </div>
-</footer>
-<div class="page-loader" aria-hidden="true">
-    <div class="loader-orbit"></div>
-</div>
-<a href="https://wa.me/917994357565" class="floating-whatsapp" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
-    <i class="bi bi-whatsapp"></i>
-</a>
-<button type="button" class="floating-backtop" id="backToTopBtn" aria-label="Back to top">
-    <i class="bi bi-arrow-up"></i>
-</button>
-<div class="premium-tools-dock">
-    <button type="button" class="premium-tool-btn" id="wishlistToggleBtn" aria-label="Open wishlist" data-bs-toggle="offcanvas" data-bs-target="#wishlistDrawer" aria-controls="wishlistDrawer">
-        <i class="bi bi-heart"></i><span class="premium-tool-count" data-wishlist-count>0</span>
-    </button>
-    <button type="button" class="premium-tool-btn" id="compareToggleBtn" aria-label="Open compare" data-bs-toggle="offcanvas" data-bs-target="#compareDrawer" aria-controls="compareDrawer">
-        <i class="bi bi-diagram-3"></i><span class="premium-tool-count" data-compare-count>0</span>
-    </button>
-    <div class="premium-tools-links">
-        <a href="{% url 'wishlist_page' %}" class="small text-decoration-none">Wishlist</a>
-        <a href="{% url 'compare_page' %}" class="small text-decoration-none">Compare</a>
-    </div>
-</div>
-<div class="offcanvas offcanvas-end quick-cart-drawer" tabindex="-1" id="quickCartDrawer" aria-labelledby="quickCartDrawerLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="quickCartDrawerLabel">Added to Cart</h5>
-        <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body d-flex flex-column">
-        <div class="quick-cart-item" id="quickCartItem">
-            <div class="quick-cart-thumb-wrap">
-                <img src="" alt="" class="quick-cart-thumb d-none" id="quickCartImage">
-                <div class="quick-cart-thumb-fallback" id="quickCartFallback"><i class="bi bi-camera-video"></i></div>
-            </div>
-            <div class="quick-cart-meta">
-                <p class="quick-cart-name mb-1" id="quickCartName">Item added</p>
-                <p class="quick-cart-price mb-1" id="quickCartPrice"></p>
-                <p class="quick-cart-qty mb-0" id="quickCartQty"></p>
-            </div>
-        </div>
-        <p class="quick-cart-message mt-3 mb-3" id="quickCartMessage">Your cart has been updated.</p>
-        <div class="mt-auto d-grid gap-2">
-            <a href="{% url 'cart' %}" class="btn btn-premium-cta">View Cart</a>
-            <button type="button" class="btn btn-outline-light" data-bs-dismiss="offcanvas">Continue Shopping</button>
-        </div>
-    </div>
-</div>
-<div class="offcanvas offcanvas-end quick-cart-drawer" tabindex="-1" id="wishlistDrawer" aria-labelledby="wishlistDrawerLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="wishlistDrawerLabel">Wishlist</h5>
-        <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body d-flex flex-column">
-        <div class="d-grid gap-2" id="wishlistItems"></div>
-        <p class="quick-cart-message mt-3 mb-3 d-none" id="wishlistEmpty">No saved items yet.</p>
-        <div class="mt-auto d-grid gap-2">
-            <button type="button" class="btn btn-outline-light" id="clearWishlistBtn">Clear Wishlist</button>
-        </div>
-    </div>
-</div>
-<div class="offcanvas offcanvas-end quick-cart-drawer" tabindex="-1" id="compareDrawer" aria-labelledby="compareDrawerLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="compareDrawerLabel">Compare Items</h5>
-        <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body d-flex flex-column">
-        <div class="d-grid gap-2" id="compareItems"></div>
-        <p class="quick-cart-message mt-3 mb-3 d-none" id="compareEmpty">No compare items selected.</p>
-        <div class="mt-auto d-grid gap-2">
-            <button type="button" class="btn btn-outline-light" id="clearCompareBtn">Clear Compare</button>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content quick-view-modal">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title" id="quickViewModalLabel">Quick View</h5>
-                <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row g-3 align-items-start">
-                    <div class="col-md-5">
-                        <div class="quick-view-image-wrap">
-                            <img src="" alt="" id="quickViewImage" class="quick-view-image d-none">
-                            <div class="quick-view-image-fallback" id="quickViewFallback"><i class="bi bi-camera-video"></i></div>
-                        </div>
-                    </div>
-                    <div class="col-md-7">
-                        <p class="eyebrow mb-1" id="quickViewCategory">Category</p>
-                        <h3 class="h4 mb-2" id="quickViewName">Product</h3>
-                        <p class="detail-price mb-2" id="quickViewPrice"></p>
-                        <p class="small mb-2" id="quickViewStock"></p>
-                        <p class="text-secondary mb-3" id="quickViewDescription"></p>
-                        <div class="d-flex flex-wrap gap-2">
-                            <form method="post" class="m-0" id="quickViewAddForm">
-                                {% csrf_token %}
-                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                <button type="submit" class="btn btn-premium-cta">Add to Cart</button>
-                            </form>
-                            <a href="#" class="btn btn-outline-light" id="quickViewDetailLink">View Details</a>
-                        </div>
-                    </div>
+                <div class="pre-footer-actions">
+                    <a href="tel:+917994357565" class="btn btn-premium-cta"><i class="bi bi-telephone me-2"></i>Call
+                        Us</a>
+                    <a href="mailto:info@eyetrack-tech.com" class="btn btn-outline-light"><i
+                            class="bi bi-envelope me-2"></i>Email</a>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-<div class="toast-container premium-toast-stack position-fixed top-0 end-0 p-3">
-    <div id="premiumActionToast" class="toast premium-toast" role="status" aria-live="polite" aria-atomic="true" data-bs-delay="2200">
-        <div class="toast-body d-flex align-items-center gap-2">
-            <i class="bi bi-check-circle-fill" id="premiumToastIcon"></i>
-            <span id="premiumToastText">Action completed</span>
+    </section>
+    {% endif %}
+    <footer class="footer-shell mt-5">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="mb-2">Eyetrack Solutions</h5>
+                    <p class="small text-secondary mb-3">Enterprise-grade CCTV commerce with professional installation
+                        and long-term support.</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="trust-chip"><i class="bi bi-shield-lock"></i>Secure</span>
+                        <span class="trust-chip"><i class="bi bi-camera-video"></i>Surveillance</span>
+                        <span class="trust-chip"><i class="bi bi-tools"></i>Installation</span>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6>Company</h6>
+                    <a href="{% url 'about_page' %}" class="footer-link d-block ms-0 mb-2">About</a>
+                    <a href="{% url 'services_page' %}" class="footer-link d-block ms-0 mb-2">Services</a>
+                    <a href="{% url 'support_page' %}" class="footer-link d-block ms-0">Support</a>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6>Resources</h6>
+                    <a href="{% url 'faq_page' %}" class="footer-link d-block ms-0 mb-2">FAQ</a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'order_history' %}" class="footer-link d-block ms-0 mb-2">Orders</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="footer-link d-block ms-0 mb-2">Login</a>
+                    {% endif %}
+                    <a href="{% url 'product_list' %}" class="footer-link d-block ms-0 mb-2">Store</a>
+                    <a href="{% url 'wishlist_page' %}" class="footer-link d-block ms-0 mb-2">Wishlist</a>
+                    <a href="{% url 'compare_page' %}" class="footer-link d-block ms-0 mb-2">Compare</a>
+                    <a href="{% url 'privacy_policy_page' %}" class="footer-link d-block ms-0 mb-2">Privacy</a>
+                    <a href="{% url 'terms_page' %}" class="footer-link d-block ms-0 mb-2">Terms</a>
+                    <a href="{% url 'refund_policy_page' %}" class="footer-link d-block ms-0 mb-2">Refunds</a>
+                    <a href="{% url 'shipping_policy_page' %}" class="footer-link d-block ms-0">Shipping</a>
+                </div>
+                <div class="col-lg-4">
+                    <h6>Contact</h6>
+                    <p class="small text-secondary mb-1">info@eyetrack-tech.com</p>
+                    <p class="small text-secondary mb-1">+91 7994357565</p>
+                    <p class="small text-secondary mb-1">Payyoli-Perambra Rd, Kozhikode, Kerala 673522</p>
+                    <p class="small text-secondary mb-0">Mon-Sat, 9:00 AM - 6:00 PM</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container d-flex flex-wrap justify-content-between gap-2 py-3">
+                <small class="text-secondary">© 2026 Eyetrack Solutions. All rights reserved.</small>
+                <small class="text-secondary">Built for secure commerce and scalable surveillance operations.</small>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/917994357565" class="floating-whatsapp" target="_blank" rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+    <button type="button" class="floating-backtop" id="backToTopBtn" aria-label="Back to top">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+    <div class="premium-tools-dock">
+        <div class="premium-tool-group">
+            <button type="button" class="premium-tool-btn" id="wishlistToggleBtn" aria-label="Open wishlist"
+                data-bs-toggle="offcanvas" data-bs-target="#wishlistDrawer" aria-controls="wishlistDrawer">
+                <i class="bi bi-heart"></i><span class="premium-tool-count" data-wishlist-count>0</span>
+            </button>
+            <a href="{% url 'wishlist_page' %}" class="premium-tool-label">Wishlist</a>
+        </div>
+        <div class="premium-tool-group">
+            <button type="button" class="premium-tool-btn" id="compareToggleBtn" aria-label="Open compare"
+                data-bs-toggle="offcanvas" data-bs-target="#compareDrawer" aria-controls="compareDrawer">
+                <i class="bi bi-diagram-3"></i><span class="premium-tool-count" data-compare-count>0</span>
+            </button>
+            <a href="{% url 'compare_page' %}" class="premium-tool-label">Compare</a>
         </div>
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{% static 'js/site.js' %}"></script>
-<script>
-(() => {
-    if (window.__etsWishlistCompareReady) return;
+    <div class="offcanvas offcanvas-end quick-cart-drawer" tabindex="-1" id="quickCartDrawer"
+        aria-labelledby="quickCartDrawerLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="quickCartDrawerLabel">Added to Cart</h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="quick-cart-item" id="quickCartItem">
+                <div class="quick-cart-thumb-wrap">
+                    <img src="" alt="" class="quick-cart-thumb d-none" id="quickCartImage">
+                    <div class="quick-cart-thumb-fallback" id="quickCartFallback"><i class="bi bi-camera-video"></i>
+                    </div>
+                </div>
+                <div class="quick-cart-meta">
+                    <p class="quick-cart-name mb-1" id="quickCartName">Item added</p>
+                    <p class="quick-cart-price mb-1" id="quickCartPrice"></p>
+                    <p class="quick-cart-qty mb-0" id="quickCartQty"></p>
+                </div>
+            </div>
+            <p class="quick-cart-message mt-3 mb-3" id="quickCartMessage">Your cart has been updated.</p>
+            <div class="mt-auto d-grid gap-2">
+                <a href="{% url 'cart' %}" class="btn btn-premium-cta">View Cart</a>
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="offcanvas">Continue
+                    Shopping</button>
+            </div>
+        </div>
+    </div>
+    <div class="offcanvas offcanvas-end quick-cart-drawer" tabindex="-1" id="wishlistDrawer"
+        aria-labelledby="wishlistDrawerLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="wishlistDrawerLabel">Wishlist</h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="d-grid gap-2" id="wishlistItems"></div>
+            <p class="quick-cart-message mt-3 mb-3 d-none" id="wishlistEmpty">No saved items yet.</p>
+            <div class="mt-auto d-grid gap-2">
+                <button type="button" class="btn btn-outline-light" id="clearWishlistBtn">Clear Wishlist</button>
+            </div>
+        </div>
+    </div>
+    <div class="offcanvas offcanvas-end quick-cart-drawer" tabindex="-1" id="compareDrawer"
+        aria-labelledby="compareDrawerLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="compareDrawerLabel">Compare Items</h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column">
+            <div class="d-grid gap-2" id="compareItems"></div>
+            <p class="quick-cart-message mt-3 mb-3 d-none" id="compareEmpty">No compare items selected.</p>
+            <div class="mt-auto d-grid gap-2">
+                <a href="{% url 'compare_page' %}" class="btn btn-premium-cta">Open Compare Page</a>
+                <button type="button" class="btn btn-outline-light" id="clearCompareBtn">Clear Compare</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content quick-view-modal">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title" id="quickViewModalLabel">Quick View</h5>
+                    <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 align-items-start">
+                        <div class="col-md-5">
+                            <div class="quick-view-image-wrap">
+                                <img src="" alt="" id="quickViewImage" class="quick-view-image d-none">
+                                <div class="quick-view-image-fallback" id="quickViewFallback"><i
+                                        class="bi bi-camera-video"></i></div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <p class="eyebrow mb-1" id="quickViewCategory">Category</p>
+                            <h3 class="h4 mb-2" id="quickViewName">Product</h3>
+                            <p class="detail-price mb-2" id="quickViewPrice"></p>
+                            <p class="small mb-2" id="quickViewStock"></p>
+                            <p class="text-secondary mb-3" id="quickViewDescription"></p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <form method="post" class="m-0" id="quickViewAddForm">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button type="submit" class="btn btn-premium-cta">Add to Cart</button>
+                                </form>
+                                <a href="#" class="btn btn-outline-light" id="quickViewDetailLink">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="toast-container premium-toast-stack position-fixed top-0 end-0 p-3">
+        <div id="premiumActionToast" class="toast premium-toast" role="status" aria-live="polite" aria-atomic="true"
+            data-bs-delay="2200">
+            <div class="toast-body d-flex align-items-center gap-2">
+                <i class="bi bi-check-circle-fill" id="premiumToastIcon"></i>
+                <span id="premiumToastText">Action completed</span>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/site.js' %}?v=6"></script>
+    <script>
+        (()            {
+            if (window.__etsWishlistCompareRe             return;
 
-    const keys = { wishlist: 'ets_wishlist_v1', compare: 'ets_compare_v1' };
-    const cookieKeys = { wishlist: 'ets_wishlist_ck', compare: 'ets_compare_ck' };
-    const mem = { wishlist: [], compare: [] };
+            const keys = {
+                wishlist: 'ets_wishlist_v1', compare            ts_compare_v1' };
+            const cookieKeys = { wishlist: 'ets_wishlist_ck', pare: 'ets_compare_ck' };
+                const             = { wishlist: [], compare: [] };
 
-    const readCookieJson = (name) => {
-        const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-        if (!match) return null;
-        try {
-            const parsed = JSON.parse(decodeURIComponent(match[1]));
-            return Array.isArray(parsed) ? parsed : null;
-        } catch {
-            return null;
-        }
-    };
+                const readCookieJson = (name) => {
+                    const match = document                match(new RegExp(`(?:^|;                 =([^;]                               if (!match) return null;
+                try {                             const parsed = JSON.parse(decodeURICo                match[1]))                              ret                y.            ray(            ed) ? parsed : null;
+                } catc                                          turn null;
+                }
+            };
 
-    const writeCookieJson = (name, value) => {
-        try {
-            const encoded = encodeURIComponent(JSON.stringify(value));
-            document.cookie = `${name}=${encoded}; Path=/; Max-Age=2592000; SameSite=Lax`;
-        } catch {}
-    };
+            co                    kieJson = (name, value) => {
+                try {
+                    const en                encodeURI Co            ent(            .stringify(value));
+                                               okie = `${ name } = ${ encoded }; Path =/; Max-Age=2592000; SameSite=Lax`;
+                } catch {}
+            };
 
-    const read = (type) => {
-        try {
-            const parsed = JSON.parse(localStorage.getItem(keys[type]) || '[]');
-            if (Array.isArray(parsed) && parsed.length) return parsed;
-            const cookieVal = readCookieJson(cookieKeys[type]);
-            return cookieVal || (Array.isArray(parsed) ? parsed : []);
-        } catch {
-            const cookieVal = readCookieJson(cookieKeys[type]);
-            return cookieVal || mem[type] || [];
-        }
-    };
+            const read = (ty                                 try {
+                const parsed                     (localStorage.getItem(keys[type]) || '[]');
+                (Array.isA && parsed.length) return parsed;
+                ieVal = readCookieJson(cookieKeys[typ                                                 return cookieVal || (Array.isA                sed) ?parsed: []);
+            } catch {
+                const cookieVal = readCookieJson(c                s[type]);
+                return cookieVal || mem[type] || [];
+            }
+        };
 
-    const write = (type, items) => {
-        mem[type] = Array.isArray(items) ? items : [];
-        writeCookieJson(cookieKeys[type], mem[type]);
-        try { localStorage.setItem(keys[type], JSON.stringify(mem[type])); } catch {}
-    };
+            c                te = (type, items) => {
+            mem[type] = Array.isArray(items)                 : [];
+            writeCookieJson(cookieKeys[type], mem[type]);
+            try { localStorage.setItem(keys[type], JSON.stringify(mem[type])); } catch { }
+        };
 
-    const refresh = () => {
-        const wishlistIds = new Set(read('wishlist').map((i) => String(i.id)));
-        const compareIds = new Set(read('compare').map((i) => String(i.id)));
-        document.querySelectorAll('[data-wishlist-count]').forEach((el) => el.textContent = String(wishlistIds.size));
-        document.querySelectorAll('[data-compare-count]').forEach((el) => el.textContent = String(compareIds.size));
-        const wishPageCount = document.getElementById('wishlistPageCount');
-        const wishPageCountMobile = document.getElementById('wishlistPageCountMobile');
-        const comparePageCount = document.getElementById('comparePageCount');
-        const comparePageCountMobile = document.getElementById('comparePageCountMobile');
-        if (wishPageCount) wishPageCount.textContent = String(wishlistIds.size);
-        if (wishPageCountMobile) wishPageCountMobile.textContent = String(wishlistIds.size);
-        if (comparePageCount) comparePageCount.textContent = String(compareIds.size);
-        if (comparePageCountMobile) comparePageCountMobile.textContent = String(compareIds.size);
-        document.querySelectorAll('.wishlist-btn[data-product-id]').forEach((btn) => {
-            btn.classList.toggle('is-active', wishlistIds.has(String(btn.getAttribute('data-product-id'))));
-        });
-        document.querySelectorAll('.compare-btn[data-product-id]').forEach((btn) => {
-            btn.classList.toggle('is-active', compareIds.has(String(btn.getAttribute('data-product-id'))));
-        });
-        renderWishlistPage();
-        renderComparePage();
-    };
-
-    const renderWishlistPage = () => {
-        const host = document.getElementById('wishlistPageGrid');
-        if (!host) return;
-        const empty = document.getElementById('wishlistPageEmpty');
-        const items = read('wishlist');
-        host.innerHTML = '';
-        if (!items.length) {
-            if (empty) empty.classList.remove('d-none');
-            return;
-        }
-        if (empty) empty.classList.add('d-none');
-        items.forEach((item) => {
-            const col = document.createElement('div');
-            col.className = 'col-md-6 col-xl-4';
-            const thumb = item.image || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
-            col.innerHTML = `
+        refresh = () => {
+            const wishlistIds = new Set(read('wishlist').map((i) => String(i.id)));
+            const compareIds = new Set(read('compare').map((i) => String(i                                document.querySelectorAll('[data-wishlist-count]').forEach((el)                 xtContent = String(wishlistIds.size));
+            document.queryS                ll('[data-compare-count]').forEach((el) => el.textContent = String(compareIds.size                            const wishPageCount = document.getElementById('wishlistPageCo                               const wishPageCountMobile = document.getElementById('wishlistPageCount                ;
+            const comparePageCount = document.getElementById('comparePag                ;
+                const comparePageCountMobile = document.getElementById('comparePageCount                ;
+                if (wishPageCount) wishPageCount.textContent = String(wishlis                                    if (wishPageCountMobile) wishPageCountMobile.textContent = String(wishlistIds.siz                                    if (comparePageCount) comparePageCount.textContent = String(compareIds.size);
+            if (comparePageCountMobile) comparePageCountMobile.textContent = String(compareIds.size);
+            nt.querySelectorAll('.                -btn[data-product-id]            orEa            btn) => {
+                    btn.c.toggle('is-active', wishlistIds.has(String(btn.getAttribu - product - id'))));
+                        });
+        document.querySelectorAll('.compa                ata-product-id]').forEach((btn)                                  btn.t.toggle('is-active', has(String(btn.getAttribute('data-product-id'                                                                  renderWishlistPage();
+        mparePage();
+            }                       const renderWishlistPage = () => {
+                         onst host = document.getElementById('                    Grid');
+            if (!host) return;
+            const empty = document.getElementById('wish                    y');
+            const items = read('wishlist');
+            host.innerHTML = '';
+            if (!items.length) {
+                if (empty) empty.classList.remove('d-none');
+                return;
+            }
+            if (empty) empty.classList.add('d-none');
+            items.forEach((item) => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-xl-4';
+                const thumb = item.image || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+                col.innerHTML = `
                 <article class="wishlist-page-card h-100 d-flex flex-column">
                     <img src="${thumb}" alt="${item.name || 'Product'}" class="wishlist-page-thumb">
                     <div class="p-3 d-flex flex-column flex-grow-1">
-                        <h6 class="mb-1"><a href="${item.url || '#'}" class="text-decoration-none text-light">${item.name || 'Product'}</a></h6>
-                        <p class="product-price mb-3">${item.price ? `Rs ${item.price}` : ''}</p>
-                        <div class="d-flex gap-2 mt-auto">
-                            <button type="button" class="btn btn-premium-cta btn-sm flex-grow-1 wishlist-add-cart-btn" data-id="${item.id}">Add</button>
-                            <button type="button" class="btn btn-outline-danger btn-sm wishlist-remove-btn" data-id="${item.id}">Remove</button>
-                        </div>
-                    </div>
-                </article>
+                        <h6 class="mb-1"><a href="${item.url || '#'}" class="text-decoration-none te                    item.name || 'Product'}                >
+                                        <p class="product-price mb-3">                rice ? `Rs ${ item.price } ` : ''}</p>
+                                     class="d-flex gap-2                ">
+                            <button type="button" class=                -premium-cta btn-sm flex-grow-1                t-add-cart-btn" data-                    d}">Add</button>
+                                    <button type="button" class="btn                     danger b                sh                ove-btn" data-id="${item.id}">Remove</butt                                    </div>
+                            </div>
+                <                >
             `;
-            host.appendChild(col);
-        });
-    };
+                dChild
+            });
+        };
 
-    const renderComparePage = async () => {
-        const body = document.getElementById('comparePageBody');
-        if (!body) return;
-        const empty = document.getElementById('comparePageEmpty');
-        const items = read('compare');
-        body.innerHTML = '';
-        if (!items.length) {
-            if (empty) empty.classList.remove('d-none');
+        const renderComparePage = async () => {
+            const body                         ementById('comparePageBody                            if (!body) return;
+                                pty = document.getElementById('comparePageEmpt                             c                        d('compare');                                      ite                h) {
+                    body.innerHTML = '';
+            empty.classList.remove('d-none');
             return;
         }
-        if (empty) empty.classList.add('d-none');
-        const fetchQuick = async (id) => {
-            try {
-                const res = await fetch(`/api/product/${id}/quick-view/`, { headers: { 'Accept': 'application/json' } });
-                if (!res.ok) return null;
-                const data = await res.json();
-                return data && data.ok ? data.product : null;
-            } catch {
-                return null;
-            }
+                              pty) assList.add('d-none');
+        body.style.opacity = '0.5';
+        body.style.pointerEvents = 'no                             const fetchQuick = async (                
+        try {
+            const res = await fetch(`/api/product/${id}/quick-                { headers: { 'Accept': 'application/json' } });
+                        if                 ) return null;
+                        const data = await res.json();
+                                return data && data.ok ? data.product : null;
+                    } catch {
+                                        ull;
+                                              };
+                const liveItems = await Promise.all(items.map(async (item) => {
+                    const live = await fetchQuick(item.id);
+                    return                    .item, ...live } : item;
+                }));
+                const toNum = (value) => {
+                               st n = Number.parseFloat(String(value || '').replace(/[^0-9.]/g, ''));
+                    return Number.isF                     : 0;
+                };
+                const bestPrice = Math.min(...liveItems.map((i) => toNum(i.price)).filter((v) => v > 0));
+                const bestStock = Math.max(...li                    (i) => Number(i.stock) || 0));
+                const spec = (item, key) => (item.specs && item.specs[key]) ? item.specs[key] : '-';
+                const yesNoClass = (val) => String(val).toLowerCase()                     'compare-check' : 'compare-cross';
+                const rows = [
+                    { label: 'Product', val                    s.map((item) => `< td class= "compare-product-cell" ><h6>${item.name || 'Product'}</h6><p>${item.price ? `Rs ${item.price                    </td>`).join('') },
+                    { label: 'Category', value: liveItems.map((item) => `< td > ${ item.category || join('') },
+                {
+                    label: 'Camera Type', value: liveItems.map((item) => `<td>${spe                    era_type')}</td>`).join('') },
+                    { label: 'Price', value: liveItems.map((item) => `<td class                    em.price) === bestPrice ? 'compare-best' : ''}">${item.price ? `Rs ${item.price}` : '-'}</td>`).join('') },
+                        label: 'Stock', value: liveItems.map((item) => `<td class="${(Number(item.stock) || 0) === bestStock ? 'compare-best' : ''}">${typeof item.stock !== 'undefined' ? item.stoc > `).join('') },
+                    { label: 'Resolution', value: liveItems.map((item) => `< td > ${ spec(item, 'resolution_mp') }</td > `).join('') },
+                    { label: 'N                    , value: liveItems.map((item) => `< td > ${ spec(item, 'night_vision_range_m') }</td > `).join('') },
+                                 el: 'Field of View', value: liveItems.map((item) => `< td > ${ spec(item, 'field_of_view_deg') }</td > `).join('') },
+                    { label: 'Lens', value: liveItems.map((item) => `< td > ${ spec(item, 'lens_mm') }</td > `).join('') },
+                    { label: 'Connectivity', value: liveItem                tem                d>${spec(item, 'connectivity')}</td>`).join('') },
+                {
+                    label: 'Weatherproof', value: liveItems.map((ite                td > ${ spec(item, 'weatherp                ing') }</td > `).join('') },
+                                    { label: 'AI Detection', valu                tems.map((item) => `< td > <span class="${yesNoClas                tem, 'ai_detectio                {spec(item, 'ai                    }</s                    join('') },
+                    { label: 'Audio Support',                     tems.map((item) => `<td><span class="${yesNoClass(spe                    io_support'))}">${spec(item, 'audio_support')}</sp                    oin('') },
+                    { label: 'Warranty', v                veI((item) => `<td>${spec(ite                anty_years')}</td>`).join('') },
+                    { label: '                , value: liveItems                em) => `<td><d                    flex gap-2"><a class="btn btn-sm btn-outline-light" href=                url || '#                    <button class= "btn btn-sm btn-outline-danger compare-remove-page-btn                    {item.id}" > Remove</butto                </                in('') },
+                         ;
+                        b            innerHTML = rows.map((row) => `<tr><td class="co                tribute-col">${row.label}</td>${row.value}</tr>`).join('');
+            le.opacity = '';
+            body.style.pointerEven
         };
-        const liveItems = await Promise.all(items.map(async (item) => {
-            const live = await fetchQuick(item.id);
-            return live ? { ...item, ...live } : item;
-        }));
-        const toNum = (value) => {
-            const n = Number.parseFloat(String(value || '').replace(/[^0-9.]/g, ''));
-            return Number.isFinite(n) ? n : 0;
-        };
-        const bestPrice = Math.min(...liveItems.map((i) => toNum(i.price)).filter((v) => v > 0));
-        const bestStock = Math.max(...liveItems.map((i) => Number(i.stock) || 0));
-        const spec = (item, key) => (item.specs && item.specs[key]) ? item.specs[key] : '-';
-        const yesNoClass = (val) => String(val).toLowerCase() === 'yes' ? 'compare-check' : 'compare-cross';
-        const rows = [
-            { label: 'Product', value: liveItems.map((item) => `<td class="compare-product-cell"><h6>${item.name || 'Product'}</h6><p>${item.price ? `Rs ${item.price}` : ''}</p></td>`).join('') },
-            { label: 'Category', value: liveItems.map((item) => `<td>${item.category || '-'}</td>`).join('') },
-            { label: 'Camera Type', value: liveItems.map((item) => `<td>${spec(item, 'camera_type')}</td>`).join('') },
-            { label: 'Price', value: liveItems.map((item) => `<td class="${toNum(item.price) === bestPrice ? 'compare-best' : ''}">${item.price ? `Rs ${item.price}` : '-'}</td>`).join('') },
-            { label: 'Stock', value: liveItems.map((item) => `<td class="${(Number(item.stock) || 0) === bestStock ? 'compare-best' : ''}">${typeof item.stock !== 'undefined' ? item.stock : '-'}</td>`).join('') },
-            { label: 'Resolution', value: liveItems.map((item) => `<td>${spec(item, 'resolution_mp')}</td>`).join('') },
-            { label: 'Night Vision', value: liveItems.map((item) => `<td>${spec(item, 'night_vision_range_m')}</td>`).join('') },
-            { label: 'Field of View', value: liveItems.map((item) => `<td>${spec(item, 'field_of_view_deg')}</td>`).join('') },
-            { label: 'Lens', value: liveItems.map((item) => `<td>${spec(item, 'lens_mm')}</td>`).join('') },
-            { label: 'Connectivity', value: liveItems.map((item) => `<td>${spec(item, 'connectivity')}</td>`).join('') },
-            { label: 'Weatherproof', value: liveItems.map((item) => `<td>${spec(item, 'weatherproof_rating')}</td>`).join('') },
-            { label: 'AI Detection', value: liveItems.map((item) => `<td><span class="${yesNoClass(spec(item, 'ai_detection'))}">${spec(item, 'ai_detection')}</span></td>`).join('') },
-            { label: 'Audio Support', value: liveItems.map((item) => `<td><span class="${yesNoClass(spec(item, 'audio_support'))}">${spec(item, 'audio_support')}</span></td>`).join('') },
-            { label: 'Warranty', value: liveItems.map((item) => `<td>${spec(item, 'warranty_years')}</td>`).join('') },
-            { label: 'Actions', value: liveItems.map((item) => `<td><div class="d-flex gap-2"><a class="btn btn-sm btn-outline-light" href="${item.url || '#'}">View</a><button class="btn btn-sm btn-outline-danger compare-remove-page-btn" data-id="${item.id}">Remove</button></div></td>`).join('') },
-        ];
-        body.innerHTML = rows.map((row) => `<tr><td class="compare-attribute-col">${row.label}</td>${row.value}</tr>`).join('');
-    };
 
-    const toggle = (type, btn) => {
-        const id = btn.getAttribute('data-product-id');
-        if (!id) return;
-        const item = {
-            id,
-            name: btn.getAttribute('data-product-name') || 'Product',
-            price: btn.getAttribute('data-product-price') || '',
-            url: btn.getAttribute('data-product-url') || '#',
-            image: btn.getAttribute('data-product-image') || '',
-        };
-        const items = read(type);
-        const exists = items.some((i) => String(i.id) === String(id));
-        let next = items;
+                                 = (type, btn) => {
+                                 = btn.ge                te                roduct - id');
+            if (!id) return;
+            const item = id, name: btn.getAt                    a-product - name') || 'Prod                                  price: btn.getAtt - product | url: btn.getAttribute('data-product-url') || '#',
+                image: btn.g                    'data-product-image') || '',
+                }; const items = read(type);
+        const exists = items.some((i) =>                      === String                                            ex                s;
         if (exists) {
-            next = items.filter((i) => String(i.id) !== String(id));
+            next = items.filter((i) => S                id) !== String(id));
         } else {
-            if (type === 'compare' && items.length >= 4) next = items.slice(1);
-            next = [...next, item];
-        }
-        write(type, next);
-        refresh();
-    };
+            if (type === 'com                    ms.length >= 4) next = items.slice(1);
+                    next = [...next, it                             }
+                        writ                ne                             refresh();
+            };
 
-    document.addEventListener('click', (event) => {
-        const wishlistBtn = event.target.closest('.wishlist-btn[data-product-id]');
+        document.addE                ener('click', (ev                                  const wis                    vent.target                    ishlist-                -p                d]');
         if (wishlistBtn) {
-            event.preventDefault();
-            event.stopPropagation();
-            toggle('wishlist', wishlistBtn);
+            event.efault();
+            ent.stopPropagation();                             to                sh            ', wi            stBtn);
             return;
         }
         const compareBtn = event.target.closest('.compare-btn[data-product-id]');
@@ -518,10 +540,11 @@
             write('compare', []);
             refresh();
         }
-    });
+            });
 
-    refresh();
-})();
-</script>
+        refresh();
+        }) ();
+    </script>
 </body>
+
 </html>
