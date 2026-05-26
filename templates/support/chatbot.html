@@ -1,0 +1,266 @@
+{% load static %}
+<!-- Floating Chatbot Widget -->
+<style>
+    #chatbot-bubble {
+        width: 3.25rem !important;
+        height: 3.25rem !important;
+        background: #ffc107;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 5px 25px rgba(255, 193, 7, 0.4);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        flex-shrink: 0;
+    }
+    #chatbot-bubble:hover {
+        transform: scale(1.1);
+    }
+    #chatbot-bubble i {
+        font-size: 20px;
+        color: #000;
+    }
+    #chatbot-window {
+        position: absolute;
+        bottom: 80px;
+        right: 20px;
+        width: 380px;
+        height: 500px;
+        background: #1a1a1a;
+        border: 1px solid rgba(255, 193, 7, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        animation: chatOpen 0.4s ease forwards;
+        backdrop-filter: blur(10px);
+        z-index: 9999999 !important;
+    }
+    @keyframes chatOpen {
+        from { opacity: 0; transform: translateY(20px) scale(0.9); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .chat-header {
+        background: #ffc107;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .chat-header-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .chat-header-info img {
+        width: 40px;
+        height: 40px;
+        background: #000;
+        border-radius: 50%;
+        padding: 5px;
+    }
+    .chat-header-info h5 {
+        margin: 0;
+        font-size: 1rem;
+        color: #000;
+        font-weight: 700;
+    }
+    .chat-header-info span {
+        font-size: 0.75rem;
+        color: rgba(0, 0, 0, 0.6);
+        display: block;
+    }
+    .chat-close {
+        cursor: pointer;
+        color: #000;
+        font-size: 1.2rem;
+    }
+    .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        background: rgba(255,255,255,0.02);
+    }
+    .msg {
+        max-width: 80%;
+        padding: 12px 16px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    .msg.bot {
+        background: rgba(255,255,255,0.05);
+        color: #eee;
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+    }
+    .msg.user {
+        background: #ffc107;
+        color: #000;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+    }
+    .chat-footer {
+        padding: 20px;
+        border-top: 1px solid rgba(255, 193, 7, 0.1);
+        display: flex;
+        gap: 10px;
+    }
+    .chat-input {
+        flex: 1;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255, 193, 7, 0.2);
+        border-radius: 50px;
+        padding: 10px 20px;
+        color: #fff;
+        font-size: 0.9rem;
+    }
+    .chat-input:focus {
+        outline: none;
+        border-color: #ffc107;
+    }
+    .chat-send {
+        width: 40px;
+        height: 40px;
+        background: #ffc107;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .chat-send:active { transform: scale(0.9); }
+    .chat-send i { color: #000; font-size: 1rem; }
+
+    /* Typing Animation */
+    .typing {
+        display: flex;
+        gap: 4px;
+        padding: 8px 12px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 15px;
+        width: fit-content;
+    }
+    .typing span {
+        width: 6px;
+        height: 6px;
+        background: #ffc107;
+        border-radius: 50%;
+        animation: typingBounce 1.4s infinite;
+    }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce {
+        0%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-6px); }
+    }
+</style>
+
+<!-- Chat Window -->
+<div id="chatbot-window" style="bottom: 11.5rem; right: 20px; position: fixed;">
+    <div class="chat-header">
+            <div class="chat-header-info">
+                <img loading="lazy" decoding="async" src="{% static 'img/company-logo.png' %}" alt="Bot" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4712/4712035.png'">
+                <div>
+                    <h5>EyeTrack AI</h5>
+                    <span>Online | Expert Support</span>
+                </div>
+            </div>
+            <div class="chat-close" id="chatClose">
+                <i class="bi bi-x-lg"></i>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="msg bot">
+                Hi there! 👋 I'm EyeTrack AI. How can I help you secure your home or business today?
+            </div>
+        </div>
+        
+        <div class="chat-footer">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your question...">
+            <div class="chat-send" id="chatSend">
+                <i class="bi bi-send-fill"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const bubble = document.getElementById('chatbot-bubble');
+    const windowEl = document.getElementById('chatbot-window');
+    const closeBtn = document.getElementById('chatClose');
+    const sendBtn = document.getElementById('chatSend');
+    const input = document.getElementById('chatInput');
+    const messages = document.getElementById('chatMessages');
+
+    bubble.addEventListener('click', () => {
+        windowEl.style.display = 'flex';
+        bubble.style.display = 'none';
+        input.focus();
+    });
+
+    closeBtn.addEventListener('click', () => {
+        windowEl.style.display = 'none';
+        bubble.style.display = 'flex';
+    });
+
+    function addMessage(text, side) {
+        const msg = document.createElement('div');
+        msg.className = `msg ${side}`;
+        msg.textContent = text;
+        messages.appendChild(msg);
+        messages.scrollTop = messages.scrollHeight;
+        return msg;
+    }
+
+    function addTyping() {
+        const typing = document.createElement('div');
+        typing.className = 'typing';
+        typing.innerHTML = '<span></span><span></span><span></span>';
+        messages.appendChild(typing);
+        messages.scrollTop = messages.scrollHeight;
+        return typing;
+    }
+
+    async function handleSend() {
+        const text = input.value.trim();
+        if (!text) return;
+
+        input.value = '';
+        addMessage(text, 'user');
+
+        const typing = addTyping();
+
+        try {
+            const response = await fetch('{% url "chatbot_api" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ message: text })
+            });
+            const data = await response.json();
+            
+            setTimeout(() => {
+                typing.remove();
+                addMessage(data.message, 'bot');
+            }, 800);
+        } catch (e) {
+            typing.remove();
+            addMessage("I'm sorry, my systems are experiencing a slight glitch. Please try again later!", "bot");
+        }
+    }
+
+    sendBtn.addEventListener('click', handleSend);
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSend();
+    });
+</script>

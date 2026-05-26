@@ -1,0 +1,155 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<!-- Admin Header -->
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">Categories Management</h1>
+            <p class="admin-subtitle">Organize your product catalog by categories</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="d-flex gap-2 justify-content-md-end mt-3 mt-md-0">
+                <a href="{% url 'admin_dashboard:category_add' %}" class="btn btn-premium-cta btn-sm">
+                    <i class="bi bi-plus-lg me-1"></i> Add Category
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Categories Table -->
+<div class="chart-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">All Categories</h5>
+        <div class="d-flex gap-2">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search categories..."
+                value="{{ search_query|default:'' }}" style="width: 200px;">
+            <button class="btn btn-outline-light btn-sm" id="searchBtn">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-dark table-admin">
+            <thead>
+                <tr>
+                    <th>Icon</th>
+                    <th>Category Name</th>
+                    <th>Slug</th>
+                    <th>Products Count</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td>
+                        <div
+                            style="width: 40px; height: 40px; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(251, 191, 36, 0.2);">
+                            <i class="bi {{ category.icon }}" style="font-size: 1.25rem; color: #fbbf24;"></i>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; font-size: 1.05rem;">{{ category.name }}</div>
+                    </td>
+                    <td>
+                        <code class="text-secondary"
+                            style="background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">{{ category.slug }}</code>
+                    </td>
+                    <td>
+                        <span class="badge bg-secondary" style="font-size: 0.9rem; padding: 0.5rem 0.75rem;">
+                            {{ category.product_count }} Products
+                        </span>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{% url 'admin_dashboard:category_edit' category.id %}"
+                                class="btn btn-outline-light btn-sm" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:products_overview' %}?category={{ category.id }}"
+                                class="btn btn-outline-light btn-sm" title="View Products">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <form method="POST" action="{% url 'admin_dashboard:category_delete' category.id %}"
+                                style="display:inline;"
+                                onsubmit="return confirm('Are you sure you want to delete {{ category.name|escapejs }}? This will affect products under it.');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-soft-danger btn-sm" title="Delete Category">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-secondary py-4">No categories found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link"
+                    href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"><i
+                        class="bi bi-chevron-left"></i> Previous</a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i> Previous</a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="page-item"><a
+                    class="page-link"
+                    href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a></li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link"
+                        href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">Next
+                        <i class="bi bi-chevron-right"></i></a></li>
+                {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">Next <i
+                            class="bi bi-chevron-right"></i></a></li>
+                {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function performSearch() {
+        const searchTerm = document.getElementById('searchInput').value;
+        const currentUrl = new URL(window.location);
+        if (searchTerm) {
+            currentUrl.searchParams.set('search', searchTerm);
+        } else {
+            currentUrl.searchParams.delete('search');
+        }
+        currentUrl.searchParams.delete('page');
+        window.location.href = currentUrl.toString();
+    }
+
+    document.getElementById('searchInput').addEventListener('keyup', function (e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+
+    document.getElementById('searchBtn').addEventListener('click', performSearch);
+</script>
+{% endblock %}

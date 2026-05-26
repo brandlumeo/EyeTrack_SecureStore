@@ -1,0 +1,25 @@
+{% if categories %}
+<div class="top-category-nav-wrapper">
+    <div class="container">
+        <div class="top-category-nav">
+            {# "All Products" Item #}
+            <a href="{% url 'product_list' %}" class="category-nav-item {% if not category %}active{% endif %}">
+                <div class="category-icon-wrap">
+                    <i class="bi bi-grid-fill"></i>
+                </div>
+                <span class="category-nav-label">All Security</span>
+            </a>
+
+            {# Dynamic Categories from Database #}
+            {% for cat in categories %}
+            <a href="{% url 'products_by_category' cat.slug %}" class="category-nav-item {% if category and category.slug == cat.slug %}active{% endif %}">
+                <div class="category-icon-wrap">
+                    <i class="bi {{ cat.icon|default:'bi-layers' }}"></i>
+                </div>
+                <span class="category-nav-label">{{ cat.name }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}

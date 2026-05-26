@@ -2,34 +2,49 @@
 {% block title %}Terms of Service | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Terms of service for purchases, installations, and support interactions on Eyetrack Solutions.{% endblock %}
 {% block content %}
-<section class="glass-card p-4 p-md-5 policy-page">
-    <p class="eyebrow mb-2">Terms of Service</p>
-    <div class="policy-intro">
-        <h1 class="h3 mb-2">Platform terms for orders and services</h1>
-        <p class="text-secondary mb-0">By using Eyetrack Solutions, you agree to these terms governing product purchases, simulated payment flow, and support engagement.</p>
+<div class="policy-page-hero d-flex flex-column align-items-center justify-content-center">
+    <div class="container text-center">
+        <span class="badge-premium mb-3">Terms of Service</span>
+        <h1 class="display-5 fw-bold text-primary-gradient mb-3">Service Platform Rules</h1>
+        <p class="text-secondary fs-5 mx-auto" style="max-width: 600px;">
+            By using the Eyetrack Solutions platform, you consciously agree to these terms governing commercial transactions, hardware simulations, and engagement frameworks.
+        </p>
     </div>
+</div>
 
-    <div class="legal-section">
-        <h2 class="h5">Orders and Availability</h2>
-        <ul class="service-list mb-0">
-            <li>Orders are subject to product availability and stock verification.</li>
-            <li>Prices and service scope may be updated without prior notice.</li>
-            <li>Order status changes are visible in your account history.</li>
-        </ul>
-    </div>
+<div class="container pb-5 mb-5">
+    <div class="policy-document">
+        <div class="legal-section-styled">
+            <h2><i class="bi bi-cart-check"></i> Orders & Availability</h2>
+            <p>Our catalog operates seamlessly but requires inventory confirmations given hardware throughput.</p>
+            <ul class="policy-modern-list">
+                <li>Orders are contingent upon ongoing inventory velocity and system validations.</li>
+                <li>Listing prices, promotions, and installation scopes may shift dynamically.</li>
+                <li>Immutable order status transitions are documented persistently in your secure account history.</li>
+            </ul>
+        </div>
 
-    <div class="legal-section">
-        <h2 class="h5">Support and Service</h2>
-        <ul class="service-list mb-0">
-            <li>Support timelines depend on issue priority and provided details.</li>
-            <li>Installation commitments are confirmed after scope validation.</li>
-            <li>Unauthorized platform misuse may result in access restriction.</li>
-        </ul>
-    </div>
+        <div class="legal-section-styled">
+            <h2><i class="bi bi-person-workspace"></i> Support Engagements</h2>
+            <p>We pride ourselves on technical proficiency. These engagements have explicit bounds.</p>
+            <ul class="policy-modern-list">
+                <li>Technical ticketing and support escalations dictate resolution bandwidths.</li>
+                <li>Physical premises installations inherently delay service finalizations pending scope analyses.</li>
+                <li>Platform tampering, malicious payload tests, or operational misuse guarantees instant blocklisting.</li>
+            </ul>
+        </div>
 
-    <div class="legal-section">
-        <h2 class="h5">Contact</h2>
-        <p class="text-secondary mb-0">For legal or policy clarifications, contact <a href="mailto:info@eyetrack-tech.com">info@eyetrack-tech.com</a>.</p>
+        <div class="legal-section-styled mb-4">
+            <h2><i class="bi bi-building"></i> Legal Entities</h2>
+            <p>System definitions, architectural intellectual properties, and store metadata belong firmly to operations.</p>
+            <p class="mb-0">Route any compliance or structural inquiries strictly to <a href="mailto:info@etsgrp.in" class="text-accent text-decoration-none">info@etsgrp.in</a>.</p>
+        </div>
+
+        <hr class="border-secondary opacity-25 my-5">
+        
+        <div class="policy-update-stamp">
+            <i class="bi bi-clock-history"></i> Last Updated: {% now "F j, Y" %}
+        </div>
     </div>
-</section>
+</div>
 {% endblock %}

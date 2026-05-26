@@ -1,0 +1,553 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} | Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    /* Ultra Premium Admin Dashboard Styles */
+    :root {
+        --premium-gold: #FFD700;
+        --premium-gold-dark: #FFA500;
+        --premium-silver: #C0C0C0;
+        --premium-bronze: #CD7F32;
+        --premium-platinum: #E5E4E2;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        --premium-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gold-gradient: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        --dark-gradient: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+    }
+
+    .admin-dashboard {
+        min-height: calc(100vh - 200px);
+        background: var(--dark-gradient);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .admin-dashboard::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+            radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 165, 0, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 20%, rgba(192, 192, 192, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .admin-sidebar {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        min-height: 100%;
+        box-shadow: var(--glass-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .admin-sidebar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gold-gradient);
+        border-radius: 1.5rem 1.5rem 0 0;
+    }
+
+    .admin-nav-link {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+        border-radius: 1rem;
+        color: #ffffff;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
+        position: relative;
+        overflow: hidden;
+        font-weight: 500;
+    }
+
+    .admin-nav-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: var(--gold-gradient);
+        transition: left 0.4s ease;
+        z-index: -1;
+    }
+
+    .admin-nav-link:hover::before {
+        left: 0;
+    }
+
+    .admin-nav-link:hover {
+        color: #000000;
+        transform: translateX(8px);
+        box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+    }
+
+    .admin-nav-link.active {
+        background: var(--gold-gradient);
+        color: #000000;
+        box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+    }
+
+    .admin-content {
+        padding: 2rem;
+    }
+
+    .admin-header {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1.5rem;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--glass-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .admin-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .admin-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: var(--gold-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .admin-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .stats-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: var(--glass-shadow);
+    }
+
+    .stats-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gold-gradient);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+
+    .stats-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .stats-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(255, 215, 0, 0.2);
+        border-color: rgba(255, 215, 0, 0.3);
+    }
+
+    .stats-number {
+        font-size: 3rem;
+        font-weight: 800;
+        background: var(--gold-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .stats-label {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .stats-trend {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .trend-up {
+        color: #10b981;
+    }
+
+    .trend-down {
+        color: #ef4444;
+    }
+
+    .chart-container {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--glass-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .chart-container::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .btn-premium-cta {
+        background: var(--gold-gradient);
+        color: #000000;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+    }
+
+    .btn-premium-cta::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .btn-premium-cta:hover::before {
+        left: 100%;
+    }
+
+    .btn-premium-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 30px rgba(255, 215, 0, 0.4);
+    }
+
+    /* Premium Soft Danger Action Button */
+    .btn-soft-danger {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.95));
+        color: #ffffff;
+        border: 1px solid rgba(255, 110, 110, 0.5);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .btn-soft-danger:hover {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        color: #ffffff;
+        border-color: #ff8f8f;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+    }
+
+    .btn-soft-danger:active {
+        transform: translateY(0);
+    }
+
+    .form-select,
+    .form-control {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        color: #ffffff;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-select:focus,
+    .form-control:focus {
+        background: var(--glass-bg);
+        border-color: var(--premium-gold);
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        color: #ffffff;
+    }
+
+    .form-select option,
+    .form-control::placeholder {
+        background: #1a1a2e;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .table-admin {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    .table-admin thead th {
+        background: var(--gold-gradient);
+        color: #000000;
+        font-weight: 700;
+        border: none;
+        padding: 1rem;
+    }
+
+    .table-admin tbody td {
+        color: rgba(255, 255, 255, 0.9);
+        border-top: 1px solid var(--glass-border);
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .table-admin tbody tr:hover td {
+        background: rgba(255, 215, 0, 0.05);
+        color: #ffffff;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    /* Premium Animations */
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes glow {
+
+        0%,
+        100% {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        50% {
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+        }
+    }
+
+    .floating {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .glowing {
+        animation: glow 2s ease-in-out infinite;
+    }
+
+    /* Responsive Premium Design */
+    @media (max-width: 768px) {
+        .admin-title {
+            font-size: 2rem;
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+        }
+
+        .admin-sidebar {
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-2 col-md-3">
+                <div class="admin-sidebar">
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center"
+                            style="width: 60px; height: 60px; background: var(--gold-gradient); border-radius: 1rem; margin-bottom: 1rem;">
+                            <i class="bi bi-speedometer2" style="font-size: 1.5rem; color: #000000;"></i>
+                        </div>
+                        <h5 class="mb-0" style="color: var(--premium-gold); font-weight: 700;">Admin Panel</h5>
+                    </div>
+
+                    <nav class="admin-nav">
+                        <a href="{% url 'admin_dashboard:dashboard' %}" class="admin-nav-link">
+                            <i class="bi bi-speedometer2 me-2"></i>
+                            Dashboard
+                        </a>
+                        <a href="{% url 'admin_dashboard:orders_overview' %}" class="admin-nav-link">
+                            <i class="bi bi-cart-check me-2"></i>
+                            Orders
+                        </a>
+                        <a href="{% url 'admin_dashboard:products_overview' %}" class="admin-nav-link">
+                            <i class="bi bi-box-seam me-2"></i>
+                            Products
+                        </a>
+                        <a href="{% url 'admin_dashboard:users_overview' %}" class="admin-nav-link">
+                            <i class="bi bi-people me-2"></i>
+                            Users
+                        </a>
+                        <a href="{% url 'admin_dashboard:analytics' %}" class="admin-nav-link">
+                            <i class="bi bi-graph-up me-2"></i>
+                            Analytics
+                        </a>
+
+                        <a href="{% url 'admin_dashboard:trash_overview' %}" class="admin-nav-link text-danger">
+                            <i class="bi bi-trash me-2"></i>
+                            Trash / Recycle Bin
+                        </a>
+
+                        <hr class="my-4" style="border-color: var(--glass-border); opacity: 0.5;">
+
+                        <a href="/admin/" class="admin-nav-link" target="_blank">
+                            <i class="bi bi-gear me-2"></i>
+                            Django Admin
+                        </a>
+
+                        <a href="{% url 'product_list' %}" class="admin-nav-link">
+                            <i class="bi bi-house me-2"></i>
+                            Store Front
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9">
+                <div class="admin-content">
+                    {% block admin_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inject Custom SweetAlert function globally for forms
+    document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
+        let originalOnsubmit = form.getAttribute('onsubmit');
+        let match = originalOnsubmit.match(/confirm\('([^']+)'\)/) || originalOnsubmit.match(/confirm\("([^"]+)"\)/);
+        if (match) {
+            let message = match[1];
+            form.removeAttribute('onsubmit');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Confirm Action',
+                    text: message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-trash"></i> Yes, Proceed',
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        popup: 'swal-glass-popup',
+                        title: 'swal-glass-title',
+                        confirmButton: 'swal-btn-confirm',
+                        cancelButton: 'swal-btn-cancel'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                })
+            });
+        }
+    });
+
+    // Inject Custom SweetAlert globally for links
+    document.querySelectorAll('a[onclick*="confirm"]').forEach(link => {
+        let originalOnclick = link.getAttribute('onclick');
+        let match = originalOnclick.match(/confirm\('([^']+)'\)/) || originalOnclick.match(/confirm\("([^"]+)"\)/);
+        if (match) {
+            let message = match[1];
+            link.removeAttribute('onclick');
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                let targetUrl = this.href;
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-exclamation-triangle"></i> Yes, Proceed',
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        popup: 'swal-glass-popup',
+                        title: 'swal-glass-title',
+                        confirmButton: 'swal-btn-confirm',
+                        cancelButton: 'swal-btn-cancel'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = targetUrl;
+                    }
+                })
+            });
+        }
+    });
+});
+</script>
+</div>
+{% endblock %}

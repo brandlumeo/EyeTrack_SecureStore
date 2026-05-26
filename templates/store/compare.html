@@ -34,8 +34,8 @@
         </div>
     </section>
 
-    <section class="glass-card p-4 mb-4">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 compare-toolbar">
+    <section class="compare-section glass-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 compare-toolbar">
             <h3 class="h4 mb-0 d-inline-flex align-items-center gap-2"><i class="bi bi-columns-gap"></i>Comparison
                 Matrix</h3>
             <div class="d-flex flex-wrap gap-2">
@@ -50,21 +50,20 @@
                     id="comparePageClearBtn" data-compare-clear><i class="bi bi-trash3"></i>Clear</button>
             </div>
         </div>
-        <div class="table-responsive compare-print-shell">
-            <table class="table premium-table align-middle mb-0 compare-table" id="comparePageTable">
-                <thead>
-                    <tr>
-                        <th>Attribute</th>
-                        <th colspan="4">Products</th>
-                    </tr>
-                </thead>
-                <tbody id="comparePageBody"></tbody>
-            </table>
+
+        <div class="alert alert-info mb-4" id="compareCategoryNote" style="display: none;">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Category-Specific Comparison:</strong> Showing specifications appropriate for the selected product category.
+            CCTV Cameras display camera specs, Video Door Phones display VDP specs.
         </div>
-        <div id="comparePageEmpty" class="text-center py-4 d-none">
-            <div class="display-6 mb-2 text-secondary"><i class="bi bi-diagram-3"></i></div>
+
+        <div class="compare-grid-shell compare-print-shell" id="comparePageTable">
+            <div id="comparePageBody" class="compare-grid-body"></div>
+        </div>
+        <div id="comparePageEmpty" class="text-center py-5 d-none">
+            <div class="compare-empty-icon mb-3"><i class="bi bi-diagram-3"></i></div>
             <h5 class="mb-2">No items selected for comparison</h5>
-            <p class="text-secondary mb-3">Add products from the store to start comparing.</p>
+            <p class="text-secondary mb-4">Add products from the store to start comparing.</p>
             <a href="{% url 'product_list' %}" class="btn btn-premium-cta">Browse Products</a>
         </div>
     </section>

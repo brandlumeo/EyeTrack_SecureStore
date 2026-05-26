@@ -1,0 +1,107 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">Review Media</h1>
+            <p class="admin-subtitle">Photos and videos uploaded by customers with their product reviews</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <div class="btn-group btn-group-sm">
+                <a href="?{% if search_query %}search={{ search_query }}&{% endif %}" class="btn {% if not type_filter %}btn-premium-cta{% else %}btn-outline-light{% endif %}">All</a>
+                <a href="?type=photo{% if search_query %}&search={{ search_query }}{% endif %}" class="btn {% if type_filter == 'photo' %}btn-premium-cta{% else %}btn-outline-light{% endif %}">Photos</a>
+                <a href="?type=video{% if search_query %}&search={{ search_query }}{% endif %}" class="btn {% if type_filter == 'video' %}btn-premium-cta{% else %}btn-outline-light{% endif %}">Videos</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#f59e0b;"><i class="bi bi-collection-fill"></i></div>
+            <div><div class="stats-number" style="font-size:1.7rem;">{{ total_count }}</div><div class="stats-label">Total Media</div></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#3b82f6;"><i class="bi bi-camera-fill"></i></div>
+            <div><div class="stats-number" style="font-size:1.7rem;">{{ photo_count }}</div><div class="stats-label">Photos</div></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#8b5cf6;"><i class="bi bi-play-circle-fill"></i></div>
+            <div><div class="stats-number" style="font-size:1.7rem;">{{ video_count }}</div><div class="stats-label">Videos</div></div>
+        </div>
+    </div>
+</div>
+
+<!-- Search -->
+<div class="chart-container mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+    <h5 class="mb-0">Media Gallery</h5>
+    <div class="d-flex gap-2">
+        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search product / user..." value="{{ search_query|default:'' }}" style="width:240px;">
+        <button class="btn btn-outline-light btn-sm" id="searchBtn"><i class="bi bi-search"></i></button>
+    </div>
+</div>
+
+<!-- Grid -->
+<div class="row g-3">
+    {% for item in media_items %}
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+        <div class="chart-container p-0 overflow-hidden" style="border-radius:1rem;">
+            <div style="position:relative;">
+                {% if item.is_video %}
+                <video style="width:100%;height:160px;object-fit:cover;display:block;" muted>
+                    <source src="{{ item.file.url }}">
+                </video>
+                <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+                    <div style="width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#fff;"><i class="bi bi-play-fill"></i></div>
+                </div>
+                <span style="position:absolute;top:8px;left:8px;background:rgba(139,92,246,0.85);color:#fff;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border-radius:4px;">VIDEO</span>
+                {% else %}
+                <img loading="lazy" decoding="async" src="{{ item.file.url }}" alt="Review photo" style="width:100%;height:160px;object-fit:cover;display:block;">
+                <span style="position:absolute;top:8px;left:8px;background:rgba(59,130,246,0.85);color:#fff;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border-radius:4px;">PHOTO</span>
+                {% endif %}
+                <a href="{{ item.file.url }}" target="_blank" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.5);color:#fff;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;text-decoration:none;"><i class="bi bi-box-arrow-up-right"></i></a>
+            </div>
+            <div class="p-2">
+                <div style="font-size:0.72rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ item.review.product.name }}">{{ item.review.product.name|truncatechars:22 }}</div>
+                <div class="text-secondary" style="font-size:0.65rem;">by {{ item.review.user.username }}</div>
+                <div class="d-flex gap-1 mt-2">
+                    <a href="{% url 'admin_dashboard:reviews_overview' %}" class="btn btn-outline-light btn-sm w-100 py-1" style="font-size:0.65rem;"><i class="bi bi-star me-1"></i>Review</a>
+                    <form method="POST" action="{% url 'admin_dashboard:review_media_delete' item.id %}" style="flex:1;" onsubmit="return confirm('Delete this media file permanently?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-soft-danger btn-sm w-100 py-1" style="font-size:0.65rem;"><i class="bi bi-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center text-secondary py-5">
+        <i class="bi bi-collection display-5 d-block mb-3 opacity-25"></i>
+        No media found.
+    </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="mt-4"><ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}"><i class="bi bi-chevron-left"></i></a></li>{% endif %}
+    {% for num in page_obj.paginator.page_range %}{% if page_obj.number == num %}<li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>{% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}<li class="page-item"><a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}">{{ num }}</a></li>{% endif %}{% endfor %}
+    {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if type_filter %}&type={{ type_filter }}{% endif %}"><i class="bi bi-chevron-right"></i></a></li>{% endif %}
+</ul></nav>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function doSearch(){ const v=document.getElementById('searchInput').value; const url=new URL(window.location); if(v) url.searchParams.set('search',v); else url.searchParams.delete('search'); url.searchParams.delete('page'); window.location.href=url; }
+    document.getElementById('searchInput').addEventListener('keyup',e=>{ if(e.key==='Enter') doSearch(); });
+    document.getElementById('searchBtn').addEventListener('click', doSearch);
+</script>
+{% endblock %}

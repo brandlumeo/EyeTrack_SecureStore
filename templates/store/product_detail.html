@@ -6,6 +6,7 @@
 {% block og_description %}{{ product.description|truncatechars:150 }}{% endblock %}
 {% block twitter_title %}{{ product.name }} | Eyetrack Solutions{% endblock %}
 {% block twitter_description %}{{ product.description|truncatechars:150 }}{% endblock %}
+{% block body_class %}page-product-detail{% endblock %}
 {% block social_image_meta %}
 {% if product.image %}
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}">
@@ -25,11 +26,8 @@
   "name": "{{ product.name|escapejs }}",
   "description": "{{ product.description|truncatechars:220|escapejs }}",
   {% if product.image %}"image": ["{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}"],{% endif %}
-  "brand": {
-    "@type": "Brand",
-    "name": "Eyetrack Solutions"
-  },
-  "sku": "ETS-{{ product.id }}",
+  "brand": { "@type": "Brand", "name": "Eyetrack Solutions" },
+  "sku": "ETS-{{ product.id|stringformat:'05d' }}",
   "category": "{{ product.category.name|escapejs }}",
   "offers": {
     "@type": "Offer",
@@ -41,150 +39,1777 @@
   }
 }
 </script>
+<style>
+    /* ── Main Product Image Container ── */
+    .main-image-container {
+        background: #ffffff !important;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 40px rgba(0,0,0,0.03), 0 20px 40px rgba(0,0,0,0.15);
+    }
+    #main-detail-image {
+        object-fit: contain;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .zoom-hint {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        background: rgba(17, 24, 39, 0.85);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        backdrop-filter: blur(8px);
+        pointer-events: none;
+        opacity: 0.8;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 5;
+    }
+
+    /* ── Product Highlights / Overview ── */
+    .product-highlights-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        margin: 2.5rem 0;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255,255,255,0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    .product-highlights-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.5), transparent);
+    }
+    .highlights-title {
+        color: #ffffff;
+        font-size: 1.1rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 1.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-family: 'Sora', sans-serif;
+    }
+    .highlights-title i {
+        color: var(--accent);
+        filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
+    }
+    .highlights-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin-left: 10px;
+    }
+    .product-highlights-list {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.25rem;
+    }
+    .product-highlights-list li {
+        position: relative;
+        padding-left: 38px;
+        color: #e2e8f0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        font-weight: 500;
+        transition: transform 0.2s ease;
+    }
+    .product-highlights-list li:hover {
+        transform: translateX(5px);
+        color: #ffffff;
+    }
+    .product-highlights-list li::before {
+        content: '\F272';
+        font-family: 'bootstrap-icons';
+        position: absolute;
+        left: 0;
+        top: -1px;
+        color: var(--accent);
+        font-size: 1.3rem;
+        filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.3));
+    }
+    @media (max-width: 768px) {
+        .product-highlights-list { grid-template-columns: 1fr; }
+        .product-highlights-card { padding: 1.5rem; margin: 1.5rem 0; }
+    }
+
+    .spec-value { color: #ffffff !important; font-weight: 600; }
+    .spec-label { color: rgba(255,255,255,0.6) !important; }
+    .quantity-selector-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+    .detail-label {
+        color: rgba(255,255,255,0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-size: 0.65rem;
+        font-weight: 800;
+        margin-bottom: 0;
+    }
+    .premium-qty-input {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 2px;
+        width: fit-content;
+    }
+    .qty-control {
+        width: 40px; height: 40px; flex: 0 0 40px;
+        display: grid; place-items: center;
+        padding: 0; margin: 0;
+        background: rgba(255,255,255,0.05);
+        border: none; border-radius: 10px;
+        color: white; cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .qty-control:hover { background: rgba(255,255,255,0.1); color: var(--accent); }
+    .qty-field {
+        width: 44px; background: transparent; border: none; color: white;
+        text-align: center; font-weight: 700; font-size: 1.15rem;
+        margin: 0; padding: 0; appearance: none; -moz-appearance: textfield; outline: none;
+    }
+    .wishlist-btn, .compare-btn {
+        flex: 1; min-height: 46px;
+        display: flex; align-items: center; justify-content: center; font-weight: 600;
+    }
+    .detail-price {
+        font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em;
+        color: var(--accent); margin-bottom: 0.5rem; display: block;
+    }
+    .trust-chip {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 6px 12px; border-radius: 99px;
+        font-size: 0.75rem; font-weight: 600;
+        color: rgba(255,255,255,0.7);
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .trust-chip i { color: var(--accent); }
+    .spec-chip {
+        background: rgba(245,158,11,0.05);
+        border: 1px solid rgba(245,158,11,0.2);
+        color: #fbd38d; padding: 4px 10px; border-radius: 6px;
+        font-size: 0.75rem; font-weight: 600; letter-spacing: 0.01em;
+    }
+
+    /* ── Share Component ── */
+    .share-wrapper { position: relative; margin-top: 12px; }
+    .btn-share-trigger {
+        background: transparent !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        color: rgba(255,255,255,0.6) !important;
+        transition: all 0.3s var(--easing-premium) !important;
+        font-weight: 600 !important; padding: 10px !important;
+        border-radius: 12px !important; font-size: 0.85rem !important;
+    }
+    .btn-share-trigger:hover {
+        background: rgba(255,255,255,0.05) !important;
+        border-color: rgba(245,158,11,0.3) !important; color: #fff !important;
+    }
+    .action-row-divider {
+        height: 1px;
+        background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        margin: 16px 0;
+    }
+    .share-menu-premium {
+        display: flex; gap: 15px; justify-content: center;
+        padding: 15px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px; margin-top: 0;
+        backdrop-filter: blur(10px);
+        opacity: 0; visibility: hidden; max-height: 0; overflow: hidden;
+        transform: translateY(15px) scale(0.95);
+        transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+        pointer-events: none;
+    }
+    .share-menu-premium.active {
+        opacity: 1; visibility: visible; max-height: 120px;
+        margin-top: 15px; transform: translateY(0) scale(1); pointer-events: auto;
+    }
+    .share-icon-btn {
+        width: 44px; height: 44px; border-radius: 50%;
+        display: grid; place-items: center;
+        background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8);
+        text-decoration: none; font-size: 1.25rem;
+        transition: all 0.3s var(--easing-premium);
+        border: 1px solid rgba(255,255,255,0.1); position: relative;
+    }
+    .share-icon-btn:hover { transform: translateY(-5px); color: white; background: var(--accent); border-color: var(--accent); box-shadow: 0 10px 20px rgba(245,158,11,0.2); }
+    .share-icon-btn.whatsapp:hover { background: #25D366; border-color: #25D366; }
+    .share-icon-btn.facebook:hover { background: #1877F2; border-color: #1877F2; }
+    .share-icon-btn.linkedin:hover { background: #0A66C2; border-color: #0A66C2; }
+    .share-icon-btn.email:hover { background: #EA4335; border-color: #EA4335; }
+    .share-icon-btn.copy-link:hover { background: #6c757d; border-color: #6c757d; }
+    .copy-feedback {
+        position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%);
+        background: var(--accent); color: white; font-size: 0.65rem;
+        padding: 4px 10px; border-radius: 6px; white-space: nowrap;
+        opacity: 0; visibility: hidden;
+        transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .copy-feedback.show { opacity: 1; visibility: visible; bottom: -40px; }
+
+    /* ── Related Products ── */
+    .product-image-wrap { position: relative; }
+    .eyebrow { text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.72rem; font-weight: 800; color: var(--accent) !important; }
+    .quick-view-btn, .compare-btn {
+        transition: all 0.3s var(--easing-premium);
+        border-color: rgba(255,255,255,0.15) !important;
+        background: rgba(255,255,255,0.05) !important; color: var(--text-soft) !important;
+    }
+    .quick-view-btn:hover, .compare-btn:hover {
+        background: rgba(255,255,255,0.12) !important;
+        border-color: var(--accent) !important; color: var(--accent) !important; transform: translateY(-2px);
+    }
+    .wishlist-btn.is-active, .compare-btn.is-active {
+        background: var(--accent) !important; border-color: var(--accent) !important; color: var(--dark) !important;
+    }
+
+    /* ── Premium Tabs ── */
+    .product-tabs-wrapper { margin-top: 3rem; }
+    .nav-premium-tabs {
+        border-bottom: 1px solid rgba(255,255,255,0.08); gap: 2rem; margin-bottom: 2rem;
+    }
+    .nav-premium-tabs .nav-link {
+        border: none; background: none; color: rgba(255,255,255,0.5);
+        font-weight: 700; font-size: 0.95rem; text-transform: uppercase;
+        letter-spacing: 0.08em; padding: 0 0 1rem 0; position: relative; transition: all 0.3s ease;
+    }
+    .nav-premium-tabs .nav-link:hover { color: rgba(255,255,255,0.8); }
+    .nav-premium-tabs .nav-link.active { color: var(--accent); background: none; }
+    .nav-premium-tabs .nav-link::after {
+        content: ''; position: absolute; bottom: -1px; left: 0;
+        width: 0; height: 2px; background: var(--accent); transition: width 0.3s ease;
+    }
+    .nav-premium-tabs .nav-link.active::after { width: 100%; box-shadow: 0 0 10px rgba(245,158,11,0.4); }
+
+    /* ── Installation Badge & Tab ── */
+    .install-available-badge {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3);
+        color: #f59e0b; padding: 0.35rem 0.75rem; border-radius: 99px;
+        font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.05em; margin-left: 1rem; vertical-align: middle;
+        animation: pulse-amber 2s infinite;
+    }
+    @keyframes pulse-amber {
+        0% { box-shadow: 0 0 0 0 rgba(245,158,11,0.2); }
+        70% { box-shadow: 0 0 0 8px rgba(245,158,11,0); }
+        100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+    }
+    .install-benefit-card {
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 1.25rem; padding: 1.5rem; height: 100%;
+        transition: all 0.3s var(--easing-premium);
+    }
+    .install-benefit-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(245,158,11,0.2); transform: translateY(-5px); }
+    .install-icon-wrap {
+        width: 48px; height: 48px; border-radius: 12px;
+        background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);
+        display: grid; place-items: center; margin-bottom: 1.25rem; color: #f59e0b; font-size: 1.5rem;
+    }
+    .install-benefit-card h6 { color: #fff; font-weight: 700; margin-bottom: 0.5rem; }
+    .install-benefit-card p { color: rgba(255,255,255,0.6); font-size: 0.88rem; line-height: 1.5; margin-bottom: 0; }
+
+    @media (max-width: 768px) {
+        .nav-premium-tabs { gap: 1.25rem; overflow-x: auto; white-space: nowrap; display: flex; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+    }
+
+    /* ── Serviceability Widget ── */
+    .serviceability-card {
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px; padding: 1rem; margin-bottom: 1.5rem;
+        transition: all 0.3s var(--easing-premium);
+    }
+    .serviceability-card:focus-within { border-color: rgba(245,158,11,0.3); background: rgba(255,255,255,0.05); }
+    .pin-input-group { display: flex; gap: 10px; position: relative; align-items: center; }
+    .pin-field {
+        flex: 1 1 0; min-width: 0;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+        padding: 0 14px; height: 46px; color: white; font-weight: 600; font-size: 0.9rem;
+        letter-spacing: 0.05em; outline: none; transition: all 0.3s ease;
+    }
+    .pin-field:focus { border-color: var(--accent); background: rgba(255,255,255,0.08); }
+    .btn-pin-check {
+        flex-shrink: 0; white-space: nowrap;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: var(--accent); color: #1a0f00; border: none; border-radius: 10px;
+        padding: 0 20px; height: 46px; font-weight: 800; font-size: 0.82rem;
+        text-transform: uppercase; letter-spacing: 0.08em; transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .btn-pin-check:hover { background: #fbbf24; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(245,158,11,0.35); }
+    .btn-pin-check:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); transform: none; box-shadow: none; }
+    .service-results { margin-top: 12px; display: none; animation: fadeIn 0.4s ease forwards; }
+    .service-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; margin-bottom: 5px; color: rgba(255,255,255,0.8); }
+    .service-item.success i { color: #10b981; }
+    .service-item.warning i { color: #f59e0b; }
+    .service-item.danger i { color: #ef4444; }
+    .contact-support-link { color: var(--accent); text-decoration: none; font-weight: 600; border-bottom: 1px dashed var(--accent); transition: all 0.3s ease; }
+    .contact-support-link:hover { color: white; border-color: white; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Review Media ── */
+    .border-dashed { border: 2px dashed rgba(255,255,255,0.15); transition: all 0.3s var(--easing-premium); }
+    .review-media-upload-zone:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
+    .review-media-item { transition: transform 0.3s var(--easing-premium), border-color 0.3s ease; border: 1px solid rgba(255,255,255,0.1); }
+    .review-media-item:hover { transform: scale(1.05); border-color: var(--accent); z-index: 10; }
+    .preview-thumbnail { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--accent); }
+    .video-preview-icon { background: var(--dark); color: var(--accent); display: flex; align-items: center; justify-content: center; border: 1px solid var(--accent); }
+    #reviewLightbox .modal-content { background: transparent; border: none; }
+    #reviewLightbox .modal-body { padding: 0; display: flex; justify-content: center; align-items: center; }
+    #reviewLightbox .lightbox-content { max-width: 100%; max-height: 85vh; border-radius: 12px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+    #reviewLightbox .close-btn { position: absolute; top: -40px; right: 0; color: white; background: none; border: none; font-size: 2rem; }
+
+    /* ── Gallery & Zoom ── */
+    .main-image-container {
+        height: 380px !important;
+        overflow: hidden !important;
+        cursor: crosshair;
+        position: relative;
+    }
+    .main-image-container img {
+        max-height: 340px !important;
+        transition: transform 0.1s ease !important;
+        transform-origin: center center;
+        will-change: transform;
+    }
+    .zoom-hint {
+        position: absolute; bottom: 10px; right: 10px;
+        background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.7);
+        padding: 4px 10px; border-radius: 8px; font-size: 0.65rem;
+        font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+        pointer-events: none; transition: opacity 0.3s ease;
+        display: flex; align-items: center; gap: 5px;
+    }
+    .main-image-container:hover .zoom-hint { opacity: 0; }
+
+
+    /* ── Price Animation ── */
+    @keyframes pricePulse { 0% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.05); filter: brightness(1.2) drop-shadow(0 0 10px rgba(245,158,11,0.4)); } 100% { transform: scale(1); filter: brightness(1); } }
+    .price-pulse { animation: pricePulse 0.5s var(--easing-premium); color: var(--accent) !important; }
+
+    /* ── SKU Badge ── */
+    .sku-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+        padding: 3px 10px; border-radius: 6px;
+        font-size: 0.7rem; color: rgba(255,255,255,0.4); font-family: monospace; letter-spacing: 0.06em;
+    }
+    .sku-badge strong { color: rgba(255,255,255,0.65); font-weight: 700; }
+
+    /* ── Buy Now Button ── */
+    .btn-buy-now {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: #1a1a2e !important; border: none; font-weight: 800;
+        border-radius: 14px; letter-spacing: 0.02em;
+        transition: all 0.3s var(--easing-premium);
+        box-shadow: 0 4px 15px rgba(245,158,11,0.2);
+    }
+    .btn-buy-now:hover { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(245,158,11,0.35); }
+    .btn-buy-now:disabled { background: rgba(255,255,255,0.1) !important; color: rgba(255,255,255,0.3) !important; transform: none !important; box-shadow: none !important; }
+
+    /* ── Notify Me Widget ── */
+    .notify-me-widget {
+        background: rgba(245,158,11,0.04); border: 1px dashed rgba(245,158,11,0.3);
+        border-radius: 16px; padding: 1.25rem; margin-bottom: 1rem;
+    }
+    .notify-me-title { font-size: 0.82rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px; }
+    .notify-status { margin-top: 10px; font-size: 0.82rem; display: none; }
+    .notify-status.success { color: #10b981; }
+    .notify-status.error { color: #ef4444; }
+
+    /* ── WhatsApp CTA ── */
+    .btn-whatsapp-cta {
+        background: rgba(37,211,102,0.08); border: 1px solid rgba(37,211,102,0.2);
+        color: #25D366; font-weight: 600;
+        transition: all 0.3s var(--easing-premium); border-radius: 12px;
+    }
+    .btn-whatsapp-cta:hover { background: rgba(37,211,102,0.15); border-color: #25D366; color: #25D366; transform: translateY(-2px); }
+
+    /* ── Mini Info Cards ── */
+    .mini-card-value { font-size: 0.72rem; color: var(--accent); font-weight: 700; margin-top: 3px; }
+
+    /* ── Rating Breakdown ── */
+    .rating-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .rating-bar-label { font-size: 0.72rem; color: rgba(255,255,255,0.45); width: 14px; text-align: right; flex-shrink: 0; }
+    .rating-bar-track { flex: 1; height: 5px; background: rgba(255,255,255,0.07); border-radius: 99px; overflow: hidden; }
+    .rating-bar-fill { height: 100%; border-radius: 99px; background: var(--accent); transition: width 1.2s cubic-bezier(0.4,0,0.2,1); width: 0; }
+    .rating-bar-count { font-size: 0.68rem; color: rgba(255,255,255,0.35); width: 22px; text-align: left; flex-shrink: 0; }
+
+    /* ── Review Sort ── */
+    .review-sort-select {
+        background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px; color: rgba(255,255,255,0.7); padding: 6px 34px 6px 14px;
+        font-size: 0.8rem; font-weight: 600; cursor: pointer; outline: none; appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ffffff60' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: right 12px center;
+        transition: all 0.3s ease;
+    }
+    .review-sort-select:focus { border-color: var(--accent); color: white; }
+    .review-sort-select option { background: #1a1a2e; color: white; }
+
+    /* ── Helpful Vote Buttons ── */
+    .helpful-btn {
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+        color: rgba(255,255,255,0.45); padding: 4px 12px; border-radius: 8px;
+        font-size: 0.75rem; font-weight: 600;
+        transition: all 0.25s var(--easing-premium); cursor: pointer;
+        display: inline-flex; align-items: center; gap: 5px;
+    }
+    .helpful-btn:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.18); color: white; }
+    .helpful-btn.active-yes { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: #10b981; }
+    .helpful-btn.active-no { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.25); color: #ef4444; }
+
+    /* ── Recently Viewed ── */
+    .rv-card {
+        background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px; overflow: hidden; text-decoration: none; display: block;
+        transition: all 0.3s var(--easing-premium);
+    }
+    .rv-card:hover { border-color: rgba(245,158,11,0.25); background: rgba(255,255,255,0.04); transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.2); }
+    .rv-img { width: 100%; height: 110px; object-fit: cover; display: block; }
+    .rv-img-placeholder { width: 100%; height: 110px; background: rgba(255,255,255,0.03); display: grid; place-items: center; color: rgba(255,255,255,0.15); font-size: 1.5rem; }
+    .rv-body { padding: 10px 12px 12px; }
+    .rv-cat { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
+    .rv-name { font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.75); line-height: 1.35; margin-bottom: 6px; }
+    .rv-price { font-size: 0.88rem; font-weight: 800; color: var(--accent); }
+
+    /* ══════════════════════════════════════════
+       PRODUCT HERO BACKGROUND — PREMIUM STAGE
+       ══════════════════════════════════════════ */
+    .product-hero-bg {
+        position: relative;
+        background:
+            radial-gradient(ellipse 72% 110% at 18% 55%, rgba(245, 158, 11, 0.10) 0%, transparent 58%),
+            radial-gradient(ellipse 50% 60% at 82% 8%,  rgba(148, 163, 184, 0.04) 0%, transparent 55%),
+            radial-gradient(ellipse 60% 50% at 55% 90%, rgba(99, 102, 241, 0.04) 0%, transparent 60%),
+            linear-gradient(170deg, rgba(17, 26, 46, 0.99) 0%, rgba(8, 12, 22, 1) 100%);
+        border-radius: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.055);
+        padding: 2rem;
+        margin-bottom: 2.5rem;
+        overflow: hidden;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.06),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+            0 50px 130px rgba(0, 0, 0, 0.55),
+            0 0 0 1px rgba(245, 158, 11, 0.035) inset;
+    }
+    /* Amber spotlight glow — upper-left, behind the product image */
+    .product-hero-bg::before {
+        content: '';
+        position: absolute;
+        top: -130px; left: -90px;
+        width: 620px; height: 620px;
+        background: radial-gradient(circle at center,
+            rgba(245, 158, 11, 0.14) 0%,
+            rgba(245, 158, 11, 0.05) 38%,
+            transparent 65%
+        );
+        pointer-events: none;
+        z-index: 0;
+    }
+    /* Secondary cool-toned accent glow — lower-right corner */
+    .product-hero-bg::after {
+        content: '';
+        position: absolute;
+        bottom: -160px; right: -100px;
+        width: 500px; height: 500px;
+        background: radial-gradient(circle at center,
+            rgba(99, 102, 241, 0.07) 0%,
+            transparent 60%
+        );
+        pointer-events: none;
+        z-index: 0;
+    }
+    /* All direct children float above the glow layers */
+    .product-hero-bg > * { position: relative; z-index: 1; }
+
+    /* ── PRODUCT INFO CARD — right column ── */
+    .product-info-card {
+        background: linear-gradient(
+            148deg,
+            rgba(26, 37, 58, 0.97) 0%,
+            rgba(13, 19, 33, 0.99) 100%
+        ) !important;
+        border: 1px solid rgba(245, 158, 11, 0.11) !important;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.065),
+            0 24px 70px rgba(0, 0, 0, 0.45) !important;
+        position: relative;
+        overflow: hidden;
+    }
+    /* Amber accent hairline at the top */
+    .product-info-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 10%; right: 10%;
+        height: 1px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(245, 158, 11, 0.50) 30%,
+            rgba(245, 158, 11, 0.75) 50%,
+            rgba(245, 158, 11, 0.50) 70%,
+            transparent 100%
+        );
+        border-radius: 999px;
+        z-index: 2;
+    }
+    /* Inner corner shine — top-left */
+    .product-info-card::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0;
+        width: 140px; height: 140px;
+        background: radial-gradient(circle at 0% 0%,
+            rgba(255, 255, 255, 0.04) 0%,
+            transparent 65%
+        );
+        pointer-events: none;
+        z-index: 1;
+    }
+    /* Ensure card content renders above pseudo-elements */
+    .product-info-card > * { position: relative; z-index: 2; }
+
+    /* ── Enhanced image container within hero bg ── */
+    .product-hero-bg .main-image-container {
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.07),
+            0 30px 80px rgba(0, 0, 0, 0.50),
+            0 0 70px rgba(245, 158, 11, 0.07) !important;
+    }
+
+    /* ── Mobile: tighter padding, smaller radii ── */
+    @media (max-width: 991.98px) {
+        .product-hero-bg {
+            padding: 1.25rem;
+            border-radius: 1.5rem;
+            margin-bottom: 1.75rem;
+        }
+        .product-hero-bg::before {
+            width: 340px; height: 340px;
+            top: -60px; left: -40px;
+        }
+        .product-hero-bg::after {
+            width: 260px; height: 260px;
+            bottom: -70px; right: -50px;
+        }
+    }
+    @media (max-width: 575.98px) {
+        .product-hero-bg {
+            padding: 0.85rem;
+            border-radius: 1.1rem;
+            margin-bottom: 1.25rem;
+            border-color: rgba(255, 255, 255, 0.04);
+        }
+    }
+</style>
 {% endblock %}
+
 {% block content %}
 <div class="product-detail-page">
-<section class="mb-4">
-    <a href="{% url 'product_list' %}" class="text-decoration-none text-secondary small"><i class="bi bi-arrow-left"></i> Back to catalog</a>
-</section>
+    <section class="mb-2">
+        {% include 'store/includes/breadcrumbs.html' %}
+    </section>
 
-<section class="row g-4 mb-4">
-    <div class="col-lg-6">
-        <div class="glass-card p-3 h-100">
-            {% if product.image %}
-                <img src="{{ product.image.url }}" class="w-100 detail-image" alt="{{ product.name }}">
-            {% else %}
-                <div class="detail-image placeholder-image">No Image</div>
-            {% endif %}
+    <!-- ══════════════════════════════════════════
+         MAIN PRODUCT SECTION
+    ══════════════════════════════════════════ -->
+    <div class="product-hero-bg">
+    <section class="row g-4 align-items-start">
+
+        <!-- ── LEFT COLUMN: Gallery ── -->
+        <div class="col-lg-6">
+            <div class="product-gallery">
+                <div class="main-image-container glass-card" id="zoomContainer">
+                    {% if product.image %}
+                    <img loading="lazy" decoding="async" src="{{ product.image.url }}" id="main-detail-image" class="w-100" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="detail-image placeholder-image d-flex align-items-center justify-content-center" style="height:340px;color:rgba(255,255,255,0.3);">
+                        <i class="bi bi-image fs-1"></i>
+                    </div>
+                    {% endif %}
+                    <div class="zoom-hint">
+                        <i class="bi bi-zoom-in"></i> Hover to zoom
+                    </div>
+                </div>
+
+                {% if product.gallery_images.exists %}
+                <div class="thumbnail-grid">
+                    {% if product.image %}
+                    <div class="thumbnail-item active" data-src="{{ product.image.url }}">
+                        <img loading="lazy" decoding="async" src="{{ product.image.url }}" alt="{{ product.name }} thumbnail">
+                    </div>
+                    {% endif %}
+                    {% for item in product.gallery_images.all %}
+                    <div class="thumbnail-item" data-src="{{ item.image.url }}">
+                        <img loading="lazy" decoding="async" src="{{ item.image.url }}" alt="{{ product.name }} gallery thumbnail">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+
+            <!-- Mini Info Cards -->
+            <div class="row g-2 mt-3">
+                <div class="col-4">
+                    <div class="mini-info-card p-2 text-center h-100">
+                        <i class="bi bi-shield-check text-accent mb-1 d-block"></i>
+                        <h6 class="small mb-0">Warranty</h6>
+                        {% if warranty_display %}
+                        <div class="mini-card-value">{{ warranty_display }}</div>
+                        {% else %}
+                        <div class="mini-card-value" style="color:rgba(255,255,255,0.3);">Included</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="mini-info-card p-2 text-center h-100">
+                        <i class="bi bi-truck text-accent mb-1 d-block"></i>
+                        <h6 class="small mb-0">Delivery</h6>
+                        <div class="mini-card-value">3–7 Days</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <a href="{% url 'support_page' %}" class="mini-info-card p-2 text-center h-100 d-flex flex-column align-items-center justify-content-center text-decoration-none">
+                        <i class="bi bi-headset text-accent mb-1 d-block"></i>
+                        <h6 class="small mb-0">Support</h6>
+                        <div class="mini-card-value">24/7 Help</div>
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="glass-card p-4 h-100 d-flex flex-column">
-            <p class="eyebrow mb-2">{{ product.category.name }}</p>
-            <h1 class="h2 mb-2">{{ product.name }}</h1>
-            <p class="text-secondary mb-3">{{ product.description }}</p>
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <span class="trust-chip"><i class="bi bi-award"></i>Premium Quality</span>
-                <span class="trust-chip"><i class="bi bi-tools"></i>Installation Support</span>
-            </div>
-            <p class="detail-price mb-1">&#8377; {{ product.price }}</p>
-            <p class="small {% if product.stock > 0 %}text-success{% else %}text-danger{% endif %}">Stock status: {{ product.stock }} unit{{ product.stock|pluralize }}</p>
-            <div class="d-flex flex-wrap gap-2 my-3">
-                {% for spec in specs %}
+
+        <!-- ── RIGHT COLUMN: Product Info ── -->
+        <div class="col-lg-6">
+            <div class="glass-card product-info-card p-4 d-flex flex-column">
+
+                <!-- Trust Chips -->
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    <span class="trust-chip"><i class="bi bi-award"></i>Premium Quality</span>
+                    <span class="trust-chip"><i class="bi bi-shield-check"></i>Certified Authentic</span>
+                    <span class="trust-chip"><i class="bi bi-tools"></i>Install Support</span>
+                </div>
+
+                <!-- Price & Install Badge -->
+                <div class="detail-price-wrapper mb-3 d-flex align-items-center flex-wrap gap-2">
+                    <span class="detail-price" id="mainPriceDisplay"
+                          data-base-price="{{ product.price }}"
+                          data-install-charge="{{ product.installation_charge|default:0 }}">
+                        &#8377; <span class="dynamic-price-value">{{ product.price }}</span>
+                    </span>
+                    {% if product.installation_available %}
+                    <div class="install-available-badge">
+                        <i class="bi bi-tools"></i> Professional Install Available
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Stock Status -->
+                <div class="mb-3">
+                    {% if product.stock <= 0 %}
+                    <span class="stock-status-badge out-of-stock small">
+                        <i class="bi bi-x-circle-fill me-1"></i>Out of Stock
+                    </span>
+                    {% elif product.stock <= 5 %}
+                    <span class="stock-status-badge low-stock small">
+                        <i class="bi bi-fire me-1"></i>Low Stock — Only {{ product.stock }} Left
+                    </span>
+                    {% else %}
+                    <span class="stock-status-badge in-stock small">
+                        <i class="bi bi-check-circle-fill me-1"></i>In Stock: {{ product.stock }} Available
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Name -->
+                <h1 class="h2 mb-1 fw-bold">{{ product.name }}</h1>
+
+                <!-- Category + SKU -->
+                <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+                    <p class="eyebrow mb-0 text-accent opacity-75">{{ product.category.name }}</p>
+                    <span class="sku-badge"><i class="bi bi-upc-scan" style="font-size:0.65rem;"></i>SKU: <strong>ETS-{{ product.id|stringformat:"05d" }}</strong></span>
+                </div>
+
+                <!-- Dynamic Star Rating -->
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="text-accent-gold">
+                        {% for star in rating_stars %}
+                            {% if star == 'full' %}<i class="bi bi-star-fill"></i>
+                            {% elif star == 'half' %}<i class="bi bi-star-half"></i>
+                            {% else %}<i class="bi bi-star text-secondary opacity-30"></i>
+                            {% endif %}
+                        {% endfor %}
+                        {% if avg_rating > 0 %}
+                        <span class="ms-1 fw-bold small text-white">{{ avg_rating|floatformat:1 }}</span>
+                        {% endif %}
+                    </div>
+                    <a href="#reviews" class="text-secondary smaller text-decoration-none border-start border-white-10 ps-2 reviews-anchor-link">
+                        {{ total_reviews_count }} verified review{{ total_reviews_count|pluralize }}
+                    </a>
+                </div>
+
+                <!-- Description -->
+                <p class="text-light-70 mb-3 small" style="line-height:1.6;max-width:90%; color: rgba(255,255,255,0.85) !important;">{{ product.description }}</p>
+
+                <!-- Spec Chips -->
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    {% for spec in specs %}
                     <span class="spec-chip">{{ spec }}</span>
-                {% endfor %}
-            </div>
-            <div class="d-flex gap-2 mt-auto">
-                <form method="post" action="{% url 'add_to_cart' product.id %}" class="flex-grow-1 m-0">
+                    {% endfor %}
+                </div>
+
+                <div class="action-row-divider"></div>
+
+                <!-- ── FORMS & ACTIONS ── -->
+                {% if product.stock > 0 %}
+                <form method="post" action="{% url 'add_to_cart' product.id %}" class="m-0" id="mainAddToCartForm">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                    <button type="submit" class="btn btn-premium-cta w-100">Add to Cart</button>
-                </form>
-                <a href="{% url 'cart' %}" class="btn btn-outline-light flex-grow-1">Go to Cart</a>
-            </div>
-            <div class="d-flex gap-2 mt-2">
-                <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 wishlist-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}"><i class="bi bi-heart me-1"></i>Wishlist</button>
-                <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 compare-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}"><i class="bi bi-diagram-3 me-1"></i>Compare</button>
-            </div>
-        </div>
-    </div>
-</section>
+                    <input type="hidden" name="is_detail_form" value="true">
 
-<section class="row g-3 mb-4">
-    <div class="col-md-4">
-        <div class="mini-info-card">
-            <h6>Warranty</h6>
-            <p>Brand warranty support with installation guidance.</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="mini-info-card">
-            <h6>Delivery</h6>
-            <p>Secure packaging and fast dispatch tracking updates.</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="mini-info-card">
-            <h6>Support</h6>
-            <p>Setup assistance and troubleshooting from expert team.</p>
-        </div>
-    </div>
-</section>
-
-<section class="glass-card p-4 mb-4">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-        <h4 class="mb-0">Technical Specifications</h4>
-        <small class="text-secondary">Structured for professional comparison</small>
-    </div>
-    <div class="table-responsive">
-        <table class="table premium-table align-middle mb-0">
-            <tbody>
-                <tr><th>Camera Type</th><td>{{ product_specs.camera_type }}</td><th>Resolution</th><td>{{ product_specs.resolution_mp }}</td></tr>
-                <tr><th>Lens</th><td>{{ product_specs.lens_mm }}</td><th>Field of View</th><td>{{ product_specs.field_of_view_deg }}</td></tr>
-                <tr><th>Night Vision Range</th><td>{{ product_specs.night_vision_range_m }}</td><th>Frame Rate</th><td>{{ product_specs.frame_rate_fps }}</td></tr>
-                <tr><th>Weatherproof</th><td>{{ product_specs.weatherproof_rating }}</td><th>Connectivity</th><td>{{ product_specs.connectivity }}</td></tr>
-                <tr><th>Power Source</th><td>{{ product_specs.power_source }}</td><th>Storage Support</th><td>{{ product_specs.storage_support }}</td></tr>
-                <tr><th>Audio Support</th><td>{{ product_specs.audio_support }}</td><th>AI Detection</th><td>{{ product_specs.ai_detection }}</td></tr>
-                <tr><th>Warranty</th><td>{{ product_specs.warranty_years }}</td><th>Stock</th><td>{{ product.stock }}</td></tr>
-            </tbody>
-        </table>
-    </div>
-</section>
-
-<section>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0">Related Products</h4>
-        <a href="{% url 'product_list' %}" class="small text-decoration-none">View all</a>
-    </div>
-    <div class="row g-3">
-        {% for item in related_products %}
-        <div class="col-md-6 col-xl-3">
-            <article class="product-card h-100">
-                <a href="{% url 'product_detail' item.slug %}" class="product-image-wrap">
-                    {% if item.image %}
-                        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="product-image">
-                    {% else %}
-                        <div class="product-image placeholder-image">No Image</div>
+                    {% if product.installation_available %}
+                    <div class="glass-card mb-3 p-3">
+                        <div class="d-flex align-items-center justify-content-between mb-0 p-0">
+                            <label class="text-light flex-grow-1" for="installToggle" style="cursor:pointer;">
+                                <span class="d-block fw-bold mb-1"><i class="bi bi-tools text-accent me-2"></i>Add Installation Service</span>
+                                <span class="d-block text-secondary small">Professional installation at &#8377; {{ product.installation_charge }} per unit</span>
+                            </label>
+                            <div class="form-check form-switch p-0 m-0 ms-3 d-flex align-items-center">
+                                <input class="form-check-input m-0 fs-3" type="checkbox" role="switch" id="installToggle" name="wants_installation" value="true" style="cursor:pointer;">
+                            </div>
+                        </div>
+                    </div>
                     {% endif %}
+
+                    <!-- Serviceability Check -->
+                    <div class="serviceability-card">
+                        <span class="detail-label d-block mb-2">Check Delivery &amp; Installation</span>
+                        <div class="pin-input-group">
+                            <input type="text" id="pincodeInput" class="pin-field" placeholder="Enter Pincode" maxlength="6" value="{{ user_pincode }}">
+                            <button type="button" id="checkPinBtn" class="btn-pin-check">Check</button>
+                        </div>
+                        <div id="pinStatusArea" class="service-results"></div>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="quantity-selector-wrapper">
+                        <span class="detail-label">Select Quantity</span>
+                        <div class="premium-qty-input">
+                            <button type="button" class="qty-control minus" onclick="stepDetailQty(this,-1)"><i class="bi bi-dash"></i></button>
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="qty-field" onchange="validateDetailQty(this)">
+                            <button type="button" class="qty-control plus" onclick="stepDetailQty(this,1)"><i class="bi bi-plus"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 action-btns-row">
+                        <button type="submit" class="btn btn-premium-cta flex-grow-1 py-3">
+                            <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                        </button>
+                        <button type="button" class="btn btn-buy-now flex-grow-1 py-3"
+                                data-checkout-url="{% url 'checkout' %}"
+                                onclick="buyNow(this)">
+                            <i class="bi bi-lightning-fill me-2"></i>Buy Now
+                        </button>
+                    </div>
+                    <a href="{% url 'cart' %}" class="btn btn-outline-light d-flex align-items-center justify-content-center w-100 mt-2 py-2">
+                        <i class="bi bi-bag-check me-2"></i>Go to Cart
+                    </a>
+                </form>
+
+                {% else %}
+                <!-- ── NOTIFY ME WIDGET (out of stock) ── -->
+                <div class="notify-me-widget">
+                    <div class="notify-me-title">
+                        <i class="bi bi-bell-fill"></i>Notify Me When Back in Stock
+                    </div>
+                    <p class="text-secondary small mb-3">Enter your email and we'll alert you the moment this product is available again.</p>
+                    <div class="pin-input-group">
+                        <input type="email" id="notifyEmailInput" class="pin-field" placeholder="your@email.com">
+                        <button type="button" id="notifyMeBtn" class="btn-pin-check" data-product-id="{{ product.id }}">Notify Me</button>
+                    </div>
+                    <div id="notifyStatus" class="notify-status"></div>
+                </div>
+                {% endif %}
+
+                <!-- ── WISHLIST + COMPARE ── -->
+                <div class="d-flex gap-2 mt-2">
+                    <button type="button"
+                        class="btn btn-sm btn-outline-light flex-grow-1 wishlist-btn {% if product.id in wishlist_item_ids %}active{% endif %}"
+                        data-product-id="{{ product.id }}" data-product-name="{{ product.name }}"
+                        data-product-price="{{ product.price }}"
+                        data-product-url="{% url 'product_detail' product.slug %}"
+                        data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}">
+                        <i class="bi {% if product.id in wishlist_item_ids %}bi-heart-fill{% else %}bi-heart{% endif %} me-1"></i>Wishlist
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 compare-btn"
+                        data-product-id="{{ product.id }}" data-product-name="{{ product.name }}"
+                        data-product-price="{{ product.price }}"
+                        data-product-url="{% url 'product_detail' product.slug %}"
+                        data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}">
+                        <i class="bi bi-diagram-3 me-1"></i>Compare
+                    </button>
+                </div>
+
+                <!-- ── WHATSAPP INQUIRY ── -->
+                <a href="https://wa.me/917994357565?text={{ product.name|urlencode }}%20-%20I'd%20like%20to%20know%20more%20about%20this%20product."
+                   target="_blank" rel="noopener noreferrer"
+                   class="btn btn-whatsapp-cta w-100 mt-2 py-2">
+                    <i class="bi bi-whatsapp me-2"></i>Inquire on WhatsApp
                 </a>
-                <div class="p-3">
-                    <h6 class="product-title"><a href="{% url 'product_detail' item.slug %}">{{ item.name }}</a></h6>
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <span class="product-price">&#8377; {{ item.price }}</span>
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-outline-light btn-sm quick-view-btn" data-product-id="{{ item.id }}">View</button>
-                            <form method="post" action="{% url 'add_to_cart' item.id %}" class="m-0">
+
+                <!-- ── SHARE ── -->
+                <div class="share-wrapper mt-3 pt-3 border-top border-white-05">
+                    <button type="button" class="btn btn-share-trigger w-100" id="shareTriggerBtn">
+                        <i class="bi bi-share me-2"></i>Share Product
+                    </button>
+                    <div class="share-menu-premium" id="shareMenu">
+                        <a href="#" class="share-icon-btn whatsapp" title="Share on WhatsApp" onclick="shareProduct('whatsapp',event)"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#" class="share-icon-btn facebook" title="Share on Facebook" onclick="shareProduct('facebook',event)"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="share-icon-btn linkedin" title="Share on LinkedIn" onclick="shareProduct('linkedin',event)"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="share-icon-btn email" title="Share via Email" onclick="shareProduct('email',event)"><i class="bi bi-envelope"></i></a>
+                        <a href="#" class="share-icon-btn copy-link" title="Copy Link" onclick="shareProduct('copy',event)">
+                            <i class="bi bi-link-45deg"></i>
+                            <span class="copy-feedback" id="copyFeedback">Copied!</span>
+                        </a>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+    </div><!-- /.product-hero-bg -->
+
+    <!-- ══════════════════════════════════════════
+         PREMIUM TABBED INTERFACE
+    ══════════════════════════════════════════ -->
+    <section class="product-tabs-wrapper mb-5" id="productTabsSection">
+        <ul class="nav nav-premium-tabs" id="productTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab" aria-controls="specs" aria-selected="true">Specifications</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="false">Overview</button>
+            </li>
+            {% if product.installation_available %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="install-tab" data-bs-toggle="tab" data-bs-target="#install" type="button" role="tab" aria-controls="install" aria-selected="false">Installation Details</button>
+            </li>
+            {% endif %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-pane" type="button" role="tab" aria-controls="reviews-pane" aria-selected="false">
+                    Reviews ({{ total_reviews_count }})
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="productTabsContent">
+
+            <!-- 1. Specifications Tab -->
+            <div class="tab-pane fade show active" id="specs" role="tabpanel" aria-labelledby="specs-tab">
+                <div class="glass-card overflow-hidden">
+                    <div class="p-4 border-bottom border-white-10">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h4 class="mb-1">Technical Specifications</h4>
+                                <p class="text-secondary small mb-0">Engineered for enterprise-grade performance</p>
+                            </div>
+                            <div class="trust-badge-mini">
+                                <i class="bi bi-patch-check-fill text-accent me-1"></i>
+                                <span class="small fw-semibold">Verified Specs</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="spec-premium-grid">
+                            {% for spec in product_specs %}
+                            <div class="spec-row">
+                                <div class="spec-meta">
+                                    <div class="spec-icon-box"><i class="bi {{ spec.icon }}"></i></div>
+                                    <span class="spec-label">{{ spec.label }}</span>
+                                </div>
+                                <div class="spec-value-box"><span class="spec-value">{{ spec.value }}</span></div>
+                            </div>
+                            {% empty %}
+                            <div class="col-12 py-4 text-center">
+                                <p class="text-secondary mb-0">Detailed specifications are being updated.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Overview Tab -->
+            <div class="tab-pane fade" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                <div class="glass-card p-4">
+                    <h4 class="mb-3">Product Overview</h4>
+                    <p class="text-secondary mb-4" style="line-height:1.8;font-size:1.05rem;">{{ product.description }}</p>
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="mini-info-card p-3">
+                                <i class="bi bi-shield-check text-accent fs-4 mb-2 d-block"></i>
+                                <h6 class="text-white">Enterprise Grade</h6>
+                                <p class="small text-secondary mb-0">Built for high-reliability surveillance and data integrity.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="mini-info-card p-3">
+                                <i class="bi bi-cloud-arrow-up text-accent fs-4 mb-2 d-block"></i>
+                                <h6 class="text-white">Smart Sync</h6>
+                                <p class="small text-secondary mb-0">Seamless remote monitoring via secure mobile applications.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="mini-info-card p-3">
+                                <i class="bi bi-headset text-accent fs-4 mb-2 d-block"></i>
+                                <h6 class="text-white">Dedicated Support</h6>
+                                <p class="small text-secondary mb-0">Expert technical support available round the clock.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Installation Details Tab -->
+            {% if product.installation_available %}
+            <div class="tab-pane fade" id="install" role="tabpanel" aria-labelledby="install-tab">
+                <div class="glass-card p-4">
+                    <div class="row align-items-center mb-5">
+                        <div class="col-lg-7">
+                            <h4 class="mb-2">Professional Implementation Service</h4>
+                            <p class="text-secondary mb-0">From unboxing to live monitoring, our certified technicians handle every step of your security deployment.</p>
+                        </div>
+                        <div class="col-lg-5 text-lg-end mt-3 mt-lg-0">
+                            <div class="d-inline-block p-3 rounded-4" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);">
+                                <span class="d-block small text-accent text-uppercase fw-bold letter-spacing-1">Service Fee</span>
+                                <span class="h3 mb-0 text-white fw-bold">&#8377; {{ product.installation_charge }}</span>
+                                <span class="small text-secondary">/ unit</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-3">
+                            <article class="install-benefit-card text-center">
+                                <div class="install-icon-wrap mx-auto"><i class="bi bi-vector-pen"></i></div>
+                                <h6>Concealed Wiring</h6>
+                                <p>Clean and professional cable management using high-grade conduits to ensure durability and aesthetics.</p>
+                            </article>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <article class="install-benefit-card text-center">
+                                <div class="install-icon-wrap mx-auto"><i class="bi bi-phone-vibrate"></i></div>
+                                <h6>Mobile Setup</h6>
+                                <p>On-the-spot pairing with your mobile devices for secure, lag-free remote monitoring anywhere in the world.</p>
+                            </article>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <article class="install-benefit-card text-center">
+                                <div class="install-icon-wrap mx-auto"><i class="bi bi-camera"></i></div>
+                                <h6>Precision Tuning</h6>
+                                <p>Optimised camera angles and focal lengths to eliminate blind spots and ensure maximum site coverage.</p>
+                            </article>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <article class="install-benefit-card text-center">
+                                <div class="install-icon-wrap mx-auto"><i class="bi bi-mortarboard"></i></div>
+                                <h6>Expert Training</h6>
+                                <p>Full walkthrough of the system, playback retrieval, and alert management training for your staff or family.</p>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="info-note mt-4 d-flex align-items-start gap-3 p-3 rounded-4" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);">
+                        <i class="bi bi-info-circle text-accent mt-1 fs-5"></i>
+                        <div>
+                            <p class="small text-light-70 mb-1"><strong>Service Guarantee</strong></p>
+                            <p class="small text-secondary mb-0">Our installation comes with a 30-day rework warranty. If any wiring or mounting needs adjustment, we'll visit and fix it for free.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- 4. Reviews Tab -->
+            <div class="tab-pane fade" id="reviews-pane" role="tabpanel" aria-labelledby="reviews-tab">
+                <div class="glass-card overflow-hidden">
+                    <!-- Reviews Header -->
+                    <div class="p-4 border-bottom border-white-10">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div>
+                                <h4 class="mb-1">User Feedback</h4>
+                                <p class="text-secondary small mb-0">Verified feedback from our secure community</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <!-- Sort Dropdown -->
+                                {% if total_reviews_count > 1 %}
+                                <select class="review-sort-select" id="reviewSortSelect" aria-label="Sort reviews">
+                                    <option value="newest" {% if review_sort == 'newest' %}selected{% endif %}>Newest First</option>
+                                    <option value="highest" {% if review_sort == 'highest' %}selected{% endif %}>Highest Rated</option>
+                                    <option value="lowest" {% if review_sort == 'lowest' %}selected{% endif %}>Lowest Rated</option>
+                                </select>
+                                {% endif %}
+                                {% if user.is_authenticated %}
+                                    {% if can_review %}
+                                    <button type="button" class="btn btn-premium-cta btn-sm" data-bs-toggle="collapse" data-bs-target="#reviewFormCollapse">
+                                        <i class="bi bi-pencil-square me-2"></i>Write a Review
+                                    </button>
+                                    {% else %}
+                                    <div class="trust-badge-mini" title="Only customers who purchased this item can leave a review">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        <span class="small">Purchase to review</span>
+                                    </div>
+                                    {% endif %}
+                                {% else %}
+                                <a href="{% url 'login' %}?next={{ request.path }}#reviews-pane" class="btn btn-outline-light btn-sm">
+                                    Login to Review
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review Form -->
+                    <div class="collapse" id="reviewFormCollapse">
+                        <div class="p-4 bg-dark-soft border-bottom border-white-10">
+                            <form action="{% url 'submit_review' product.id %}" method="post" enctype="multipart/form-data" class="review-form">
                                 {% csrf_token %}
-                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                <button type="submit" class="btn btn-premium-cta btn-sm">Add</button>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-medium text-light-70">Review Subject</label>
+                                        <input type="text" name="subject" class="form-control bg-dark border-secondary text-light" placeholder="Summary of your experience" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-medium text-light-70">Star Rating</label>
+                                        <div class="star-rating-input d-flex gap-2 fs-4">
+                                            <input type="radio" id="star5" name="rating" value="5" required hidden /><label for="star5" class="bi bi-star pointer" title="Excellent"></label>
+                                            <input type="radio" id="star4" name="rating" value="4" hidden /><label for="star4" class="bi bi-star pointer" title="Good"></label>
+                                            <input type="radio" id="star3" name="rating" value="3" hidden /><label for="star3" class="bi bi-star pointer" title="Average"></label>
+                                            <input type="radio" id="star2" name="rating" value="2" hidden /><label for="star2" class="bi bi-star pointer" title="Poor"></label>
+                                            <input type="radio" id="star1" name="rating" value="1" hidden /><label for="star1" class="bi bi-star pointer" title="Very Poor"></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small fw-medium text-light-70">Your Review</label>
+                                        <textarea name="review" rows="4" class="form-control bg-dark border-secondary text-light" placeholder="How has this product helped your security needs?" required></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small fw-medium text-light-70 d-block mb-2">Photos &amp; Videos (Optional)</label>
+                                        <div class="review-media-upload-zone p-3 rounded-4 border-dashed text-center cursor-pointer position-relative" id="reviewUploadZone">
+                                            <input type="file" name="review_media" multiple id="reviewMediaInput" class="position-absolute w-100 h-100 top-0 start-0 opacity-0 cursor-pointer" accept="image/*,video/*">
+                                            <div class="py-2">
+                                                <i class="bi bi-camera-reels text-accent fs-3 mb-2 d-block"></i>
+                                                <span class="small text-secondary d-block">Add real-world photos or short videos</span>
+                                                <span class="smaller text-muted">Drag &amp; drop or click to select</span>
+                                            </div>
+                                            <div id="reviewMediaPreview" class="row g-2 mt-2 justify-content-center"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 text-end mt-3">
+                                        <button type="button" class="btn btn-link btn-sm text-secondary me-3 text-decoration-none" data-bs-toggle="collapse" data-bs-target="#reviewFormCollapse">Cancel</button>
+                                        <button type="submit" class="btn btn-premium-cta px-4">Submit Review</button>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
-                    <div class="d-flex gap-2 mt-2">
-                        <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 wishlist-btn" data-product-id="{{ item.id }}" data-product-name="{{ item.name }}" data-product-price="{{ item.price }}" data-product-url="{% url 'product_detail' item.slug %}" data-product-image="{% if item.image %}{{ item.image.url }}{% endif %}"><i class="bi bi-heart me-1"></i>Wishlist</button>
-                        <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 compare-btn" data-product-id="{{ item.id }}" data-product-name="{{ item.name }}" data-product-price="{{ item.price }}" data-product-url="{% url 'product_detail' item.slug %}" data-product-image="{% if item.image %}{{ item.image.url }}{% endif %}"><i class="bi bi-diagram-3 me-1"></i>Compare</button>
+
+                    <!-- Reviews Body -->
+                    <div class="p-4">
+                        <div class="row g-4">
+
+                            <!-- Rating Summary & Breakdown -->
+                            <div class="col-lg-4 pb-4 pb-lg-0 border-end-lg border-white-10">
+                                <div class="text-center mb-4">
+                                    <h2 class="display-3 fw-bold mb-0 text-white">{{ avg_rating|floatformat:1|default:"—" }}</h2>
+                                    <div class="fs-5 text-accent-gold my-2">
+                                        {% for star in rating_stars %}
+                                            {% if star == 'full' %}<i class="bi bi-star-fill"></i>
+                                            {% elif star == 'half' %}<i class="bi bi-star-half"></i>
+                                            {% else %}<i class="bi bi-star text-secondary opacity-25"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <p class="text-secondary small mb-3">Based on {{ total_reviews_count }} review{{ total_reviews_count|pluralize }}</p>
+                                    <div class="trust-pill-large">
+                                        <i class="bi bi-shield-check text-accent me-2"></i>
+                                        <span>100% Genuine Reviews</span>
+                                    </div>
+                                </div>
+
+                                <!-- Star Breakdown Bars -->
+                                {% if total_reviews_count > 0 %}
+                                <div class="rating-breakdown-bars px-2">
+                                    {% for item in rating_breakdown %}
+                                    <div class="rating-bar-row">
+                                        <span class="rating-bar-label">{{ item.star }}</span>
+                                        <i class="bi bi-star-fill text-accent" style="font-size:0.6rem;flex-shrink:0;"></i>
+                                        <div class="rating-bar-track">
+                                            <div class="rating-bar-fill" data-width="{{ item.percent }}"></div>
+                                        </div>
+                                        <span class="rating-bar-count">{{ item.count }}</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Reviews List -->
+                            <div class="col-lg-8 ps-lg-4">
+                                <div class="reviews-list-container">
+                                    {% for review in reviews %}
+                                    <div class="review-item mb-4 pb-4 border-bottom border-white-05 last-child-no-border">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="avatar-circle">{{ review.user.username|make_list|first|upper }}</div>
+                                                <div>
+                                                    <h6 class="mb-0 text-light fw-semibold">{{ review.user.username }}</h6>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="text-accent-gold small">
+                                                            {% for i in "12345" %}
+                                                                {% if forloop.counter <= review.rating %}
+                                                                    <i class="bi bi-star-fill"></i>
+                                                                {% else %}
+                                                                    <i class="bi bi-star text-secondary opacity-30"></i>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </div>
+                                                        <span class="text-secondary smaller">• {{ review.added_at|date:"d M Y" }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="verified-badge">
+                                                <i class="bi bi-patch-check-fill me-1"></i>Verified Customer
+                                            </div>
+                                        </div>
+
+                                        <h6 class="text-light-70 mb-2">{{ review.subject }}</h6>
+                                        <p class="text-secondary small mb-3">{{ review.review }}</p>
+
+                                        {% if review.media.all %}
+                                        <div class="review-gallery d-flex flex-wrap gap-2 mb-3">
+                                            {% for media in review.media.all %}
+                                            <div class="review-media-item position-relative rounded-3 overflow-hidden cursor-pointer"
+                                                 style="width:80px;height:80px;background:rgba(0,0,0,0.2);"
+                                                 onclick="openReviewLightbox('{{ media.file.url }}','{{ media.is_video|yesno:'true,false' }}')">
+                                                {% if media.is_video %}
+                                                <div class="video-indicator-overlay position-absolute w-100 h-100 d-grid place-items-center bg-black bg-opacity-30">
+                                                    <i class="bi bi-play-fill text-white fs-4"></i>
+                                                </div>
+                                                <video src="{{ media.file.url }}" class="w-100 h-100 object-fit-cover opacity-75"></video>
+                                                {% else %}
+                                                <img loading="lazy" decoding="async" src="{{ media.file.url }}" class="w-100 h-100 object-fit-cover" alt="Review photo">
+                                                {% endif %}
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+
+                                        <!-- Helpful Voting -->
+                                        <div class="d-flex align-items-center gap-2 mt-2">
+                                            <span class="text-secondary" style="font-size:0.72rem;">Helpful?</span>
+                                            <button class="helpful-btn" data-review-id="{{ review.id }}" data-vote="yes" onclick="voteHelpful(this)">
+                                                <i class="bi bi-hand-thumbs-up"></i>
+                                                <span class="helpful-yes-count">{{ review.helpful_count }}</span>
+                                            </button>
+                                            <button class="helpful-btn" data-review-id="{{ review.id }}" data-vote="no" onclick="voteHelpful(this)">
+                                                <i class="bi bi-hand-thumbs-down"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <div class="text-center py-5">
+                                        <div class="opacity-30 mb-3"><i class="bi bi-chat-left-dots fs-1"></i></div>
+                                        <h5 class="text-light-70">No reviews yet</h5>
+                                        <p class="text-secondary small">Be the first to share your experience with this product.</p>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-            </article>
+            </div>
         </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="glass-card p-3 text-secondary">No related products available yet.</div>
+    </section>
+
+    <!-- ── Product Highlights / Key Selling Points ── -->
+    {% if product_highlights %}
+    <section class="mb-5 reveal">
+        <div class="product-highlights-card">
+            <h5 class="highlights-title"><i class="bi bi-stars"></i> Why Choose This Product?</h5>
+            <ul class="product-highlights-list">
+                {% for highlight in product_highlights %}
+                <li>{{ highlight }}</li>
+                {% endfor %}
+            </ul>
         </div>
-        {% endfor %}
-    </div>
-</section>
+    </section>
+    {% endif %}
+
+    <!-- ══════════════════════════════════════════
+         RELATED PRODUCTS
+    ══════════════════════════════════════════ -->
+    {% if related_products %}
+    <section class="mt-5 mb-5 reveal related-scroll-wrap">
+        <div class="d-flex justify-content-between align-items-end mb-4 px-1">
+            <div>
+                <p class="eyebrow mb-1 text-accent">Related Solutions</p>
+                <h3 class="h4 mb-0 fw-bold">You may also like</h3>
+            </div>
+            <a href="{% url 'products_by_category' product.category.slug %}" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                View Category <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="row g-4 related-scroll-row">
+            {% for rp in related_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <article class="product-card h-100 d-flex flex-column reveal" data-href="{% url 'product_detail' rp.slug %}">
+                    <div class="product-image-wrap">
+                        {% if rp.image %}
+                        <img loading="lazy" decoding="async" src="{{ rp.image.url }}" alt="{{ rp.name }}" class="product-image">
+                        {% else %}
+                        <div class="product-image placeholder-image">No Image</div>
+                        {% endif %}
+                    </div>
+                    <div class="p-3 d-flex flex-column flex-grow-1">
+                        {% if rp.stock <= 0 %}
+                        <span class="stock-pill out mb-2">Out of Stock</span>
+                        {% elif rp.stock <= 5 %}
+                        <span class="stock-pill low mb-2"><i class="bi bi-fire"></i> Low Stock</span>
+                        {% else %}
+                        <span class="stock-pill in mb-2">In Stock</span>
+                        {% endif %}
+                        <p class="small text-secondary mb-1">{{ rp.category.name }}</p>
+                        <h6 class="product-title"><a href="{% url 'product_detail' rp.slug %}">{{ rp.name }}</a></h6>
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <div>
+                                <p class="product-price mb-0">&#8377; {{ rp.price }}</p>
+                                <small class="text-secondary">Stock: {{ rp.stock }}</small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-outline-light btn-sm quick-view-btn premium-tooltip-trigger"
+                                        data-product-id="{{ rp.id }}" title="Quick View">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <form action="{% url 'add_to_cart' rp.id %}" method="post" class="m-0">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button type="submit" class="btn btn-premium-cta btn-sm px-3" title="Add to Cart">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 wishlist-btn {% if rp.id in wishlist_item_ids %}is-active{% endif %}"
+                                    data-product-id="{{ rp.id }}" data-product-name="{{ rp.name }}"
+                                    data-product-price="{{ rp.price }}" data-product-url="{% url 'product_detail' rp.slug %}"
+                                    data-product-image="{% if rp.image %}{{ rp.image.url }}{% endif %}">
+                                <i class="bi {% if rp.id in wishlist_item_ids %}bi-heart-fill{% else %}bi-heart{% endif %} me-1"></i>Wishlist
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 compare-btn"
+                                    data-product-id="{{ rp.id }}" data-product-name="{{ rp.name }}"
+                                    data-product-price="{{ rp.price }}" data-product-url="{% url 'product_detail' rp.slug %}"
+                                    data-product-image="{% if rp.image %}{{ rp.image.url }}{% endif %}">
+                                <i class="bi bi-diagram-3 me-1"></i>Compare
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="related-swipe-hint d-flex d-sm-none align-items-center justify-content-center gap-2 mt-3">
+            <i class="bi bi-arrow-left-right"></i>
+            <span>Swipe to explore</span>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- ══════════════════════════════════════════
+         RECENTLY VIEWED (localStorage)
+    ══════════════════════════════════════════ -->
+    <section id="recentlyViewedSection" class="mt-5 mb-5" style="display:none;">
+        <div class="d-flex justify-content-between align-items-end mb-4 px-1">
+            <div>
+                <p class="eyebrow mb-1 text-accent">Your History</p>
+                <h3 class="h4 mb-0 fw-bold">Recently Viewed</h3>
+            </div>
+        </div>
+        <div class="row g-3" id="recentlyViewedGrid"></div>
+    </section>
 </div>
+
+<!-- ══════════════════════════════════════════
+     STICKY ADD-TO-CART BAR
+══════════════════════════════════════════ -->
 <div class="sticky-detail-bar">
     <div class="sticky-detail-meta d-none d-md-block">
         <strong>{{ product.name|truncatechars:34 }}</strong>
-        <span>&#8377; {{ product.price }}</span>
+        <span class="text-accent">&#8377; <span class="dynamic-price-value">{{ product.price }}</span></span>
     </div>
-    <form method="post" action="{% url 'add_to_cart' product.id %}" class="flex-grow-1 m-0">
+    {% if product.stock > 0 %}
+    <form method="post" action="{% url 'add_to_cart' product.id %}"
+          class="flex-grow-1 m-0 d-flex align-items-center gap-2">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
-        <button type="submit" class="btn btn-premium-cta w-100">Add to Cart</button>
+        <input type="hidden" name="is_detail_form" value="true">
+        <input type="hidden" name="wants_installation" id="stickyInstallInput" value="false">
+        <div class="premium-qty-input small-scale me-2">
+            <button type="button" class="qty-control minus" onclick="stepDetailQty(this,-1)"><i class="bi bi-dash"></i></button>
+            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="qty-field" onchange="validateDetailQty(this)">
+            <button type="button" class="qty-control plus" onclick="stepDetailQty(this,1)"><i class="bi bi-plus"></i></button>
+        </div>
+        <button type="submit" class="btn btn-premium-cta flex-grow-1">Add to Cart</button>
     </form>
-    <a href="tel:+917994357565" class="btn btn-outline-light flex-grow-1">Call</a>
+    {% else %}
+    <div class="flex-grow-1 d-flex align-items-center justify-content-center">
+        <span class="stock-status-badge out-of-stock small"><i class="bi bi-x-circle-fill me-1"></i>Out of Stock</span>
+    </div>
+    {% endif %}
+    <a href="https://wa.me/917994357565" target="_blank" rel="noopener noreferrer"
+       class="btn btn-whatsapp-cta flex-shrink-0 px-3">
+        <i class="bi bi-whatsapp me-1 d-none d-sm-inline"></i>WhatsApp
+    </a>
+    <a href="tel:+917994357565" class="btn btn-outline-light flex-shrink-0">Call</a>
 </div>
+
+<!-- Review Lightbox Modal -->
+<div class="modal fade" id="reviewLightbox" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-body position-relative">
+                <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="bi bi-x-circle"></i>
+                </button>
+                <div id="lightboxMediaContainer" class="w-100 d-flex justify-content-center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* ── Quantity Controls ── */
+function stepDetailQty(btn, step) {
+    const wrapper = btn.closest('.premium-qty-input');
+    const input = wrapper.querySelector('.qty-field');
+    let val = parseInt(input.value) || 1;
+    val = Math.max(parseInt(input.min) || 1, Math.min(parseInt(input.max) || 999, val + step));
+    document.querySelectorAll('.qty-field').forEach(el => { el.value = val; });
+    updateDynamicPrice();
+}
+
+function validateDetailQty(input) {
+    let val = parseInt(input.value) || 1;
+    val = Math.max(parseInt(input.min) || 1, Math.min(parseInt(input.max) || 999, val));
+    document.querySelectorAll('.qty-field').forEach(el => { el.value = val; });
+    updateDynamicPrice();
+}
+
+/* ── Install Toggle Sync ── */
+document.addEventListener('DOMContentLoaded', function () {
+    const mainToggle = document.getElementById('installToggle');
+    const stickyInput = document.getElementById('stickyInstallInput');
+
+    if (mainToggle) {
+        mainToggle.addEventListener('change', function () {
+            if (stickyInput) stickyInput.value = this.checked ? 'true' : 'false';
+            updateDynamicPrice();
+            document.querySelectorAll('.dynamic-price-value').forEach(el => {
+                el.parentElement.classList.add('price-pulse');
+                setTimeout(() => el.parentElement.classList.remove('price-pulse'), 500);
+            });
+        });
+    }
+});
+
+/* ── Dynamic Price ── */
+function updateDynamicPrice() {
+    const priceEl = document.getElementById('mainPriceDisplay');
+    if (!priceEl) return;
+    const basePrice = parseFloat(priceEl.dataset.basePrice);
+    const installCharge = parseFloat(priceEl.dataset.installCharge || 0);
+    const qty = parseInt(document.querySelector('.qty-field')?.value || 1) || 1;
+    const isInstall = document.getElementById('installToggle')?.checked || false;
+    const total = (basePrice + (isInstall ? installCharge : 0)) * qty;
+    document.querySelectorAll('.dynamic-price-value').forEach(el => animatePriceChange(el, total));
+}
+
+function animatePriceChange(el, target) {
+    const start = parseFloat(el.dataset.currentValue || el.innerText.replace(/[^\d.]/g, '')) || 0;
+    const duration = 600, startTime = performance.now();
+    function easeOutExpo(x) { return x === 1 ? 1 : 1 - Math.pow(2, -10 * x); }
+    function update(now) {
+        const p = easeOutExpo(Math.min((now - startTime) / duration, 1));
+        const cur = start + (target - start) * p;
+        el.innerText = cur.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+        el.dataset.currentValue = cur;
+        if (p < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+}
+
+/* ── Buy Now ── */
+function buyNow(btn) {
+    const form = document.getElementById('mainAddToCartForm');
+    if (!form) return;
+    const nextInput = form.querySelector('input[name="next"]');
+    if (nextInput) nextInput.value = btn.dataset.checkoutUrl;
+    form.submit();
+}
+
+/* ── Share ── */
+const shareTrigger = document.getElementById('shareTriggerBtn');
+const shareMenu = document.getElementById('shareMenu');
+if (shareTrigger && shareMenu) {
+    shareTrigger.addEventListener('click', e => { e.stopPropagation(); shareMenu.classList.toggle('active'); });
+    document.addEventListener('click', e => { if (!shareMenu.contains(e.target) && e.target !== shareTrigger) shareMenu.classList.remove('active'); });
+}
+
+function shareProduct(platform, event) {
+    if (event) event.preventDefault();
+    const url = window.location.href;
+    const title = "{{ product.name|escapejs }} | Eyetrack Solutions";
+    const text = `Check out this ${title}: ${url}`;
+    const map = {
+        whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`,
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+        email: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text)}`,
+    };
+    if (platform === 'copy') {
+        navigator.clipboard.writeText(url).then(() => {
+            const fb = document.getElementById('copyFeedback');
+            fb.classList.add('show');
+            setTimeout(() => fb.classList.remove('show'), 2000);
+            if (typeof showPremiumToast === 'function') showPremiumToast('Link copied to clipboard', 'bi-link-45deg');
+        });
+        return;
+    }
+    if (map[platform]) window.open(map[platform], '_blank', 'noopener,noreferrer');
+}
+
+/* ── Serviceability Check ── */
+document.addEventListener('DOMContentLoaded', function () {
+    const pinInput = document.getElementById('pincodeInput');
+    const checkBtn = document.getElementById('checkPinBtn');
+    const statusArea = document.getElementById('pinStatusArea');
+    if (!pinInput || !checkBtn || !statusArea) return;
+
+    const productId = "{{ product.id }}";
+
+    async function performPinCheck(pin) {
+        if (!pin || pin.length !== 6 || isNaN(pin)) { showPinError('Please enter a valid 6-digit pincode.'); return; }
+        checkBtn.disabled = true; checkBtn.innerText = '...';
+        statusArea.style.display = 'block';
+        statusArea.innerHTML = '<div class="service-item text-secondary"><i class="bi bi-hourglass-split"></i>Checking serviceability…</div>';
+        try {
+            const res = await fetch(`/api/check-serviceability/?pincode=${pin}&product_id=${productId}`);
+            const data = await res.json();
+            if (data.ok && data.is_serviceable) {
+                let html = `<div class="service-item success"><i class="bi bi-truck"></i><span>${data.message}</span></div>`;
+                if (data.installation_available) {
+                    html += `<div class="service-item success"><i class="bi bi-tools"></i><span>Installation available for this product.</span></div>`;
+                } else {
+                    html += `<div class="service-item warning"><i class="bi bi-exclamation-triangle"></i><span>Installation not available in this area. <a href="https://wa.me/917994357565" target="_blank" class="contact-support-link">Ask why?</a></span></div>`;
+                }
+                statusArea.innerHTML = html;
+            } else {
+                statusArea.innerHTML = `<div class="service-item danger"><i class="bi bi-geo-alt-fill"></i><span>${data.message}</span></div><div class="mt-2 small text-secondary">Need help? <a href="https://wa.me/917994357565" target="_blank" class="contact-support-link">Contact Support</a></div>`;
+            }
+        } catch { showPinError('Could not verify serviceability. Please try again.'); }
+        finally { checkBtn.disabled = false; checkBtn.innerText = 'Check'; }
+    }
+
+    function showPinError(msg) {
+        statusArea.style.display = 'block';
+        statusArea.innerHTML = `<div class="service-item danger"><i class="bi bi-x-circle"></i>${msg}</div>`;
+    }
+
+    checkBtn.addEventListener('click', () => performPinCheck(pinInput.value.trim()));
+    pinInput.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); performPinCheck(pinInput.value.trim()); } });
+    if (pinInput.value.trim().length === 6) performPinCheck(pinInput.value.trim());
+});
+
+/* ── Notify Me (out of stock) ── */
+document.addEventListener('DOMContentLoaded', function () {
+    const notifyBtn = document.getElementById('notifyMeBtn');
+    if (!notifyBtn) return;
+    const emailInput = document.getElementById('notifyEmailInput');
+    const statusEl = document.getElementById('notifyStatus');
+
+    notifyBtn.addEventListener('click', async function () {
+        const email = emailInput.value.trim();
+        if (!email) { showNotifyStatus('Please enter your email address.', false); return; }
+
+        notifyBtn.disabled = true; notifyBtn.innerText = '…';
+
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        try {
+            const res = await fetch("{% url 'notify_stock' product.id %}", { method: 'POST', body: formData });
+            const data = await res.json();
+            showNotifyStatus(data.message, data.ok);
+            if (data.ok) { emailInput.value = ''; notifyBtn.style.display = 'none'; }
+        } catch { showNotifyStatus('Something went wrong. Please try again.', false); }
+        finally { notifyBtn.disabled = false; if (notifyBtn.style.display !== 'none') notifyBtn.innerText = 'Notify Me'; }
+    });
+
+    function showNotifyStatus(msg, ok) {
+        statusEl.textContent = msg;
+        statusEl.className = `notify-status ${ok ? 'success' : 'error'}`;
+        statusEl.style.display = 'block';
+    }
+});
+
+/* ── Review Media Preview ── */
+const reviewMediaInput = document.getElementById('reviewMediaInput');
+const reviewMediaPreview = document.getElementById('reviewMediaPreview');
+if (reviewMediaInput) {
+    reviewMediaInput.addEventListener('change', function () {
+        reviewMediaPreview.innerHTML = '';
+        Array.from(this.files).forEach(file => {
+            const col = document.createElement('div'); col.className = 'col-auto';
+            if (file.type.startsWith('video/')) {
+                col.innerHTML = `<div class="position-relative"><div class="preview-thumbnail video-preview-icon"><i class="bi bi-play-fill fs-4"></i></div></div>`;
+            } else {
+                const reader = new FileReader();
+                reader.onload = e => { col.innerHTML = `<img loading="lazy" decoding="async" src="${e.target.result}" class="preview-thumbnail" alt="Preview">`; };
+                reader.readAsDataURL(file);
+            }
+            reviewMediaPreview.appendChild(col);
+        });
+    });
+}
+
+/* ── Review Lightbox ── */
+function openReviewLightbox(url, isVideo) {
+    const container = document.getElementById('lightboxMediaContainer');
+    container.innerHTML = isVideo === 'true'
+        ? `<video src="${url}" controls autoplay class="lightbox-content w-100"></video>`
+        : `<img loading="lazy" decoding="async" src="${url}" class="lightbox-content" alt="Review Full Size">`;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('reviewLightbox')).show();
+    document.getElementById('reviewLightbox').addEventListener('hidden.bs.modal', () => { container.innerHTML = ''; }, { once: true });
+}
+
+/* ── Review Sort ── */
+document.addEventListener('DOMContentLoaded', function () {
+    const sortSelect = document.getElementById('reviewSortSelect');
+    if (!sortSelect) return;
+    sortSelect.addEventListener('change', function () {
+        const url = new URL(window.location.href);
+        url.searchParams.set('review_sort', this.value);
+        url.hash = 'reviews-pane';
+        window.location.href = url.toString();
+    });
+});
+
+/* ── Helpful Voting ── */
+function voteHelpful(btn) {
+    const reviewId = btn.dataset.reviewId;
+    const isHelpful = btn.dataset.vote === 'yes';
+    const csrfToken = '{{ csrf_token }}';
+
+    const formData = new FormData();
+    formData.append('is_helpful', isHelpful ? 'true' : 'false');
+    formData.append('csrfmiddlewaretoken', csrfToken);
+
+    const url = `/api/review/${reviewId}/helpful/`;
+
+    fetch(url, { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) return;
+            const reviewItem = btn.closest('.review-item');
+            const yesBtn = reviewItem.querySelector('[data-vote="yes"]');
+            const noBtn = reviewItem.querySelector('[data-vote="no"]');
+
+            // Reset states
+            yesBtn.classList.remove('active-yes');
+            noBtn.classList.remove('active-no');
+
+            // Update count on yes button
+            const countEl = yesBtn.querySelector('.helpful-yes-count');
+            if (countEl) countEl.textContent = data.helpful_count;
+
+            // Apply active state based on action
+            if (data.action === 'added' || data.action === 'updated') {
+                if (isHelpful) yesBtn.classList.add('active-yes');
+                else noBtn.classList.add('active-no');
+            }
+        })
+        .catch(() => {});
+}
+
+/* ── Rating Breakdown Bar Animation ── */
+document.addEventListener('DOMContentLoaded', function () {
+    const fills = document.querySelectorAll('.rating-bar-fill');
+    if (!fills.length) return;
+    // Use IntersectionObserver to animate on scroll into view
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.width = entry.target.dataset.width + '%';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.2 });
+    fills.forEach(el => observer.observe(el));
+});
+
+/* ── Image Zoom on Hover ── */
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('zoomContainer');
+    const img = document.getElementById('main-detail-image');
+    if (!container || !img) return;
+
+    container.addEventListener('mouseenter', () => { img.style.transform = 'scale(1.75)'; });
+    container.addEventListener('mousemove', e => {
+        const rect = container.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        img.style.transformOrigin = `${x}% ${y}%`;
+    });
+    container.addEventListener('mouseleave', () => {
+        img.style.transform = 'scale(1)';
+        img.style.transformOrigin = 'center center';
+    });
+
+    // Reset zoom when gallery thumbnail changes image
+    document.querySelectorAll('.thumbnail-item').forEach(thumb => {
+        thumb.addEventListener('click', () => {
+            img.style.transform = 'scale(1)';
+            img.style.transformOrigin = 'center center';
+        });
+    });
+});
+
+/* ── Reviews Anchor Link (activate tab & scroll) ── */
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.reviews-anchor-link').forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const reviewsTab = document.getElementById('reviews-tab');
+            if (reviewsTab) {
+                bootstrap.Tab.getOrCreateInstance(reviewsTab).show();
+                setTimeout(() => { reviewsTab.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+            }
+        });
+    });
+
+    // Auto-activate reviews tab if URL hash is #reviews or #reviews-pane
+    if (window.location.hash === '#reviews' || window.location.hash === '#reviews-pane') {
+        const reviewsTab = document.getElementById('reviews-tab');
+        if (reviewsTab) {
+            bootstrap.Tab.getOrCreateInstance(reviewsTab).show();
+            setTimeout(() => { reviewsTab.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 300);
+        }
+    }
+});
+
+/* ── Recently Viewed (localStorage) ── */
+(function () {
+    const KEY = 'eyetrack_recently_viewed';
+    const current = {
+        id: {{ product.id }},
+        name: "{{ product.name|escapejs }}",
+        price: "{{ product.price }}",
+        slug: "{{ product.slug|escapejs }}",
+        image: "{% if product.image %}{{ product.image.url }}{% endif %}",
+        category: "{{ product.category.name|escapejs }}"
+    };
+
+    // Save current product
+    try {
+        let viewed = JSON.parse(localStorage.getItem(KEY) || '[]');
+        viewed = viewed.filter(p => p.id !== current.id);
+        viewed.unshift(current);
+        viewed = viewed.slice(0, 10);
+        localStorage.setItem(KEY, JSON.stringify(viewed));
+    } catch (e) {}
+
+    // Render other recently viewed products (exclude current)
+    document.addEventListener('DOMContentLoaded', function () {
+        try {
+            let viewed = JSON.parse(localStorage.getItem(KEY) || '[]');
+            viewed = viewed.filter(p => p.id !== current.id).slice(0, 4);
+            if (viewed.length === 0) return;
+
+            const section = document.getElementById('recentlyViewedSection');
+            const grid = document.getElementById('recentlyViewedGrid');
+            if (!section || !grid) return;
+
+            grid.innerHTML = viewed.map(p => `
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="/product/${p.slug}/" class="rv-card">
+                        ${p.image
+                            ? `<img loading="lazy" decoding="async" src="${p.image}" class="rv-img" alt="${p.name}">`
+                            : `<div class="rv-img-placeholder"><i class="bi bi-image"></i></div>`}
+                        <div class="rv-body">
+                            <div class="rv-cat">${p.category}</div>
+                            <div class="rv-name">${p.name}</div>
+                            <div class="rv-price">&#8377; ${parseFloat(p.price).toLocaleString('en-IN')}</div>
+                        </div>
+                    </a>
+                </div>
+            `).join('');
+            section.style.display = 'block';
+        } catch (e) {}
+    });
+})();
+
+/* ── Firebase Analytics ── */
+document.addEventListener('DOMContentLoaded', () => {
+    const fb = window.EyetrackFirebase;
+    if (fb && fb.analytics && typeof fb.logEvent === 'function') {
+        fb.logEvent(fb.analytics, 'view_item', {
+            currency: "INR",
+            value: {{ product.price|default:0 }},
+            items: [{
+                item_id: "{{ product.id }}",
+                item_name: "{{ product.name|escapejs }}",
+                item_category: "{{ product.category.name|escapejs }}",
+                price: {{ product.price|default:0 }}
+            }]
+        });
+    }
+});
+</script>
 {% endblock %}

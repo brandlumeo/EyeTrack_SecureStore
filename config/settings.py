@@ -36,7 +36,9 @@ CSRF_TRUSTED_ORIGINS = [
 INSTALLED_APPS = [
     'store',
     'accounts',
-    'orders',
+    'orders.apps.OrdersConfig',
+    'admin_dashboard.apps.AdminDashboardConfig',
+    'support',
     'crispy_forms',
     'crispy_bootstrap5',
     'django_filters',
@@ -58,6 +60,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'core_middleware.DisableClientCacheMiddleware',
+    'core_middleware.CartCleanupMiddleware',
+    'config.middleware.SSLRedirectMiddleware',
+    'config.middleware.SecurityHeadersMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -73,6 +78,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'store.context_processors.cart_count',
+                'store.context_processors.wishlist_count',
+                'store.context_processors.categories',
+                'store.context_processors.firebase_config',
             ],
         },
     },
@@ -91,7 +99,7 @@ DATABASES = {
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
 
@@ -139,6 +147,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
+LOGIN_URL = '/accounts/login/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -151,6 +160,14 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool, default=True)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool, default=False)
 
+ADMINS = [
+    (config('ADMIN_NAME', default='Admin'), config('ADMIN_EMAIL', default='admin@eyetrack-tech.com'))
+]
+MANAGERS = ADMINS
+
+# Import SSL/HTTPS Security Settings
+from .security_settings import *
+
 if not DEBUG:
     SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', cast=bool, default=True)
     SESSION_COOKIE_SECURE = True
@@ -159,3 +176,25 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = config('SECURE_HSTS_INCLUDE_SUBDOMAINS', cast=bool, default=True)
     SECURE_HSTS_PRELOAD = config('SECURE_HSTS_PRELOAD', cast=bool, default=True)
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Razorpay Configuration
+RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID', default='rzp_test_placeholder')
+RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET', default='placeholder_secret')
+
+# Allow cross-origin popups for Firebase OAuth
+# Allow cross-origin popups for Firebase OAuth
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+
+# Firebase Settings
+FIREBASE_API_KEY = config('FIREBASE_API_KEY', default='')
+FIREBASE_AUTH_DOMAIN = config('FIREBASE_AUTH_DOMAIN', default='')
+FIREBASE_PROJECT_ID = config('FIREBASE_PROJECT_ID', default='')
+FIREBASE_STORAGE_BUCKET = config('FIREBASE_STORAGE_BUCKET', default='')
+FIREBASE_MESSAGING_SENDER_ID = config('FIREBASE_MESSAGING_SENDER_ID', default='')
+FIREBASE_APP_ID = config('FIREBASE_APP_ID', default='')
+FIREBASE_MEASUREMENT_ID = config('FIREBASE_MEASUREMENT_ID', default='')
+FIREBASE_VAPID_KEY = config('FIREBASE_VAPID_KEY', default='')
+
+# Google Identity Services Web Client ID
+# Get from: Firebase Console → Authentication → Sign-in method → Google → Web SDK configuration → Web client ID
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')

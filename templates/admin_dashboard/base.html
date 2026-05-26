@@ -1,0 +1,802 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }} | Admin Dashboard{% endblock %}
+
+{% block extra_head %}
+
+<style>
+    /* Premium Font Import */
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+    :root {
+        --bg-dark: #070c14;
+        --card-glass: rgba(14, 20, 32, 0.82);
+        --card-strong: rgba(18, 26, 42, 0.97);
+        --accent-gold: #f59e0b;
+        --accent-glow: rgba(245, 158, 11, 0.25);
+        --text-primary: #f1f5f9;
+        --text-secondary: #8899b0;
+        --border-subtle: rgba(255, 255, 255, 0.07);
+        --border-gold: rgba(245, 158, 11, 0.3);
+        --glass-blur: blur(20px);
+        --sidebar-w: 260px;
+    }
+
+    body {
+        background: var(--bg-dark) !important;
+        font-family: 'Inter', sans-serif;
+        color: var(--text-primary);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    .site-bg {
+        display: none !important;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .admin-title,
+    .stats-number {
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .admin-dashboard {
+        min-height: calc(100vh - 200px);
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Multi-orb ambient background */
+    .admin-dashboard::before {
+        content: '';
+        position: fixed;
+        top: -120px;
+        left: -80px;
+        width: 520px;
+        height: 520px;
+        background: radial-gradient(circle, rgba(245,158,11,0.13) 0%, transparent 70%);
+        z-index: -1;
+        border-radius: 50%;
+        pointer-events: none;
+        animation: orbFloat 12s ease-in-out infinite alternate;
+    }
+    .admin-dashboard::after {
+        content: '';
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 65%);
+        z-index: -1;
+        border-radius: 50%;
+        pointer-events: none;
+        animation: orbFloat 16s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes orbFloat {
+        from { transform: translate(0,0) scale(1); }
+        to   { transform: translate(30px, 20px) scale(1.08); }
+    }
+
+    .admin-sidebar {
+        background: linear-gradient(170deg, rgba(16,23,38,0.97) 0%, rgba(10,15,25,0.99) 100%);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border: 1px solid var(--border-subtle);
+        border-top: 1px solid rgba(245,158,11,0.22);
+        border-radius: 1.2rem;
+        padding: 0 0.75rem 1.5rem;
+        min-height: 100%;
+        max-height: calc(100vh - 4rem);
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-shadow: 0 20px 50px -15px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05);
+        position: sticky;
+        top: 2rem;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(245,158,11,0.25) transparent;
+    }
+    /* Sidebar identity header */
+    .sidebar-identity {
+        padding: 1.4rem 0.5rem 1rem;
+        margin-bottom: 0.25rem;
+        border-bottom: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.6rem;
+    }
+    .sidebar-avatar {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        background: linear-gradient(135deg,#f59e0b,#d97706);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        color: #0f172a;
+        box-shadow: 0 0 20px rgba(245,158,11,0.4);
+        font-weight: 800;
+    }
+    .sidebar-brand-name {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 0.92rem;
+        color: var(--text-primary);
+        letter-spacing: -0.01em;
+    }
+    .sidebar-role-badge {
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: rgba(245,158,11,0.12);
+        color: #f59e0b;
+        border: 1px solid rgba(245,158,11,0.25);
+        border-radius: 999px;
+        padding: 2px 10px;
+    }
+
+    .admin-sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .admin-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .admin-sidebar::-webkit-scrollbar-thumb {
+        background: rgba(251,191,36,0.3);
+        border-radius: 4px;
+    }
+
+    .admin-nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.72rem 0.9rem;
+        margin-bottom: 0.2rem;
+        border-radius: 0.7rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid transparent;
+        font-weight: 500;
+        font-size: 0.83rem;
+        white-space: nowrap;
+        width: 100%;
+        position: relative;
+    }
+
+    .nav-group-label {
+        font-size: 0.58rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.2);
+        padding: 1rem 0.9rem 0.25rem;
+        margin-bottom: 0;
+        user-select: none;
+    }
+
+    .admin-nav-link span {
+        flex: 1;
+        line-height: 1.2;
+    }
+
+    .admin-nav-link:hover {
+        background: rgba(245,158,11,0.07);
+        color: #e2e8f0;
+        transform: translateX(4px);
+        border-color: rgba(245,158,11,0.1);
+    }
+
+    .admin-nav-link.active {
+        background: linear-gradient(120deg, rgba(245,158,11,0.18) 0%, rgba(245,158,11,0.06) 100%);
+        border-color: rgba(245,158,11,0.35);
+        color: #fbbf24;
+        box-shadow: 0 2px 12px rgba(245,158,11,0.18), inset 0 0 0 1px rgba(245,158,11,0.1);
+    }
+    /* Left accent bar on active */
+    .admin-nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 20%;
+        height: 60%;
+        width: 3px;
+        background: #f59e0b;
+        border-radius: 0 3px 3px 0;
+        box-shadow: 0 0 8px rgba(245,158,11,0.6);
+    }
+
+    .admin-nav-link i {
+        width: 1.2rem;
+        text-align: center;
+        margin-right: 0.65rem;
+        /* Tighter margin for more text space */
+        font-size: 1.1rem;
+        transition: transform 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .admin-nav-link:hover i {
+        transform: scale(1.1);
+    }
+
+    .stats-card {
+        background: var(--card-glass);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border: 1px solid var(--border-subtle);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        height: 100%;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+    }
+
+    .stats-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+        pointer-events: none;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(251, 191, 36, 0.4);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow);
+        z-index: 2;
+    }
+
+    .stats-number {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        /* Changed to white for better contrast like design */
+        margin-bottom: 0.25rem;
+        line-height: 1.2;
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .stats-label {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+    }
+
+    .stats-trend {
+        font-size: 0.85rem;
+        margin-top: 0.75rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .trend-up {
+        color: #10b981;
+    }
+
+    .trend-down {
+        color: #ef4444;
+    }
+
+    .chart-container,
+    .admin-header {
+        background: linear-gradient(145deg, rgba(16,23,38,0.9) 0%, rgba(10,15,25,0.95) 100%);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        border: 1px solid var(--border-subtle);
+        border-radius: 1.2rem;
+        padding: 1.75rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 12px 35px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
+        position: relative;
+        overflow: hidden;
+    }
+    /* Subtle top shimmer line */
+    .chart-container::before, .admin-header::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 2rem; right: 2rem;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(245,158,11,0.25), transparent);
+        pointer-events: none;
+    }
+
+    .admin-content {
+        padding: 1rem 2rem 2rem;
+    }
+
+    .admin-title {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #fff 0%, #fbbf24 50%, #f8fafc 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.4rem;
+        letter-spacing: -0.025em;
+        line-height: 1.15;
+    }
+
+    .admin-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        font-weight: 400;
+    }
+
+    /* Premium Buttons */
+    .btn-premium-cta {
+        background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+        color: #0f172a;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        /* Sharper, more modern radius */
+        padding: 0.6rem 1.4rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-premium-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(251, 191, 36, 0.5);
+        color: #000;
+    }
+
+    .btn-outline-light {
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text-primary);
+        backdrop-filter: blur(4px);
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        padding: 0.6rem 1.4rem;
+    }
+
+    .btn-outline-light:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    /* Premium Red Danger Button */
+    .btn-soft-danger {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.85), rgba(220, 38, 38, 0.95)) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 110, 110, 0.5) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        border-radius: 8px !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.6rem 1.4rem;
+    }
+
+    .btn-soft-danger:hover {
+        background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+        color: #ffffff !important;
+        border-color: #ff8f8f !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+    }
+
+    .btn-soft-danger:active {
+        transform: translateY(0);
+    }
+
+    /* Form Elements */
+    .form-control,
+    .form-select {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid var(--border-subtle);
+        color: #fff !important;
+        /* Force white text */
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background: rgba(15, 23, 42, 0.8);
+        border-color: var(--accent-gold);
+        box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
+        color: #fff !important;
+    }
+
+    .bg-dark-soft {
+        background-color: rgba(30, 41, 59, 0.4) !important;
+    }
+
+    /* Label & Help Text Visibility */
+    .text-light-50 {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    .text-light-70 {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    /* Tables */
+    .table-admin {
+        background: transparent;
+        margin-bottom: 0;
+        color: var(--text-primary);
+    }
+
+    .table-admin th {
+        background: rgba(15, 23, 42, 0.4);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-secondary);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        padding: 1.25rem 1rem;
+    }
+
+    .table-admin td {
+        padding: 1.25rem 1rem;
+        border-bottom: 1px solid var(--border-subtle);
+        vertical-align: middle;
+        background: transparent;
+        color: var(--text-primary);
+    }
+
+    .table-admin tbody tr:hover td {
+        background: rgba(245,158,11,0.06) !important;
+        color: #f1f5f9;
+    }
+    .table-admin tbody tr:hover {
+        box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+    }
+    .table-admin tbody tr {
+        transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+    /* Zebra tint */
+    .table-admin tbody tr:nth-child(even) td {
+        background: rgba(255,255,255,0.015);
+    }
+
+    /* Badges */
+    .badge-status {
+        padding: 0.35rem 0.85rem;
+        border-radius: 2rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: inline-block;
+    }
+
+    .status-pending,
+    .status-unpaid {
+        background: rgba(251, 191, 36, 0.15);
+        color: #fbbf24;
+        border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+
+    .status-confirmed,
+    .status-paid {
+        background: rgba(59, 130, 246, 0.15);
+        color: #60a5fa;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .status-processing {
+        background: rgba(168, 85, 247, 0.15);
+        color: #c084fc;
+        border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .status-shipped {
+        background: rgba(34, 197, 94, 0.15);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .status-delivered {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-cancelled,
+    .status-failed {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Pagination Links */
+    .pagination .page-link {
+        background: var(--card-strong);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        margin: 0 2px;
+        border-radius: 0.25rem;
+        transition: all 0.2s ease;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: var(--accent-gold);
+        border-color: var(--accent-gold);
+        color: #0f172a;
+        font-weight: 600;
+    }
+
+    .pagination .page-link:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        .admin-content {
+            padding: 1rem;
+        }
+
+        .stats-number {
+            font-size: 2.25rem;
+        }
+
+        .admin-title {
+            font-size: 1.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid admin-dashboard mt-3">
+    <div class="row px-lg-3 g-0">
+        <!-- Sidebar -->
+        <div class="col-xl-2 col-lg-3 col-md-4 mb-4">
+            <div class="admin-sidebar">
+                <!-- Identity Header -->
+                <div class="sidebar-identity">
+                    <div class="sidebar-avatar">
+                        {{ request.user.username|first|upper }}
+                    </div>
+                    <div class="text-center">
+                        <div class="sidebar-brand-name">{{ request.user.username|title }}</div>
+                        <span class="sidebar-role-badge">{% if request.user.is_superuser %}Super Admin{% else %}Staff{% endif %}</span>
+                    </div>
+                </div>
+
+                <nav class="admin-nav">
+                    <!-- Core -->
+                    <div class="nav-group-label">Core</div>
+                    <a href="{% url 'admin_dashboard:dashboard' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                        <i class="bi bi-grid-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:analytics' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'analytics' %}active{% endif %}">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Analytics</span>
+                    </a>
+
+                    <!-- Catalogue -->
+                    <div class="nav-group-label">Catalogue</div>
+                    <a href="{% url 'admin_dashboard:products_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'products_overview' %}active{% endif %}">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Products</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:categories_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'categories_overview' or request.resolver_match.url_name == 'category_add' or request.resolver_match.url_name == 'category_edit' %}active{% endif %}">
+                        <i class="bi bi-tags"></i>
+                        <span>Categories</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:coupons_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'coupons_overview' or request.resolver_match.url_name == 'coupon_add' or request.resolver_match.url_name == 'coupon_edit' %}active{% endif %}">
+                        <i class="bi bi-ticket-perforated"></i>
+                        <span>Coupons</span>
+                    </a>
+
+                    <!-- Operations -->
+                    <div class="nav-group-label">Operations</div>
+                    <a href="{% url 'admin_dashboard:orders_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'orders_overview' or request.resolver_match.url_name == 'order_detail' %}active{% endif %}">
+                        <i class="bi bi-bag-check"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:payments_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'payments_overview' %}active{% endif %}">
+                        <i class="bi bi-credit-card"></i>
+                        <span>Payments</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:shipments_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'shipments_overview' %}active{% endif %}">
+                        <i class="bi bi-truck"></i>
+                        <span>Shipments</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:installations_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'installations_overview' %}active{% endif %}">
+                        <i class="bi bi-shield-check"></i>
+                        <span>Installations</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:installation_photos' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'installation_photos' or request.resolver_match.url_name == 'installation_photos_booking' %}active{% endif %}">
+                        <i class="bi bi-images"></i>
+                        <span>Install Photos</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:invoices_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'invoices_overview' or request.resolver_match.url_name == 'invoice_detail' %}active{% endif %}">
+                        <i class="bi bi-receipt"></i>
+                        <span>Invoices</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:return_requests_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'return_requests_overview' or request.resolver_match.url_name == 'return_request_detail' %}active{% endif %}">
+                        <i class="bi bi-arrow-left-right"></i>
+                        <span>Returns</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:delivery_board' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'delivery_board' %}active{% endif %}">
+                        <i class="bi bi-kanban" style="color:#a78bfa;"></i>
+                        <span>Delivery Board</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:delivery_agents' %}" class="admin-nav-link {% if 'delivery_agent' in request.resolver_match.url_name %}active{% endif %}">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Delivery Agents</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:technicians_overview' %}" class="admin-nav-link {% if 'technician' in request.resolver_match.url_name %}active{% endif %}">
+                        <i class="bi bi-person-workspace" style="color: #fbbf24;"></i>
+                        <span>Field Technicians</span>
+                    </a>
+
+                    <!-- Customers -->
+                    <div class="nav-group-label">Customers</div>
+                    <a href="{% url 'admin_dashboard:users_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'users_overview' %}active{% endif %}">
+                        <i class="bi bi-people"></i>
+                        <span>Users</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:profiles_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'profiles_overview' or request.resolver_match.url_name == 'profile_detail' %}active{% endif %}">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <span>Profiles</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:addresses_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'addresses_overview' %}active{% endif %}">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Addresses</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:notifications_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'notifications_overview' %}active{% endif %}">
+                        <i class="bi bi-bell"></i>
+                        <span>Notifications</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:reviews_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'reviews_overview' %}active{% endif %}">
+                        <i class="bi bi-star"></i>
+                        <span>Reviews</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:review_media' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'review_media' %}active{% endif %}">
+                        <i class="bi bi-collection"></i>
+                        <span>Review Media</span>
+                    </a>
+
+                    <!-- Configuration -->
+                    <div class="nav-group-label">Configuration</div>
+                    <a href="{% url 'admin_dashboard:serviceable_areas' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'serviceable_areas' or request.resolver_match.url_name == 'serviceable_area_add' or request.resolver_match.url_name == 'serviceable_area_edit' %}active{% endif %}">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Service Areas</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:faqs_overview' %}" class="admin-nav-link {% if 'faq' in request.resolver_match.url_name %}active{% endif %}">
+                        <i class="bi bi-question-circle"></i>
+                        <span>FAQs</span>
+                    </a>
+
+                    <hr class="my-3" style="border-color: var(--border-subtle);">
+
+                    <a href="{% url 'admin_dashboard:trash_overview' %}" class="admin-nav-link text-danger {% if request.resolver_match.url_name == 'trash_overview' %}active{% endif %}">
+                        <i class="bi bi-trash"></i>
+                        <span>Trash / Recycle Bin</span>
+                    </a>
+
+                    <hr class="my-3" style="border-color: var(--stroke-soft);">
+
+                    <a href="/admin/" class="admin-nav-link" target="_blank">
+                        <i class="bi bi-gear"></i>
+                        <span>Django Admin</span>
+                    </a>
+                    <a href="{% url 'product_list' %}" class="admin-nav-link">
+                        <i class="bi bi-house"></i>
+                        <span>Store Front</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-xl-10 col-lg-9 col-md-8">
+            <div class="admin-content">
+                {% block admin_content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hide Storefront Assistance and Footer -->
+{% block pre_footer %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block extra_js %}{% endblock %}
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inject Custom SweetAlert function globally for forms
+    document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
+        let originalOnsubmit = form.getAttribute('onsubmit');
+        let match = originalOnsubmit.match(/confirm\('([^']+)'\)/) || originalOnsubmit.match(/confirm\("([^"]+)"\)/);
+        if (match) {
+            let message = match[1];
+            form.removeAttribute('onsubmit');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Confirm Action',
+                    text: message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-trash"></i> Yes, Proceed',
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        popup: 'swal-glass-popup',
+                        title: 'swal-glass-title',
+                        confirmButton: 'swal-btn-confirm',
+                        cancelButton: 'swal-btn-cancel'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                })
+            });
+        }
+    });
+
+    // Inject Custom SweetAlert globally for links
+    document.querySelectorAll('a[onclick*="confirm"]').forEach(link => {
+        let originalOnclick = link.getAttribute('onclick');
+        let match = originalOnclick.match(/confirm\('([^']+)'\)/) || originalOnclick.match(/confirm\("([^"]+)"\)/);
+        if (match) {
+            let message = match[1];
+            link.removeAttribute('onclick');
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                let targetUrl = this.href;
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-exclamation-triangle"></i> Yes, Proceed',
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        popup: 'swal-glass-popup',
+                        title: 'swal-glass-title',
+                        confirmButton: 'swal-btn-confirm',
+                        cancelButton: 'swal-btn-cancel'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = targetUrl;
+                    }
+                })
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

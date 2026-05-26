@@ -1,0 +1,478 @@
+{% extends 'admin_dashboard/base_premium.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header floating">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">Premium Dashboard</h1>
+            <p class="admin-subtitle">Advanced analytics and insights for your business empire</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="d-flex gap-3 justify-content-md-end mt-3 mt-md-0">
+                <select class="form-select form-select-sm" style="min-width: 150px;">
+                    <option>Last 30 days</option>
+                    <option>Last 7 days</option>
+                    <option>Last 90 days</option>
+                    <option>Custom Range</option>
+                </select>
+                <button class="btn btn-premium-cta btn-sm glowing">
+                    <i class="bi bi-download me-1"></i> Export Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Premium Stats Cards -->
+<div class="row g-4 mb-5">
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card floating" style="animation-delay: 0.1s;">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div class="stats-number">{{ total_orders }}</div>
+                    <div class="stats-label">Total Orders</div>
+                    <div class="stats-trend trend-up">
+                        <i class="bi bi-arrow-up-circle-fill"></i> 
+                        <span>{{ revenue_7_days|default:0 }} this week</span>
+                    </div>
+                </div>
+                <div class="floating" style="font-size: 4rem; opacity: 0.2; color: var(--premium-gold); animation-delay: 0.2s;">
+                    <i class="bi bi-cart-check-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card floating" style="animation-delay: 0.2s;">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div class="stats-number">₹{{ total_revenue|floatformat:0 }}</div>
+                    <div class="stats-label">Total Revenue</div>
+                    <div class="stats-trend trend-up">
+                        <i class="bi bi-graph-up-arrow"></i> 
+                        <span>+{{ revenue_growth_7_days|default:0 }}%</span>
+                    </div>
+                </div>
+                <div class="floating" style="font-size: 4rem; opacity: 0.2; color: var(--premium-gold); animation-delay: 0.3s;">
+                    <i class="bi bi-currency-rupee"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card floating" style="animation-delay: 0.3s;">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div class="stats-number">{{ total_products }}</div>
+                    <div class="stats-label">Total Products</div>
+                    <div class="stats-trend {% if product_performance_good %}trend-up{% else %}trend-down{% endif %}">
+                        <i class="bi bi-{% if product_performance_good %}arrow-up-circle-fill{% else %}arrow-down-circle-fill{% endif %}"></i> 
+                        <span>{{ active_products }} active</span>
+                    </div>
+                </div>
+                <div class="floating" style="font-size: 4rem; opacity: 0.2; color: var(--premium-gold); animation-delay: 0.4s;">
+                    <i class="bi bi-box-seam-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card floating" style="animation-delay: 0.4s;">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div class="stats-number">{{ total_users }}</div>
+                    <div class="stats-label">Total Users</div>
+                    <div class="stats-trend trend-up">
+                        <i class="bi bi-people-fill"></i> 
+                        <span>{{ new_users_30_days|default:0 }} new</span>
+                    </div>
+                </div>
+                <div class="floating" style="font-size: 4rem; opacity: 0.2; color: var(--premium-gold); animation-delay: 0.5s;">
+                    <i class="bi bi-person-badge-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Premium Charts Section -->
+<div class="row g-4 mb-5">
+    <div class="col-lg-8">
+        <div class="chart-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0" style="color: var(--premium-gold); font-weight: 700;">
+                    <i class="bi bi-graph-up-arrow me-2"></i>Revenue Analytics
+                </h5>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-light btn-sm">Week</button>
+                    <button type="button" class="btn btn-premium-cta btn-sm">Month</button>
+                    <button type="button" class="btn btn-outline-light btn-sm">Year</button>
+                </div>
+            </div>
+            <div style="position: relative; height: 350px;">
+                <canvas id="monthlySalesChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="chart-container">
+            <h5 class="mb-4" style="color: var(--premium-gold); font-weight: 700;">
+                <i class="bi bi-pie-chart-fill me-2"></i>Order Distribution
+            </h5>
+            <div style="position: relative; height: 350px;">
+                <canvas id="orderStatusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Premium Recent Orders Table -->
+<div class="chart-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="mb-0" style="color: var(--premium-gold); font-weight: 700;">
+            <i class="bi bi-receipt-cutoff me-2"></i>Recent Transactions
+        </h5>
+        <div class="d-flex gap-2">
+            <div class="input-group" style="max-width: 250px;">
+                <input type="text" class="form-control form-control-sm" placeholder="Search orders...">
+                <button class="btn btn-outline-light btn-sm" type="button">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+            <a href="{% url 'admin_dashboard:orders_overview' %}" class="btn btn-premium-cta btn-sm">
+                View All <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-admin">
+            <thead>
+                <tr>
+                    <th><i class="bi bi-hash me-1"></i>Order ID</th>
+                    <th><i class="bi bi-person me-1"></i>Customer</th>
+                    <th><i class="bi bi-currency-rupee me-1"></i>Amount</th>
+                    <th><i class="bi bi-info-circle me-1"></i>Status</th>
+                    <th><i class="bi bi-calendar me-1"></i>Date</th>
+                    <th><i class="bi bi-gear me-1"></i>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders %}
+                <tr>
+                    <td>
+                        <span class="badge bg-gradient" style="background: var(--gold-gradient); color: #000;">
+                            {{ order.formatted_id }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                                {{ order.user.username|slice:":2"|upper }}
+                            </div>
+                            <div>
+                                <div class="fw-semibold">{{ order.user.get_full_name|default:order.user.username }}</div>
+                                <small class="text-muted">{{ order.user.email }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="fw-bold" style="color: var(--premium-gold);">₹{{ order.total }}</span>
+                    </td>
+                    <td>
+                        <span class="badge bg-{{ order.order_status|default:'secondary' }} px-3 py-2">
+                            <i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i>
+                            {{ order.order_status|title|default:'Unknown' }}
+                        </span>
+                    </td>
+                    <td>
+                        <div>
+                            <div>{{ order.created_at|date:"M d, Y" }}</div>
+                            <small class="text-muted">{{ order.created_at|time:"g:i A" }}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-light btn-sm" onclick="viewOrder({{ order.id }})">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-outline-light btn-sm" onclick="editOrder({{ order.id }})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-secondary py-4">
+                        <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                        <div class="mt-2">No orders found</div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Quick Actions Panel -->
+<div class="row g-4 mt-2">
+    <div class="col-md-4">
+        <div class="chart-container">
+            <h6 class="mb-3" style="color: var(--premium-gold); font-weight: 600;">
+                <i class="bi bi-lightning-fill me-2"></i>Quick Actions
+            </h6>
+            <div class="d-grid gap-2">
+                <a href="{% url 'admin_dashboard:product_add' %}" class="btn btn-premium-cta text-start">
+                    <i class="bi bi-plus-circle me-2"></i>Add New Product
+                </a>
+                <button class="btn btn-outline-light">
+                    <i class="bi bi-envelope me-2"></i>Send Newsletter
+                </button>
+                <button class="btn btn-outline-light">
+                    <i class="bi bi-file-earmark-text me-2"></i>Generate Report
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="chart-container">
+            <h6 class="mb-3" style="color: var(--premium-gold); font-weight: 600;">
+                <i class="bi bi-bell-fill me-2"></i>System Alerts
+            </h6>
+            <div class="alert alert-warning border-0" style="background: rgba(255, 193, 7, 0.1); color: #ffc107;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <small>3 products are low on stock</small>
+            </div>
+            <div class="alert alert-info border-0" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                <i class="bi bi-info-circle-fill me-2"></i>
+                <small>New user registration spike detected</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="chart-container">
+            <h6 class="mb-3" style="color: var(--premium-gold); font-weight: 600;">
+                <i class="bi bi-graph-up me-2"></i>Performance Metrics
+            </h6>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <small>CPU Usage</small>
+                    <small>45%</small>
+                </div>
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar" role="progressbar" style="width: 45%; background: var(--gold-gradient);"></div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <small>Memory</small>
+                    <small>62%</small>
+                </div>
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar" role="progressbar" style="width: 62%; background: var(--gold-gradient);"></div>
+                </div>
+            </div>
+            <div>
+                <div class="d-flex justify-content-between mb-1">
+                    <small>Storage</small>
+                    <small>38%</small>
+                </div>
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar" role="progressbar" style="width: 38%; background: var(--gold-gradient);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Premium Chart Configuration
+Chart.defaults.color = '#ffffff';
+Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+// Monthly Sales Chart with Premium Styling
+const monthlySalesCtx = document.getElementById('monthlySalesChart');
+if (monthlySalesCtx) {
+    const gradient = monthlySalesCtx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)');
+    gradient.addColorStop(1, 'rgba(255, 215, 0, 0.01)');
+
+    new Chart(monthlySalesCtx, {
+        type: 'line',
+        data: {
+            labels: [{% for sale in monthly_sales %}'{{ sale.month }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Revenue (₹)',
+                data: [{% for sale in monthly_sales %}{{ sale.revenue }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                borderColor: '#FFD700',
+                backgroundColor: gradient,
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#FFD700',
+                pointBorderColor: '#000000',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#FFD700',
+                    bodyColor: '#ffffff',
+                    borderColor: '#FFD700',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return 'Revenue: ₹' + context.parsed.y.toLocaleString();
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        font: {
+                            size: 11
+                        },
+                        callback: function(value) {
+                            return '₹' + (value/1000) + 'k';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        font: {
+                            size: 11
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Order Status Chart with Premium Styling
+const orderStatusCtx = document.getElementById('orderStatusChart');
+if (orderStatusCtx) {
+    new Chart(orderStatusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: [{% for status, count in order_status_data.items %}'{{ status|title }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                data: [{% for status, count in order_status_data.items %}{{ count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                backgroundColor: [
+                    '#FFD700', // pending - gold
+                    '#FFA500', // confirmed - orange
+                    '#C0C0C0', // processing - silver
+                    '#10b981', // shipped - green
+                    '#22c55e', // delivered - emerald
+                    '#ef4444'  // cancelled - red
+                ],
+                borderWidth: 3,
+                borderColor: '#1a1a2e',
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#ffffff',
+                        padding: 15,
+                        font: {
+                            size: 11
+                        },
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#FFD700',
+                    bodyColor: '#ffffff',
+                    borderColor: '#FFD700',
+                    borderWidth: 1,
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            },
+            cutout: '65%'
+        }
+    });
+}
+
+// Premium JavaScript Functions
+function viewOrder(orderId) {
+    window.open('/admin-dashboard/orders/' + orderId + '/', '_self');
+}
+
+function editOrder(orderId) {
+    window.open('/admin-dashboard/orders/' + orderId + '/', '_self');
+}
+
+// Add subtle animations on scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.stats-card, .chart-container').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'all 0.6s ease-out';
+    observer.observe(el);
+});
+</script>
+{% endblock %}

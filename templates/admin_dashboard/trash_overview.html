@@ -1,0 +1,159 @@
+{% extends "admin_dashboard/base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block admin_content %}
+<!-- Admin Header -->
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-9">
+            <h1 class="admin-title"><i class="bi bi-trash text-danger me-2"></i>{{ page_title }}</h1>
+            <p class="admin-subtitle">Manage softly deleted items. You can restore them to the active site or permanently delete them.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Trashed Categories -->
+    <div class="col-12 mb-4">
+        <div class="chart-container">
+            <h5 class="mb-3" style="color: var(--premium-gold); font-weight: 600;">Deleted Categories</h5>
+            <div class="table-responsive">
+                <table class="table table-dark table-admin mb-0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Deleted At</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in trashed_categories %}
+                        <tr>
+                            <td><i class="{{ item.icon }} me-2 text-secondary"></i><span class="fw-bold">{{ item.name }}</span></td>
+                            <td>{{ item.deleted_at|date:"M d, Y H:i" }}</td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{% url 'admin_dashboard:trash_action' 'category' item.id 'restore' %}" class="btn btn-outline-light btn-sm" onclick="return confirm('Restore this category? All its associated products will also be restored.');">
+                                        <i class="bi bi-arrow-counterclockwise me-2"></i> Restore
+                                    </a>
+                                    <a href="{% url 'admin_dashboard:trash_action' 'category' item.id 'hard_delete' %}" class="btn btn-soft-danger btn-sm" onclick="return confirm('PERMANENTLY delete this category? This cannot be undone!');">
+                                        <i class="bi bi-x-octagon me-2"></i> Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-secondary">No deleted categories.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trashed Products -->
+    <div class="col-12 mb-4">
+        <div class="chart-container">
+            <h5 class="mb-3" style="color: var(--premium-gold); font-weight: 600;">Deleted Products</h5>
+            <div class="table-responsive">
+                <table class="table table-dark table-admin mb-0">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Deleted At</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in trashed_products %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if item.image %}
+                                        <img loading="lazy" decoding="async" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 0.5rem; margin-right: 0.75rem;">
+                                    {% else %}
+                                        <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 0.5rem; margin-right: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-box text-secondary" style="font-size: 1rem;"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div style="min-width: 0; flex-grow: 1;">
+                                        <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;" title="{{ item.name }}">
+                                            {{ item.name }}
+                                        </div>
+                                        <small class="text-secondary d-block">Stock: {{ item.stock }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-secondary">{{ item.category.name }}</span></td>
+                            <td>₹{{ item.price|floatformat:0 }}</td>
+                            <td>{{ item.deleted_at|date:"M d, Y H:i" }}</td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{% url 'admin_dashboard:trash_action' 'product' item.id 'restore' %}" class="btn btn-outline-light btn-sm" onclick="return confirm('Restore this product?');">
+                                        <i class="bi bi-arrow-counterclockwise me-2"></i> Restore
+                                    </a>
+                                    <a href="{% url 'admin_dashboard:trash_action' 'product' item.id 'hard_delete' %}" class="btn btn-soft-danger btn-sm" onclick="return confirm('PERMANENTLY delete this product? This cannot be undone!');">
+                                        <i class="bi bi-x-octagon me-2"></i> Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-secondary">No deleted products.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trashed Coupons -->
+    <div class="col-12 mb-4">
+        <div class="chart-container">
+            <h5 class="mb-3" style="color: var(--premium-gold); font-weight: 600;">Deleted Coupons</h5>
+            <div class="table-responsive">
+                <table class="table table-dark table-admin mb-0">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Discount</th>
+                            <th>Deleted At</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in trashed_coupons %}
+                        <tr>
+                            <td><span class="badge" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">{{ item.code }}</span></td>
+                            <td>{{ item.discount_percentage }}%</td>
+                            <td>{{ item.deleted_at|date:"M d, Y H:i" }}</td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{% url 'admin_dashboard:trash_action' 'coupon' item.id 'restore' %}" class="btn btn-outline-light btn-sm" onclick="return confirm('Restore this coupon?');">
+                                        <i class="bi bi-arrow-counterclockwise me-2"></i> Restore
+                                    </a>
+                                    <a href="{% url 'admin_dashboard:trash_action' 'coupon' item.id 'hard_delete' %}" class="btn btn-soft-danger btn-sm" onclick="return confirm('PERMANENTLY delete this coupon? This cannot be undone!');">
+                                        <i class="bi bi-x-octagon me-2"></i> Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-secondary">No deleted coupons.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

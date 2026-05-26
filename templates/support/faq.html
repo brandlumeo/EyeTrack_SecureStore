@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Frequently Asked Questions | EyeTrack Solutions{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ── Hero Search Box ── */
+    .premium-search-box {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .premium-search-box input {
+        background: rgba(11, 18, 32, 0.6) !important;
+        border: 1px solid rgba(245, 158, 11, 0.2) !important;
+        border-radius: 30px;
+        padding: 1rem 1.5rem 1rem 3.5rem;
+        color: #fff !important;
+        font-size: 1.1rem;
+        backdrop-filter: blur(12px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+    .premium-search-box input:focus {
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 0 0.25rem rgba(245, 158, 11, 0.25), 0 8px 32px rgba(245, 158, 11, 0.1);
+        background: rgba(11, 18, 32, 0.8) !important;
+        outline: none;
+    }
+    .premium-search-box input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+    .premium-search-box i {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #f59e0b;
+        font-size: 1.2rem;
+        z-index: 10;
+    }
+
+    /* ── Premium Accordion Styles ── */
+    .faq-category-title {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid rgba(245, 158, 11, 0.15);
+    }
+    .faq-category-title i {
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.1);
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 1.2rem;
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .premium-accordion .accordion-item {
+        background: rgba(11, 18, 32, 0.5);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px !important;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    .premium-accordion .accordion-item:hover {
+        border-color: rgba(245, 158, 11, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .premium-accordion .accordion-button {
+        background: transparent !important;
+        color: #fff !important;
+        font-weight: 600;
+        font-size: 1.05rem;
+        padding: 1.25rem 1.5rem;
+        box-shadow: none !important;
+        gap: 1rem;
+    }
+    .premium-accordion .accordion-button:not(.collapsed) {
+        color: #f59e0b !important;
+        background: rgba(245, 158, 11, 0.05) !important;
+        border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+    }
+    
+    /* Custom Indicator */
+    .premium-accordion .accordion-button::after {
+        content: '\F415'; /* bi-plus */
+        font-family: 'bootstrap-icons';
+        background-image: none;
+        font-size: 1.2rem;
+        transition: transform 0.3s ease, color 0.3s ease;
+        color: rgba(255, 255, 255, 0.5);
+    }
+    .premium-accordion .accordion-button:not(.collapsed)::after {
+        content: '\F2E1'; /* bi-dash */
+        transform: rotate(180deg);
+        color: #f59e0b;
+    }
+
+    .premium-accordion .accordion-body {
+        color: rgba(255, 255, 255, 0.75);
+        line-height: 1.7;
+        padding: 1.5rem;
+        font-size: 0.95rem;
+    }
+    
+    /* Category Section Spacing */
+    .category-section {
+        margin-bottom: 3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- JSON-LD Structured Data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for category in faq_categories %}
+      {% for faq in category.faqs.all %}
+      {
+        "@type": "Question",
+        "name": "{{ faq.question|escapejs }}",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "{{ faq.answer|striptags|escapejs }}"
+        }
+      }{% if not forloop.last or not forloop.parentloop.last %},{% endif %}
+      {% endfor %}
+    {% endfor %}
+  ]
+}
+</script>
+
+<div class="faq-page pb-5">
+    <!-- Premium Hero Section -->
+    <section class="hero-premium page-section text-center">
+        <div class="container">
+            <p class="eyebrow mb-2">Support Center</p>
+            <h1 class="display-title mb-3">How can we help you?</h1>
+            <p class="lead-copy mb-5 mx-auto" style="max-width: 600px;">Find instant answers to common questions regarding our hardware, shipping processes, and professional installation services.</p>
+            
+            <div class="premium-search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" id="faqSearch" class="form-control" placeholder="Search for questions or keywords...">
+            </div>
+        </div>
+    </section>
+
+    <div class="container" style="max-width: 900px;">
+        {% for category in faq_categories %}
+        <div class="category-section" id="category-{{ category.id }}">
+            <h3 class="faq-category-title">
+                <i class="bi {{ category.icon|default:'bi-grid' }}"></i>
+                {{ category.name }}
+            </h3>
+            
+            <div class="accordion premium-accordion" id="accordion-{{ category.id }}">
+                {% for faq in category.faqs.all %}
+                <div class="accordion-item faq-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-{{ faq.id }}">
+                            {{ faq.question }}
+                        </button>
+                    </h2>
+                    <div id="faq-{{ faq.id }}" class="accordion-collapse collapse" data-bs-parent="#accordion-{{ category.id }}">
+                        <div class="accordion-body">
+                            {{ faq.answer|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        <!-- Premium Contact CTA -->
+        <section class="glass-card p-4 p-md-5 service-cta mt-5">
+            <div class="row g-3 align-items-center">
+                <div class="col-lg-8 text-center text-lg-start">
+                    <p class="eyebrow mb-2">Still Need Help?</p>
+                    <h3 class="h2 mb-2">Our support engineers are ready.</h3>
+                    <p class="text-secondary mb-0">If you couldn't find your answer here, reach out to our dedicated support team for personalized assistance.</p>
+                </div>
+                <div class="col-lg-4 text-center text-lg-end d-grid gap-2">
+                    <a href="mailto:support@eyetrack-solutions.com" class="btn btn-premium-cta btn-lg"><i class="bi bi-envelope-fill me-2"></i>Email Support</a>
+                    <a href="#" class="btn btn-outline-light"><i class="bi bi-chat-dots me-2"></i>Live Chat</a>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('faqSearch');
+        if (!searchInput) return;
+
+        searchInput.addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase().trim();
+            const faqItems = document.querySelectorAll('.faq-item');
+            const categories = document.querySelectorAll('.category-section');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.accordion-button').textContent.toLowerCase();
+                const answer = item.querySelector('.accordion-body').textContent.toLowerCase();
+                if (question.includes(term) || answer.includes(term)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            categories.forEach(cat => {
+                const visibleItems = cat.querySelectorAll('.faq-item[style="display: block;"]');
+                if (visibleItems.length === 0 && term !== '') {
+                    cat.style.display = 'none';
+                } else {
+                    cat.style.display = 'block';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

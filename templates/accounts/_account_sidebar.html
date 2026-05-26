@@ -1,0 +1,39 @@
+<aside class="glass-card p-3 p-md-4 account-sidebar">
+    <div class="account-sidebar-head">
+        {% if account_profile.profile_picture %}
+            <img loading="lazy" decoding="async" src="{{ account_profile.profile_picture.url }}" alt="{{ request.user.get_full_name|default:request.user.username }}" class="account-avatar">
+        {% else %}
+            <div class="account-avatar account-avatar-fallback">{{ request.user.first_name|default:request.user.username|slice:":1"|upper }}</div>
+        {% endif %}
+        <div class="account-sidebar-meta">
+            <h5 class="mb-0 fw-bold tracking-tight" style="color:#fff; font-size:1.05rem; letter-spacing:-0.01em;">{{ request.user.get_full_name|default:request.user.username }}</h5>
+            <div class="d-flex align-items-center gap-2 mt-1">
+                <i class="bi bi-envelope-at" style="color:#f59e0b; opacity:0.8; font-size:0.82rem;"></i>
+                <p class="mb-0 small fw-medium" style="color:rgba(209,213,219,0.85); letter-spacing:0.2px; overflow-wrap:anywhere; word-break:break-word;">{{ request.user.email }}</p>
+            </div>
+        </div>
+    </div>
+    <div style="height:1px; background:linear-gradient(90deg, rgba(245,158,11,0.3), rgba(245,158,11,0.05), transparent); margin-bottom:0.85rem; border-radius:1px;"></div>
+    <div class="account-verify-badge {% if account_profile.phone_verified %}verified{% else %}pending{% endif %}">
+        <i class="bi {% if account_profile.phone_verified %}bi-phone-vibrate{% else %}bi-shield-exclamation{% endif %}"></i>
+        <span>{% if account_profile.phone_verified %}Mobile verified{% else %}Mobile Verification pending{% endif %}</span>
+    </div>
+    <div class="account-verify-badge {% if account_profile.email_verified %}verified{% else %}pending{% endif %}">
+        <i class="bi {% if account_profile.email_verified %}bi-patch-check{% else %}bi-envelope-exclamation{% endif %}"></i>
+        <span>{% if account_profile.email_verified %}Email verified{% else %}Email Verification pending{% endif %}</span>
+    </div>
+    <nav class="account-nav">
+        <a href="{% url 'account_dashboard' %}" class="account-nav-link {% if request.resolver_match.url_name == 'account_dashboard' %}active{% endif %}"><i class="bi bi-grid"></i><span>Dashboard</span></a>
+        <a href="{% url 'order_history' %}" class="account-nav-link {% if request.resolver_match.url_name == 'order_history' or request.resolver_match.url_name == 'order_tracking' or request.resolver_match.url_name == 'order_invoice' %}active{% endif %}"><i class="bi bi-bag-check"></i><span>My Orders</span></a>
+        <a href="{% url 'wishlist_page' %}" class="account-nav-link {% if request.resolver_match.url_name == 'wishlist_page' %}active{% endif %}"><i class="bi bi-heart"></i><span>Wishlist</span></a>
+        <a href="{% url 'address_list' %}" class="account-nav-link {% if request.resolver_match.url_name == 'address_list' or request.resolver_match.url_name == 'address_add' or request.resolver_match.url_name == 'address_edit' %}active{% endif %}"><i class="bi bi-geo-alt"></i><span>Saved Addresses</span></a>
+        <a href="{% url 'profile' %}" class="account-nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"><i class="bi bi-person-gear"></i><span>Account Settings</span></a>
+        <div class="account-nav-divider" aria-hidden="true"></div>
+        <form action="{% url 'logout' %}" method="post" class="account-nav-form">
+            {% csrf_token %}
+            <button type="submit" class="account-nav-link account-nav-button account-nav-link-danger">
+                <i class="bi bi-box-arrow-right"></i><span>Logout</span>
+            </button>
+        </form>
+    </nav>
+</aside>

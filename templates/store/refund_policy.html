@@ -2,33 +2,47 @@
 {% block title %}Refund Policy | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Understand refund, cancellation, and support rules for Eyetrack Solutions orders and services.{% endblock %}
 {% block content %}
-<section class="glass-card p-4 p-md-5 policy-page">
-    <p class="eyebrow mb-2">Refund Policy</p>
-    <div class="policy-intro">
-        <h1 class="h3 mb-2">Refund and cancellation rules</h1>
-        <p class="text-secondary mb-0">Refund and cancellation requests are reviewed against order status, product condition, and support verification.</p>
+<div class="policy-page-hero d-flex flex-column align-items-center justify-content-center">
+    <div class="container text-center">
+        <span class="badge-premium mb-3">Refund Policy</span>
+        <h1 class="display-5 fw-bold text-primary-gradient mb-3">Refund & Cancellation Rules</h1>
+        <p class="text-secondary fs-5 mx-auto" style="max-width: 600px;">
+            Refund and cancellation requests are reviewed against order status, product condition, and support verification.
+        </p>
     </div>
+</div>
 
-    <div class="legal-section">
-        <h2 class="h5">Eligibility</h2>
-        <ul class="service-list mb-0">
-            <li>Cancellation is generally allowed before dispatch or installation scheduling.</li>
-            <li>Damaged or incorrect item cases should be reported with evidence within 48 hours of delivery.</li>
-            <li>Refund approvals are processed to the original payment method after verification.</li>
-        </ul>
-    </div>
+<div class="container pb-5 mb-5">
+    <div class="policy-document">
+        <div class="legal-section-styled">
+            <h2><i class="bi bi-bookmark-check"></i> Eligibility</h2>
+            <p>We accommodate order changes wherever possible according to standard dispatch rules.</p>
+            <ul class="policy-modern-list">
+                <li>Cancellation is generally allowed before dispatch or installation scheduling.</li>
+                <li>Damaged or incorrect item cases should be reported with evidence within 48 hours of delivery.</li>
+                <li>Refund approvals are processed to the original payment method after verification.</li>
+            </ul>
+        </div>
 
-    <div class="legal-section">
-        <h2 class="h5">Non-Refundable Cases</h2>
-        <ul class="service-list mb-0">
-            <li>Custom enterprise deployments after implementation start.</li>
-            <li>Misuse, physical tampering, or unauthorized hardware modification.</li>
-        </ul>
-    </div>
+        <div class="legal-section-styled">
+            <h2><i class="bi bi-x-octagon"></i> Non-Refundable Cases</h2>
+            <p>Unfortunately, certain technical and custom deployments cannot be reversed once initiated.</p>
+            <ul class="policy-modern-list">
+                <li>Custom enterprise deployments after implementation start.</li>
+                <li>Misuse, physical tampering, or unauthorized hardware modification.</li>
+            </ul>
+        </div>
 
-    <div class="legal-section">
-        <h2 class="h5">Request Process</h2>
-        <p class="text-secondary mb-0">Share your order ID and issue details via <a href="mailto:info@eyetrack-tech.com">info@eyetrack-tech.com</a> or call <a href="tel:+917994357565">+91 7994357565</a>.</p>
+        <div class="legal-section-styled mb-4">
+            <h2><i class="bi bi-headset"></i> Request Process</h2>
+            <p>Share your order ID and issue details via <a href="mailto:info@etsgrp.in" class="text-accent text-decoration-none">info@etsgrp.in</a> or call <a href="tel:+917994357565" class="text-accent text-decoration-none">+91 7994357565</a>.</p>
+        </div>
+
+        <hr class="border-secondary opacity-25 my-5">
+        
+        <div class="policy-update-stamp">
+            <i class="bi bi-clock-history"></i> Last Updated: {% now "F j, Y" %}
+        </div>
     </div>
-</section>
+</div>
 {% endblock %}

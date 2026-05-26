@@ -1,0 +1,110 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">{{ page_title }}</h1>
+            <p class="admin-subtitle">Fill in the details below to {% if coupon %}update{% else %}create{% endif %} a promotional coupon</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_dashboard:coupons_overview' %}" class="btn btn-outline-light btn-sm mt-3 mt-md-0">
+                <i class="bi bi-arrow-left me-1"></i> Back to Coupons
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="chart-container">
+            <form method="post" action="{% if coupon %}{% url 'admin_dashboard:coupon_edit' coupon.id %}{% else %}{% url 'admin_dashboard:coupon_add' %}{% endif %}">
+                {% csrf_token %}
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show bg-dark text-light border-secondary" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary">Coupon Code <span class="text-danger">*</span></label>
+                        {{ form.code }}
+                        {% if form.code.errors %}<div class="text-danger small mt-1">{{ form.code.errors }}</div>{% endif %}
+                        <small class="text-secondary text-sm mt-1 d-block">e.g. SUMMER20</small>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary">Discount Percentage <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            {{ form.discount_percentage }}
+                            <span class="input-group-text bg-transparent text-secondary border-secondary">%</span>
+                        </div>
+                        {% if form.discount_percentage.errors %}<div class="text-danger small mt-1">{{ form.discount_percentage.errors }}</div>{% endif %}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary">Max Discount Cap (₹)</label>
+                        {{ form.max_discount_amount }}
+                        {% if form.max_discount_amount.errors %}<div class="text-danger small mt-1">{{ form.max_discount_amount.errors }}</div>{% endif %}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary">Max Uses Limit</label>
+                        {{ form.max_uses }}
+                        {% if form.max_uses.errors %}<div class="text-danger small mt-1">{{ form.max_uses.errors }}</div>{% endif %}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary">Valid From <span class="text-danger">*</span></label>
+                        {{ form.valid_from }}
+                        {% if form.valid_from.errors %}<div class="text-danger small mt-1">{{ form.valid_from.errors }}</div>{% endif %}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary">Valid To <span class="text-danger">*</span></label>
+                        {{ form.valid_to }}
+                        {% if form.valid_to.errors %}<div class="text-danger small mt-1">{{ form.valid_to.errors }}</div>{% endif %}
+                    </div>
+                    
+                    <div class="col-12 mt-4 pt-2">
+                        <div class="form-check form-switch custom-switch d-flex align-items-center">
+                            {{ form.active }}
+                            <label class="form-check-label text-light ms-3 mb-0" for="{{ form.active.id_for_label }}">Active & Usable</label>
+                        </div>
+                        {% if form.active.errors %}<div class="text-danger small mt-1">{{ form.active.errors }}</div>{% endif %}
+                    </div>
+                </div>
+                
+                <hr class="border-secondary my-4">
+                
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'admin_dashboard:coupons_overview' %}" class="btn btn-outline-secondary text-light">Cancel</a>
+                    <button type="submit" class="btn btn-premium-cta">
+                        <i class="bi bi-save me-1"></i> Save Coupon
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-switch .form-check-input {
+        width: 3.5rem;
+        height: 1.75rem;
+        background-color: var(--surface-1);
+        border-color: #4b5563;
+        cursor: pointer;
+    }
+    .custom-switch .form-check-input:checked {
+        background-color: #10b981;
+        border-color: #10b981;
+    }
+</style>
+{% endblock %}

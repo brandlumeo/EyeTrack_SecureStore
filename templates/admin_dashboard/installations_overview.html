@@ -1,0 +1,151 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block admin_content %}
+<div class="admin-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="admin-title mb-0">Installation Management</h1>
+        <p class="admin-subtitle mb-0">Track and manage service deployments across all active orders.</p>
+    </div>
+</div>
+
+<!-- Filters & Search -->
+<div class="chart-container mb-4">
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label text-secondary small">Search Service</label>
+            <div class="input-group">
+                <span class="input-group-text bg-dark border-secondary text-secondary">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="search" class="form-control" placeholder="Order ID, Tech Name..." value="{{ search_query }}">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label text-secondary small">Status Filter</label>
+            <select name="status" class="form-select">
+                <option value="">All Statuses</option>
+                {% for val, label in status_choices %}
+                <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-premium-cta w-100">
+                <i class="bi bi-filter me-2"></i>Apply Filter
+            </button>
+        </div>
+        {% if search_query or status_filter %}
+        <div class="col-md-2">
+            <a href="{% url 'admin_dashboard:installations_overview' %}" class="btn btn-outline-light w-100">Clear All</a>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Installations Table -->
+<div class="chart-container overflow-hidden p-0">
+    <div class="table-responsive">
+        <table class="table table-admin mb-0">
+            <thead>
+                <tr>
+                    <th>Order Info</th>
+                    <th>Customer</th>
+                    <th>Service Date</th>
+                    <th>Technician</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for installation in installations %}
+                <tr>
+                    <td>
+                        <div class="fw-bold text-white">{{ installation.order.formatted_id }}</div>
+                        <div class="text-secondary smaller" style="font-size: 0.75rem;">Placed {{ installation.order.created_at|date:"M d, Y" }}</div>
+                    </td>
+                    <td>
+                        <div class="text-white">{{ installation.order.full_name }}</div>
+                        <div class="text-secondary smaller">{{ installation.order.email }}</div>
+                    </td>
+                    <td>
+                        <div class="text-white">{{ installation.preferred_date|date:"d M, Y" }}</div>
+                        <div class="text-secondary smaller">{{ installation.preferred_time_slot }}</div>
+                    </td>
+                    <td>
+                        {% if installation.technician_name %}
+                        <div class="d-flex align-items-center">
+                            <span class="btn-tech-call p-1 me-2" style="background: rgba(245,158,11,0.1); border-radius: 4px; color: #f59e0b;">
+                                <i class="bi bi-person-badge-fill"></i>
+                            </span>
+                            <div>
+                                <div class="text-white fw-medium">{{ installation.technician_name }}</div>
+                                {% if installation.technician_verified %}
+                                <div class="text-success" style="font-size: 0.7rem;"><i class="bi bi-patch-check-fill"></i> Verified</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <span class="text-secondary italic small">Unassigned</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge-status status-{{ installation.status }}">
+                            {{ installation.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'admin_dashboard:order_detail' installation.order.id %}" class="btn btn-premium-cta btn-sm" title="View Details">
+                            <i class="bi bi-gear-wide-connected"></i> Manage
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5">
+                        <div class="text-secondary mb-3"><i class="bi bi-shield-slash fs-1"></i></div>
+                        <h5 class="text-white">No installations records found</h5>
+                        <p class="text-secondary small">Try adjusting your filters or search criteria.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if installations.has_other_pages %}
+<div class="d-flex justify-content-between align-items-center mt-4 px-2">
+    <div class="text-secondary small">
+        Showing {{ installations.start_index }} to {{ installations.end_index }} of {{ installations.paginator.count }} installations
+    </div>
+    <nav>
+        <ul class="pagination pagination-sm mb-0">
+            {% if installations.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ installations.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for i in installations.paginator.page_range %}
+                {% if installations.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                {% elif i > installations.number|add:'-3' and i < installations.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if installations.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ installations.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}
+{% endblock %}

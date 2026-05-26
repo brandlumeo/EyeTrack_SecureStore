@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+{% block title %}Request Return | EyeTrack SecureStore{% endblock %}
+
+{% block content %}
+<section class="account-layout page-section">
+    <div class="row g-4">
+        <div class="col-lg-4 col-xl-3">
+            {% include 'accounts/_account_sidebar.html' %}
+        </div>
+        <div class="col-lg-8 col-xl-9">
+            <div class="return-form-container">
+                <div class="glass-card p-4 p-md-5">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="icon-wrap bg-accent-soft rounded-circle p-3">
+                            <i class="bi bi-arrow-left-right fs-4 text-accent"></i>
+                        </div>
+                        <div>
+                            <h1 class="h3 mb-1 text-white">Return Request</h1>
+                            <p class="text-secondary small mb-0">Order {{ order.formatted_id }} • Delivered on {{ order.shipment.delivered_at|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" class="return-workflow-form" id="returnForm">
+                        {% csrf_token %}
+                        
+                        <!-- Step 1: Select Items -->
+                        <div class="form-step mb-5">
+                            <h2 class="h5 text-accent mb-4 d-flex align-items-center gap-2">
+                                <span class="step-num">1</span> Select Items for Return
+                            </h2>
+                            <div class="item-selection-grid row g-3">
+                                {% for item in items %}
+                                <div class="col-12">
+                                    <div class="return-item-card glass-panel-soft p-3 rounded-4 d-flex align-items-center gap-3 transition-all">
+                                        <div class="form-check custom-check">
+                                            <input class="form-check-input item-selector" type="checkbox" name="items" value="{{ item.id }}" id="item{{ item.id }}">
+                                        </div>
+                                        <div class="item-thumb bg-dark rounded-3 overflow-hidden shadow-sm" style="width: 60px; height: 60px;">
+                                            {% if item.product.image %}
+                                                <img loading="lazy" decoding="async" src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-100 h-100 object-fit-cover">
+                                            {% else %}
+                                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted"><i class="bi bi-box"></i></div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <label class="d-block text-white fw-medium mb-1 cursor-pointer" for="item{{ item.id }}">{{ item.product.name }}</label>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <span class="small text-secondary">Price: &#8377; {{ item.price }}</span>
+                                                <span class="small text-secondary">Qty Purchased: {{ item.quantity }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="return-qty-wrap d-none" id="qtyWrap{{ item.id }}">
+                                            <label class="small text-secondary d-block mb-1">Return Qty</label>
+                                            <input type="number" name="qty_{{ item.id }}" value="{{ item.quantity }}" min="1" max="{{ item.quantity }}" class="form-control form-control-sm bg-dark border-secondary text-light text-center" style="width: 70px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Reason & Details -->
+                        <div class="form-step mb-5">
+                            <h2 class="h5 text-accent mb-4 d-flex align-items-center gap-2">
+                                <span class="step-num">2</span> Why are you returning?
+                            </h2>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label small text-light-70 fw-medium">Reason for Return</label>
+                                    <select name="reason" class="form-select bg-dark border-secondary text-light rounded-3" required>
+                                        <option value="" selected disabled>Select a reason</option>
+                                        {% for code, label in reasons %}
+                                            <option value="{{ code }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small text-light-70 fw-medium">Describe the issue</label>
+                                    <textarea name="details" rows="4" class="form-control bg-dark border-secondary text-light rounded-4" placeholder="Please provide more details to help us process your return faster..." required></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Visual Evidence -->
+                        <div class="form-step mb-5">
+                            <h2 class="h5 text-accent mb-4 d-flex align-items-center gap-2">
+                                <span class="step-num">3</span> Upload Photos (Optional but Recommended)
+                            </h2>
+                            <div class="upload-zone rounded-4 border-dashed p-4 text-center cursor-pointer transition-all" id="dropZone">
+                                <input type="file" name="photos" multiple id="photoInput" class="d-none" accept="image/*">
+                                <div class="upload-content">
+                                    <i class="bi bi-cloud-arrow-up display-4 text-accent mb-3 d-block"></i>
+                                    <h4 class="h6 text-white mb-2">Drag & drop photos or click to browse</h4>
+                                    <p class="small text-secondary mb-0">Upload clear photos showing any damage or defects. Max 5 photos.</p>
+                                </div>
+                                <div id="previewContainer" class="row g-2 mt-3 justify-content-center"></div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center border-top border-white-10 pt-4 mt-5">
+                            <a href="{% url 'order_tracking' order.pk %}" class="btn btn-outline-light px-4">Cancel</a>
+                            <button type="submit" class="btn btn-premium-cta px-5 py-2 fw-bold" id="submitBtn">Submit Return Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .return-form-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .step-num {
+        width: 28px;
+        height: 28px;
+        background: var(--accent);
+        color: var(--dark-bg);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 800;
+    }
+    .glass-panel-soft {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .return-item-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(245, 158, 11, 0.3);
+    }
+    .return-item-card.selected {
+        background: rgba(245, 158, 11, 0.05);
+        border-color: rgba(245, 158, 11, 0.5);
+    }
+    .custom-check .form-check-input {
+        width: 1.5em;
+        height: 1.5em;
+        background-color: transparent;
+        border: 2px solid rgba(255,255,255,0.2);
+        cursor: pointer;
+    }
+    .custom-check .form-check-input:checked {
+        background-color: var(--accent);
+        border-color: var(--accent);
+    }
+    .border-dashed {
+        border: 2px dashed rgba(255, 255, 255, 0.15);
+    }
+    .upload-zone:hover {
+        background: rgba(255, 255, 255, 0.02);
+        border-color: var(--accent);
+    }
+    .preview-thumb {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const itemSelectors = document.querySelectorAll('.item-selector');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    function updateSubmitState() {
+        const anySelected = Array.from(itemSelectors).some(cb => cb.checked);
+        submitBtn.disabled = !anySelected;
+        if (!anySelected) {
+            submitBtn.classList.add('opacity-50');
+        } else {
+            submitBtn.classList.remove('opacity-50');
+        }
+    }
+
+    itemSelectors.forEach(cb => {
+        cb.addEventListener('change', function() {
+            const card = this.closest('.return-item-card');
+            const qtyWrap = document.getElementById('qtyWrap' + this.value);
+            
+            if (this.checked) {
+                card.classList.add('selected');
+                qtyWrap.classList.remove('d-none');
+            } else {
+                card.classList.remove('selected');
+                qtyWrap.classList.add('d-none');
+            }
+            updateSubmitState();
+        });
+    });
+
+    updateSubmitState();
+
+    // Image Preview logic
+    const photoInput = document.getElementById('photoInput');
+    const dropZone = document.getElementById('dropZone');
+    const previewContainer = document.getElementById('previewContainer');
+
+    if (dropZone) {
+        dropZone.addEventListener('click', () => photoInput.click());
+    }
+
+    if (photoInput) {
+        photoInput.addEventListener('change', function() {
+            previewContainer.innerHTML = '';
+            if (this.files) {
+                Array.from(this.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const col = document.createElement('div');
+                        col.className = 'col-auto';
+                        col.innerHTML = `<img loading="lazy" decoding="async" src="${e.target.result}" class="preview-thumb">`;
+                        previewContainer.appendChild(col);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+    }
+
+    // Handle drag and drop
+    if (dropZone) {
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--accent)';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            photoInput.files = e.dataTransfer.files;
+            photoInput.dispatchEvent(new Event('change'));
+        });
+    }
+});
+</script>
+{% endblock %}

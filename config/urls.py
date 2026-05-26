@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
 from store.sitemaps import CategorySitemap, ProductSitemap, StaticViewSitemap
+from support import views as support_views
 
 
 sitemaps = {
@@ -32,11 +33,22 @@ sitemaps = {
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('admin-dashboard/', include('admin_dashboard.urls')),
+    path('support/', include('support.urls')),
+    path('faq/', support_views.faq_view, name='faq'),
     path('', include('store.urls')),
     path('accounts/', include('accounts.urls')),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("robots.txt", TemplateView.as_view(template_name="robots.txt", content_type="text/plain"), name="robots_txt"),
+    path("firebase-messaging-sw.js", TemplateView.as_view(template_name="firebase-messaging-sw.js", content_type="application/javascript"), name="firebase_sw"),
 ]
+
+from django.urls import re_path
+from django.views.static import serve
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]

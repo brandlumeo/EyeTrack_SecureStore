@@ -1,0 +1,177 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <a href="{% url 'admin_dashboard:return_requests_overview' %}" class="btn btn-outline-light btn-sm rounded-circle p-2" style="width: 36px; height: 36px;">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h1 class="admin-title h3 mb-1">Return Request #{{ return_req.id }}</h1>
+            <p class="admin-subtitle mb-0">For Order {{ return_req.order.formatted_id }} • Submitted on {{ return_req.created_at|date:"M d, Y" }}</p>
+        </div>
+        <div class="ms-auto">
+            <span class="badge {% if return_req.status == 'pending' %}bg-warning text-dark{% elif return_req.status == 'approved' or return_req.status == 'picked_up' %}bg-info text-white{% elif return_req.status == 'completed' %}bg-success text-white{% else %}bg-secondary{% endif %} fs-6 py-2 px-3 rounded-pill">
+                {{ return_req.get_status_display }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column: Details & Items -->
+    <div class="col-lg-8">
+        <div class="chart-container mb-4">
+            <h5 class="mb-4 d-flex align-items-center gap-2">
+                <i class="bi bi-info-circle text-accent"></i> Request Information
+            </h5>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="small text-secondary mb-1">Return Reason</label>
+                    <div class="text-white fw-bold">{{ return_req.get_reason_display }}</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="small text-secondary mb-1">Customer</label>
+                    <div class="text-white fw-bold">{{ return_req.user.get_full_name|default:return_req.user.username }}</div>
+                    <small class="text-secondary">{{ return_req.user.email }}</small>
+                </div>
+                <div class="col-12">
+                    <label class="small text-secondary mb-1">Description from Customer</label>
+                    <div class="p-3 rounded bg-dark-soft border border-white-10 text-light-70">
+                        {{ return_req.details|linebreaks }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container mb-4">
+            <h5 class="mb-4 d-flex align-items-center gap-2">
+                <i class="bi bi-box-seam text-accent"></i> Items to Return
+            </h5>
+            <div class="table-responsive">
+                <table class="table table-dark table-admin align-middle">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th class="text-center">Return Qty</th>
+                            <th class="text-end">Unit Price</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in return_req.returned_items.all %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="bg-dark rounded p-1" style="width: 40px; height: 40px;">
+                                        {% if item.order_item.product.image %}
+                                            <img loading="lazy" decoding="async" src="{{ item.order_item.product.image.url }}" class="w-100 h-100 object-fit-cover rounded">
+                                        {% else %}
+                                            <i class="bi bi-box"></i>
+                                        {% endif %}
+                                    </div>
+                                    <span class="text-white">{{ item.order_item.product.name }}</span>
+                                </div>
+                            </td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-end">₹{{ item.order_item.price }}</td>
+                            <td class="text-end text-accent fw-bold">₹{{ item.order_item.price|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if return_req.photos.exists %}
+        <div class="chart-container">
+            <h5 class="mb-4 d-flex align-items-center gap-2">
+                <i class="bi bi-camera text-accent"></i> Verification Photos
+            </h5>
+            <div class="row g-3">
+                {% for photo in return_req.photos.all %}
+                <div class="col-6 col-md-4">
+                    <a href="{{ photo.image.url }}" target="_blank" class="d-block overflow-hidden rounded-3 border border-white-10 hover-lift">
+                        <img loading="lazy" decoding="async" src="{{ photo.image.url }}" class="w-100 h-100 object-fit-cover" style="aspect-ratio: 4/3;">
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Right Column: Actions -->
+    <div class="col-lg-4">
+        <div class="chart-container sticky-top" style="top: 2rem;">
+            <h5 class="mb-4 d-flex align-items-center gap-2">
+                <i class="bi bi-lightning-fill text-accent"></i> Take Action
+            </h5>
+            
+            <form method="post" id="actionForm">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="form-label small text-secondary">Internal Note / Admin Comment</label>
+                    <textarea name="admin_comment" rows="4" class="form-control bg-dark border-secondary text-light" placeholder="Comment visible to customer...">{{ return_req.admin_comment }}</textarea>
+                </div>
+
+                <div class="d-grid gap-2">
+                    {% if return_req.status == 'pending' %}
+                        <button type="submit" name="action" value="approve" class="btn btn-success py-2">
+                            <i class="bi bi-check-circle me-2"></i> Approve Request
+                        </button>
+                        <button type="submit" name="action" value="reject" class="btn btn-outline-danger py-2">
+                            <i class="bi bi-x-circle me-2"></i> Reject Request
+                        </button>
+                    {% elif return_req.status == 'approved' %}
+                        <div class="alert alert-info py-2" style="font-size: 0.8rem;">
+                            Waiting for item pickup from customer address.
+                        </div>
+                        <button type="submit" name="action" value="picked_up" class="btn btn-info text-white py-2">
+                            <i class="bi bi-truck me-2"></i> Mark as Picked Up
+                        </button>
+                    {% elif return_req.status == 'picked_up' %}
+                        <div class="alert alert-info py-2" style="font-size: 0.8rem;">
+                            Item received and verified. Trigger refund to finalize.
+                        </div>
+                        <button type="submit" name="action" value="complete" class="btn btn-premium-cta py-3 fw-bold" onclick="return confirm('Trigger refund and finalize return? This updates order status to RETURNED.')">
+                            <i class="bi bi-credit-card-2-back me-2"></i> Trigger Refund & Close
+                        </button>
+                    {% elif return_req.status == 'completed' %}
+                        <div class="alert alert-success py-3 text-center">
+                            <i class="bi bi-patch-check-fill fs-2 d-block mb-2"></i>
+                            Return Completed & Refunded
+                        </div>
+                    {% elif return_req.status == 'rejected' %}
+                        <div class="alert alert-danger py-3 text-center">
+                            Return Rejected
+                        </div>
+                        <button type="submit" name="action" value="approve" class="btn btn-outline-success btn-sm">Re-open & Approve</button>
+                    {% endif %}
+                </div>
+            </form>
+
+            <div class="mt-5 pt-4 border-top border-white-10">
+                <h6 class="text-light-70 mb-3">Order Context</h6>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small text-secondary">Order Total</span>
+                    <span class="small text-white">₹{{ return_req.order.total }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="small text-secondary">Payment Method</span>
+                    <span class="small text-white">{{ return_req.order.get_payment_method_display }}</span>
+                </div>
+                <a href="{% url 'admin_dashboard:order_detail' return_req.order.id %}" class="btn btn-outline-light btn-sm w-100">
+                    View Original Order
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-dark-soft { background: rgba(0,0,0,0.2); }
+    .hover-lift:hover { transform: translateY(-3px); transition: transform 0.2s; }
+</style>
+{% endblock %}

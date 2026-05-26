@@ -1,0 +1,8 @@
+Hello {{ user.first_name|default:user.username }},
+
+Welcome to Eyetrack Solutions.
+
+Please verify your email address to activate your account:
+{{ verify_url }}
+
+If you did not create this account, you can ignore this email.

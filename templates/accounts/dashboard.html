@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}My Account | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<section class="account-layout page-section">
+    <div class="row g-4">
+        <div class="col-lg-4 col-xl-3">
+            {% include 'accounts/_account_sidebar.html' %}
+        </div>
+        <div class="col-lg-8 col-xl-9">
+            <div class="account-section-grid">
+                <a href="{% url 'order_history' %}" class="glass-card p-4 account-panel-link"><div class="account-panel-icon"><i class="bi bi-bag-check"></i></div><h3>My Orders</h3><p>Review your latest purchases and order statuses.</p></a>
+                <a href="{% url 'wishlist_page' %}" class="glass-card p-4 account-panel-link"><div class="account-panel-icon"><i class="bi bi-heart"></i></div><h3>Wishlist</h3><p>Open your saved products and move them to cart faster.</p></a>
+                <a href="{% url 'address_list' %}" class="glass-card p-4 account-panel-link"><div class="account-panel-icon"><i class="bi bi-geo-alt"></i></div><h3>Saved Addresses</h3><p>Manage multiple delivery addresses and defaults.</p></a>
+                <a href="{% url 'profile' %}" class="glass-card p-4 account-panel-link"><div class="account-panel-icon"><i class="bi bi-person-gear"></i></div><h3>Account Settings</h3><p>Update your name, phone number, email, and profile image.</p></a>
+            </div>
+            <div class="row g-4 mt-1">
+                <div class="col-xl-6">
+                    <div class="glass-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+                            <h3 class="h5 mb-0">Recent Orders</h3>
+                            <a href="{% url 'order_history' %}" class="small text-decoration-none">View all</a>
+                        </div>
+                        {% if recent_orders %}
+                            <div class="d-grid gap-3">
+                                {% for order in recent_orders %}
+                                    <div class="account-inline-card">
+                                        <div>
+                                            <strong>{{ order.formatted_id }}</strong>
+                                            <div class="small text-secondary">{{ order.created_at|date:"M d, Y" }}</div>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="fw-semibold">&#8377; {{ order.total|floatformat:2 }}</div>
+                                            <div class="small text-secondary">{{ order.get_order_status_display }}</div>
+                                            <div class="d-flex flex-column align-items-end gap-1">
+                                                <a href="{% url 'order_tracking' order.id %}" class="small text-decoration-none">Track order</a>
+                                                {% if order.order_status == 'shipped' or order.order_status == 'delivered' %}
+                                                    <a href="{% url 'order_invoice' order.id %}" class="small text-decoration-none">View invoice</a>
+                                                {% else %}
+                                                    <span class="small text-muted" title="Available after dispatch">View invoice</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-secondary mb-0">No orders yet. Your future purchases will appear here.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="glass-card p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+                            <h3 class="h5 mb-0">Default Address</h3>
+                            <a href="{% url 'address_list' %}" class="small text-decoration-none">Manage</a>
+                        </div>
+                        {% if default_address %}
+                            <div class="account-address-card">
+                                <span class="address-default-badge">Default</span>
+                                <h4>{{ default_address.full_name }}</h4>
+                                <p>{{ default_address.house_street }}</p>
+                                <p>{{ default_address.city }}, {{ default_address.state }} {{ default_address.pincode }}</p>
+                                <p>{{ default_address.country }}</p>
+                                <p class="mb-0">{{ default_address.phone_number }}</p>
+                            </div>
+                        {% else %}
+                            <p class="text-secondary">No default address saved yet.</p>
+                            <a href="{% url 'address_add' %}" class="btn btn-premium-cta btn-sm">Add Address</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card p-4 p-md-5 mt-4 account-support-card">
+                <div class="row g-3 align-items-center">
+                    <div class="col-lg-8">
+                        <p class="eyebrow mb-2">Need Assistance?</p>
+                        <h3 class="h4 mb-2">Get help with orders, shipping, or installation planning.</h3>
+                        <p class="text-secondary mb-0">Connect with Eyetrack support for post-purchase help, address issues, and professional installation guidance.</p>
+                    </div>
+                    <div class="col-lg-4 d-grid gap-2">
+                        <a href="mailto:info@etsgrp.in" class="btn btn-premium-cta">Email Support</a>
+                        <a href="tel:+917994357565" class="btn btn-outline-light">Call Support</a>
+                        <a href="{% url 'services_page' %}" class="btn btn-outline-light">Installation Help</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">{{ page_title }}</h1>
+            <p class="admin-subtitle">{% if category %}Update the details for this FAQ category{% else %}Create a new FAQ topic group{% endif %}</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_dashboard:faq_categories' %}" class="btn btn-outline-light btn-sm mt-3 mt-md-0">
+                <i class="bi bi-arrow-left me-1"></i> Back to Categories
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="chart-container">
+            <form method="post" action="{% if category %}{% url 'admin_dashboard:faq_category_edit' category.id %}{% else %}{% url 'admin_dashboard:faq_category_add' %}{% endif %}">
+                {% csrf_token %}
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show bg-dark text-light border-secondary" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="row g-4">
+                    <div class="col-12">
+                        <label class="form-label text-secondary">Category Name <span class="text-danger">*</span></label>
+                        {{ form.name }}
+                        {% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="col-md-8">
+                        <label class="form-label text-secondary">Bootstrap Icon Class</label>
+                        {{ form.icon }}
+                        {% if form.icon.errors %}<div class="text-danger small mt-1">{{ form.icon.errors }}</div>{% endif %}
+                        <small class="text-secondary d-block mt-1">
+                            e.g. <code class="text-warning">bi-tools</code>, <code class="text-warning">bi-shield-check</code>
+                            — <a href="https://icons.getbootstrap.com/" target="_blank" class="text-accent">Browse Icons</a>
+                        </small>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label text-secondary">Display Order</label>
+                        {{ form.order }}
+                        {% if form.order.errors %}<div class="text-danger small mt-1">{{ form.order.errors }}</div>{% endif %}
+                        <small class="text-secondary d-block mt-1">Lower = first</small>
+                    </div>
+
+                    {% if form.icon.value %}
+                    <div class="col-12">
+                        <div class="p-3 rounded-3 d-flex align-items-center gap-3" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);">
+                            <div style="font-size:2rem;color:#f59e0b;" id="iconPreview">
+                                <i class="bi {{ form.icon.value }}"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold text-white" id="namePreview">{{ form.name.value|default:"Category Name" }}</div>
+                                <small class="text-secondary">Icon preview</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <hr class="border-secondary my-4">
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'admin_dashboard:faq_categories' %}" class="btn btn-outline-secondary text-light">Cancel</a>
+                    <button type="submit" class="btn btn-premium-cta">
+                        <i class="bi bi-save me-1"></i> Save Category
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -8,7 +8,7 @@
         <div class="col-lg-8">
             <p class="eyebrow mb-2">Order Command Center</p>
             <h1 class="display-title mb-3">Track purchases, statuses, and spending in one premium dashboard.</h1>
-            <p class="lead-copy mb-3">View every order lifecycle from pending to completed, with quick access to purchased products and future reorders.</p>
+            <p class="lead-copy mb-3">View every order lifecycle from pending to delivered, including confirmation, shipping, and returns.</p>
             <div class="d-flex flex-wrap gap-2">
                 <a href="{% url 'product_list' %}" class="btn btn-premium-cta px-4">Continue Shopping</a>
                 <a href="{% url 'support_page' %}" class="btn btn-outline-light px-4">Need Help?</a>
@@ -18,7 +18,7 @@
             <div class="premium-stats-grid">
                 <div class="premium-stat-card"><h3>{{ order_summary.total_orders|default:0 }}</h3><p>Total Orders</p></div>
                 <div class="premium-stat-card"><h3>&#8377; {{ order_summary.total_spend|default:0|floatformat:0 }}</h3><p>Total Spend</p></div>
-                <div class="premium-stat-card"><h3>{{ status_counts.completed }}</h3><p>Completed</p></div>
+                <div class="premium-stat-card"><h3>{{ status_counts.delivered }}</h3><p>Delivered</p></div>
                 <div class="premium-stat-card"><h3>{{ status_counts.pending }}</h3><p>Pending</p></div>
             </div>
         </div>
@@ -28,59 +28,104 @@
 {% if latest_order %}
 <section class="page-section">
     <div class="row g-3">
-        <div class="col-md-6 col-xl-3"><div class="mini-info-card"><h6>Latest Order</h6><p>#{{ latest_order.id }} on {{ latest_order.created_at|date:"M d, Y" }}</p></div></div>
+        <div class="col-md-6 col-xl-3"><div class="mini-info-card"><h6>Latest Order</h6><p>{{ latest_order.formatted_id }} on {{ latest_order.created_at|date:"M d, Y" }}</p></div></div>
         <div class="col-md-6 col-xl-3"><div class="mini-info-card"><h6>Latest Value</h6><p>&#8377; {{ latest_order.total|floatformat:2 }}</p></div></div>
-        <div class="col-md-6 col-xl-3"><div class="mini-info-card"><h6>Processing</h6><p>{{ status_counts.processing }} order{{ status_counts.processing|pluralize }}</p></div></div>
-        <div class="col-md-6 col-xl-3"><div class="mini-info-card"><h6>Cancelled</h6><p>{{ status_counts.cancelled }} order{{ status_counts.cancelled|pluralize }}</p></div></div>
+        <div class="col-md-6 col-xl-3"><div class="mini-info-card"><h6>Confirmed</h6><p>{{ status_counts.confirmed }} order{{ status_counts.confirmed|pluralize }}</p></div></div>
+        <div class="col-md-6 col-xl-3"><div class="mini-info-card"><h6>Shipped</h6><p>{{ status_counts.shipped }} order{{ status_counts.shipped|pluralize }}</p></div></div>
     </div>
 </section>
 {% endif %}
 
 {% if orders %}
-<section class="glass-card p-3 p-md-4 page-section">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-        <h3 class="h4 mb-0">Order Timeline</h3>
-        <span class="small text-secondary">Newest orders shown first</span>
+<div class="page-section">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <div>
+            <h3 class="h4 mb-1">Your Orders</h3>
+            <p class="text-secondary small mb-0">Total {{ order_summary.total_orders }} orders placed</p>
+        </div>
+        <div class="d-flex gap-2">
+            <span class="small text-secondary">Newest first</span>
+        </div>
     </div>
-    <div class="table-responsive">
-        <table class="table premium-table align-middle mb-0">
-            <thead>
-            <tr>
-                <th>Order</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Total</th>
-                <th>Items</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for order in orders %}
-            <tr>
-                <td>#{{ order.id }}</td>
-                <td>{{ order.created_at|date:"M d, Y" }}</td>
-                <td>
-                    {% if order.status == 'Pending' %}
-                        <span class="status-pill pending">Pending</span>
-                    {% elif order.status == 'Processing' %}
-                        <span class="status-pill processing">Processing</span>
-                    {% elif order.status == 'Completed' %}
-                        <span class="status-pill completed">Completed</span>
+
+    <div class="order-history-cards">
+        {% for row in order_rows %}
+        <div class="order-premium-card">
+            <div class="order-card-header">
+                <span class="order-id-badge">{{ row.order.formatted_id }}</span>
+                <span class="order-date-meta">Placed on {{ row.order.created_at|date:"M d, Y" }}</span>
+            </div>
+            
+            <div class="order-card-grid">
+                <!-- Product Preview -->
+                <div class="order-thumb-wrapper">
+                    {% with first_item=row.order.items.first %}
+                        {% if first_item.product.image %}
+                            <img loading="lazy" decoding="async" src="{{ first_item.product.image.url }}" alt="{{ first_item.product.name }}" class="order-item-thumb">
+                        {% else %}
+                            <div class="order-item-thumb d-flex align-items-center justify-content-center">
+                                <i class="bi bi-camera-video text-muted h4 mb-0"></i>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+
+                <!-- Product Details -->
+                <div class="order-item-info">
+                    {% with first_item=row.order.items.first %}
+                        <h4>{{ first_item.product.name }}</h4>
+                        <p>Quantity: {{ first_item.quantity }}</p>
+                        {% with others=row.order.items.count|add:"-1" %}
+                            {% if others > 0 %}
+                                <p class="small text-accent">+ {{ others }} more item{{ others|pluralize }}</p>
+                            {% endif %}
+                        {% endwith %}
+                    {% endwith %}
+                </div>
+
+                <!-- Status & Price -->
+                <div class="order-item-status-col">
+                    <div class="status-dot-wrapper">
+                        <span class="status-dot {{ row.order.order_status }}"></span>
+                        <span class="status-label">{{ row.order.get_order_status_display }}</span>
+                    </div>
+                    {% if row.order.order_status == 'delivered' %}
+                        <p class="small text-success mb-2">Delivered successfully</p>
+                    {% elif row.order.order_status == 'shipped' %}
+                        <p class="small text-info mb-2">Arriving soon</p>
                     {% else %}
-                        <span class="status-pill cancelled">Cancelled</span>
+                        <p class="small text-secondary mb-2">Order is {{ row.order.order_status }}</p>
                     {% endif %}
-                </td>
-                <td><strong>&#8377; {{ order.total|floatformat:2 }}</strong></td>
-                <td>
-                    {% for item in order.items.all %}
-                        <div class="small order-item-row">{{ item.quantity }}x {{ item.product.name }}</div>
-                    {% endfor %}
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                    <div class="order-price-summary">&#8377; {{ row.order.total|floatformat:2 }}</div>
+                </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="order-card-footer">
+                <a href="{% url 'order_tracking' row.order.id %}" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-geo-alt me-1"></i> Track Order
+                </a>
+                
+                {% if row.order.payment_status|lower == 'pending' and row.order.payment_method == 'online' %}
+                    <a href="{% url 'razorpay_checkout' row.order.id %}" class="btn btn-accent btn-sm">
+                        <i class="bi bi-credit-card me-1"></i> Pay Now
+                    </a>
+                {% endif %}
+
+                {% if row.order.order_status == 'shipped' or row.order.order_status == 'delivered' %}
+                    <a href="{% url 'order_invoice' row.order.id %}" class="btn btn-premium-cta btn-sm">
+                        <i class="bi bi-file-earmark-pdf me-1"></i> Invoice
+                    </a>
+                {% else %}
+                    <button class="btn btn-secondary btn-sm" disabled title="Available after dispatch">
+                        <i class="bi bi-file-earmark-lock me-1"></i> Invoice
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
     </div>
-</section>
+</div>
 {% else %}
 <section class="glass-card p-5 text-center page-section">
     <h4 class="mb-2">No orders yet</h4>
@@ -88,5 +133,20 @@
     <a href="{% url 'product_list' %}" class="btn btn-premium-cta">Go to Shop</a>
 </section>
 {% endif %}
+
+<section class="glass-card p-4 p-md-5 service-cta page-section">
+    <div class="row g-3 align-items-center">
+        <div class="col-lg-8">
+            <p class="eyebrow mb-2">Need Assistance?</p>
+            <h3 class="h2 mb-2">Contact our support team for order help.</h3>
+            <p class="text-secondary mb-0">Get quick answers about your orders, returns, or technical support for your security setup.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end d-grid gap-2 support-cta-stack">
+            <a href="mailto:info@etsgrp.in" class="btn btn-premium-cta support-primary-cta">Email Support</a>
+            <a href="tel:+917994357565" class="btn btn-outline-light">Call Support</a>
+            <a href="https://wa.me/917994357565" class="btn btn-success" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a>
+        </div>
+    </div>
+</section>
 </div>
 {% endblock %}

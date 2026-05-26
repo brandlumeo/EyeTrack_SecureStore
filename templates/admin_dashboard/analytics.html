@@ -1,0 +1,303 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<!-- Admin Header -->
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">Analytics Dashboard</h1>
+            <p class="admin-subtitle">Detailed insights and performance metrics</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="d-flex gap-2 justify-content-md-end mt-3 mt-md-0">
+                <select class="form-select form-select-sm" onchange="location.href='?days=' + this.value">
+                    <option value="7" {% if period_days == 7 %}selected{% endif %}>Last 7 days</option>
+                    <option value="30" {% if period_days == 30 %}selected{% endif %}>Last 30 days</option>
+                    <option value="90" {% if period_days == 90 %}selected{% endif %}>Last 90 days</option>
+                </select>
+                <button class="btn btn-premium-cta btn-sm" onclick="exportAnalytics()">
+                    <i class="bi bi-download me-1"></i> Export
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Period Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="stats-card text-center">
+            <div class="stats-number">₹{{ total_revenue_period|floatformat:0 }}</div>
+            <div class="stats-label">Revenue ({{ period_days }} days)</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card text-center">
+            <div class="stats-number">{{ total_orders_period }}</div>
+            <div class="stats-label">Orders ({{ period_days }} days)</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card text-center">
+            <div class="stats-number">₹{{ avg_order_value_period|floatformat:0 }}</div>
+            <div class="stats-label">Avg Order Value</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card text-center">
+            <div class="stats-number">{{ orders_per_day }}</div>
+            <div class="stats-label">Orders per Day</div>
+        </div>
+    </div>
+</div>
+
+<!-- Sales Chart -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="chart-container">
+            <h5 class="mb-3">Sales Trend (Last {{ period_days }} days)</h5>
+            <div style="position: relative; height: 320px; width: 100%;">
+                <canvas id="salesTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product and Category Performance -->
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="chart-container">
+            <h5 class="mb-3">Top Products Performance</h5>
+            <div class="table-responsive">
+                <table class="table table-dark table-admin">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Units Sold</th>
+                            <th>Revenue</th>
+                            <th>Orders</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in product_performance %}
+                        <tr>
+                            <td>{{ product.product__name|truncatechars:30 }}</td>
+                            <td>{{ product.product__category__name }}</td>
+                            <td>{{ product.total_sold }}</td>
+                            <td>₹{{ product.revenue|floatformat:0 }}</td>
+                            <td>{{ product.orders }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-secondary">No product data available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="chart-container">
+            <h5 class="mb-3">Category Performance</h5>
+            <div style="position: relative; height: 320px; width: 100%;">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional Metrics -->
+<div class="row">
+    <div class="col-12">
+        <div class="chart-container">
+            <h5 class="mb-3">Key Metrics Summary</h5>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <div class="h6">Best Selling Day</div>
+                        <div class="stats-number" style="font-size: 1.5rem;">
+                            {% for day in daily_sales %}
+                                {% if forloop.first %}
+                                    {{ day.date|date:"D, M d" }}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="text-secondary">Highest sales day</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <div class="h6">Conversion Rate</div>
+                        <div class="stats-number" style="font-size: 1.5rem;">2.4%</div>
+                        <div class="text-secondary">Orders / Visitors</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <div class="h6">Avg Items per Order</div>
+                        <div class="stats-number" style="font-size: 1.5rem;">1.8</div>
+                        <div class="text-secondary">Items per transaction</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <div class="h6">Revenue Growth</div>
+                        <div class="stats-number trend-up" style="font-size: 1.5rem;">+12.5%</div>
+                        <div class="text-secondary">vs previous period</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Sales Trend Chart
+const salesTrendCtx = document.getElementById('salesTrendChart');
+if (salesTrendCtx) {
+    const salesTrendData = {
+        labels: [{% for sale in daily_sales %}'{{ sale.date|date:"M d" }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Revenue (₹)',
+            data: [{% for sale in daily_sales %}{{ sale.revenue }}{% if not forloop.last %},{% endif %}{% endfor %}],
+            borderColor: '#F59E0B',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'Orders',
+            data: [{% for sale in daily_sales %}{{ sale.orders }}{% if not forloop.last %},{% endif %}{% endfor %}],
+            borderColor: '#3B82F6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true,
+            yAxisID: 'y1'
+        }]
+    };
+
+    new Chart(salesTrendCtx, {
+        type: 'line',
+        data: salesTrendData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#9CA3AF'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#9CA3AF',
+                        callback: function(value) {
+                            return '₹' + value.toLocaleString();
+                        }
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    beginAtZero: true,
+                    grid: {
+                        drawOnChartArea: false,
+                    },
+                    ticks: {
+                        color: '#9CA3AF'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#9CA3AF'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Category Performance Chart
+const categoryCtx = document.getElementById('categoryChart');
+if (categoryCtx) {
+    const categoryData = {
+        labels: [{% for cat in category_performance %}'{{ cat.product__category__name }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            data: [{% for cat in category_performance %}{{ cat.revenue }}{% if not forloop.last %},{% endif %}{% endfor %}],
+            backgroundColor: [
+                '#F59E0B',
+                '#3B82F6',
+                '#10B981',
+                '#8B5CF6',
+                '#EF4444',
+                '#F97316',
+                '#06B6D4',
+                '#84CC16'
+            ],
+            borderWidth: 0
+        }]
+    };
+
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: categoryData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#9CA3AF',
+                        padding: 15
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${label}: ₹${value.toLocaleString()} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function exportAnalytics() {
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set('export', 'csv');
+    window.location.href = currentUrl.toString();
+}
+</script>
+{% endblock %}

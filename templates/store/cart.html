@@ -1,17 +1,354 @@
 {% extends 'base.html' %}
 {% block title %}Your Cart | Eyetrack Solutions{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
-{% block content %}
-<section class="mb-4">
-    <h1 class="h3 mb-2">Your Cart</h1>
-    <p class="text-secondary mb-0">Review products, adjust quantity, and move to secure checkout.</p>
-</section>
+{% block extra_head %}
+<style>
+/* ── Cart Page Hero ───────────────────────────────────────────── */
+.cart-hero {
+    position: relative;
+    padding: 2.8rem 2rem 2.4rem;
+    margin-bottom: 2rem;
+    border-radius: 1.4rem;
+    overflow: hidden;
+    text-align: center;
+    background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,158,11,0.13) 0%, transparent 70%),
+        linear-gradient(160deg, rgba(26,35,51,0.82) 0%, rgba(11,18,32,0.88) 100%);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.06);
+    backdrop-filter: blur(16px);
+}
+.cart-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+    pointer-events: none;
+}
+.cart-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(245,158,11,0.12);
+    border: 1px solid rgba(245,158,11,0.28);
+    color: #FCD34D;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+.cart-hero h1 {
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+}
+.cart-hero-subtitle {
+    color: #CBD5E1;
+    font-size: 0.975rem;
+    max-width: 540px;
+    margin: 0 auto 1.4rem;
+    line-height: 1.65;
+    font-weight: 400;
+}
+.cart-hero-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 0;
+}
+.cart-hero-divider span {
+    display: block;
+    height: 2px;
+    width: 56px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, transparent, rgba(245,158,11,0.65), transparent);
+}
+.cart-hero-divider i { color: rgba(245,158,11,0.7); font-size: 0.75rem; }
 
-<section class="mb-4">
+/* ── Trust Info Cards ─────────────────────────────────────────── */
+.cart-trust-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    height: 100%;
+    padding: 1.1rem 1.15rem;
+    border-radius: 1.05rem;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.09);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+    transition: background 200ms ease, border-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+    cursor: default;
+}
+.cart-trust-card:hover {
+    background: rgba(255,255,255,0.062);
+    border-color: rgba(245,158,11,0.24);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(0,0,0,0.2);
+}
+.cart-trust-icon {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 0.65rem;
+    display: grid;
+    place-items: center;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.2);
+    color: #F59E0B;
+    font-size: 1rem;
+}
+.cart-trust-body h6 {
+    margin: 0 0 0.22rem;
+    font-size: 0.935rem;
+    font-weight: 700;
+    color: #F1F5F9;
+    letter-spacing: -0.01em;
+}
+.cart-trust-body p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: #94A3B8;
+    line-height: 1.45;
+}
+
+/* ── Mobile cart item cards (replaces table on mobile) ─────────── */
+.cart-item-card-mobile {
+    display: none;
+}
+
+/* ── Mobile overrides ─────────────────────────────────────────── */
+@media (max-width: 575.98px) {
+
+    /* ── 1. Hero: ultra-compact single row ── */
+    .cart-hero {
+        padding: 0.75rem 1rem;
+        border-radius: 0.9rem;
+        margin-bottom: 0.65rem;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background:
+            linear-gradient(135deg, rgba(22,30,46,0.97), rgba(13,20,34,0.99));
+        border-color: rgba(245,158,11,0.2);
+    }
+    .cart-hero::before { display: none; }
+    .cart-hero-eyebrow { display: none; }
+    .cart-hero h1 {
+        font-size: 1.15rem;
+        margin: 0;
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    .cart-hero-subtitle,
+    .cart-hero-divider { display: none; }
+
+    /* ── 2. Trust bar: single compact horizontal strip ── */
+    .cart-trust-section {
+        margin-bottom: 0.75rem !important;
+    }
+    .cart-trust-section > .row {
+        display: flex !important;
+        flex-wrap: nowrap;
+        gap: 0;
+        margin: 0;
+        background: rgba(14,22,38,0.85);
+        border: 1px solid rgba(245,158,11,0.18);
+        border-radius: 0.85rem;
+        overflow: hidden;
+    }
+    .cart-trust-section .col-md-4 {
+        flex: 1;
+        padding: 0;
+    }
+    .cart-trust-section .col-md-4 + .col-md-4 .cart-trust-card {
+        border-left: 1px solid rgba(255,255,255,0.07) !important;
+    }
+    .cart-trust-card {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0.6rem 0.3rem;
+        background: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        gap: 0.25rem;
+        transform: none !important;
+        height: auto;
+    }
+    .cart-trust-card:hover {
+        background: rgba(245,158,11,0.05) !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    .cart-trust-icon {
+        width: 26px;
+        height: 26px;
+        font-size: 0.75rem;
+        border-radius: 0.45rem;
+        flex-shrink: 0;
+    }
+    .cart-trust-body h6 {
+        font-size: 0.62rem;
+        font-weight: 700;
+        white-space: nowrap;
+        margin: 0;
+        color: #e2e8f0;
+        letter-spacing: 0;
+    }
+    .cart-trust-body p { display: none; }
+
+    /* ── 3. Cart items: hide desktop table, show mobile cards ── */
+    .cart-table-desktop { display: none !important; }
+    .cart-item-card-mobile { display: block; }
+
+    .cart-item-card {
+        display: grid;
+        grid-template-columns: 56px 1fr auto;
+        gap: 0.7rem;
+        align-items: center;
+        padding: 0.85rem;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .cart-item-card:last-child { border-bottom: none; }
+
+    .cart-item-card-thumb {
+        width: 56px;
+        height: 56px;
+        border-radius: 0.6rem;
+        overflow: hidden;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .cart-item-card-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .cart-item-card-meta {
+        min-width: 0;
+    }
+    .cart-item-card-name {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #f1f5f9;
+        line-height: 1.3;
+        margin-bottom: 0.2rem;
+        overflow-wrap: anywhere;
+    }
+    .cart-item-card-price {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #f59e0b;
+        margin-bottom: 0.3rem;
+    }
+    .cart-item-card-qty {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    .cart-item-card-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.4rem;
+        flex-shrink: 0;
+    }
+    .cart-item-card-subtotal {
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: #fff;
+        white-space: nowrap;
+    }
+    .cart-remove-btn {
+        background: rgba(239,68,68,0.1);
+        border: 1px solid rgba(239,68,68,0.25);
+        border-radius: 0.5rem;
+        color: #fca5a5;
+        font-size: 0.75rem;
+        padding: 0.28rem 0.55rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        white-space: nowrap;
+    }
+
+    /* ── 4. Summary panel on mobile — float up below items ── */
+    .cart-summary-mobile-first {
+        order: -1;
+    }
+}
+</style>
+{% endblock %}
+{% block content %}
+
+<!-- ══ Premium Cart Hero ══════════════════════════════════════════════ -->
+<div class="cart-hero mb-4">
+    <div class="cart-hero-eyebrow">
+        <i class="bi bi-cart3"></i>
+        Shopping Cart
+    </div>
+    <h1>Your Shopping Cart</h1>
+    <p class="cart-hero-subtitle">Review your premium security selections and proceed to our secure, encrypted checkout environment.</p>
+    <div class="cart-hero-divider">
+        <span></span>
+        <i class="bi bi-shield-lock-fill"></i>
+        <span></span>
+    </div>
+</div>
+
+<!-- ══ Trust Badges ══════════════════════════════════════════════════ -->
+<section class="mb-4 cart-trust-section">
     <div class="row g-3">
-        <div class="col-md-4"><div class="mini-info-card"><h6>Secure Checkout</h6><p>SSL encrypted order flow.</p></div></div>
-        <div class="col-md-4"><div class="mini-info-card"><h6>Professional Install</h6><p>Book installation after purchase.</p></div></div>
-        <div class="col-md-4"><div class="mini-info-card"><h6>Warranty Included</h6><p>Transparent product coverage.</p></div></div>
+        <div class="col-md-4">
+            <div class="cart-trust-card">
+                <div class="cart-trust-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div class="cart-trust-body">
+                    <h6>Secure Checkout</h6>
+                    <p>SSL encrypted order flow &mdash; your data is fully protected.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="cart-trust-card">
+                <div class="cart-trust-icon">
+                    <i class="bi bi-tools"></i>
+                </div>
+                <div class="cart-trust-body">
+                    <h6>Professional Install</h6>
+                    <p>Book a certified installation appointment after purchase.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="cart-trust-card">
+                <div class="cart-trust-icon">
+                    <i class="bi bi-patch-check"></i>
+                </div>
+                <div class="cart-trust-body">
+                    <h6>Warranty Included</h6>
+                    <p>Transparent, no-hassle product coverage on every order.</p>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -19,54 +356,121 @@
 <section class="row g-4">
     <div class="col-lg-8">
         <div class="glass-card p-3 p-md-4">
-            <div class="table-responsive">
-                <table class="table premium-table align-middle mb-0">
+            <h5 class="mb-3 mb-md-4" style="font-size:1rem; font-weight:700; color:#fff; display:flex; align-items:center; gap:0.5rem;">
+                <i class="bi bi-bag-check" style="color:#f59e0b;"></i> Your Cart Items
+            </h5>
+
+            <!-- ── Desktop table ── -->
+            <div class="table-responsive cart-table-desktop">
+                <table class="premium-table align-middle mb-0">
                     <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Qty</th>
-                        <th>Subtotal</th>
-                        <th></th>
-                    </tr>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th style="text-align: center;">Qty</th>
+                            <th style="text-align: right;">Subtotal</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {% for product in products %}
-                    <tr>
-                        <td>
-                            <strong>{{ product.name }}</strong>
-                            <div class="small text-secondary">{{ product.category.name }}</div>
-                        </td>
-                        <td>&#8377; {{ product.price }}</td>
-                        <td>
-                            <div class="qty-controls">
-                                <form method="post" action="{% url 'update_cart' product.id 'decrease' %}" class="m-0">
+                        {% for product in products %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="cart-item-thumb shrink-0"
+                                        style="width: 60px; height: 60px; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
+                                        {% if product.image %}
+                                        <img loading="lazy" decoding="async" src="{{ product.image.url }}" alt="{{ product.name }}"
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                        {% else %}
+                                        <i class="bi bi-image text-muted"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <strong>{{ product.name }}</strong>
+                                        <div class="small text-secondary">{{ product.category.name }}</div>
+                                        {% if product.has_install %}
+                                        <div class="small text-accent mt-1"><i class="bi bi-tools me-1"></i>Includes Installation (&#8377; {{ product.install_cost|floatformat:2 }})</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>&#8377; {{ product.price }}</td>
+                            <td style="text-align: center;">
+                                <div class="qty-controls d-inline-flex">
+                                    <form method="post" action="{% url 'update_cart' product.id 'decrease' %}" class="m-0">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <button type="submit" class="qty-btn">−</button>
+                                    </form>
+                                    <span class="px-2">{{ product.quantity }}</span>
+                                    <form method="post" action="{% url 'update_cart' product.id 'increase' %}" class="m-0">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <button type="submit" class="qty-btn">+</button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td style="text-align: right;"><strong>&#8377; {{ product.subtotal }}</strong></td>
+                            <td style="text-align: right;">
+                                <form method="post" action="{% url 'remove_from_cart' product.id %}" class="m-0">
                                     {% csrf_token %}
                                     <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                    <button type="submit" class="qty-btn">-</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1"><i class="bi bi-trash3"></i>Remove</button>
                                 </form>
-                                <span>{{ product.quantity }}</span>
-                                <form method="post" action="{% url 'update_cart' product.id 'increase' %}" class="m-0">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                    <button type="submit" class="qty-btn">+</button>
-                                </form>
-                            </div>
-                        </td>
-                        <td><strong>&#8377; {{ product.subtotal }}</strong></td>
-                        <td>
-                            <form method="post" action="{% url 'remove_from_cart' product.id %}" class="m-0">
-                                {% csrf_token %}
-                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
+
+            <!-- ── Mobile card list ── -->
+            <div class="cart-item-card-mobile">
+                {% for product in products %}
+                <div class="cart-item-card">
+                    <!-- Thumb -->
+                    <div class="cart-item-card-thumb">
+                        {% if product.image %}
+                            <img loading="lazy" decoding="async" src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <i class="bi bi-image" style="color:rgba(156,163,175,0.5); font-size:1.2rem;"></i>
+                        {% endif %}
+                    </div>
+                    <!-- Meta -->
+                    <div class="cart-item-card-meta">
+                        <div class="cart-item-card-name">{{ product.name }}</div>
+                        <div class="cart-item-card-price">&#8377; {{ product.price }}</div>
+                        {% if product.has_install %}
+                        <div style="font-size:0.7rem; color:#f59e0b; margin-bottom:0.3rem;"><i class="bi bi-tools me-1"></i>+Install &#8377;{{ product.install_cost|floatformat:0 }}</div>
+                        {% endif %}
+                        <div class="cart-item-card-qty">
+                            <form method="post" action="{% url 'update_cart' product.id 'decrease' %}" class="m-0">
+                                {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button type="submit" class="qty-btn" style="width:28px;height:28px;font-size:1rem;">−</button>
+                            </form>
+                            <span style="font-size:0.85rem; font-weight:700; color:#fff; padding:0 0.4rem;">{{ product.quantity }}</span>
+                            <form method="post" action="{% url 'update_cart' product.id 'increase' %}" class="m-0">
+                                {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button type="submit" class="qty-btn" style="width:28px;height:28px;font-size:1rem;">+</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Actions -->
+                    <div class="cart-item-card-actions">
+                        <div class="cart-item-card-subtotal">&#8377; {{ product.subtotal }}</div>
+                        <form method="post" action="{% url 'remove_from_cart' product.id %}" class="m-0">
+                            {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit" class="cart-remove-btn">
+                                <i class="bi bi-trash3"></i> Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
+
 
         {% if recommended_products %}
         <div class="glass-card p-3 p-md-4 mt-4">
@@ -84,21 +488,144 @@
         </div>
         {% endif %}
     </div>
-
     <div class="col-lg-4">
-        <div class="glass-card p-4 sticky-summary">
-            <h5 class="mb-3">Order Summary</h5>
-            <div class="summary-line"><span>Subtotal</span><strong>&#8377; {{ total }}</strong></div>
-            <div class="summary-line"><span>Shipping</span><strong>&#8377; {{ shipping }}</strong></div>
-            <div class="summary-line"><span>Tax (18%)</span><strong>&#8377; {{ tax|floatformat:2 }}</strong></div>
-            <hr>
-            <div class="summary-line mb-3"><span>Total Payable</span><strong class="h5 mb-0">&#8377; {{ grand_total|floatformat:2 }}</strong></div>
-            <a href="{% url 'checkout' %}" class="btn btn-premium-cta w-100 mb-2">Proceed to Checkout</a>
-            <a href="{% url 'product_list' %}" class="btn btn-outline-light w-100">Continue Shopping</a>
-            <p class="small text-secondary mt-3 mb-0"><i class="bi bi-shield-check me-1"></i>SSL protected checkout and editable placeholder payment integration.</p>
+        <div class="glass-card p-4 sticky-summary border-top border-accent border-opacity-25" style="background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);">
+            <h5 class="mb-4 text-white d-flex align-items-center gap-2">
+                <i class="bi bi-shield-check text-accent"></i>
+                Order Summary
+            </h5>
+            
+            <div class="summary-line mb-3">
+                <span class="text-secondary">Subtotal</span>
+                <strong class="text-white">&#8377; {{ total|floatformat:2 }}</strong>
+            </div>
+            
+            {% if total_installation_charge > 0 %}
+            <div class="summary-line mb-3 text-accent">
+                <span>Installation Services</span>
+                <strong>&#8377; {{ total_installation_charge|floatformat:2 }}</strong>
+            </div>
+            {% endif %}
+            
+            {% if active_coupon %}
+            <div class="summary-line mb-3 text-success">
+                <span class="d-flex align-items-center gap-1">
+                    Discount ({{ active_coupon.code }}) 
+                    <a href="#" id="removeCouponBtn" class="text-danger ms-1" title="Remove coupon">
+                        <i class="bi bi-x-circle small"></i>
+                    </a>
+                </span>
+                <strong>- &#8377; {{ discount_amount|floatformat:2 }}</strong>
+            </div>
+            {% endif %}
+
+            <div class="summary-line mb-3">
+                <span class="text-secondary">Delivery Fee</span>
+                <strong class="text-white">{% if shipping == 0 %}FREE{% else %}&#8377; {{ shipping }}{% endif %}</strong>
+            </div>
+            
+            <div class="mt-4 pt-4 border-top border-secondary border-opacity-10">
+                <div class="d-flex justify-content-between align-items-end mb-1">
+                    <span class="h6 mb-0 text-white fw-bold">Total Payable</span>
+                    <strong class="h4 mb-0 text-primary-glow">&#8377; {{ grand_total|floatformat:2 }}</strong>
+                </div>
+                <div class="text-end">
+                    <small class="text-accent" style="font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase;">Inclusive of all taxes (GST)</small>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <a href="{% url 'checkout' %}" class="btn btn-premium-cta w-100 py-3 mb-3 d-flex align-items-center justify-content-center gap-2">
+                    Proceed to Checkout <i class="bi bi-arrow-right"></i>
+                </a>
+                <a href="{% url 'product_list' %}" class="btn btn-outline-light w-100 py-2 opacity-75">
+                    <i class="bi bi-cart-plus me-1"></i> Continue Shopping
+                </a>
+            </div>
+
+            <div class="mt-4 pt-3 border-top border-secondary border-opacity-10 text-center">
+                <div class="d-flex justify-content-center gap-3 mb-2 opacity-50">
+                    <i class="bi bi-credit-card h5 mb-0" title="Secure Payment"></i>
+                    <i class="bi bi-lock h5 mb-0" title="SSL Encrypted"></i>
+                    <i class="bi bi-patch-check h5 mb-0" title="Authentic Products"></i>
+                </div>
+                <p class="small text-secondary mb-0" style="font-size: 0.75rem;">Your data is protected by industry standard SSL encryption.</p>
+            </div>
         </div>
     </div>
 </section>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const applyBtn = document.getElementById('applyCouponBtn');
+    const removeBtn = document.getElementById('removeCouponBtn');
+    const couponInput = document.getElementById('couponCodeInput');
+    const messageDiv = document.getElementById('couponMessage');
+
+    if (applyBtn) {
+        applyBtn.addEventListener('click', function() {
+            const code = couponInput.value.trim();
+            if (!code) return;
+
+            applyBtn.disabled = true;
+            applyBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+            const formData = new FormData();
+            formData.append('code', code);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+            fetch("{% url 'apply_coupon' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    window.location.reload();
+                } else {
+                    messageDiv.textContent = data.message;
+                    messageDiv.className = 'small mt-1 text-danger';
+                    messageDiv.style.display = 'block';
+                    applyBtn.disabled = false;
+                    applyBtn.textContent = 'Apply';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                applyBtn.disabled = false;
+                applyBtn.textContent = 'Apply';
+            });
+        });
+    }
+
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+            fetch("{% url 'remove_coupon' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    window.location.reload();
+                }
+            });
+        });
+    }
+});
+</script>
 {% else %}
 <section class="glass-card p-5 text-center">
     <h4 class="mb-2">Your cart is empty</h4>

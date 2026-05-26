@@ -1,0 +1,48 @@
+<div class="d-flex flex-column gap-2">
+{% for notification in notifications %}
+<div class="notification-item position-relative p-3 {% if not notification.is_read %}is-unread{% endif %}" 
+     data-id="{{ notification.id }}" 
+     data-title="{{ notification.title }}" 
+     data-message="{{ notification.message }}" 
+     data-link="{{ notification.link }}" 
+     data-type="{{ notification.notification_type }}">
+     
+    {% if not notification.is_read %}
+    <span class="position-absolute top-0 start-0 translate-middle p-1 bg-warning rounded-circle unread-dot" style="margin-top: 24px; margin-left: 12px; border: 2px solid #0b1220;"></span>
+    {% endif %}
+    
+    <div class="d-flex gap-3 align-items-start">
+        <!-- Icon Circle -->
+        <div class="notif-icon-box {% if notification.notification_type == 'order' %}type-order{% elif notification.notification_type == 'offer' %}type-offer{% else %}type-alert{% endif %} flex-shrink-0">
+            {% if notification.notification_type == 'order' %}
+            <i class="bi bi-box2-heart"></i>
+            {% elif notification.notification_type == 'offer' %}
+            <i class="bi bi-brightness-high"></i>
+            {% else %}
+            <i class="bi bi-info-circle"></i>
+            {% endif %}
+        </div>
+        
+        <!-- Content -->
+        <div class="flex-grow-1" style="min-width:0;">
+            <div class="d-flex justify-content-between align-items-start mb-1 gap-2">
+                <h6 class="mb-0 notif-title text-truncate">{{ notification.title }}</h6>
+                <small class="notif-time text-secondary flex-shrink-0">{{ notification.created_at|timesince }}</small>
+            </div>
+            <p class="mb-2 small notif-message">{{ notification.message }}</p>
+            {% if notification.link %}
+            <a href="{{ notification.link }}" class="btn btn-premium-cta-outline mt-1 notification-action-btn">
+                View Details
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="empty-notif-state">
+    <div class="empty-notif-icon"><i class="bi bi-bell-slash"></i></div>
+    <h6 style="font-weight:600;color:#e5e7eb;">All Caught Up!</h6>
+    <p class="text-secondary small mb-0">You have no new notifications.</p>
+</div>
+{% endfor %}
+</div>

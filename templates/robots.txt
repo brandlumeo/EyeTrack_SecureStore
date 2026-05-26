@@ -13,4 +13,8 @@ Disallow: /checkout/
 Disallow: /payment/
 Disallow: /order-success/
 
-Sitemap: {{ request.scheme }}://{{ request.get_host }}{% url 'sitemap' %}
+Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml
+
+# Regional Focus: Kozhikode, Kerala
+# Security & Surveillance Specialists
+Crawl-delay: 10

@@ -1,0 +1,114 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">{{ page_title }}</h1>
+            <p class="admin-subtitle">Update user details and permissions</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_dashboard:users_overview' %}" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-x-lg me-1"></i> Cancel
+            </a>
+        </div>
+    </div>
+</div>
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show bg-dark text-light border-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} mb-4"
+    role="alert">
+    {{ message }}
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <div class="row g-4">
+        <!-- Main User Info -->
+        <div class="col-lg-7">
+            <div class="chart-container">
+                <h5 class="mb-4">Account Information</h5>
+
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-secondary small">Username</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                        <div class="text-danger small mt-1">{{ form.username.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-secondary small">Email Address</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-secondary small">First Name</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-secondary small">Last Name</label>
+                        {{ form.last_name }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-secondary small">Password</label>
+                    {{ form.password }}
+                    <div class="form-text text-secondary mt-1" style="font-size: 0.75rem;">{{ form.password.help_text }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Options -->
+        <div class="col-lg-5">
+            <div class="chart-container">
+                <h5 class="mb-4">Permissions & Status</h5>
+
+                <div class="form-check form-switch mb-3 mt-2">
+                    {{ form.is_active }}
+                    <label class="form-check-label text-light ms-2" for="{{ form.is_active.id_for_label }}">Active Account</label>
+                    <div class="form-text text-secondary ms-5 mt-0" style="font-size: 0.75rem;">User can log in.</div>
+                </div>
+
+                <hr class="border-secondary mb-3">
+
+                <div class="form-check form-switch mb-3">
+                    {{ form.is_staff }}
+                    <label class="form-check-label text-light ms-2" for="{{ form.is_staff.id_for_label }}">Staff Status</label>
+                    <div class="form-text text-secondary ms-5 mt-0" style="font-size: 0.75rem;">Can access this admin dashboard.</div>
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                    {{ form.is_superuser }}
+                    <label class="form-check-label text-light ms-2" for="{{ form.is_superuser.id_for_label }}">Superuser Status</label>
+                    <div class="form-text text-secondary ms-5 mt-0" style="font-size: 0.75rem;">Has all permissions without explicitly assigning them.</div>
+                </div>
+
+                <button type="submit" class="btn btn-premium-cta w-100 py-2 mt-4">
+                    <i class="bi bi-check2-circle me-1"></i> Save User Details
+                </button>
+            </div>
+            
+            <div class="chart-container mt-4 bg-dark-soft border-0">
+                <h6 class="text-accent small text-uppercase fw-bold mb-3">Security Note</h6>
+                <ul class="text-secondary small mb-0 ps-3">
+                    <li class="mb-2">Be cautious when granting <strong class="text-light">Superuser Status</strong>.</li>
+                    <li>If you change the password, the user will be logged out of their current sessions.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

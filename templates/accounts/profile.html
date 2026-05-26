@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% block title %}Account Settings | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<section class="account-layout page-section">
+    <div class="row g-4">
+        <div class="col-lg-4 col-xl-3">
+            {% include 'accounts/_account_sidebar.html' %}
+        </div>
+        <div class="col-lg-8 col-xl-9">
+            <h1 class="h3 mb-4 text-white">Profile Details</h1>
+            <form method="post" enctype="multipart/form-data" id="profile-settings-form">
+                {% csrf_token %}
+                
+                <!-- Profile Picture Module -->
+                <div class="profile-section-card glass-card mb-4 p-4">
+                    <h2 class="h6 text-white mb-3 border-bottom border-secondary border-opacity-10 pb-2">Profile Picture</h2>
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="position-relative">
+                            <div id="profile-picture-container">
+                                {% if profile.profile_picture %}
+                                    <img loading="lazy" decoding="async" src="{{ profile.profile_picture.url }}" id="profile-picture-preview" alt="Profile" class="rounded-circle object-fit-cover border border-secondary border-opacity-25 shadow-sm" style="width: 100px; height: 100px;">
+                                    <div id="profile-picture-placeholder" class="rounded-circle d-flex align-items-center justify-content-center border border-secondary border-opacity-25 shadow-sm d-none" style="width: 100px; height: 100px; background: rgba(255, 255, 255, 0.05); color: var(--text-soft);">
+                                        <i class="bi bi-person-fill fs-1"></i>
+                                    </div>
+                                {% else %}
+                                    <img loading="lazy" decoding="async" src="#" id="profile-picture-preview" alt="Profile" class="rounded-circle object-fit-cover border border-secondary border-opacity-25 shadow-sm d-none" style="width: 100px; height: 100px;">
+                                    <div id="profile-picture-placeholder" class="rounded-circle d-flex align-items-center justify-content-center border border-secondary border-opacity-25 shadow-sm" style="width: 100px; height: 100px; background: rgba(255, 255, 255, 0.05); color: var(--text-soft);">
+                                        <i class="bi bi-person-fill fs-1"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <label for="{{ form.profile_picture.id_for_label }}" class="position-absolute bottom-0 end-0 rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px; cursor: pointer; background: var(--accent, #f5a623); color: #221104; border: 2px solid #1a202c; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                <i class="bi bi-camera-fill small"></i>
+                            </label>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-none">
+                                {{ form.profile_picture }}
+                            </div>
+                            <p class="text-white opacity-75 small mb-2">Upload a new avatar. Larger image will be resized automatically.<br>Maximum upload size is <strong>2 MB</strong>.</p>
+                            {% if profile.profile_picture %}
+                                <div class="form-check custom-checkbox mt-1">
+                                    <input type="checkbox" name="profile_picture-clear" id="profile_picture-clear_id" class="form-check-input">
+                                    <label class="form-check-label text-danger small" for="profile_picture-clear_id">Remove current picture</label>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if form.profile_picture.errors %}<div class="text-danger small mt-2">{{ form.profile_picture.errors|striptags }}</div>{% endif %}
+                </div>
+
+                <!-- Personal Information Module -->
+                <div class="profile-section-card glass-card mb-4 p-4" id="section-personal">
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-light border-opacity-10 pb-2">
+                        <h2 class="h6 mb-0 text-white">Personal Information</h2>
+                        <button type="button" class="btn btn-link text-accent text-decoration-none p-0 edit-section-btn fw-bold" data-target="personal">Edit</button>
+                    </div>
+                    <div class="row g-3 section-inputs">
+                        <div class="col-md-6">
+                            <label class="form-label text-white opacity-75 small">{{ form.first_name.label }}</label>
+                            <input type="text" name="{{ form.first_name.html_name }}" value="{{ form.first_name.value|default_if_none:'' }}" class="form-control premium-input locked-input" id="{{ form.first_name.id_for_label }}" readonly>
+                            {% if form.first_name.errors %}<div class="text-danger small mt-1">{{ form.first_name.errors|striptags }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white opacity-75 small">{{ form.last_name.label }}</label>
+                            <input type="text" name="{{ form.last_name.html_name }}" value="{{ form.last_name.value|default_if_none:'' }}" class="form-control premium-input locked-input" id="{{ form.last_name.id_for_label }}" readonly>
+                            {% if form.last_name.errors %}<div class="text-danger small mt-1">{{ form.last_name.errors|striptags }}</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Address Module -->
+                <div class="profile-section-card glass-card mb-4 p-4" id="section-email">
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-light border-opacity-10 pb-2">
+                        <h2 class="h6 mb-0 text-white">Email Address</h2>
+                        <button type="button" class="btn btn-link text-accent text-decoration-none p-0 edit-section-btn fw-bold" data-target="email">Edit</button>
+                    </div>
+                    <div class="section-inputs">
+                        <div class="alert alert-warning small d-none" id="email-warning-alert"><i class="bi bi-exclamation-triangle-fill me-2"></i>Changing your email address will log you out and require re-verification.</div>
+                        <label class="form-label text-white opacity-75 small">{{ form.email.label }}</label>
+                        <input type="email" name="{{ form.email.html_name }}" value="{{ form.email.value|default_if_none:'' }}" class="form-control premium-input locked-input" id="{{ form.email.id_for_label }}" readonly>
+                        {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors|striptags }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Mobile Number Module -->
+                <div class="profile-section-card glass-card mb-4 p-4" id="section-phone">
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-light border-opacity-10 pb-2">
+                        <h2 class="h6 mb-0 text-white">Mobile Number</h2>
+                        <button type="button" class="btn btn-link text-accent text-decoration-none p-0 edit-section-btn fw-bold" data-target="phone">Edit</button>
+                    </div>
+                    <div class="section-inputs">
+                        <label class="form-label d-flex justify-content-between text-white opacity-75 small mb-2 w-100">
+                            <span>{{ form.phone_number.label }}</span>
+                        </label>
+                        <input type="text" name="{{ form.phone_number.html_name }}" value="{{ form.phone_number.value|default_if_none:'' }}" class="form-control premium-input locked-input" id="{{ form.phone_number.id_for_label }}" readonly>
+                        
+
+                        
+                        {% if form.phone_number.errors %}<div class="text-danger small mt-1">{{ form.phone_number.errors|striptags }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <!-- Global Action Bar -->
+                <div class="glass-card p-3 d-flex justify-content-end gap-3 sticky-bottom border border-secondary border-opacity-25" style="bottom: 20px; z-index: 100; backdrop-filter: blur(12px);">
+                    <a href="{% url 'profile' %}" class="btn btn-outline-light px-4 rounded-pill">Discard</a>
+                    <button type="submit" class="btn btn-premium-cta px-5 rounded-pill shadow">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Profile Picture Live Preview
+    const profilePicInput = document.querySelector('input[type="file"][name="profile_picture"]');
+    const profilePicPreview = document.getElementById('profile-picture-preview');
+    const profilePicPlaceholder = document.getElementById('profile-picture-placeholder');
+
+    if (profilePicInput) {
+        profilePicInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select a valid image file.');
+                    this.value = ''; // Reset the input
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (profilePicPreview) {
+                        profilePicPreview.src = e.target.result;
+                        profilePicPreview.classList.remove('d-none');
+                    }
+                    if (profilePicPlaceholder) {
+                        profilePicPlaceholder.classList.add('d-none');
+                    }
+                }
+                reader.readAsDataURL(file);
+            } else {
+                // If the user cancelled the file selection, revert to previous state
+                // This could optionally restore the original image if needed, but leaving as is handles most cases.
+            }
+        });
+    }
+
+    // Edit Section Logic (Flipkart UI style)
+    const editBtns = document.querySelectorAll('.edit-section-btn');
+    editBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetSection = this.getAttribute('data-target');
+            const sectionDiv = document.getElementById('section-' + targetSection);
+            const inputs = sectionDiv.querySelectorAll('input');
+            
+            if (this.innerText === 'Edit') {
+                inputs.forEach(input => {
+                    input.removeAttribute('readonly');
+                    input.classList.remove('locked-input');
+                    input.classList.add('border-accent');
+                });
+                this.innerText = 'Cancel';
+                this.classList.replace('text-accent', 'text-danger');
+                inputs[0].focus();
+                
+                // Show alerts if applicable
+                const alert = sectionDiv.querySelector('.alert-warning');
+                if (alert) alert.classList.remove('d-none');
+            } else {
+                // Cancel edit - restore original logic
+                inputs.forEach(input => {
+                    input.setAttribute('readonly', true);
+                    input.classList.add('locked-input');
+                    input.classList.remove('border-accent');
+                    input.value = input.defaultValue; // Revert to initial
+                });
+                this.innerText = 'Edit';
+                this.classList.replace('text-danger', 'text-accent');
+                
+                const alert = sectionDiv.querySelector('.alert-warning');
+                if (alert) alert.classList.add('d-none');
+            }
+        });
+    });
+
+});
+</script>
+
+<style>
+/* Local CSS for profile modules */
+.locked-input {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: var(--text-soft) !important;
+    cursor: default;
+    transition: all 0.3s ease;
+}
+.locked-input:focus {
+    box-shadow: none !important;
+}
+.border-accent {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 0.2rem rgba(245, 166, 35, 0.25) !important;
+    background-color: rgba(0,0,0,0.2) !important;
+    color: white !important;
+}
+.badge-premium-verify {
+    transition: all 0.3s ease;
+}
+.badge-premium-verify:hover.pending {
+    background-color: var(--accent);
+    color: #1a202c !important;
+}
+</style>
+{% endblock %}

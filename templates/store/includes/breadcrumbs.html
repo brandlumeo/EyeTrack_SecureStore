@@ -1,0 +1,36 @@
+{% if category or product or request.GET.q %}
+<div class="premium-breadcrumb-wrapper">
+    <nav aria-label="breadcrumb">
+        <ul class="premium-breadcrumb">
+            {# Category Level #}
+            {% if product and product.category %}
+                <li class="breadcrumb-item">
+                    <a href="{% url 'products_by_category' product.category.slug %}">
+                        <span>{{ product.category.name }}</span>
+                    </a>
+                </li>
+            {% elif category %}
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span>{{ category.name }}</span>
+                </li>
+            {% elif request.GET.q %}
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span>Search: "{{ request.GET.q }}"</span>
+                </li>
+            {% endif %}
+
+            {# Product Level #}
+            {% if product %}
+                {% if product.category or category or request.GET.q %}
+                    <li class="breadcrumb-separator"><i class="bi bi-chevron-right"></i></li>
+                {% endif %}
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span>{{ product.name }}</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endif %}
+
+

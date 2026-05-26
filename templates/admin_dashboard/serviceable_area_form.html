@@ -1,0 +1,94 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">{{ page_title }}</h1>
+            <p class="admin-subtitle">{% if area %}Update pincode coverage details{% else %}Add a new pincode to your serviceable network{% endif %}</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_dashboard:serviceable_areas' %}" class="btn btn-outline-light btn-sm mt-3 mt-md-0">
+                <i class="bi bi-arrow-left me-1"></i> Back to Areas
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="chart-container">
+            <form method="post" action="{% if area %}{% url 'admin_dashboard:serviceable_area_edit' area.id %}{% else %}{% url 'admin_dashboard:serviceable_area_add' %}{% endif %}">
+                {% csrf_token %}
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show bg-dark text-light border-secondary" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary">Pincode <span class="text-danger">*</span></label>
+                        {{ form.pincode }}
+                        {% if form.pincode.errors %}<div class="text-danger small mt-1">{{ form.pincode.errors }}</div>{% endif %}
+                        <small class="text-secondary d-block mt-1">6-digit Indian pincode</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary">Estimated Delivery Days <span class="text-danger">*</span></label>
+                        {{ form.estimated_delivery_days }}
+                        {% if form.estimated_delivery_days.errors %}<div class="text-danger small mt-1">{{ form.estimated_delivery_days.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary">Delivery Charge (₹) <span class="text-danger">*</span></label>
+                        {{ form.delivery_charge }}
+                        {% if form.delivery_charge.errors %}<div class="text-danger small mt-1">{{ form.delivery_charge.errors }}</div>{% endif %}
+                        <small class="text-secondary d-block mt-1">Specific charge for this pincode</small>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="p-3 rounded-3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch d-flex align-items-center gap-3">
+                                        {{ form.delivery_available }}
+                                        <label class="form-check-label text-light mb-0" for="{{ form.delivery_available.id_for_label }}">
+                                            <i class="bi bi-truck me-1 text-success"></i> Delivery Available
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch d-flex align-items-center gap-3">
+                                        {{ form.installation_available }}
+                                        <label class="form-check-label text-light mb-0" for="{{ form.installation_available.id_for_label }}">
+                                            <i class="bi bi-tools me-1 text-warning"></i> Installation Available
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-secondary my-4">
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'admin_dashboard:serviceable_areas' %}" class="btn btn-outline-secondary text-light">Cancel</a>
+                    <button type="submit" class="btn btn-premium-cta">
+                        <i class="bi bi-save me-1"></i> Save Pincode
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-check-input { width:2.75rem; height:1.4rem; cursor:pointer; }
+    .form-check-input:checked { background-color:#10b981; border-color:#10b981; }
+</style>
+{% endblock %}

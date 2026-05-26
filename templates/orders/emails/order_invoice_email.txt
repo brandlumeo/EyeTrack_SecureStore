@@ -1,0 +1,21 @@
+Hi {{ invoice_display.recipient_name }},
+
+Your payment for order {{ order.formatted_id }} has been confirmed.
+
+Invoice number: {{ invoice.invoice_number }}
+Order reference: {{ invoice_display.order_reference }}
+Paid amount: Rs. {{ invoice_display.total_amount|floatformat:2 }}
+Payment method: {{ invoice_display.payment_method }}
+Payment status: {{ invoice_display.payment_status }}
+
+You can review your order here:
+{{ tracking_url }}
+
+You can view or download your invoice here:
+{{ invoice_url }}
+
+We have also attached the invoice PDF to this email for your records.
+
+Need help? Contact {{ invoice_display.support_email }} and reference {{ invoice.invoice_number }}.
+
+Eyetrack Solutions

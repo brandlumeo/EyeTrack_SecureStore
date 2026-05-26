@@ -1,0 +1,575 @@
+{% extends 'base.html' %}
+{% block title %}Track Order {{ tracked_order.formatted_id }} | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<section class="account-layout page-section">
+    <div class="row g-4">
+        <div class="col-lg-4 col-xl-3">
+            {% include 'accounts/_account_sidebar.html' %}
+        </div>
+        <div class="col-lg-8 col-xl-9">
+            <section class="order-track-view">
+                <section class="glass-card order-track-hero mb-4 p-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                        <div>
+                            <a href="{% url 'order_history' %}" class="tracking-back-link text-decoration-none mb-2 d-inline-block" style="color: var(--text-soft); font-size: 0.9rem;"><i class="bi bi-arrow-left me-2"></i>Back to My Orders</a>
+                            <h1 class="order-track-title h3 mb-1 text-white">Order {{ tracked_order.formatted_id }}</h1>
+                            <p class="text-secondary mb-0 small">Placed on {{ tracked_order.created_at|date:"M d, Y" }}</p>
+                        </div>
+                        <div class="text-md-end mt-3 mt-md-0">
+                            <h2 class="h4 mb-1 text-accent">&#8377; {{ tracked_order.total|floatformat:2 }}</h2>
+                            <span class="badge bg-secondary bg-opacity-25 text-white border border-secondary">{{ tracking_display.payment_status }}</span>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-3 border-top border-secondary border-opacity-25">
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            {% if tracked_order.order_status == 'shipped' or tracked_order.order_status == 'delivered' %}
+                                <a href="{% url 'order_invoice' tracked_order.id %}" class="btn btn-premium-cta btn-sm"><i class="bi bi-receipt me-2"></i>Invoice</a>
+                                <a href="{% url 'order_invoice_download' tracked_order.id %}" class="btn btn-outline-light btn-sm"><i class="bi bi-download me-2"></i>PDF</a>
+                            {% else %}
+                                <button class="btn btn-secondary btn-sm" disabled><i class="bi bi-receipt me-2"></i>Invoice</button>
+                            {% endif %}
+                            
+                            {% if tracked_order.payment_status|lower == 'pending' and tracked_order.payment_method == 'online' %}
+                                <a href="{% url 'razorpay_checkout' tracked_order.id %}" class="btn btn-success btn-sm px-4"><i class="bi bi-credit-card me-2"></i>Pay Now</a>
+                            {% endif %}
+
+                            {% if order_is_returnable %}
+                                <a href="{% url 'order_return' tracked_order.id %}" class="btn btn-premium-cta btn-sm">
+                                    <i class="bi bi-arrow-left-right me-2"></i>Request Return
+                                </a>
+                            {% elif tracked_order.order_status == 'delivered' %}
+                                 <button class="btn btn-outline-secondary btn-sm" disabled title="Return window (5 days) has expired.">
+                                    <i class="bi bi-clock-history me-2"></i>Return Expired
+                                </button>
+                            {% endif %}
+                        </div>
+
+                        {% if user.is_authenticated and tracked_order.order_status == 'pending' or user.is_authenticated and tracked_order.order_status == 'confirmed' %}
+                            <div class="ms-auto">
+                                <button type="button" class="btn btn-soft-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">
+                                    <i class="bi bi-x-circle me-1"></i> Cancel Order
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- NEW: Premium Delivery Timeline Rail -->
+                <section class="glass-card tracking-rail-card mb-4" style="border-top: 4px solid var(--success);">
+                    <div class="px-3 px-md-4 py-4">
+                        <h2 class="h5 mb-4 text-white">Delivery Timeline</h2>
+                        <div class="delivery-progress-rail">
+                            {% for step in tracking_focus.steps %}
+                            <article class="delivery-progress-step {{ step.state }}">
+                                <div class="delivery-node">
+                                    {% if step.state == 'complete' %}
+                                        <i class="bi bi-check-lg"></i>
+                                    {% elif step.state == 'current' %}
+                                        <div class="pulsing-dot"></div>
+                                    {% else %}
+                                        <div class="inactive-dot"></div>
+                                    {% endif %}
+                                </div>
+                                <div class="delivery-copy">
+                                    <strong>{{ step.label }}</strong>
+                                    <small>
+                                        {% if step.state == 'complete' %}
+                                            Completed
+                                        {% elif step.state == 'current' %}
+                                            {{ tracking_focus.headline }}
+                                        {% else %}
+                                            Pending
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </article>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+                
+                {% if installation_focus %}
+                <section class="glass-card order-track-progress-panel page-section installation-progress-panel" style="border-left: 4px solid #f59e0b;">
+                    <div class="order-track-panel-head">
+                        <div>
+                            <p class="eyebrow mb-2" style="color: #fbbf24;">Installation Progress</p>
+                            <h2 class="h4 mb-0">Professional Setup Tracker</h2>
+                        </div>
+                        <div class="order-track-chip" style="background: rgba(245, 158, 11, 0.1); color: #fbbf24; border-color: rgba(245, 158, 11, 0.2);">
+                            <i class="bi bi-tools"></i>
+                            <span>{{ installation_focus.booking.get_status_display }}</span>
+                        </div>
+                    </div>
+
+                    <div class="order-track-progress-rail installation-rail">
+                        {% for step in installation_focus.steps %}
+                        <article class="order-track-progress-step {{ step.state }} amber-step">
+                            <div class="order-track-progress-node">
+                                {% if step.label == "Pending Confirmation" %}
+                                    <i class="bi bi-calendar-event"></i>
+                                {% elif step.label == "Technician Assigned" %}
+                                    <i class="bi bi-person-badge"></i>
+                                {% elif step.label == "On-Site / In-Progress" %}
+                                    <i class="bi bi-geo-fill"></i>
+                                {% else %}
+                                    <i class="bi bi-patch-check"></i>
+                                {% endif %}
+                            </div>
+                            <div class="order-track-progress-copy">
+                                <strong>{{ step.label }}</strong>
+                                <small>
+                                    {% if step.state == 'complete' %}
+                                        Completed
+                                    {% elif step.state == 'current' %}
+                                        {{ installation_focus.headline }}
+                                    {% else %}
+                                        Upcoming
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </article>
+                        {% endfor %}
+                    </div>
+
+                    {% if installation_focus.booking.technician or installation_focus.booking.technician_name %}
+                    <div class="technician-profile-card mt-4">
+                        <div class="tech-card-glass">
+                            <div class="tech-header">
+                                <div class="tech-avatar">
+                                    <div class="avatar-blob"></div>
+                                    {% if installation_focus.booking.technician and installation_focus.booking.technician.photo %}
+                                        <img loading="lazy" decoding="async" src="{{ installation_focus.booking.technician.photo.url }}" alt="{{ installation_focus.booking.technician.name }}" class="tech-img">
+                                    {% else %}
+                                        <i class="bi bi-person-fill"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="tech-info">
+                                    <div class="tech-name-row">
+                                        <h3 class="tech-name">
+                                            {% if installation_focus.booking.technician %}
+                                                {{ installation_focus.booking.technician.name }}
+                                            {% else %}
+                                                {{ installation_focus.booking.technician_name }}
+                                            {% endif %}
+                                        </h3>
+                                        {% if installation_focus.booking.technician.is_verified or installation_focus.booking.technician_verified %}
+                                        <span class="tech-verified-badge" title="Verified Professional">
+                                            <i class="bi bi-patch-check-fill"></i> VERIFIED EXPERT
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                    <p class="tech-designation">
+                                        {% if installation_focus.booking.technician %}
+                                            {{ installation_focus.booking.technician.get_expertise_level_display }}
+                                        {% else %}
+                                            Assigned Installation Lead
+                                        {% endif %}
+                                    </p>
+                                    
+                                    {% if installation_focus.booking.technician %}
+                                    <div class="tech-rating mt-1">
+                                        <div class="stars">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill text-secondary"></i>
+                                        </div>
+                                        <span class="rating-num">{{ installation_focus.booking.technician.rating }} / 5.0</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="tech-actions">
+                                    {% if installation_focus.booking.technician.phone or installation_focus.booking.technician_phone %}
+                                    <a href="tel:{{ installation_focus.booking.technician.phone|default:installation_focus.booking.technician_phone }}" class="btn-tech-call" title="Call Technician">
+                                        <i class="bi bi-telephone-outbound-fill"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            {% if installation_focus.booking.technician.bio %}
+                            <div class="tech-bio mb-3">
+                                <p class="small text-secondary mb-0">"{{ installation_focus.booking.technician.bio }}"</p>
+                            </div>
+                            {% endif %}
+
+                            <div class="tech-footer">
+                                <div class="tech-meta">
+                                    <i class="bi bi-clock-history"></i>
+                                    <span>Slot: <strong>{{ installation_focus.booking.preferred_time_slot }}</strong></span>
+                                </div>
+                                <div class="tech-meta">
+                                    <i class="bi bi-calendar-check"></i>
+                                    <span>Date: <strong>{{ installation_focus.booking.preferred_date|date:"M d, Y" }}</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if installation_focus.booking.photos.exists or installation_focus.booking.completion_certificate %}
+                    <div class="service-documentation-track mt-5 pt-4 border-top border-secondary border-opacity-10">
+                        <div class="row align-items-center mb-4">
+                            <div class="col">
+                                <h3 class="h5 mb-1 text-white">Visual Proof & Documentation</h3>
+                                <p class="small text-secondary mb-0">Official record of your professional installation.</p>
+                            </div>
+                            {% if installation_focus.booking.completion_certificate %}
+                            <div class="col-auto">
+                                <a href="{{ installation_focus.booking.completion_certificate.url }}" class="btn btn-premium-cta btn-sm px-3" target="_blank">
+                                    <i class="bi bi-patch-check-fill me-2"></i>Download Certificate
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {% if installation_focus.booking.photos.exists %}
+                        <div class="row g-3">
+                            {% for photo in installation_focus.booking.photos.all %}
+                            <div class="col-6 col-md-3">
+                                <div class="proof-card glass-card p-2" data-bs-toggle="modal" data-bs-target="#photoModal{{ photo.id }}" style="cursor: zoom-in;">
+                                    <div class="proof-img-container rounded-3 overflow-hidden position-relative" style="aspect-ratio: 1/1;">
+                                        <img loading="lazy" decoding="async" src="{{ photo.image.url }}" class="w-100 h-100 object-fit-cover transition-all" alt="{{ photo.get_label_display }}">
+                                        <div class="proof-label position-absolute bottom-0 start-0 w-100 p-2 text-center" style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); font-size: 0.7rem; color: #fbbf24; font-weight: 600;">
+                                            {{ photo.get_label_display|upper }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Photo Modal -->
+                                <div class="modal fade premium-modal" id="photoModal{{ photo.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content overflow-hidden border-0 bg-dark">
+                                            <div class="modal-header border-0 position-absolute end-0 top-0 z-3">
+                                                <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body p-0">
+                                                <img loading="lazy" decoding="async" src="{{ photo.image.url }}" class="w-100 h-100 object-fit-contain" alt="{{ photo.get_label_display }}">
+                                                <div class="p-4 glass-panel border-0 rounded-0">
+                                                    <h4 class="h5 mb-1 text-accent">{{ photo.get_label_display }}</h4>
+                                                    <p class="small text-secondary mb-0">Captured on {{ photo.uploaded_at|date:"M d, Y at H:i" }} by Eyetrack Technician</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </section>
+
+                <style>
+                    /* Installation Progress Styling */
+                    .amber-step.complete .order-track-progress-node {
+                        background: linear-gradient(135deg, #f59e0b, #d97706);
+                        color: #fff;
+                        box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+                    }
+                    .amber-step.current .order-track-progress-node {
+                        border-color: #f59e0b;
+                        color: #f59e0b;
+                        box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+                    }
+                    .amber-step.complete::after {
+                        background: #f59e0b;
+                    }
+                    .amber-step.current strong { color: #fbbf24; }
+
+                    /* Technician Profile Card */
+                    .technician-profile-card {
+                        position: relative;
+                        border-radius: 16px;
+                        overflow: hidden;
+                        background: rgba(245, 158, 11, 0.03);
+                        border: 1px solid rgba(245, 158, 11, 0.1);
+                        padding: 1.5rem;
+                    }
+                    .tech-header {
+                        display: flex;
+                        align-items: center;
+                        gap: 1.5rem;
+                        margin-bottom: 1.5rem;
+                    }
+                    .tech-avatar {
+                        position: relative;
+                        width: 64px;
+                        height: 64px;
+                        background: #1e1e1e;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.5rem;
+                        color: #f59e0b;
+                        border: 2px solid rgba(245, 158, 11, 0.3);
+                        overflow: hidden;
+                    }
+                    .tech-img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                    .tech-rating {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        font-size: 0.75rem;
+                    }
+                    .tech-rating .stars {
+                        color: #fbbf24;
+                        display: flex;
+                        gap: 2px;
+                    }
+                    .rating-num {
+                        color: #9ca3af;
+                        font-weight: 600;
+                    }
+                    .tech-bio {
+                        padding: 0.75rem 1rem;
+                        background: rgba(255, 255, 255, 0.03);
+                        border-left: 3px solid #f59e0b;
+                        border-radius: 4px;
+                        font-style: italic;
+                    }
+                    .tech-name {
+                        font-size: 1.25rem;
+                        font-weight: 700;
+                        margin: 0;
+                        color: #fff;
+                    }
+                    .tech-verified-badge {
+                        background: rgba(245, 158, 11, 0.15);
+                        color: #fbbf24;
+                        padding: 2px 8px;
+                        border-radius: 4px;
+                        font-size: 0.65rem;
+                        font-weight: 800;
+                        letter-spacing: 0.5px;
+                        display: flex;
+                        align-items: center;
+                        gap: 4px;
+                        border: 1px solid rgba(245, 158, 11, 0.2);
+                    }
+                    .tech-name-row {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        margin-bottom: 4px;
+                    }
+                    .tech-designation {
+                        font-size: 0.85rem;
+                        color: #9ca3af;
+                        margin: 0;
+                    }
+                    .btn-tech-call {
+                        width: 44px;
+                        height: 44px;
+                        background: #f59e0b;
+                        color: #fff;
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        text-decoration: none;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+                    }
+                    .btn-tech-call:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4);
+                        background: #fbbf24;
+                        color: #fff;
+                    }
+                    .tech-footer {
+                        display: flex;
+                        gap: 2rem;
+                        padding-top: 1rem;
+                        border-top: 1px solid rgba(255,255,255,0.05);
+                    }
+                    .tech-meta {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        font-size: 0.8rem;
+                        color: #9ca3af;
+                    }
+                    .tech-meta i { color: #f59e0b; }
+                    .tech-meta strong { color: #fff; }
+
+                    /* Service Proof Gallery Styling */
+                    .proof-card {
+                        border: 1px solid rgba(255, 255, 255, 0.05);
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                    .proof-card:hover {
+                        border-color: rgba(245, 158, 11, 0.3);
+                        transform: translateY(-4px);
+                        box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+                    }
+                    .proof-img-container img {
+                        transition: transform 0.5s ease;
+                    }
+                    .proof-card:hover .proof-img-container img {
+                        transform: scale(1.1);
+                    }
+                    .glass-panel {
+                        background: rgba(17, 24, 39, 0.95);
+                        backdrop-filter: blur(10px);
+                    }
+
+                    @media (max-width: 576px) {
+                        .tech-header { flex-direction: column; text-align: center; }
+                        .tech-name-row { justify-content: center; flex-direction: column; }
+                        .tech-footer { flex-direction: column; gap: 0.75rem; }
+                    }
+                </style>
+                {% endif %}
+
+                <section class="row g-4 page-section">
+                    <div class="col-xl-8">
+                        <section class="glass-card order-track-panel h-100 p-4">
+                            <div class="border-bottom border-light border-opacity-10 pb-3 mb-4">
+                                <h2 class="h5 mb-0 text-white"><i class="bi bi-box-seam text-accent me-2"></i>Order Items ({{ tracked_items|length }})</h2>
+                            </div>
+                            <div class="order-track-item-list">
+                                {% for item in tracked_items %}
+                                <div class="d-flex flex-wrap flex-sm-nowrap gap-3 mb-3 pb-3 border-bottom border-secondary border-opacity-10 last-border-0">
+                                    <div class="bg-dark rounded-3 border border-secondary border-opacity-25 p-1 shrink-0" style="width: 80px; height: 80px;">
+                                        {% if item.product.image %}
+                                            <img loading="lazy" decoding="async" src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-100 h-100 object-fit-cover rounded-2">
+                                        {% else %}
+                                            <div class="w-100 h-100 d-flex align-items-center justify-content-center text-secondary h3 mb-0"><i class="bi {{ item.product.category.icon }}"></i></div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h3 class="h6 mb-1 text-white">{{ item.product.name }}</h3>
+                                        <div class="text-secondary small mb-2">Quantity: {{ item.quantity }}</div>
+                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <strong class="text-white">&#8377; {{ item.price|floatformat:2 }}</strong>
+                                            <span class="text-accent small fw-semibold">Subtotal: &#8377; {{ item.line_total|floatformat:2 }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                    <div class="text-secondary py-3 text-center">No items available.</div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="col-xl-4 d-flex flex-column gap-4">
+                        <section class="glass-card order-track-panel p-4">
+                            <div class="border-bottom border-light border-opacity-10 pb-3 mb-3">
+                                <h2 class="h6 mb-0 text-white"><i class="bi bi-geo-alt text-success me-2"></i>Delivery Address</h2>
+                            </div>
+                            <div>
+                                <h3 class="h6 text-white mb-1">{{ tracking_display.recipient_name }}</h3>
+                                <p class="text-secondary small mb-3">{{ tracking_display.address }}</p>
+                                <div class="d-flex flex-column gap-2 small">
+                                    <div class="d-flex justify-content-between border-bottom border-secondary border-opacity-10 pb-2">
+                                        <span class="text-muted">Email</span>
+                                        <span class="text-white">{{ tracked_order.email }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">Phone</span>
+                                        <span class="text-white">{{ tracked_order.phone }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        {% if return_requests %}
+                        <section class="glass-card order-track-panel p-4 border border-accent border-opacity-20" style="background: rgba(245, 158, 11, 0.05);">
+                            <div class="border-bottom border-light border-opacity-10 pb-3 mb-3">
+                                <h2 class="h6 mb-0 text-white"><i class="bi bi-arrow-left-right text-accent me-2"></i>Active Returns</h2>
+                            </div>
+                            {% for req in return_requests %}
+                            <div class="mb-3 last-mb-0">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="text-white small fw-bold">Request #{{ req.id }}</span>
+                                    <span class="badge {% if req.status == 'pending' %}bg-warning text-dark{% elif req.status == 'approved' %}bg-info text-white{% elif req.status == 'completed' %}bg-success text-white{% else %}bg-secondary{% endif %} rounded-pill" style="font-size: 0.65rem;">
+                                        {{ req.get_status_display|upper }}
+                                    </span>
+                                </div>
+                                <p class="text-secondary mb-2" style="font-size: 0.75rem;">Reason: {{ req.get_reason_display }}</p>
+                                {% if req.admin_comment %}
+                                <div class="p-2 rounded bg-dark-soft border border-white-10 small text-light-70 mb-2" style="font-size: 0.7rem;">
+                                    <i class="bi bi-chat-left-dots me-1 text-accent"></i> {{ req.admin_comment }}
+                                </div>
+                                {% endif %}
+                                <div class="d-flex gap-2">
+                                    {% for item in req.returned_items.all %}
+                                        <div class="small text-muted" style="font-size: 0.7rem;">• {{ item.order_item.product.name|truncatechars:15 }} (x{{ item.quantity }})</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </section>
+                        {% endif %}
+
+                        <section class="glass-card order-track-panel p-4">
+                            <div class="border-bottom border-light border-opacity-10 pb-3 mb-3">
+                                <h2 class="h6 mb-0 text-white"><i class="bi bi-truck text-info me-2"></i>Courier Details</h2>
+                            </div>
+                            <div class="d-flex flex-column gap-2 small">
+                                <div class="d-flex justify-content-between border-bottom border-secondary border-opacity-10 pb-2">
+                                    <span class="text-muted">Tracking ID</span>
+                                    <span class="text-white fw-bold">{{ tracking_display.tracking_number }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between border-bottom border-secondary border-opacity-10 pb-2">
+                                    <span class="text-muted">Carrier</span>
+                                    <span class="text-white">{{ tracking_display.carrier }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Service</span>
+                                    <span class="text-white">{{ tracking_display.service_level }}</span>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="glass-card order-track-panel p-4 border border-secondary border-opacity-25" style="background: rgba(245, 158, 11, 0.03);">
+                            <h2 class="h6 text-white mb-2"><i class="bi bi-headset text-accent me-2"></i>Need Help?</h2>
+                            <p class="text-secondary small mb-3">Use your order number when speaking with support.</p>
+                            <a href="mailto:info@etsgrp.in" class="btn btn-premium-cta w-100 btn-sm">Contact Support</a>
+                        </section>
+                    </div>
+                </section>
+            </section>
+        </div>
+    </div>
+</section>
+
+<!-- Premium Cancellation Modal -->
+{% if user.is_authenticated and tracked_order.order_status == 'pending' or user.is_authenticated and tracked_order.order_status == 'confirmed' %}
+<div class="modal fade premium-modal" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title h4" id="cancelOrderModalLabel">Cancel Order {{ tracked_order.formatted_id }}?</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="mb-4">
+                    <i class="bi bi-exclamation-triangle-fill text-danger display-4"></i>
+                </div>
+                <p class="lead-copy mb-2">Are you sure you want to cancel this order?</p>
+                <p class="text-secondary small">This action cannot be undone. Your stock will be restored to our inventory immediately.</p>
+            </div>
+            <div class="modal-footer border-0 pb-4 justify-content-center">
+                <button type="button" class="btn btn-premium-cta btn-modal-cancel px-4" data-bs-dismiss="modal">Keep Order</button>
+                <form method="post" action="{% url 'cancel_order' tracked_order.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-modal-confirm px-4">Confirm Cancellation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -279,8 +279,14 @@
         window.addEventListener('resize', onScroll);
 
         if (backToTopBtn) {
-            backToTopBtn.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+            backToTopBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                try {
+                    window.scroll({ top: 0, left: 0, behavior: 'smooth' });
+                } catch (err) {
+                    window.scrollTo(0, 0);
+                }
             });
         }
 
@@ -407,6 +413,10 @@
             if (!form.action || !form.action.includes('add-to-cart')) {
                 return;
             }
+            // If this is the product-list upsell form, let the installation modal handle it
+            if (form.classList.contains('add-to-cart-form')) {
+                return;
+            }
             event.preventDefault();
             const submitButton = form.querySelector('button[type="submit"]');
             if (submitButton) {
@@ -469,6 +479,7 @@
             return;
         }
         const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        const quickViewLoading = document.getElementById('quickViewLoading');
         const quickViewImage = document.getElementById('quickViewImage');
         const quickViewFallback = document.getElementById('quickViewFallback');
         const quickViewCategory = document.getElementById('quickViewCategory');
@@ -478,6 +489,8 @@
         const quickViewDescription = document.getElementById('quickViewDescription');
         const quickViewDetailLink = document.getElementById('quickViewDetailLink');
         const quickViewAddForm = document.getElementById('quickViewAddForm');
+        const quickViewSpecsContainer = document.getElementById('quickViewSpecsContainer');
+        const quickViewSpecsGrid = document.getElementById('quickViewSpecsGrid');
 
         document.addEventListener('click', async (event) => {
             const btn = event.target.closest('.quick-view-btn');
@@ -490,29 +503,51 @@
                 return;
             }
 
+            // Show loading state
+            if (quickViewLoading) quickViewLoading.classList.remove('d-none');
+            modal.show();
+
             try {
                 const response = await fetch(`/api/product/${productId}/quick-view/`, {
                     headers: { 'Accept': 'application/json' },
                 });
                 if (!response.ok) {
-                    return;
+                    throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
                 if (!data.ok || !data.product) {
-                    return;
+                    throw new Error('Product data not found');
                 }
+                
                 const product = data.product;
+                
+                // Populate basic info
                 quickViewCategory.textContent = product.category || 'Product';
                 quickViewName.textContent = product.name || 'Product';
                 quickViewPrice.textContent = product.price ? `Rs ${product.price}` : '';
-                quickViewStock.textContent = `Stock: ${product.stock}`;
-                quickViewStock.className = `small mb-2 ${product.stock > 0 ? 'text-success' : 'text-danger'}`;
+                
+                // Stock status
+                if (quickViewStock) {
+                    if (product.stock <= 0) {
+                        quickViewStock.innerHTML = `<i class="bi bi-x-circle-fill me-1"></i>Out of Stock`;
+                        quickViewStock.className = `stock-status-badge small out-of-stock`;
+                    } else if (product.stock <= 5) {
+                        quickViewStock.innerHTML = `<i class="bi bi-fire me-1"></i>Low Stock: ${product.stock} Left`;
+                        quickViewStock.className = `stock-status-badge small low-stock`;
+                    } else {
+                        quickViewStock.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i>In Stock: ${product.stock}`;
+                        quickViewStock.className = `stock-status-badge small in-stock`;
+                    }
+                }
+
                 quickViewDescription.textContent = product.description || '';
                 quickViewDetailLink.href = product.url || '#';
+                
                 if (quickViewAddForm && product.add_to_cart_url) {
                     quickViewAddForm.setAttribute('action', product.add_to_cart_url);
                 }
 
+                // Populate Image
                 if (product.image) {
                     quickViewImage.src = product.image;
                     quickViewImage.alt = product.name || 'Product image';
@@ -523,12 +558,36 @@
                     quickViewFallback.classList.remove('d-none');
                 }
 
-                modal.show();
+                // Populate Specs
+                if (quickViewSpecsGrid && product.display_specs && product.display_specs.length > 0) {
+                    quickViewSpecsGrid.innerHTML = '';
+                    // Limit to top 4 key specs for quick view
+                    product.display_specs.slice(0, 4).forEach(spec => {
+                        const specHtml = `
+                            <div class="quick-view-spec-item">
+                                <span class="quick-view-spec-label">${spec.label}</span>
+                                <span class="quick-view-spec-value">${spec.value}</span>
+                            </div>
+                        `;
+                        quickViewSpecsGrid.insertAdjacentHTML('beforeend', specHtml);
+                    });
+                    quickViewSpecsContainer.classList.remove('d-none');
+                } else {
+                    quickViewSpecsContainer.classList.add('d-none');
+                }
+
             } catch (error) {
-                // Intentionally no-op to keep the UI resilient without noisy errors.
+                console.error('Quick view fetch failed:', error);
+                modal.hide();
+                if (typeof showPremiumToast === 'function') {
+                    showPremiumToast('Unable to load product preview', 'error');
+                }
+            } finally {
+                if (quickViewLoading) quickViewLoading.classList.add('d-none');
             }
         });
     };
+
 
     const setupWishlistCompare = (showToast) => {
         const maxCompare = 4;
@@ -545,13 +604,65 @@
         const wishlistToggleBtn = document.getElementById('wishlistToggleBtn');
         const compareToggleBtn = document.getElementById('compareToggleBtn');
 
-        const extractProduct = (btn) => ({
-            id: btn.dataset.productId || btn.getAttribute('data-product-id') || '',
-            name: btn.dataset.productName || btn.getAttribute('data-product-name') || 'Product',
-            price: btn.dataset.productPrice || btn.getAttribute('data-product-price') || '',
-            url: btn.dataset.productUrl || btn.getAttribute('data-product-url') || '#',
-            image: btn.dataset.productImage || btn.getAttribute('data-product-image') || '',
-        });
+        const toggleCollection = async (type, btn) => {
+            const config = window.EyetrackConfig || {};
+            const productId = btn.dataset.productId || btn.getAttribute('data-product-id') || '';
+            const productData = {
+                id: productId,
+                name: btn.dataset.productName || btn.getAttribute('data-product-name') || 'Product',
+                price: btn.dataset.productPrice || btn.getAttribute('data-product-price') || '',
+                url: btn.dataset.productUrl || btn.getAttribute('data-product-url') || '#',
+                image: btn.dataset.productImage || btn.getAttribute('data-product-image') || '',
+                category: btn.dataset.productCategory || btn.getAttribute('data-product-category') || '',
+            };
+
+            if (!productId) {
+                return;
+            }
+
+            const currentItems = getCollection(type);
+            const exists = currentItems.some((item) => String(item.id) === String(productId));
+            let nextItems = [];
+
+            if (exists) {
+                nextItems = currentItems.filter((item) => String(item.id) !== String(productId));
+                showToast(`Removed from ${type}.`);
+            } else {
+                if (type === 'compare' && currentItems.length >= 4) {
+                    showToast('Comparison limit reached (max 4).', 'warning');
+                    return;
+                }
+                nextItems = [...currentItems, productData];
+                showToast(`Added to ${type}.`);
+            }
+
+            setCollection(type, nextItems);
+
+            // Server-side sync for wishlist if authenticated
+            if (type === 'wishlist' && config.isAuthenticated) {
+                try {
+                    const response = await fetch(`${config.toggleWishlistUrl}${productId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': config.csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.ok) {
+                        // Ensure badge counts match server exactly
+                        const wishlistBadges = document.querySelectorAll('[data-wishlist-count]');
+                        wishlistBadges.forEach(el => el.textContent = data.wishlist_count);
+                    }
+                } catch (error) {
+                    console.error('Wishlist server sync failed:', error);
+                }
+            }
+
+            renderCollection(type);
+            updateCounts();
+            syncButtonStates();
+        };
 
         const renderCollection = (type) => {
             const items = getCollection(type);
@@ -605,61 +716,36 @@
             });
         };
 
-        const toggleCollection = (type, btn) => {
-            const product = extractProduct(btn);
-            if (!product.id) {
-                return;
-            }
-            const items = getCollection(type);
-            const exists = items.some((i) => String(i.id) === String(product.id));
-            let nextItems = items;
-            if (exists) {
-                nextItems = items.filter((i) => String(i.id) !== String(product.id));
-                showToast(type === 'wishlist' ? 'Removed from wishlist.' : 'Removed from compare list.');
-            } else {
-                if (type === 'compare' && items.length >= maxCompare) {
-                    nextItems = items.slice(1);
-                    showToast('Compare list is full. Replaced oldest item.', 'error');
-                }
-                nextItems = [...nextItems, product];
-                showToast(type === 'wishlist' ? 'Added to wishlist.' : 'Added to compare list.');
-            }
-            setCollection(type, nextItems);
-            renderCollection(type);
-            updateCounts();
-            syncButtonStates();
-        };
-
         const bindStaticButtons = () => {
             document.querySelectorAll('.wishlist-btn[data-product-id]').forEach((btn) => {
-                btn.addEventListener('click', (event) => {
+                btn.addEventListener('click', async (event) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    toggleCollection('wishlist', btn);
+                    await toggleCollection('wishlist', btn);
                 });
             });
             document.querySelectorAll('.compare-btn[data-product-id]').forEach((btn) => {
-                btn.addEventListener('click', (event) => {
+                btn.addEventListener('click', async (event) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    toggleCollection('compare', btn);
+                    await toggleCollection('compare', btn);
                 });
             });
         };
 
-        document.addEventListener('click', (event) => {
+        document.addEventListener('click', async (event) => {
             const wishlistBtn = event.target.closest('.wishlist-btn');
             if (wishlistBtn) {
                 event.preventDefault();
                 event.stopPropagation();
-                toggleCollection('wishlist', wishlistBtn);
+                await toggleCollection('wishlist', wishlistBtn);
                 return;
             }
             const compareBtn = event.target.closest('.compare-btn');
             if (compareBtn) {
                 event.preventDefault();
                 event.stopPropagation();
-                toggleCollection('compare', compareBtn);
+                await toggleCollection('compare', compareBtn);
                 return;
             }
             const removeBtn = event.target.closest('.remove-saved-btn');
@@ -703,8 +789,28 @@
         renderCollection('wishlist');
         renderCollection('compare');
         updateCounts();
+        const syncWithServer = async () => {
+            const config = window.EyetrackConfig || {};
+            if (config.isAuthenticated && config.wishlistDataUrl) {
+                try {
+                    const response = await fetch(config.wishlistDataUrl);
+                    const data = await response.json();
+                    if (data.ok && data.wishlist) {
+                        // Merge or replace local with server? Usually replace for auth users.
+                        setCollection('wishlist', data.wishlist);
+                        // Also sync counts
+                        const wishlistBadges = document.querySelectorAll('[data-wishlist-count]');
+                        wishlistBadges.forEach(el => el.textContent = data.wishlist.length);
+                    }
+                } catch (error) {
+                    console.error('Initial wishlist sync failed:', error);
+                }
+            }
+        };
+
+        syncWithServer();
         syncButtonStates();
-        bindStaticButtons();
+        updateCounts();
         window.__etsWishlistCompareReady = true;
     };
 
@@ -714,11 +820,16 @@
             return;
         }
         const fields = Array.from(form.querySelectorAll('.checkout-field'));
+        const fieldsByName = fields.reduce((map, field) => {
+            map[field.name] = field;
+            return map;
+        }, {});
         const progressBar = document.getElementById('checkoutProgressBar');
         const progressText = document.getElementById('checkoutProgressText');
         const submitBtn = document.getElementById('checkoutSubmitBtn');
         const stepAddress = document.getElementById('checkoutStepAddress');
         const stepPayment = document.getElementById('checkoutStepPayment');
+        const savedAddressSelect = document.getElementById('checkoutSavedAddress');
 
         const validateField = (field) => {
             const value = field.value.trim();
@@ -729,12 +840,34 @@
             if (field.name === 'phone') {
                 valid = /^[0-9+ ]{10,15}$/.test(value);
             }
-            if (field.name === 'address') {
-                valid = value.length >= 8;
+            if (field.name === 'address' || field.name.startsWith('addr_')) {
+                valid = value.length >= 2;
+                if (field.name === 'addr_pincode') {
+                    valid = /^[0-9]{6}$/.test(value);
+                }
             }
             field.classList.toggle('is-valid', valid);
             field.classList.toggle('is-invalid', !valid && value.length > 0);
             return valid;
+        };
+
+        const initStickyDetailBar = () => {
+            const stickyBar = document.querySelector('.sticky-detail-bar');
+            const mainActionContainer = document.querySelector('.product-detail-page form[action*="add-to-cart"]');
+
+            if (stickyBar && mainActionContainer) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+                            stickyBar.classList.add('visible');
+                        } else {
+                            stickyBar.classList.remove('visible');
+                        }
+                    });
+                }, { threshold: 0, rootMargin: "-100px 0px 0px 0px" });
+
+                observer.observe(mainActionContainer);
+            }
         };
 
         const refreshProgress = () => {
@@ -750,10 +883,46 @@
             stepPayment?.classList.toggle('active', pct === 100);
         };
 
+        const applySavedAddressSelection = () => {
+            if (!savedAddressSelect) {
+                return;
+            }
+
+            const selectedOption = savedAddressSelect.options[savedAddressSelect.selectedIndex];
+            if (!selectedOption || !selectedOption.value) {
+                refreshProgress();
+                return;
+            }
+
+            const valueMap = {
+                full_name: selectedOption.dataset.fullName || '',
+                email: selectedOption.dataset.email || '',
+                phone: selectedOption.dataset.phone || '',
+                addr_house: selectedOption.dataset.house || '',
+                addr_landmark: selectedOption.dataset.landmark || '',
+                addr_city: selectedOption.dataset.city || '',
+                addr_state: selectedOption.dataset.state || '',
+                addr_pincode: selectedOption.dataset.pincode || '',
+            };
+
+            Object.entries(valueMap).forEach(([name, value]) => {
+                const field = fieldsByName[name];
+                if (!field) {
+                    return;
+                }
+                field.value = value;
+                validateField(field);
+            });
+
+            refreshProgress();
+        };
+
         fields.forEach((field) => {
             field.addEventListener('input', refreshProgress);
             field.addEventListener('blur', refreshProgress);
         });
+
+        savedAddressSelect?.addEventListener('change', applySavedAddressSelection);
 
         form.addEventListener('submit', () => {
             if (submitBtn) {
@@ -920,15 +1089,31 @@
             const num = Number.parseFloat(String(value || '').replace(/[^0-9.]/g, ''));
             return Number.isFinite(num) ? num : 0;
         };
+        const compareShell = document.getElementById('comparePageTable');
         const getSpec = (item, key) => (item.specs && item.specs[key] ? item.specs[key] : '-');
-        const yesNoClass = (value) => (String(value).toLowerCase() === 'yes' ? 'compare-check' : 'compare-cross');
+        const yesNoClass = (value) => (String(value).toLowerCase() === 'yes' ? 'compare-check yes' : 'compare-check no');
+        const yesNoIcon = (value) => (String(value).toLowerCase() === 'yes' ? '✔ Yes' : '✖ No');
         const numberFromSpec = (item, key) => toNumber(getSpec(item, key));
+        const dataCell = (content, className = '') => `<div class="compare-data-cell${className ? ` ${className}` : ''}">${content}</div>`;
+
+        const getStockBadgeClass = (stock) => {
+            if (stock === 0) return 'compare-stock-badge out-of-stock';
+            if (stock < 5) return 'compare-stock-badge low-stock';
+            return 'compare-stock-badge in-stock';
+        };
+
+        const getStockBadgeText = (stock) => {
+            if (stock === 0) return 'Out of Stock';
+            if (stock < 5) return `${stock} Left`;
+            return 'In Stock';
+        };
 
         const render = async () => {
             const storedItems = getCollection('compare');
             countEls.forEach((el) => { el.textContent = `${storedItems.length}`; });
             if (!storedItems.length) {
                 tbody.innerHTML = '';
+                compareShell?.style.setProperty('--compare-cols', '1');
                 emptyEl?.classList.remove('d-none');
                 return;
             }
@@ -936,10 +1121,30 @@
             tbody.style.opacity = '0.5';
             tbody.style.pointerEvents = 'none';
 
+            // Validate all products are from same category
+            const categories = new Set(storedItems.map(item => item.category).filter(Boolean));
+            if (categories.size > 1) {
+                tbody.innerHTML = `
+                    <div class="compare-grid-message">
+                        <div class="display-6 mb-2 text-danger"><i class="bi bi-exclamation-triangle"></i></div>
+                        <h5 class="mb-2">Invalid Comparison</h5>
+                        <p class="text-secondary mb-3">Products must be from the same category to compare.</p>
+                        <p class="small text-secondary">Categories found: ${Array.from(categories).join(', ')}</p>
+                    </div>
+                `;
+                compareShell?.style.setProperty('--compare-cols', '1');
+                tbody.style.opacity = '';
+                tbody.style.pointerEvents = '';
+                return;
+            }
+
             const liveItems = await Promise.all(storedItems.map(async (item) => {
                 const live = await fetchProduct(item.id);
                 return live ? { ...item, ...live } : item;
             }));
+            const compareCols = Math.max(liveItems.length, 1);
+            const compareGridTemplate = `220px repeat(${compareCols}, minmax(0, 1fr))`;
+            compareShell?.style.setProperty('--compare-cols', String(compareCols));
 
             const prices = liveItems.map((item) => toNumber(item.price)).filter((v) => v > 0);
             const bestPrice = prices.length ? Math.min(...prices) : 0;
@@ -958,120 +1163,237 @@
                 const bestStockBadge = bestStock > 0 && stock === bestStock
                     ? `<span class="compare-chip best-stock">Top Stock</span>` : '';
                 const image = item.image
-                    ? `<img src="${item.image}" alt="${item.name || 'Product'}" class="compare-thumb">`
-                    : `<div class="compare-thumb compare-thumb-fallback"><i class="bi bi-camera-video"></i></div>`;
+                    ? `<img src="${item.image}" alt="${item.name || 'Product'}" class="compare-product-image">`
+                    : `<div class="compare-product-image-placeholder"><i class="bi bi-camera-video"></i></div>`;
 
                 return `
-                    <td class="compare-product-cell">
-                        <div class="compare-product-head">
+                    <td class="compare-data-cell">
+                        <div class="compare-product-header">
                             ${image}
-                            <div>
-                                <h6>${item.name || ''}</h6>
-                                <p>${item.price ? `Rs ${item.price}` : ''}</p>
-                                <div class="compare-chip-row">${bestPriceBadge}${bestStockBadge}</div>
+                            <h6 class="compare-product-name">${item.name || '-'}</h6>
+                            <p class="compare-product-price">${item.price ? `₹${item.price}` : '-'}</p>
+                            <div class="d-flex gap-2 flex-wrap justify-content-center mb-2">
+                                ${bestPriceBadge}${bestStockBadge}
                             </div>
-                        </div>
-                        <div class="d-flex gap-2 mt-2">
-                            <a class="btn btn-sm btn-outline-light" href="${item.url || item.product_url || '#'}">View</a>
-                            <button class="btn btn-sm btn-outline-danger compare-remove-page-btn desktop-secondary-btn" data-id="${item.id}">Remove</button>
-                            <details class="mobile-more-actions">
-                                <summary class="btn btn-outline-light btn-sm">More</summary>
-                                <div class="mobile-more-panel">
-                                    <button class="btn btn-sm btn-outline-danger w-100 compare-remove-page-btn" data-id="${item.id}">Remove</button>
-                                </div>
-                            </details>
+                            <div class="compare-product-actions">
+                                <a class="btn btn-sm compare-view-product d-inline-flex align-items-center justify-content-center gap-1" href="${item.url || item.product_url || '#'}"><i class="bi bi-eye"></i>View</a>
+                                <button class="btn btn-sm compare-remove-product d-inline-flex align-items-center justify-content-center gap-1 compare-remove-page-btn" data-id="${item.id}"><i class="bi bi-trash3"></i>Remove</button>
+                            </div>
                         </div>
                     </td>
                 `;
             }).join('');
 
+            // Determine category and create appropriate spec rows
+            const category = categories.values().next().value;
+            console.log('Compare category:', category);
+            console.log('First product specs:', liveItems[0]?.specs);
+
+            let specRows = [];
+
+            if (category === 'CCTV Cameras') {
+                specRows = [
+                    {
+                        label: 'Camera Type',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'camera_type')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Resolution',
+                        value: liveItems.map((item) => {
+                            const value = getSpec(item, 'resolution_mp');
+                            const best = bestResolution > 0 && numberFromSpec(item, 'resolution_mp') === bestResolution;
+                            return `<td class="compare-data-cell ${best ? 'compare-best' : ''}">${value}</td>`;
+                        }).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Night Vision Range',
+                        value: liveItems.map((item) => {
+                            const value = getSpec(item, 'night_vision_range_m');
+                            const best = bestNightVision > 0 && numberFromSpec(item, 'night_vision_range_m') === bestNightVision;
+                            return `<td class="compare-data-cell ${best ? 'compare-best' : ''}">${value}</td>`;
+                        }).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Field of View',
+                        value: liveItems.map((item) => {
+                            const value = getSpec(item, 'field_of_view_deg');
+                            const best = bestFov > 0 && numberFromSpec(item, 'field_of_view_deg') === bestFov;
+                            return `<td class="compare-data-cell ${best ? 'compare-best' : ''}">${value}</td>`;
+                        }).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Lens',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'lens')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Frame Rate',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'frame_rate')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Weatherproof',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'weatherproof')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Connectivity',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'connectivity')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Power Source',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'power_source')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Storage Support',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'storage_support')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Audio Support',
+                        value: liveItems.map((item) => {
+                            const val = getSpec(item, 'audio_support');
+                            return `<td class="compare-data-cell"><span class="${yesNoClass(val)}">${yesNoIcon(val)}</span></td>`;
+                        }).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'AI Detection',
+                        value: liveItems.map((item) => {
+                            const val = getSpec(item, 'ai_detection');
+                            return `<td class="compare-data-cell"><span class="${yesNoClass(val)}">${yesNoIcon(val)}</span></td>`;
+                        }).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Warranty',
+                        value: liveItems.map((item) => {
+                            const value = getSpec(item, 'warranty_years');
+                            const best = bestWarranty > 0 && numberFromSpec(item, 'warranty_years') === bestWarranty;
+                            return `<td class="compare-data-cell ${best ? 'compare-best' : ''}">${value}</td>`;
+                        }).join(''),
+                        className: ''
+                    },
+                ];
+            } else if (category === 'Video Door Phones') {
+                specRows = [
+                    {
+                        label: 'Screen Size',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'screen_size')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Camera Resolution',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'camera_resolution')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Night Vision',
+                        value: liveItems.map((item) => {
+                            const val = getSpec(item, 'night_vision');
+                            return `<td class="compare-data-cell"><span class="${yesNoClass(val)}">${yesNoIcon(val)}</span></td>`;
+                        }).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Connectivity Type',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'connectivity_type')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Unlock Method',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'unlock_method')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Audio Communication',
+                        value: liveItems.map((item) => {
+                            const val = getSpec(item, 'audio_communication');
+                            return `<td class="compare-data-cell"><span class="${yesNoClass(val)}">${yesNoIcon(val)}</span></td>`;
+                        }).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Mobile App Support',
+                        value: liveItems.map((item) => {
+                            const val = getSpec(item, 'mobile_app_support');
+                            return `<td class="compare-data-cell"><span class="${yesNoClass(val)}">${yesNoIcon(val)}</span></td>`;
+                        }).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Storage Support',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'storage_support')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Power Source',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'power_source')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Installation Type',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'installation_type')}</td>`).join(''),
+                        className: ''
+                    },
+                    {
+                        label: 'Warranty',
+                        value: liveItems.map((item) => `<td class="compare-data-cell">${getSpec(item, 'warranty')}</td>`).join(''),
+                        className: ''
+                    },
+                ];
+            }
+
             const rows = [
-                { label: 'Product', value: productCells },
-                { label: 'Category', value: liveItems.map((item) => `<td>${item.category || '-'}</td>`).join('') },
-                { label: 'Camera Type', value: liveItems.map((item) => `<td>${getSpec(item, 'camera_type')}</td>`).join('') },
                 {
-                    label: 'Price',
-                    value: liveItems.map((item) => {
-                        const itemPrice = toNumber(item.price);
-                        const best = bestPrice > 0 && itemPrice === bestPrice;
-                        return `<td class="${best ? 'compare-best' : ''}">${item.price ? `Rs ${item.price}` : '-'}</td>`;
-                    }).join(''),
+                    label: 'Product',
+                    value: productCells,
+                    className: ''
                 },
                 {
-                    label: 'Stock Units',
-                    value: liveItems.map((item) => {
-                        const stock = Number(item.stock) || 0;
-                        const best = bestStock > 0 && stock === bestStock;
-                        const stockClass = stock > 0 ? 'compare-stock-in' : 'compare-stock-out';
-                        return `<td class="${best ? 'compare-best' : ''}"><span class="${stockClass}">${stock}</span></td>`;
-                    }).join(''),
+                    label: 'Category',
+                    value: liveItems.map((item) => `<td class="compare-data-cell">${item.category || '-'}</td>`).join(''),
+                    className: ''
                 },
-                {
-                    label: 'Resolution',
-                    value: liveItems.map((item) => {
-                        const value = getSpec(item, 'resolution_mp');
-                        const best = bestResolution > 0 && numberFromSpec(item, 'resolution_mp') === bestResolution;
-                        return `<td class="${best ? 'compare-best' : ''}">${value}</td>`;
-                    }).join(''),
-                },
-                {
-                    label: 'Night Vision Range',
-                    value: liveItems.map((item) => {
-                        const value = getSpec(item, 'night_vision_range_m');
-                        const best = bestNightVision > 0 && numberFromSpec(item, 'night_vision_range_m') === bestNightVision;
-                        return `<td class="${best ? 'compare-best' : ''}">${value}</td>`;
-                    }).join(''),
-                },
-                {
-                    label: 'Field of View',
-                    value: liveItems.map((item) => {
-                        const value = getSpec(item, 'field_of_view_deg');
-                        const best = bestFov > 0 && numberFromSpec(item, 'field_of_view_deg') === bestFov;
-                        return `<td class="${best ? 'compare-best' : ''}">${value}</td>`;
-                    }).join(''),
-                },
-                { label: 'Lens', value: liveItems.map((item) => `<td>${getSpec(item, 'lens_mm')}</td>`).join('') },
-                { label: 'Frame Rate', value: liveItems.map((item) => `<td>${getSpec(item, 'frame_rate_fps')}</td>`).join('') },
-                { label: 'Weatherproof', value: liveItems.map((item) => `<td>${getSpec(item, 'weatherproof_rating')}</td>`).join('') },
-                { label: 'Connectivity', value: liveItems.map((item) => `<td>${getSpec(item, 'connectivity')}</td>`).join('') },
-                { label: 'Power Source', value: liveItems.map((item) => `<td>${getSpec(item, 'power_source')}</td>`).join('') },
-                { label: 'Storage Support', value: liveItems.map((item) => `<td>${getSpec(item, 'storage_support')}</td>`).join('') },
-                {
-                    label: 'Audio Support',
-                    value: liveItems.map((item) => {
-                        const val = getSpec(item, 'audio_support');
-                        return `<td><span class="${yesNoClass(val)}">${val}</span></td>`;
-                    }).join(''),
-                },
-                {
-                    label: 'AI Detection',
-                    value: liveItems.map((item) => {
-                        const val = getSpec(item, 'ai_detection');
-                        return `<td><span class="${yesNoClass(val)}">${val}</span></td>`;
-                    }).join(''),
-                },
-                {
-                    label: 'Warranty',
-                    value: liveItems.map((item) => {
-                        const value = getSpec(item, 'warranty_years');
-                        const best = bestWarranty > 0 && numberFromSpec(item, 'warranty_years') === bestWarranty;
-                        return `<td class="${best ? 'compare-best' : ''}">${value}</td>`;
-                    }).join(''),
-                },
+                ...specRows,
                 {
                     label: 'Description',
-                    value: liveItems.map((item) => `<td>${(item.description || '-').toString().slice(0, 140)}</td>`).join(''),
+                    value: liveItems.map((item) => `<td class="compare-data-cell">${(item.description || '-').toString().slice(0, 140)}</td>`).join(''),
+                    className: ''
                 },
             ];
 
             tbody.innerHTML = rows.map((row) => `
-                <tr>
-                    <td class="compare-attribute-col">${row.label}</td>
+                <div class="compare-grid-row ${row.className}" style="grid-template-columns: ${compareGridTemplate};">
+                    <div class="compare-attribute-name">${row.label}</div>
                     ${row.value}
-                </tr>
-            `).join('');
+                </div>
+            `).join('')
+                .replaceAll('<td class="compare-data-cell">', '<div class="compare-data-cell">')
+                .replace(/<td class="compare-data-cell ([^"]+)">/g, '<div class="compare-data-cell $1">')
+                .replaceAll('</td>', '</div>');
             tbody.style.opacity = '';
             tbody.style.pointerEvents = '';
+
+            const categoryNoteEl = document.getElementById('compareCategoryNote');
+            if (category && liveItems.length > 0) {
+                categoryNoteEl.style.display = 'block';
+                categoryNoteEl.innerHTML = `
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Category-Specific Comparison:</strong> Showing ${category} specifications.
+                    ${category === 'CCTV Cameras' ? 'Camera specs include resolution, lens, connectivity, etc.' :
+                        category === 'Video Door Phones' ? 'VDP specs include screen size, unlock methods, app support, etc.' :
+                            'Product specifications based on category.'}
+                `;
+            } else {
+                categoryNoteEl.style.display = 'none';
+            }
         };
 
         tbody.addEventListener('click', (event) => {
@@ -1171,6 +1493,91 @@
         window.setTimeout(hydrate, 540);
     };
 
+    const setupAjaxCatalog = () => {
+        const gridCol = document.getElementById('catalogGridCol');
+        if (!gridCol) return;
+
+        const updateCatalog = async (url) => {
+            gridCol.style.opacity = '0.4';
+            gridCol.style.pointerEvents = 'none';
+
+            try {
+                const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                if (!response.ok) throw new Error('Bad response');
+                
+                const htmlString = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlString, 'text/html');
+
+                const newGridCol = doc.getElementById('catalogGridCol');
+                if (newGridCol) {
+                    gridCol.innerHTML = newGridCol.innerHTML;
+                    window.history.pushState({}, '', url);
+                    
+                    const newForm = doc.getElementById('catalogFilterForm');
+                    const currentForm = document.getElementById('catalogFilterForm');
+                    if (newForm && currentForm) {
+                        currentForm.innerHTML = newForm.innerHTML;
+                    }
+
+                    const newDockCount = doc.getElementById('mobileFilterCountDock');
+                    const currentDockCount = document.getElementById('mobileFilterCountDock');
+                    if (newDockCount && currentDockCount) {
+                        currentDockCount.textContent = newDockCount.textContent;
+                        currentDockCount.style.opacity = newDockCount.style.opacity;
+                    }
+
+                    if (typeof setupCardTilt === 'function') setupCardTilt();
+                    
+                    // Re-trigger badge count
+                    const inputEvent = new Event('input', { bubbles: true });
+                    currentForm.dispatchEvent(inputEvent);
+                }
+            } catch (err) {
+                window.location.href = url;
+            } finally {
+                gridCol.style.opacity = '1';
+                gridCol.style.pointerEvents = 'all';
+                const catalogSection = document.getElementById('catalog');
+                if (catalogSection) {
+                    const offsetPosition = catalogSection.getBoundingClientRect().top + window.scrollY - 80;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                }
+            }
+        };
+
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('#catalogGridCol .pagination a.page-link, #catalogGridCol .active-filter-clear, #mobileFilters .filter-reset-link');
+            if (link && link.href && !link.href.includes('#')) {
+                e.preventDefault();
+                updateCatalog(link.href);
+            }
+        });
+
+        document.addEventListener('submit', (e) => {
+            const form = e.target.closest('#catalogFilterForm');
+            if (form) {
+                e.preventDefault();
+                const url = new URL(form.action || window.location.href);
+                const formData = new FormData(form);
+                const searchParams = new URLSearchParams();
+                for (const [key, value] of formData.entries()) {
+                    if (value.trim() !== '') {
+                        searchParams.append(key, value);
+                    }
+                }
+                url.search = searchParams.toString();
+                updateCatalog(url.toString());
+            }
+        });
+
+        window.addEventListener('popstate', () => {
+            if (window.location.pathname.includes('/store/') || window.location.pathname.includes('/category/') || window.location.pathname === '/' || window.location.pathname === '/products/') {
+                updateCatalog(window.location.href);
+            }
+        });
+    };
+
     const init = () => {
         const showToast = setupPremiumToast();
         markReady();
@@ -1186,8 +1593,9 @@
         setupQuickView();
         setupWishlistCompare(showToast);
         setupCheckoutMicroInteractions();
-        setupWishlistPage(showToast);
-        setupComparePage(showToast);
+        if (typeof setupWishlistPage !== 'undefined') setupWishlistPage(showToast);
+        if (typeof setupComparePage !== 'undefined') setupComparePage(showToast);
+        setupAjaxCatalog();
     };
 
     if (document.readyState === 'loading') {
@@ -1197,3 +1605,152 @@
     }
 
 })();
+
+/* Product Detail Gallery Switching */
+document.addEventListener('DOMContentLoaded', function() {
+    const mainImage = document.getElementById('main-detail-image');
+    const thumbnails = document.querySelectorAll('.thumbnail-item');
+
+    if (mainImage && thumbnails.length > 0) {
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                const newSrc = this.dataset.src;
+                
+                // Reset active state for all thumbnails
+                thumbnails.forEach(t => t.classList.remove('active'));
+                // Set active state for clicked thumbnail
+                this.classList.add('active');
+                
+                // Apply fade out effect
+                mainImage.style.opacity = '0';
+                
+                setTimeout(() => {
+                    mainImage.src = newSrc;
+                    mainImage.style.opacity = '1';
+                }, 300);
+            });
+        });
+    }
+});
+
+/* Notifications Logic */
+document.addEventListener('DOMContentLoaded', function() {
+    const notificationDrawer = document.getElementById('notificationDrawer');
+    const badge = document.getElementById('globalUnreadBadge');
+    const drawerBody = document.getElementById('notificationDrawerBody');
+    const markAllReadBtn = document.getElementById('markAllReadBtn');
+    
+    if(!notificationDrawer) return;
+
+    function fetchNotifications() {
+        fetch('/accounts/api/notifications/')
+            .then(res => res.json())
+            .then(data => {
+                const unreadCount = data.unread_count;
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                    badge.classList.remove('d-none');
+                } else {
+                    badge.classList.add('d-none');
+                }
+                drawerBody.innerHTML = data.html;
+                attachNotificationListeners();
+            })
+            .catch(err => console.error("Error fetching notifications", err));
+    }
+
+    function attachNotificationListeners() {
+        // We now use event delegation on drawerBody for better reliability
+        if (!drawerBody.dataset.listenerAttached) {
+            drawerBody.addEventListener('click', function(e) {
+                const item = e.target.closest('.notification-item');
+                if (!item) return;
+                
+                // Prevent modal if user clicked a specific action button inside
+                if (e.target.closest('.notification-action-btn')) return;
+
+                console.log("Notification item clicked:", item.dataset.id);
+
+                const notificationId = item.dataset.id;
+                const title = item.dataset.title || 'Notification';
+                const message = item.dataset.message || '';
+                const link = item.dataset.link;
+                const type = item.dataset.type;
+
+                // Mark as read immediately
+                if (item.classList.contains('is-unread')) {
+                    fetch(`/accounts/api/notifications/${notificationId}/read/`, { 
+                        method: 'POST', 
+                        headers: { 
+                            'X-CSRFToken': window.EyetrackConfig?.csrfToken,
+                            'Content-Type': 'application/json'
+                        } 
+                    }).then(() => {
+                        item.classList.remove('is-unread');
+                        const dot = item.querySelector('.unread-dot');
+                        if (dot) dot.remove();
+                        if (badge) {
+                            let current = parseInt(badge.textContent);
+                            if (!isNaN(current)) {
+                                current--;
+                                if (current <= 0) badge.classList.add('d-none');
+                                else badge.textContent = current;
+                            } else if (badge.textContent === '9+') {
+                                fetchNotifications();
+                            }
+                        }
+                    });
+                }
+
+                // Show detailed modal
+                let icon = 'info';
+                if (type === 'order') icon = 'success';
+                else if (type === 'offer') icon = 'info';
+                else if (type === 'alert') icon = 'warning';
+
+                if (window.Swal) {
+                    Swal.fire({
+                        title: title,
+                        text: message,
+                        icon: icon,
+                        showCancelButton: !!link,
+                        confirmButtonText: link ? 'Close' : 'OK',
+                        cancelButtonText: 'View Details',
+                        buttonsStyling: false,
+                        customClass: {
+                            popup: 'swal-glass-popup',
+                            title: 'swal-glass-title',
+                            confirmButton: 'swal-btn-cancel btn me-2',
+                            cancelButton: 'swal-btn-confirm btn'
+                        }
+                    }).then((result) => {
+                        if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel && link) {
+                            window.location.href = link;
+                        }
+                    });
+                } else {
+                    alert(title + "\n\n" + message);
+                }
+            });
+            drawerBody.dataset.listenerAttached = "true";
+        }
+    }
+
+    notificationDrawer.addEventListener('show.bs.offcanvas', fetchNotifications);
+
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', function() {
+            fetch('/accounts/api/notifications/clear/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': window.EyetrackConfig?.csrfToken
+                }
+            }).then(() => fetchNotifications());
+        });
+    }
+
+    // Initial fetch to show unread dot
+    if (window.EyetrackConfig && window.EyetrackConfig.isAuthenticated) {
+        fetchNotifications();
+    }
+});

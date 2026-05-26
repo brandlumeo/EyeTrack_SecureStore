@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<body style="margin:0;padding:0;background:#f3f5f8;font-family:Segoe UI,Arial,sans-serif;color:#182033;">
+  <div style="max-width:680px;margin:0 auto;padding:28px 18px;">
+    <div style="background:#0b1b37;border-radius:22px;padding:28px 30px;color:#ffffff;">
+      <div style="display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.12);font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Order Confirmed</div>
+      <h1 style="margin:18px 0 8px;font-size:28px;line-height:1.2;">Invoice {{ invoice.invoice_number }}</h1>
+      <p style="margin:0;font-size:15px;line-height:1.7;color:#d9e3f0;">Your payment for order {{ order.formatted_id }} has been received successfully. We have attached the invoice PDF and included direct access to your order and invoice below.</p>
+    </div>
+
+    <div style="background:#ffffff;border:1px solid #d8dee8;border-radius:22px;padding:28px 30px;margin-top:18px;">
+      <p style="margin:0 0 14px;font-size:16px;line-height:1.7;">Hi {{ invoice_display.recipient_name }},</p>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:22px 0;">
+        <div style="background:#f6f8fc;border:1px solid #dde4ee;border-radius:16px;padding:16px 18px;">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:#6c7890;font-weight:700;">Order</div>
+          <div style="margin-top:8px;font-size:20px;font-weight:700;color:#182033;">{{ order.formatted_id }}</div>
+        </div>
+        <div style="background:#f6f8fc;border:1px solid #dde4ee;border-radius:16px;padding:16px 18px;">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:#6c7890;font-weight:700;">Paid Amount</div>
+          <div style="margin-top:8px;font-size:20px;font-weight:700;color:#182033;">Rs. {{ invoice_display.total_amount|floatformat:2 }}</div>
+        </div>
+        <div style="background:#f6f8fc;border:1px solid #dde4ee;border-radius:16px;padding:16px 18px;">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:#6c7890;font-weight:700;">Payment Method</div>
+          <div style="margin-top:8px;font-size:16px;font-weight:700;color:#182033;">{{ invoice_display.payment_method }}</div>
+        </div>
+        <div style="background:#f6f8fc;border:1px solid #dde4ee;border-radius:16px;padding:16px 18px;">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:#6c7890;font-weight:700;">Payment Status</div>
+          <div style="margin-top:8px;font-size:16px;font-weight:700;color:#182033;">{{ invoice_display.payment_status }}</div>
+        </div>
+        <div style="background:#f6f8fc;border:1px solid #dde4ee;border-radius:16px;padding:16px 18px;">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:#6c7890;font-weight:700;">Reference</div>
+          <div style="margin-top:8px;font-size:16px;font-weight:700;color:#182033;">{{ invoice_display.order_reference }}</div>
+        </div>
+      </div>
+
+      <div style="margin:24px 0 0;">
+        <a href="{{ tracking_url }}" style="display:inline-block;background:#f5a623;color:#0b1b37;text-decoration:none;font-weight:700;padding:13px 18px;border-radius:999px;margin-right:10px;">Track Order</a>
+        <a href="{{ invoice_url }}" style="display:inline-block;background:#0b1b37;color:#ffffff;text-decoration:none;font-weight:700;padding:13px 18px;border-radius:999px;">View Invoice</a>
+      </div>
+
+      <div style="margin-top:28px;padding-top:22px;border-top:1px solid #e3e8f0;color:#5f6c81;font-size:14px;line-height:1.8;">
+        The invoice PDF is attached to this email for your records. If you need billing support, contact {{ invoice_display.support_email }} and mention {{ invoice.invoice_number }}.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

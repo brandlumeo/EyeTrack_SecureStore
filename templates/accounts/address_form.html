@@ -1,0 +1,573 @@
+{% extends 'base.html' %}
+{% block title %}{{ page_title }} | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block extra_head %}
+<style>
+/* =========================================
+   FLIPKART-STYLE ADDRESS FORM
+   ========================================= */
+.af-wrapper {
+  max-width: 780px;
+}
+
+/* ---------- Section headings ---------- */
+.af-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent, #f5a623);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.af-section-title svg { flex-shrink: 0; }
+
+/* ---------- Address-type chips ---------- */
+.af-type-group {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+.af-type-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.42rem 1.1rem;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.04);
+  user-select: none;
+}
+.af-type-chip:hover {
+  border-color: rgba(255,255,255,0.35);
+  color: #fff;
+}
+.af-type-chip.active {
+  border-color: var(--color-accent, #f5a623);
+  background: rgba(245,166,35,0.12);
+  color: var(--color-accent, #f5a623);
+}
+
+/* ---------- Location button ---------- */
+.af-location-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1.5px solid var(--color-accent, #f5a623);
+  color: var(--color-accent, #f5a623);
+  border-radius: 8px;
+  padding: 0.55rem 1.2rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.af-location-btn:hover {
+  background: rgba(245,166,35,0.12);
+}
+.af-location-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.af-location-btn svg {
+  animation: none;
+}
+.af-location-btn.loading svg {
+  animation: af-spin 0.9s linear infinite;
+}
+@keyframes af-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Pincode row layout ---------- */
+.af-pincode-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+.af-pincode-row .form-group { flex: 1; }
+.af-pincode-row .af-location-btn { margin-top: 1.82rem; }
+
+/* ---------- Input labels & helpers ---------- */
+.af-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 0.38rem;
+  display: block;
+}
+.af-optional {
+  font-weight: 400;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.35);
+  margin-left: 0.3rem;
+}
+
+/* ---------- Status badge on pincode field ---------- */
+.af-city-state-badge {
+  display: none;
+  font-size: 0.73rem;
+  margin-top: 0.3rem;
+  color: #4ade80;
+  font-weight: 500;
+}
+.af-city-state-badge.visible { display: block; }
+.af-city-state-badge.error { color: #f87171; }
+
+/* ---------- Form card ---------- */
+.af-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+/* ---------- Default checkbox ---------- */
+.af-default-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+  padding: 0.9rem 1rem;
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.af-default-row:hover { border-color: rgba(255,255,255,0.25); }
+.af-default-row input[type="checkbox"] {
+  width: 1.1rem; height: 1.1rem; accent-color: var(--color-accent, #f5a623);
+  cursor: pointer;
+}
+.af-default-row label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+  margin: 0;
+}
+.af-default-row small {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.4);
+  display: block;
+  margin-top: 0.1rem;
+}
+
+/* ---------- Action buttons ---------- */
+.af-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+.af-save-btn {
+  flex: 1;
+  min-width: 160px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 10px;
+}
+
+/* ---------- Page title ---------- */
+.af-page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.af-page-subtitle {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 1.75rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="account-layout page-section">
+  <div class="row g-4">
+    <div class="col-lg-4 col-xl-3">
+      {% include 'accounts/_account_sidebar.html' %}
+    </div>
+    <div class="col-lg-8 col-xl-9">
+      <div class="glass-card p-4 p-md-5">
+        <div class="af-wrapper">
+
+          <!-- Page header -->
+          <h1 class="af-page-title">{{ page_title }}</h1>
+          <p class="af-page-subtitle">
+            {% if page_title == "Add Address" %}
+              Add a new delivery address to your account.
+            {% else %}
+              Update your saved delivery address details.
+            {% endif %}
+          </p>
+
+          <form method="post" id="af-form" class="af-form" novalidate>
+            {% csrf_token %}
+
+            <!-- Hidden fields (lat/lng/address_type managed by JS) -->
+            {{ form.latitude }}
+            {{ form.longitude }}
+            {{ form.address_type }}
+
+            <!-- ==============================
+                 SECTION 1: Contact Details
+                 ============================== -->
+            <div class="af-card mb-3">
+              <div class="af-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Contact Information
+              </div>
+
+              <div class="row g-3">
+                <!-- Full Name -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="af-label" for="{{ form.full_name.id_for_label }}">Full Name</label>
+                    {{ form.full_name }}
+                    {% if form.full_name.errors %}
+                      <div class="text-danger small mt-1">{{ form.full_name.errors|striptags }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="af-label" for="{{ form.phone_number.id_for_label }}">Mobile Number</label>
+                    {{ form.phone_number }}
+                    {% if form.phone_number.errors %}
+                      <div class="text-danger small mt-1">{{ form.phone_number.errors|striptags }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <!-- Alternate Phone -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="af-label" for="{{ form.alternate_phone.id_for_label }}">
+                      Alternate Mobile <span class="af-optional">(optional)</span>
+                    </label>
+                    {{ form.alternate_phone }}
+                    {% if form.alternate_phone.errors %}
+                      <div class="text-danger small mt-1">{{ form.alternate_phone.errors|striptags }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================
+                 SECTION 2: Address Details
+                 ============================== -->
+            <div class="af-card mb-3">
+              <div class="af-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Delivery Address
+              </div>
+
+              <!-- Pincode + Use My Location -->
+              <div class="row g-3 mb-1">
+                <div class="col-12">
+                  <div class="af-pincode-row">
+                    <div class="form-group">
+                      <label class="af-label" for="id_pincode">Pincode</label>
+                      {{ form.pincode }}
+                      <span id="af-pincode-status" class="af-city-state-badge"></span>
+                      {% if form.pincode.errors %}
+                        <div class="text-danger small mt-1">{{ form.pincode.errors|striptags }}</div>
+                      {% endif %}
+                    </div>
+                    <button type="button" id="af-locate-btn" class="af-location-btn" title="Detect my current location">
+                      <svg id="af-locate-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+                      <span id="af-locate-text">Use My Location</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- City + State (auto-filled) -->
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="af-label" for="id_city">City / District</label>
+                    {{ form.city }}
+                    {% if form.city.errors %}
+                      <div class="text-danger small mt-1">{{ form.city.errors|striptags }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="af-label" for="id_state">State</label>
+                    {{ form.state }}
+                    {% if form.state.errors %}
+                      <div class="text-danger small mt-1">{{ form.state.errors|striptags }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <!-- House/Street (full row) -->
+                <div class="col-12">
+                  <div class="form-group">
+                    <label class="af-label" for="{{ form.house_street.id_for_label }}">House No., Building, Street, Area</label>
+                    {{ form.house_street }}
+                    {% if form.house_street.errors %}
+                      <div class="text-danger small mt-1">{{ form.house_street.errors|striptags }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <!-- Landmark -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="af-label" for="{{ form.landmark.id_for_label }}">
+                      Landmark <span class="af-optional">(optional)</span>
+                    </label>
+                    {{ form.landmark }}
+                    {% if form.landmark.errors %}
+                      <div class="text-danger small mt-1">{{ form.landmark.errors|striptags }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <!-- Country -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="af-label" for="id_country">Country</label>
+                    {{ form.country }}
+                    {% if form.country.errors %}
+                      <div class="text-danger small mt-1">{{ form.country.errors|striptags }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================
+                 SECTION 3: Address Type
+                 ============================== -->
+            <div class="af-card mb-3">
+              <div class="af-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                Address Type
+              </div>
+              <div class="af-type-group" id="af-type-group">
+                <button type="button" class="af-type-chip active" data-type="home">
+                  🏠 Home
+                </button>
+                <button type="button" class="af-type-chip" data-type="work">
+                  🏢 Work
+                </button>
+                <button type="button" class="af-type-chip" data-type="other">
+                  📍 Other
+                </button>
+              </div>
+            </div>
+
+            <!-- ==============================
+                 SECTION 4: Preferences
+                 ============================== -->
+            <div class="af-card mb-3">
+              <label class="af-default-row" for="{{ form.is_default.id_for_label }}">
+                {{ form.is_default }}
+                <div>
+                  <span>Set as default address</span>
+                  <small>Orders will be delivered to this address by default</small>
+                </div>
+              </label>
+              {% if form.is_default.errors %}
+                <div class="text-danger small mt-1">{{ form.is_default.errors|striptags }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Form-level errors -->
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger py-2 px-3 mb-3 small">{{ form.non_field_errors|striptags }}</div>
+            {% endif %}
+
+            <!-- Action buttons -->
+            <div class="af-actions">
+              <button type="submit" class="btn btn-premium-cta af-save-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:6px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save Address
+              </button>
+              <a href="{% url 'address_list' %}" class="btn btn-outline-light" style="padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600;">
+                Cancel
+              </a>
+            </div>
+
+          </form>
+        </div><!-- /.af-wrapper -->
+      </div><!-- /.glass-card -->
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  'use strict';
+
+  /* ─── Helpers ─── */
+  const $ = id => document.getElementById(id);
+  const pinEl    = $('id_pincode');
+  const cityEl   = $('id_city');
+  const stateEl  = $('id_state');
+  const countryEl = $('id_country');
+  const latEl    = document.querySelector('[name="latitude"]');
+  const lngEl    = document.querySelector('[name="longitude"]');
+  const statusEl = $('af-pincode-status');
+  const locBtn   = $('af-locate-btn');
+  const locText  = $('af-locate-text');
+  const locIcon  = $('af-locate-icon');
+  const typeGrp  = $('af-type-group');
+  const typeHid  = document.querySelector('[name="address_type"]');
+
+  /* ─── Address type chips ─── */
+  // Set initial value from existing data
+  const initialType = typeHid.value || 'home';
+  typeGrp.querySelectorAll('.af-type-chip').forEach(chip => {
+    if (chip.dataset.type === initialType) chip.classList.add('active');
+    else chip.classList.remove('active');
+    chip.addEventListener('click', () => {
+      typeGrp.querySelectorAll('.af-type-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      typeHid.value = chip.dataset.type;
+    });
+  });
+
+  /* ─── Pincode → City / State (India Post API) ─── */
+  let pincodeTimer = null;
+
+  function setPincodeStatus(msg, isError = false) {
+    statusEl.textContent = msg;
+    statusEl.classList.toggle('error', isError);
+    statusEl.classList.add('visible');
+  }
+
+  function clearPincodeStatus() {
+    statusEl.textContent = '';
+    statusEl.classList.remove('visible', 'error');
+  }
+
+  async function lookupPincode(pin) {
+    if (!pin || pin.length !== 6 || !/^\d{6}$/.test(pin)) return;
+    setPincodeStatus('Looking up pincode…');
+    try {
+      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+      const data = await res.json();
+      if (data && data[0] && data[0].Status === 'Success') {
+        const po = data[0].PostOffice[0];
+        cityEl.value    = po.District  || po.Name || '';
+        stateEl.value   = po.State     || '';
+        countryEl.value = po.Country   || 'India';
+        setPincodeStatus(`✓ ${po.District}, ${po.State}`);
+      } else {
+        setPincodeStatus('Pincode not found. Please fill city & state.', true);
+      }
+    } catch {
+      setPincodeStatus('Could not verify pincode. Fill city & state manually.', true);
+    }
+  }
+
+  if (pinEl) {
+    pinEl.addEventListener('input', () => {
+      clearTimeout(pincodeTimer);
+      const pin = pinEl.value.trim();
+      if (pin.length === 6) {
+        pincodeTimer = setTimeout(() => lookupPincode(pin), 500);
+      } else {
+        clearPincodeStatus();
+      }
+    });
+  }
+
+  /* ─── "Use My Location" (GPS + reverse geocode via Nominatim) ─── */
+  function setLocLoading(on) {
+    locBtn.disabled = on;
+    locBtn.classList.toggle('loading', on);
+    locText.textContent = on ? 'Detecting…' : 'Use My Location';
+  }
+
+  async function reverseGeocode(lat, lng) {
+    // OpenStreetMap Nominatim (free, no key)
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`;
+    const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+    return res.json();
+  }
+
+  function extractPostcodeFromNominatim(addr) {
+    return addr.postcode || '';
+  }
+
+  if (locBtn) {
+    locBtn.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        alert('Your browser does not support location detection. Please enter your address manually.');
+        return;
+      }
+      setLocLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          if (latEl) latEl.value = lat.toFixed(6);
+          if (lngEl) lngEl.value = lng.toFixed(6);
+          try {
+            const geo = await reverseGeocode(lat, lng);
+            if (geo && geo.address) {
+              const a = geo.address;
+              const pin = extractPostcodeFromNominatim(a);
+              if (pin) {
+                pinEl.value = pin;
+                await lookupPincode(pin);
+              }
+              // Also fill street/area if empty
+              const streetEl = document.querySelector('[name="house_street"]');
+              if (streetEl && !streetEl.value.trim()) {
+                const road = [a.house_number, a.road, a.suburb, a.neighbourhood]
+                  .filter(Boolean).join(', ');
+                if (road) streetEl.value = road;
+              }
+              // Fallback for city/state if pincode lookup didn't fill them
+              if (!cityEl.value)  cityEl.value  = a.city || a.town || a.village || a.county || '';
+              if (!stateEl.value) stateEl.value = a.state || '';
+              if (!countryEl.value) countryEl.value = a.country || 'India';
+            }
+          } catch {
+            // silent — user can fill manually
+          }
+          setLocLoading(false);
+        },
+        (err) => {
+          setLocLoading(false);
+          let msg = 'Location access denied.';
+          if (err.code === 1) msg = 'Location permission denied. Please allow location access in your browser.';
+          else if (err.code === 2) msg = 'Location unavailable. Please enter your pincode manually.';
+          else if (err.code === 3) msg = 'Location timed out. Please try again.';
+          alert(msg);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    });
+  }
+
+})();
+</script>
+{% endblock %}

@@ -8,10 +8,11 @@
     <script>document.documentElement.classList.add('ui-booting');</script>
     <title>{% block title %}Eyetrack Solutions{% endblock %}</title>
     <meta name="description"
-        content="{% block meta_description %}Eyetrack Solutions offers premium CCTV cameras, installation services, and secure online checkout for homes and businesses.{% endblock %}">
+        content="{% block meta_description %}Eyetrack Solutions - Premium CCTV cameras and professional installation services in Kozhikode, Kerala. Leading surveillance systems for homes and businesses.{% endblock %}">
     <meta name="keywords"
-        content="{% block meta_keywords %}CCTV cameras, surveillance systems, security cameras, CCTV installation, Eyetrack Solutions{% endblock %}">
-    <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+        content="{% block meta_keywords %}CCTV cameras Kozhikode, security systems Kerala, surveillance installation Kozhikode, best CCTV dealer Perambra, Eyetrack Solutions Kerala{% endblock %}">
+    <meta name="robots"
+        content="{% block meta_robots %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endblock %}">
     <link rel="canonical"
         href="{% block canonical_url %}{{ request.scheme }}://{{ request.get_host }}{{ request.path }}{% endblock %}">
 
@@ -38,19 +39,21 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="{% static 'css/site.css' %}?v=61" as="style">
+    <link rel="preload" href="{% static 'img/company-logo.png' %}" as="image">
     <link
         href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap"
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="{% static 'css/site.css' %}?v=8" rel="stylesheet">
+    <link href="{% static 'css/site.css' %}?v=61" rel="stylesheet">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "Eyetrack Solutions",
       "url": "{{ request.scheme }}://{{ request.get_host }}",
-      "email": "info@eyetrack-tech.com",
+      "email": "info@etsgrp.in",
       "telephone": "+91 7994357565",
       "address": {
         "@type": "PostalAddress",
@@ -59,13 +62,616 @@
         "addressRegion": "Kerala",
         "postalCode": "673522",
         "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 11.5317,
+        "longitude": 75.7876
+      },
+      "areaServed": {
+        "@type": "AdministrativeArea",
+        "name": "Kozhikode District, Kerala"
       }
     }
     </script>
+
+    <!-- SweetAlert2 Premium Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+    <style>
+        .swal-glass-popup {
+            background: rgba(15, 23, 42, 0.95) !important;
+            backdrop-filter: blur(16px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 1.5rem !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
+            color: #f8fafc !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        .swal-glass-title {
+            color: #fff !important;
+            font-weight: 700 !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 1.75rem !important;
+        }
+
+        .swal-btn-confirm {
+            background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+            border: none !important;
+            border-radius: 0.75rem !important;
+            font-weight: 600 !important;
+            padding: 0.7rem 1.5rem !important;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3) !important;
+            color: white !important;
+        }
+
+        .swal-btn-cancel {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #94a3b8 !important;
+            border-radius: 0.75rem !important;
+            font-weight: 500 !important;
+            padding: 0.7rem 1.5rem !important;
+            margin-left: 10px;
+        }
+
+        .swal-btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+        }
+    </style>
+
+    <!-- ═══ CRITICAL: Mobile Search Overlay — Inlined to bypass static file cache ═══ -->
+    <style>
+        @media (max-width: 991.98px) {
+            body.mob-search-lock {
+                overflow: hidden !important;
+            }
+
+            .mob-search-overlay {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                z-index: 9998 !important;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+
+            .mob-search-overlay.is-open {
+                opacity: 1 !important;
+                pointer-events: all !important;
+                background: rgba(7, 11, 20, 0.93) !important;
+                backdrop-filter: blur(18px);
+                -webkit-backdrop-filter: blur(18px);
+            }
+
+            .mob-search-panel {
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                background: linear-gradient(160deg, rgba(15, 23, 42, 0.99), rgba(8, 14, 28, 0.99)) !important;
+                border-bottom: 1px solid rgba(245, 158, 11, 0.2) !important;
+                box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6) !important;
+                transform: translateY(-10px);
+                transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+                max-height: 80vh;
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            .mob-search-overlay.is-open .mob-search-panel {
+                transform: translateY(0) !important;
+            }
+
+            .mob-search-topbar {
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.75rem;
+                padding: 0.9rem 1rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+                flex-shrink: 0;
+            }
+
+            .mob-search-field-wrap {
+                flex: 1 !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.6rem;
+                background: rgba(255, 255, 255, 0.07) !important;
+                border: 1.5px solid rgba(245, 158, 11, 0.3) !important;
+                border-radius: 0.9rem !important;
+                padding: 0.65rem 0.9rem !important;
+                transition: border-color 0.2s;
+            }
+
+            .mob-search-field-wrap:focus-within {
+                border-color: rgba(245, 158, 11, 0.6) !important;
+                background: rgba(255, 255, 255, 0.1) !important;
+            }
+
+            .mob-search-ico {
+                color: #F59E0B !important;
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+
+            .mob-search-field {
+                flex: 1 !important;
+                background: transparent !important;
+                border: none !important;
+                color: #fff !important;
+                font-size: 16px !important;
+                font-weight: 500;
+                outline: none !important;
+                min-width: 0;
+                font-family: 'Manrope', sans-serif;
+            }
+
+            .mob-search-field::placeholder {
+                color: rgba(255, 255, 255, 0.33) !important;
+            }
+
+            .mob-search-clear {
+                background: none !important;
+                border: none !important;
+                color: rgba(255, 255, 255, 0.45);
+                font-size: 1rem;
+                padding: 0;
+                cursor: pointer;
+                flex-shrink: 0;
+                line-height: 1;
+            }
+
+            .mob-search-cancel {
+                background: none !important;
+                border: none !important;
+                color: #F59E0B !important;
+                font-size: 0.9rem;
+                font-weight: 700;
+                padding: 0.4rem 0;
+                white-space: nowrap;
+                cursor: pointer;
+                flex-shrink: 0;
+                font-family: 'Manrope', sans-serif;
+            }
+
+            .mob-search-body {
+                overflow-y: auto !important;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                padding: 1.1rem 1rem 1.5rem;
+                flex: 1;
+            }
+
+            .mob-search-section-label {
+                font-size: 0.68rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                color: #9CA3AF;
+                margin-bottom: 0.7rem;
+                display: block;
+            }
+
+            .mob-search-chips-row {
+                display: flex !important;
+                flex-wrap: wrap;
+                gap: 0.4rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .mob-chip {
+                display: inline-flex !important;
+                align-items: center;
+                padding: 0.35rem 0.8rem;
+                border-radius: 999px;
+                background: rgba(245, 158, 11, 0.08);
+                border: 1px solid rgba(245, 158, 11, 0.25);
+                color: #fbd38d !important;
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-decoration: none !important;
+            }
+
+            .mob-search-cat-list {
+                display: flex !important;
+                flex-direction: column;
+            }
+
+            .mob-search-cat-link {
+                display: flex !important;
+                align-items: center;
+                gap: 0.8rem;
+                padding: 0.7rem 0.5rem;
+                border-radius: 0.65rem;
+                text-decoration: none !important;
+                color: rgba(255, 255, 255, 0.82) !important;
+                font-size: 0.9rem;
+                font-weight: 500;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .mob-search-cat-link:last-child {
+                border-bottom: none;
+            }
+
+            .mob-search-cat-icon {
+                width: 34px;
+                height: 34px;
+                border-radius: 0.55rem;
+                background: rgba(245, 158, 11, 0.1);
+                border: 1px solid rgba(245, 158, 11, 0.2);
+                display: grid;
+                place-items: center;
+                flex-shrink: 0;
+                color: #F59E0B;
+                font-size: 0.95rem;
+            }
+
+            .mob-search-cat-name {
+                flex: 1;
+            }
+
+            .mob-search-cat-arrow {
+                color: #9CA3AF;
+                font-size: 0.7rem;
+                opacity: 0.55;
+            }
+
+            .mob-search-loading {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 1.5rem 0;
+                color: #9CA3AF;
+                font-size: 0.88rem;
+            }
+
+            .mob-search-empty {
+                text-align: center;
+                padding: 2rem 1rem;
+            }
+
+            .mob-search-empty i {
+                font-size: 2.2rem;
+                opacity: 0.2;
+                display: block;
+                margin-bottom: 0.6rem;
+                color: #9CA3AF;
+            }
+
+            .mob-search-empty p {
+                font-size: 0.88rem;
+                color: #9CA3AF;
+                margin: 0;
+            }
+
+            .mob-res-item {
+                display: flex !important;
+                align-items: center;
+                gap: 0.8rem;
+                padding: 0.7rem 0.4rem;
+                text-decoration: none !important;
+                color: #F9FAFB !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .mob-res-item:last-child {
+                border-bottom: none;
+            }
+
+            .mob-res-thumb {
+                width: 50px;
+                height: 50px;
+                border-radius: 0.55rem;
+                object-fit: cover;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                flex-shrink: 0;
+                background: rgba(255, 255, 255, 0.05);
+                display: grid;
+                place-items: center;
+            }
+
+            .mob-res-thumb-fb {
+                color: #9CA3AF;
+                font-size: 1.15rem;
+            }
+
+            .mob-res-info {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 0.18rem;
+                min-width: 0;
+            }
+
+            .mob-res-name {
+                font-size: 0.88rem;
+                font-weight: 600;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .mob-res-cat {
+                font-size: 0.73rem;
+                color: #9CA3AF;
+            }
+
+            .mob-res-price {
+                font-size: 0.9rem;
+                font-weight: 700;
+                color: #F59E0B;
+                flex-shrink: 0;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .mob-search-overlay {
+                display: none !important;
+            }
+        }
+    </style>
+
+    <!-- ═══ CRITICAL: Mobile Shop Panel — Inlined CSS ═══ -->
+    <style>
+        @media (max-width: 991.98px) {
+
+            /* Backdrop */
+            .mob-shop-overlay {
+                position: fixed !important;
+                inset: 0 !important;
+                z-index: 9997 !important;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+                background: rgba(7, 11, 20, 0);
+            }
+
+            .mob-shop-overlay.is-open {
+                opacity: 1 !important;
+                pointer-events: all !important;
+                background: rgba(7, 11, 20, 0.85) !important;
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+            }
+
+            /* Bottom sheet panel */
+            .mob-shop-panel {
+                position: absolute !important;
+                bottom: 70px !important;
+                /* sits just above bottom dock */
+                left: 0 !important;
+                right: 0 !important;
+                background: linear-gradient(180deg, rgba(17, 27, 50, 0.99) 0%, rgba(8, 14, 28, 0.99) 100%) !important;
+                border: 1px solid rgba(255, 255, 255, 0.09) !important;
+                border-bottom: none !important;
+                border-radius: 1.4rem 1.4rem 0 0 !important;
+                box-shadow: 0 -16px 50px rgba(0, 0, 0, 0.6) !important;
+                transform: translateY(30px);
+                transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+                max-height: calc(82vh - 70px);
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            .mob-shop-overlay.is-open .mob-shop-panel {
+                transform: translateY(0) !important;
+            }
+
+            /* Drag handle */
+            .mob-shop-handle {
+                width: 38px;
+                height: 4px;
+                border-radius: 99px;
+                background: rgba(255, 255, 255, 0.15);
+                margin: 0.7rem auto 0;
+                flex-shrink: 0;
+            }
+
+            /* Header */
+            .mob-shop-header {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                padding: 0.85rem 1.1rem 0.65rem;
+                flex-shrink: 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            }
+
+            .mob-shop-header-left {
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.6rem;
+            }
+
+            .mob-shop-header-icon {
+                width: 32px;
+                height: 32px;
+                border-radius: 0.55rem;
+                background: rgba(245, 158, 11, 0.12);
+                border: 1px solid rgba(245, 158, 11, 0.22);
+                display: grid;
+                place-items: center;
+                color: #F59E0B;
+                font-size: 0.9rem;
+            }
+
+            .mob-shop-header-title {
+                font-size: 1rem;
+                font-weight: 700;
+                color: #fff;
+                font-family: 'Sora', sans-serif;
+                letter-spacing: -0.02em;
+            }
+
+            .mob-shop-close {
+                background: rgba(255, 255, 255, 0.06) !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                color: rgba(255, 255, 255, 0.6) !important;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                display: grid;
+                place-items: center;
+                font-size: 0.78rem;
+                cursor: pointer;
+            }
+
+            /* Scrollable body */
+            .mob-shop-body {
+                overflow-y: auto !important;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+                padding: 0.85rem 1rem 1.2rem;
+                flex: 1;
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            /* All Products featured link */
+            .mob-shop-all-link {
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.9rem;
+                padding: 0.85rem 0.9rem;
+                border-radius: 0.9rem;
+                background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.04));
+                border: 1px solid rgba(245, 158, 11, 0.22);
+                text-decoration: none !important;
+                color: #fff !important;
+                margin-bottom: 1rem;
+            }
+
+            .mob-shop-all-icon {
+                width: 42px;
+                height: 42px;
+                border-radius: 0.75rem;
+                flex-shrink: 0;
+                background: rgba(245, 158, 11, 0.18);
+                border: 1px solid rgba(245, 158, 11, 0.28);
+                display: grid;
+                place-items: center;
+                color: #F59E0B;
+                font-size: 1.1rem;
+            }
+
+            .mob-shop-all-info {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 0.1rem;
+            }
+
+            .mob-shop-all-info strong {
+                font-size: 0.92rem;
+                color: #fff;
+            }
+
+            .mob-shop-all-info small {
+                font-size: 0.72rem;
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+            .mob-shop-all-link>.bi-arrow-right {
+                color: #F59E0B;
+                font-size: 0.9rem;
+                flex-shrink: 0;
+            }
+
+            /* Section label */
+            .mob-shop-section-label {
+                font-size: 0.67rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.11em;
+                color: #9CA3AF;
+                margin: 0.5rem 0 0.55rem;
+                display: block;
+            }
+
+            /* Category list */
+            .mob-shop-cat-list {
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            .mob-shop-cat-link {
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.8rem;
+                padding: 0.7rem 0.55rem;
+                border-radius: 0.7rem;
+                text-decoration: none !important;
+                color: rgba(255, 255, 255, 0.85) !important;
+                font-size: 0.88rem;
+                font-weight: 500;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+                transition: background 0.15s ease;
+            }
+
+            .mob-shop-cat-link:last-child {
+                border-bottom: none;
+            }
+
+            .mob-shop-cat-link:active {
+                background: rgba(245, 158, 11, 0.07);
+            }
+
+            .mob-shop-cat-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 0.6rem;
+                flex-shrink: 0;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                display: grid;
+                place-items: center;
+                color: #F59E0B;
+                font-size: 0.95rem;
+            }
+
+            .mob-shop-cat-info {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 0.08rem;
+            }
+
+            .mob-shop-cat-info strong {
+                font-size: 0.88rem;
+                color: #f1f5f9;
+                font-weight: 600;
+            }
+
+            .mob-shop-cat-info small {
+                font-size: 0.7rem;
+                color: #9CA3AF;
+            }
+
+            .mob-shop-cat-arrow {
+                color: #9CA3AF;
+                font-size: 0.7rem;
+                opacity: 0.55;
+                flex-shrink: 0;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .mob-shop-overlay {
+                display: none !important;
+            }
+        }
+    </style>
+
     {% block extra_head %}{% endblock %}
 </head>
 
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <div class="site-bg"></div>
     <div class="scroll-progress" aria-hidden="true">
         <span id="scrollProgressBar"></span>
@@ -80,23 +686,97 @@
         </div>
     </div>
     <header class="header-shell sticky-top" id="siteHeader">
-        <nav class="navbar navbar-expand-lg premium-nav">
+        <nav class="navbar navbar-expand-lg navbar-dark premium-nav">
             <div class="container py-2">
                 <a class="navbar-brand brand-mark" href="{% url 'product_list' %}">
-                    <img src="{% static 'img/company-logo.png' %}" alt="Eyetrack Solutions logo" class="brand-logo">
-                    <span><span class="brand-accent">EYETRACK</span> SOLUTIONS</span>
+                    <img fetchpriority="high" decoding="async" src="{% static 'img/company-logo.png' %}"
+                        alt="Eyetrack Solutions logo" class="brand-logo">
+                    <span class="brand-wordmark"><span class="brand-accent">EYETRACK</span> <span
+                            class="brand-secondary">SOLUTIONS</span></span>
                 </a>
-                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false"
+                <!-- Premium Mobile Toggler -->
+                <button class="navbar-toggler border-0 shadow-none d-lg-none" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#premiumMobileMenu" aria-controls="premiumMobileMenu"
                     aria-label="Toggle navigation">
-                    <i class="bi bi-list text-light fs-3"></i>
+                    <div class="toggler-icon-wrap">
+                        <span class="toggler-bar"></span>
+                        <span class="toggler-bar"></span>
+                        <span class="toggler-bar"></span>
+                    </div>
                 </button>
-                <div class="collapse navbar-collapse" id="siteNav">
+                <!-- Desktop Navigation -->
+                <div class="collapse navbar-collapse d-none d-lg-flex" id="siteNav">
+                    <form class="d-none d-lg-flex mx-auto position-relative premium-search-form" id="globalSearchForm"
+                        action="{% url 'product_list' %}" method="get" style="max-width: 400px; width: 100%;">
+                        <div class="input-group premium-search-shell">
+                            <input type="text"
+                                class="form-control premium-input premium-search-input border-end-0 shadow-none"
+                                name="q" id="globalSearchInput" placeholder="Search cameras, systems..."
+                                autocomplete="off">
+                            <button class="btn premium-search-submit border-start-0 shadow-none" type="submit"
+                                aria-label="Search">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                        <div class="search-dropdown-results position-absolute w-100 d-none" id="globalSearchResults">
+                            <!-- AJAX Results will be inserted here -->
+                        </div>
+                    </form>
                     {% with current=request.resolver_match.url_name %}
+                    <div class="d-lg-none px-3 mb-4 mt-2">
+                        <form action="{% url 'product_list' %}" method="get" class="premium-search-shell">
+                            <input type="text" name="q"
+                                class="form-control premium-input border-0 bg-transparent text-white"
+                                placeholder="Search devices..." autocomplete="off">
+                            <button type="submit" class="btn text-white opacity-50"><i
+                                    class="bi bi-search"></i></button>
+                        </form>
+                    </div>
                     <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-                        <li class="nav-item"><a
-                                class="nav-link premium-link {% if current == 'product_list' or current == 'products_by_category' or current == 'product_detail' %}active{% endif %}"
-                                href="{% url 'product_list' %}">Shop</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link premium-link {% if current == 'product_list' and not category %}active{% endif %}"
+                                href="{% url 'product_list' %}">Home</a>
+                        </li>
+                        <li class="nav-item dropdown nav-shop-dropdown"><a
+                                class="nav-link premium-link dropdown-toggle {% if current == 'product_list' or current == 'products_by_category' or current == 'product_detail' %}active{% endif %}"
+                                href="{% url 'product_list' %}" id="categoryDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shop-dropdown-panel"
+                                aria-labelledby="categoryDropdown">
+                                <li class="shop-dropdown-grid">
+                                    <div class="shop-dropdown-intro">
+                                        <p class="shop-dropdown-kicker mb-2">Security commerce</p>
+                                        <h6 class="shop-dropdown-title mb-2">Choose the right surveillance stack.</h6>
+                                        <p class="shop-dropdown-copy mb-3">Browse cameras, system bundles, and
+                                            site-ready solutions curated for homes, offices, and industrial setups.</p>
+                                        <a class="shop-dropdown-featured" href="{% url 'product_list' %}">
+                                            <span class="shop-dropdown-featured-icon"><i
+                                                    class="bi bi-grid-1x2-fill"></i></span>
+                                            <span>
+                                                <strong>Browse all products</strong>
+                                                <small>See the full catalog</small>
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <div class="shop-dropdown-links">
+                                        <div class="shop-dropdown-section-label">Service Lines</div>
+                                        <div class="shop-dropdown-link-grid">
+                                            {% for cat in categories %}
+                                            <a class="shop-dropdown-link"
+                                                href="{% url 'products_by_category' cat.slug %}">
+                                                <span class="shop-dropdown-link-icon"><i
+                                                        class="bi {{ cat.icon }}"></i></span>
+                                                <span>
+                                                    <strong>{{ cat.name }}</strong>
+                                                    <small>Explore solutions</small>
+                                                </span>
+                                            </a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-item"><a
                                 class="nav-link premium-link {% if current == 'services_page' %}active{% endif %}"
                                 href="{% url 'services_page' %}">Installations</a></li>
@@ -108,8 +788,8 @@
                                 href="{% url 'faq_page' %}">FAQ</a></li>
                         {% if user.is_authenticated %}
                         <li class="nav-item"><a
-                                class="nav-link premium-link {% if current == 'order_history' %}active{% endif %}"
-                                href="{% url 'order_history' %}">Orders</a></li>
+                                class="nav-link premium-link {% if current == 'account_dashboard' or current == 'profile' or current == 'address_list' or current == 'address_add' or current == 'address_edit' or current == 'order_history' or current == 'order_tracking' or current == 'order_invoice' %}active{% endif %}"
+                                href="{% url 'account_dashboard' %}">Dashboard</a></li>
                         <li class="nav-item">
                             <form action="{% url 'logout' %}" method="post">
                                 {% csrf_token %}
@@ -125,9 +805,32 @@
                                 class="nav-link premium-link {% if current == 'register' %}active{% endif %}"
                                 href="{% url 'register' %}">Register</a></li>
                         {% endif %}
-                        <li class="nav-item ms-lg-2">
-                            <a href="{% url 'cart' %}" class="btn btn-premium-cta btn-sm px-3 cart-btn">
-                                <i class="bi bi-cart3 me-1"></i>Cart <span class="badge rounded-pill cart-count-badge ms-1" data-cart-count>{{ cart_count }}</span>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item ms-lg-2 d-flex align-items-center">
+                            <button type="button"
+                                class="btn btn-outline-light position-relative premium-tooltip-trigger d-inline-flex align-items-center justify-content-center p-0"
+                                data-bs-toggle="offcanvas" data-bs-target="#notificationDrawer"
+                                aria-controls="notificationDrawer" id="notificationBellBtn"
+                                style="height: 38px; width: 38px; border-radius: 6px;" title="Notifications">
+                                <i class="bi bi-bell fs-6"></i>
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-dark d-none"
+                                    id="globalUnreadBadge" style="font-size: 0.65rem;">0</span>
+                            </button>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item ms-lg-2 d-flex align-items-center">
+                            <a href="{% url 'cart' %}"
+                                class="btn btn-premium-cta btn-sm px-3 cart-btn d-inline-flex align-items-center justify-content-center position-relative"
+                                style="height: 38px;">
+                                <i class="bi bi-cart3 me-2 fs-6"></i>
+                                <span class="fw-medium">Cart</span>
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-dark"
+                                    data-cart-count
+                                    style="font-size: 0.75rem; transform: translate(-30%, -30%) !important;">
+                                    {{ cart_count }}
+                                </span>
                             </a>
                         </li>
                     </ul>
@@ -135,19 +838,137 @@
                 </div>
             </div>
         </nav>
+
+        <!-- Premium Mobile Drawer -->
+        <div class="offcanvas offcanvas-start premium-mobile-drawer d-lg-none" tabindex="-1" id="premiumMobileMenu"
+            aria-labelledby="premiumMobileMenuLabel">
+            <div class="offcanvas-header py-4">
+                <a class="navbar-brand brand-mark" href="{% url 'product_list' %}">
+                    <span class="brand-wordmark"><span class="brand-accent">EYETRACK</span></span>
+                </a>
+                <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body p-0">
+                <div class="px-4 mb-4">
+                    <form action="{% url 'product_list' %}" method="get" class="mobile-drawer-search">
+                        <i class="bi bi-search"></i>
+                        <input type="text" name="q" placeholder="Search devices..." autocomplete="off">
+                    </form>
+                </div>
+
+                <div class="mobile-nav-list">
+                    <a href="{% url 'product_list' %}" class="mobile-nav-link active">
+                        <i class="bi bi-house-door"></i> <span>Home</span>
+                    </a>
+                    <div class="mobile-nav-group mt-3">
+                        <p class="mobile-nav-heading">Product Categories</p>
+                        {% for cat in categories %}
+                        <a href="{% url 'products_by_category' cat.slug %}" class="mobile-nav-link">
+                            <i class="bi {{ cat.icon }}"></i> <span>{{ cat.name }}</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mobile-nav-group mt-3">
+                        <p class="mobile-nav-heading">Services & Support</p>
+                        <a href="{% url 'services_page' %}" class="mobile-nav-link">
+                            <i class="bi bi-tools"></i> <span>Installations</span>
+                        </a>
+                        <a href="{% url 'support_page' %}" class="mobile-nav-link">
+                            <i class="bi bi-headset"></i> <span>Support Center</span>
+                        </a>
+                        <a href="{% url 'faq_page' %}" class="mobile-nav-link">
+                            <i class="bi bi-question-circle"></i> <span>FAQs</span>
+                        </a>
+                    </div>
+
+                    <div class="mobile-nav-group mt-3 pb-5">
+                        <p class="mobile-nav-heading">Your Account</p>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'account_dashboard' %}" class="mobile-nav-link">
+                            <i class="bi bi-person-circle"></i> <span>Dashboard</span>
+                        </a>
+                        <form action="{% url 'logout' %}" method="post" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="mobile-nav-link btn-link text-start w-100 border-0 bg-transparent">
+                                <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
+                            </button>
+                        </form>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="mobile-nav-link">
+                            <i class="bi bi-box-arrow-in-right"></i> <span>Login</span>
+                        </a>
+                        <a href="{% url 'register' %}" class="mobile-nav-link">
+                            <i class="bi bi-person-plus"></i> <span>Register</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Mobile Bottom Dock -->
+        <div class="mobile-bottom-dock d-lg-none">
+            <a href="{% url 'product_list' %}" class="dock-item" id="dockHome">
+                <i class="bi bi-house-door"></i>
+                <span>Home</span>
+            </a>
+            <button type="button" class="dock-item" id="dockShop" aria-label="Open Shop Menu">
+                <i class="bi bi-grid"></i>
+                <span>Shop</span>
+            </button>
+            <button type="button" class="dock-item" id="dockSearch" aria-label="Open Search">
+                <i class="bi bi-search"></i>
+                <span>Search</span>
+            </button>
+            <a href="{% url 'cart' %}" class="dock-item position-relative" id="dockCart">
+                <i class="bi bi-cart3"></i>
+                <span class="dock-badge" data-cart-count>{{ cart_count }}</span>
+                <span>Cart</span>
+            </a>
+            <a href="{% url 'account_dashboard' %}" class="dock-item" id="dockAccount">
+                <i class="bi bi-person"></i>
+                <span>Account</span>
+            </a>
+        </div>
     </header>
+
     <main class="pb-5 main-shell">
         <div class="container pt-4">
             {% if messages %}
-            <div class="mb-3">
+            <div class="flash-message-shell mb-3" aria-live="polite" aria-atomic="true">
                 {% for message in messages %}
-                <div class="alert alert-{{ message.tags|default:'info' }} mb-2">{{ message }}</div>
+                <div class="alert alert-dismissible fade show flash-message {% if message.tags == 'success' %}flash-message-success{% elif message.tags == 'warning' %}flash-message-warning{% elif message.tags == 'error' or message.tags == 'danger' %}flash-message-danger{% else %}flash-message-info{% endif %} mb-0"
+                    role="alert">
+                    <div class="flash-message-icon" aria-hidden="true">
+                        {% if message.tags == 'success' %}
+                        <i class="bi bi-check2-circle"></i>
+                        {% elif message.tags == 'warning' %}
+                        <i class="bi bi-exclamation-triangle"></i>
+                        {% elif message.tags == 'error' or message.tags == 'danger' %}
+                        <i class="bi bi-x-octagon"></i>
+                        {% else %}
+                        <i class="bi bi-info-circle"></i>
+                        {% endif %}
+                    </div>
+                    <div class="flash-message-content">
+                        <p class="flash-message-text">{{ message }}</p>
+                    </div>
+                    <button type="button" class="flash-message-close" data-bs-dismiss="alert"
+                        aria-label="Dismiss message">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </button>
+                </div>
                 {% endfor %}
             </div>
             {% endif %}
             {% block content %}{% endblock %}
         </div>
     </main>
+
+    {% block pre_footer %}
     {% if request.resolver_match.url_name != 'support_page' %}
     <section class="pre-footer-contact">
         <div class="container">
@@ -161,72 +982,137 @@
                 <div class="pre-footer-actions">
                     <a href="tel:+917994357565" class="btn btn-premium-cta"><i class="bi bi-telephone me-2"></i>Call
                         Us</a>
-                    <a href="mailto:info@eyetrack-tech.com" class="btn btn-outline-light"><i
+                    <a href="mailto:info@etsgrp.in" class="btn btn-outline-light"><i
                             class="bi bi-envelope me-2"></i>Email</a>
                 </div>
             </div>
         </div>
     </section>
     {% endif %}
+    {% endblock %}
+
+    {% block footer %}
     <footer class="footer-shell mt-5">
         <div class="container py-5">
-            <div class="row g-4">
+            <div class="footer-top-band">
+                <div class="footer-brand-block">
+                    <p class="footer-kicker mb-2">Eyetrack Solutions</p>
+                    <h5 class="footer-title mb-2">Built for secure commerce and dependable surveillance operations.</h5>
+                    <p class="footer-copy mb-0">Premium CCTV hardware, installation planning, and post-deployment
+                        support aligned into one streamlined customer experience.</p>
+                </div>
+                <div class="footer-signal-grid">
+                    <div class="footer-signal-card">
+                        <span class="footer-signal-icon"><i class="bi bi-shield-lock"></i></span>
+                        <div>
+                            <strong>Secure Checkout</strong>
+                            <small>Trusted purchase flow</small>
+                        </div>
+                    </div>
+                    <div class="footer-signal-card">
+                        <span class="footer-signal-icon"><i class="bi bi-headset"></i></span>
+                        <div>
+                            <strong>Support Coverage</strong>
+                            <small>Fast assistance when needed</small>
+                        </div>
+                    </div>
+                    <div class="footer-signal-card">
+                        <span class="footer-signal-icon"><i class="bi bi-tools"></i></span>
+                        <div>
+                            <strong>Installation Ready</strong>
+                            <small>Planning to deployment</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4 footer-main-grid">
                 <div class="col-lg-4">
-                    <h5 class="mb-2">Eyetrack Solutions</h5>
-                    <p class="small text-secondary mb-3">Enterprise-grade CCTV commerce with professional installation
-                        and long-term support.</p>
-                    <div class="d-flex flex-wrap gap-2">
-                        <span class="trust-chip"><i class="bi bi-shield-lock"></i>Secure</span>
-                        <span class="trust-chip"><i class="bi bi-camera-video"></i>Surveillance</span>
-                        <span class="trust-chip"><i class="bi bi-tools"></i>Installation</span>
+                    <div class="footer- contact-card">
+                        <p class="footer-column-label mb-2">Direct Contact</p>
+                        <a href="mailto:info@etsgrp.in"
+                            class="footer-contact-primary">info@etsgrp.in</a>
+                        <a href="tel:+917994357565" class="footer-contact-secondary">+91 7994357565</a>
+                        <p class="footer-contact-meta mb-3">Payyoli-Perambra Rd, Kozhikode, Kerala 673522</p>
+                        <p class="footer-contact-meta mb-3">Mon-Sat, 9:00 AM - 6:00 PM</p>
+
+                        <div class="footer-social-links mt-2 d-flex gap-3">
+                            <a href="https://www.instagram.com/eyetrack_solutions_pvt.ltd/" target="_blank"
+                                rel="noopener noreferrer" class="social-icon-link" aria-label="Instagram">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                            <a href="https://www.facebook.com/profile.php?id=61573098895103" target="_blank"
+                                rel="noopener noreferrer" class="social-icon-link" aria-label="Facebook">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/company/109270992/admin/dashboard/" target="_blank"
+                                rel="noopener noreferrer" class="social-icon-link" aria-label="LinkedIn">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="col-6 col-lg-2">
-                    <h6>Company</h6>
-                    <a href="{% url 'about_page' %}" class="footer-link d-block ms-0 mb-2">About</a>
-                    <a href="{% url 'services_page' %}" class="footer-link d-block ms-0 mb-2">Services</a>
-                    <a href="{% url 'support_page' %}" class="footer-link d-block ms-0">Support</a>
+                    <p class="footer-column-label mb-3">Explore</p>
+                    <a href="{% url 'product_list' %}" class="footer-link d-block mb-2">Store</a>
+                    <a href="{% url 'services_page' %}" class="footer-link d-block mb-2">Installations</a>
+                    <a href="{% url 'about_page' %}" class="footer-link d-block mb-2">About</a>
+                    <a href="{% url 'faq_page' %}" class="footer-link d-block">FAQ</a>
                 </div>
                 <div class="col-6 col-lg-2">
-                    <h6>Resources</h6>
-                    <a href="{% url 'faq_page' %}" class="footer-link d-block ms-0 mb-2">FAQ</a>
+                    <p class="footer-column-label mb-3">Customer Tools</p>
+                    <a href="{% url 'wishlist_page' %}" class="footer-link d-block mb-2">Wishlist</a>
+                    <a href="{% url 'compare_page' %}" class="footer-link d-block mb-2">Compare</a>
                     {% if user.is_authenticated %}
-                    <a href="{% url 'order_history' %}" class="footer-link d-block ms-0 mb-2">Orders</a>
+                    <a href="{% url 'order_history' %}" class="footer-link d-block mb-2">My Orders</a>
                     {% else %}
-                    <a href="{% url 'login' %}" class="footer-link d-block ms-0 mb-2">Login</a>
+                    <a href="{% url 'login' %}" class="footer-link d-block mb-2">Login or Register</a>
                     {% endif %}
-                    <a href="{% url 'product_list' %}" class="footer-link d-block ms-0 mb-2">Store</a>
-                    <a href="{% url 'wishlist_page' %}" class="footer-link d-block ms-0 mb-2">Wishlist</a>
-                    <a href="{% url 'compare_page' %}" class="footer-link d-block ms-0 mb-2">Compare</a>
-                    <a href="{% url 'privacy_policy_page' %}" class="footer-link d-block ms-0 mb-2">Privacy</a>
-                    <a href="{% url 'terms_page' %}" class="footer-link d-block ms-0 mb-2">Terms</a>
-                    <a href="{% url 'refund_policy_page' %}" class="footer-link d-block ms-0 mb-2">Refunds</a>
-                    <a href="{% url 'shipping_policy_page' %}" class="footer-link d-block ms-0">Shipping</a>
+                    <a href="{% url 'support_page' %}" class="footer-link d-block">Support Center</a>
                 </div>
                 <div class="col-lg-4">
-                    <h6>Contact</h6>
-                    <p class="small text-secondary mb-1">info@eyetrack-tech.com</p>
-                    <p class="small text-secondary mb-1">+91 7994357565</p>
-                    <p class="small text-secondary mb-1">Payyoli-Perambra Rd, Kozhikode, Kerala 673522</p>
-                    <p class="small text-secondary mb-0">Mon-Sat, 9:00 AM - 6:00 PM</p>
+                    <p class="footer-column-label mb-3">Policies</p>
+                    <div class="footer-policy-grid">
+                        <a href="{% url 'privacy_policy_page' %}" class="footer-policy-tile">
+                            <strong>Privacy Policy</strong>
+                            <small>Data handling and account protection</small>
+                        </a>
+                        <a href="{% url 'terms_page' %}" class="footer-policy-tile">
+                            <strong>Terms of Service</strong>
+                            <small>Platform and purchasing terms</small>
+                        </a>
+                        <a href="{% url 'refund_policy_page' %}" class="footer-policy-tile">
+                            <strong>Return Policy</strong>
+                            <small>Eligibility and return guidance</small>
+                        </a>
+                        <a href="{% url 'shipping_policy_page' %}" class="footer-policy-tile">
+                            <strong>Shipping Policy</strong>
+                            <small>Dispatch, delivery, and timelines</small>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <div class="container d-flex flex-wrap justify-content-between gap-2 py-3">
+            <div class="container d-flex justify-content-between align-items-center py-3 flex-wrap gap-2">
                 <small class="text-secondary">© 2026 Eyetrack Solutions. All rights reserved.</small>
-                <small class="text-secondary">Built for secure commerce and scalable surveillance operations.</small>
+                <small class="text-secondary">Engineered for secure commerce and scalable surveillance.</small>
             </div>
         </div>
     </footer>
+    {% endblock %}
 
-    <a href="https://wa.me/917994357565" class="floating-whatsapp" target="_blank" rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp">
-        <i class="bi bi-whatsapp"></i>
-    </a>
-    <button type="button" class="floating-backtop" id="backToTopBtn" aria-label="Back to top">
-        <i class="bi bi-arrow-up"></i>
-    </button>
+    <div class="floating-buttons">
+        <button type="button" class="floating-backtop" id="backToTopBtn" aria-label="Back to top">
+            <i class="bi bi-arrow-up"></i>
+        </button>
+        <a href="https://wa.me/917994357565" class="floating-whatsapp" target="_blank" rel="noopener noreferrer"
+            aria-label="Chat on WhatsApp">
+            <i class="bi bi-whatsapp"></i>
+        </a>
+        <div id="chatbot-bubble" title="Chat with AI">
+            <i class="bi bi-chat-dots-fill"></i>
+        </div>
+    </div>
     <div class="premium-tools-dock">
         <div class="premium-tool-group">
             <button type="button" class="premium-tool-btn" id="wishlistToggleBtn" aria-label="Open wishlist"
@@ -253,7 +1139,8 @@
         <div class="offcanvas-body d-flex flex-column">
             <div class="quick-cart-item" id="quickCartItem">
                 <div class="quick-cart-thumb-wrap">
-                    <img src="" alt="" class="quick-cart-thumb d-none" id="quickCartImage">
+                    <img loading="lazy" decoding="async" src="" alt="" class="quick-cart-thumb d-none"
+                        id="quickCartImage">
                     <div class="quick-cart-thumb-fallback" id="quickCartFallback"><i class="bi bi-camera-video"></i>
                     </div>
                 </div>
@@ -282,6 +1169,7 @@
             <div class="d-grid gap-2" id="wishlistItems"></div>
             <p class="quick-cart-message mt-3 mb-3 d-none" id="wishlistEmpty">No saved items yet.</p>
             <div class="mt-auto d-grid gap-2">
+                <a href="{% url 'wishlist_page' %}" class="btn btn-premium-cta">Open Wishlist Page</a>
                 <button type="button" class="btn btn-outline-light" id="clearWishlistBtn">Clear Wishlist</button>
             </div>
         </div>
@@ -304,34 +1192,59 @@
     </div>
     <div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content quick-view-modal">
+            <div class="modal-content quick-view-modal-premium">
+                <div id="quickViewLoading" class="quick-view-loading-overlay d-none">
+                    <div class="spinner-border text-accent" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title" id="quickViewModalLabel">Quick View</h5>
                     <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row g-3 align-items-start">
+                    <div class="row g-4 align-items-center">
                         <div class="col-md-5">
-                            <div class="quick-view-image-wrap">
-                                <img src="" alt="" id="quickViewImage" class="quick-view-image d-none">
-                                <div class="quick-view-image-fallback" id="quickViewFallback"><i
-                                        class="bi bi-camera-video"></i></div>
+                            <div class="quick-view-gallery">
+                                <div class="quick-view-image-main">
+                                    <img loading="lazy" decoding="async" src="" alt="" id="quickViewImage"
+                                        class="img-fluid d-none">
+                                    <div class="quick-view-image-fallback" id="quickViewFallback">
+                                        <i class="bi bi-camera-video"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-7">
-                            <p class="eyebrow mb-1" id="quickViewCategory">Category</p>
-                            <h3 class="h4 mb-2" id="quickViewName">Product</h3>
-                            <p class="detail-price mb-2" id="quickViewPrice"></p>
-                            <p class="small mb-2" id="quickViewStock"></p>
-                            <p class="text-secondary mb-3" id="quickViewDescription"></p>
-                            <div class="d-flex flex-wrap gap-2">
-                                <form method="post" class="m-0" id="quickViewAddForm">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                    <button type="submit" class="btn btn-premium-cta">Add to Cart</button>
-                                </form>
-                                <a href="#" class="btn btn-outline-light" id="quickViewDetailLink">View Details</a>
+                            <div class="quick-view-details">
+                                <p class="eyebrow mb-1 text-accent" id="quickViewCategory">Category</p>
+                                <h3 class="h4 mb-2 fw-bold" id="quickViewName">Product</h3>
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <span class="detail-price mb-0" id="quickViewPrice"></span>
+                                    <span class="stock-status-badge small" id="quickViewStock"></span>
+                                </div>
+                                <p class="text-secondary mb-4 quick-view-desc" id="quickViewDescription"></p>
+
+                                <div id="quickViewSpecsContainer" class="mb-4 d-none">
+                                    <p class="quick-view-spec-label mb-2">Key Specifications</p>
+                                    <div class="quick-view-specs-grid" id="quickViewSpecsGrid">
+                                        <!-- Specs injected via JS -->
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-2 mt-auto">
+                                    <form method="post" class="m-0" id="quickViewAddForm">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                        <button type="submit" class="btn btn-premium-cta px-4">
+                                            <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                                        </button>
+                                    </form>
+                                    <a href="#" class="btn btn-outline-light px-4" id="quickViewDetailLink">
+                                        View Details <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -349,201 +1262,562 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'js/site.js' %}?v=6"></script>
     <script>
-        (()            {
-            if (window.__etsWishlistCompareRe             return;
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchForm = document.getElementById('globalSearchForm');
+            const searchInput = document.getElementById('globalSearchInput');
+            const searchResults = document.getElementById('globalSearchResults');
+            let searchTimeout;
+            let currentFocus = -1;
 
-            const keys = {
-                wishlist: 'ets_wishlist_v1', compare            ts_compare_v1' };
-            const cookieKeys = { wishlist: 'ets_wishlist_ck', pare: 'ets_compare_ck' };
-                const             = { wishlist: [], compare: [] };
-
-                const readCookieJson = (name) => {
-                    const match = document                match(new RegExp(`(?:^|;                 =([^;]                               if (!match) return null;
-                try {                             const parsed = JSON.parse(decodeURICo                match[1]))                              ret                y.            ray(            ed) ? parsed : null;
-                } catc                                          turn null;
-                }
-            };
-
-            co                    kieJson = (name, value) => {
-                try {
-                    const en                encodeURI Co            ent(            .stringify(value));
-                                               okie = `${ name } = ${ encoded }; Path =/; Max-Age=2592000; SameSite=Lax`;
-                } catch {}
-            };
-
-            const read = (ty                                 try {
-                const parsed                     (localStorage.getItem(keys[type]) || '[]');
-                (Array.isA && parsed.length) return parsed;
-                ieVal = readCookieJson(cookieKeys[typ                                                 return cookieVal || (Array.isA                sed) ?parsed: []);
-            } catch {
-                const cookieVal = readCookieJson(c                s[type]);
-                return cookieVal || mem[type] || [];
-            }
-        };
-
-            c                te = (type, items) => {
-            mem[type] = Array.isArray(items)                 : [];
-            writeCookieJson(cookieKeys[type], mem[type]);
-            try { localStorage.setItem(keys[type], JSON.stringify(mem[type])); } catch { }
-        };
-
-        refresh = () => {
-            const wishlistIds = new Set(read('wishlist').map((i) => String(i.id)));
-            const compareIds = new Set(read('compare').map((i) => String(i                                document.querySelectorAll('[data-wishlist-count]').forEach((el)                 xtContent = String(wishlistIds.size));
-            document.queryS                ll('[data-compare-count]').forEach((el) => el.textContent = String(compareIds.size                            const wishPageCount = document.getElementById('wishlistPageCo                               const wishPageCountMobile = document.getElementById('wishlistPageCount                ;
-            const comparePageCount = document.getElementById('comparePag                ;
-                const comparePageCountMobile = document.getElementById('comparePageCount                ;
-                if (wishPageCount) wishPageCount.textContent = String(wishlis                                    if (wishPageCountMobile) wishPageCountMobile.textContent = String(wishlistIds.siz                                    if (comparePageCount) comparePageCount.textContent = String(compareIds.size);
-            if (comparePageCountMobile) comparePageCountMobile.textContent = String(compareIds.size);
-            nt.querySelectorAll('.                -btn[data-product-id]            orEa            btn) => {
-                    btn.c.toggle('is-active', wishlistIds.has(String(btn.getAttribu - product - id'))));
-                        });
-        document.querySelectorAll('.compa                ata-product-id]').forEach((btn)                                  btn.t.toggle('is-active', has(String(btn.getAttribute('data-product-id'                                                                  renderWishlistPage();
-        mparePage();
-            }                       const renderWishlistPage = () => {
-                         onst host = document.getElementById('                    Grid');
-            if (!host) return;
-            const empty = document.getElementById('wish                    y');
-            const items = read('wishlist');
-            host.innerHTML = '';
-            if (!items.length) {
-                if (empty) empty.classList.remove('d-none');
-                return;
-            }
-            if (empty) empty.classList.add('d-none');
-            items.forEach((item) => {
-                const col = document.createElement('div');
-                col.className = 'col-md-6 col-xl-4';
-                const thumb = item.image || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
-                col.innerHTML = `
-                <article class="wishlist-page-card h-100 d-flex flex-column">
-                    <img src="${thumb}" alt="${item.name || 'Product'}" class="wishlist-page-thumb">
-                    <div class="p-3 d-flex flex-column flex-grow-1">
-                        <h6 class="mb-1"><a href="${item.url || '#'}" class="text-decoration-none te                    item.name || 'Product'}                >
-                                        <p class="product-price mb-3">                rice ? `Rs ${ item.price } ` : ''}</p>
-                                     class="d-flex gap-2                ">
-                            <button type="button" class=                -premium-cta btn-sm flex-grow-1                t-add-cart-btn" data-                    d}">Add</button>
-                                    <button type="button" class="btn                     danger b                sh                ove-btn" data-id="${item.id}">Remove</butt                                    </div>
-                            </div>
-                <                >
-            `;
-                dChild
-            });
-        };
-
-        const renderComparePage = async () => {
-            const body                         ementById('comparePageBody                            if (!body) return;
-                                pty = document.getElementById('comparePageEmpt                             c                        d('compare');                                      ite                h) {
-                    body.innerHTML = '';
-            empty.classList.remove('d-none');
-            return;
-        }
-                              pty) assList.add('d-none');
-        body.style.opacity = '0.5';
-        body.style.pointerEvents = 'no                             const fetchQuick = async (                
-        try {
-            const res = await fetch(`/api/product/${id}/quick-                { headers: { 'Accept': 'application/json' } });
-                        if                 ) return null;
-                        const data = await res.json();
-                                return data && data.ok ? data.product : null;
-                    } catch {
-                                        ull;
-                                              };
-                const liveItems = await Promise.all(items.map(async (item) => {
-                    const live = await fetchQuick(item.id);
-                    return                    .item, ...live } : item;
-                }));
-                const toNum = (value) => {
-                               st n = Number.parseFloat(String(value || '').replace(/[^0-9.]/g, ''));
-                    return Number.isF                     : 0;
+            if (searchInput) {
+                const addActive = (items) => {
+                    if (!items) return false;
+                    removeActive(items);
+                    if (currentFocus >= items.length) currentFocus = 0;
+                    if (currentFocus < 0) currentFocus = (items.length - 1);
+                    items[currentFocus].classList.add('search-result-active');
+                    items[currentFocus].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 };
-                const bestPrice = Math.min(...liveItems.map((i) => toNum(i.price)).filter((v) => v > 0));
-                const bestStock = Math.max(...li                    (i) => Number(i.stock) || 0));
-                const spec = (item, key) => (item.specs && item.specs[key]) ? item.specs[key] : '-';
-                const yesNoClass = (val) => String(val).toLowerCase()                     'compare-check' : 'compare-cross';
-                const rows = [
-                    { label: 'Product', val                    s.map((item) => `< td class= "compare-product-cell" ><h6>${item.name || 'Product'}</h6><p>${item.price ? `Rs ${item.price                    </td>`).join('') },
-                    { label: 'Category', value: liveItems.map((item) => `< td > ${ item.category || join('') },
-                {
-                    label: 'Camera Type', value: liveItems.map((item) => `<td>${spe                    era_type')}</td>`).join('') },
-                    { label: 'Price', value: liveItems.map((item) => `<td class                    em.price) === bestPrice ? 'compare-best' : ''}">${item.price ? `Rs ${item.price}` : '-'}</td>`).join('') },
-                        label: 'Stock', value: liveItems.map((item) => `<td class="${(Number(item.stock) || 0) === bestStock ? 'compare-best' : ''}">${typeof item.stock !== 'undefined' ? item.stoc > `).join('') },
-                    { label: 'Resolution', value: liveItems.map((item) => `< td > ${ spec(item, 'resolution_mp') }</td > `).join('') },
-                    { label: 'N                    , value: liveItems.map((item) => `< td > ${ spec(item, 'night_vision_range_m') }</td > `).join('') },
-                                 el: 'Field of View', value: liveItems.map((item) => `< td > ${ spec(item, 'field_of_view_deg') }</td > `).join('') },
-                    { label: 'Lens', value: liveItems.map((item) => `< td > ${ spec(item, 'lens_mm') }</td > `).join('') },
-                    { label: 'Connectivity', value: liveItem                tem                d>${spec(item, 'connectivity')}</td>`).join('') },
-                {
-                    label: 'Weatherproof', value: liveItems.map((ite                td > ${ spec(item, 'weatherp                ing') }</td > `).join('') },
-                                    { label: 'AI Detection', valu                tems.map((item) => `< td > <span class="${yesNoClas                tem, 'ai_detectio                {spec(item, 'ai                    }</s                    join('') },
-                    { label: 'Audio Support',                     tems.map((item) => `<td><span class="${yesNoClass(spe                    io_support'))}">${spec(item, 'audio_support')}</sp                    oin('') },
-                    { label: 'Warranty', v                veI((item) => `<td>${spec(ite                anty_years')}</td>`).join('') },
-                    { label: '                , value: liveItems                em) => `<td><d                    flex gap-2"><a class="btn btn-sm btn-outline-light" href=                url || '#                    <button class= "btn btn-sm btn-outline-danger compare-remove-page-btn                    {item.id}" > Remove</butto                </                in('') },
-                         ;
-                        b            innerHTML = rows.map((row) => `<tr><td class="co                tribute-col">${row.label}</td>${row.value}</tr>`).join('');
-            le.opacity = '';
-            body.style.pointerEven
+
+                const removeActive = (items) => {
+                    for (let i = 0; i < items.length; i++) {
+                        items[i].classList.remove('search-result-active');
+                    }
+                };
+
+                searchInput.addEventListener('keydown', (e) => {
+                    const items = searchResults.querySelectorAll('.search-result-item');
+                    if (!items.length) return;
+
+                    if (e.key === 'ArrowDown') {
+                        currentFocus++;
+                        addActive(items);
+                        e.preventDefault();
+                    } else if (e.key === 'ArrowUp') {
+                        currentFocus--;
+                        addActive(items);
+                        e.preventDefault();
+                    } else if (e.key === 'Enter') {
+                        if (currentFocus > -1) {
+                            e.preventDefault();
+                            items[currentFocus].click();
+                        }
+                    } else if (e.key === 'Escape') {
+                        searchResults.classList.add('d-none');
+                        searchInput.blur();
+                    }
+                });
+
+                searchInput.addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout);
+                    const query = e.target.value.trim();
+                    currentFocus = -1;
+
+                    if (query.length < 2) {
+                        searchResults.classList.add('d-none');
+                        return;
+                    }
+
+                    searchResults.innerHTML = '<div class="text-center py-4 text-secondary"><div class="spinner-border spinner-border-sm text-accent" role="status"></div></div>';
+                    searchResults.classList.remove('d-none');
+
+                    searchTimeout = setTimeout(() => {
+                        fetch(`{% url 'live_search' %}?q=${encodeURIComponent(query)}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                searchResults.innerHTML = '';
+                                if (data.results.length > 0) {
+                                    data.results.forEach(item => {
+                                        const imageHtml = item.image
+                                            ? `<img loading="lazy" decoding="async" src="${item.image}" alt="" class="search-result-thumb">`
+                                            : `<span class="search-result-thumb-fallback"><i class="bi bi-camera-video"></i></span>`;
+                                        const html = `
+                                            <a href="${item.url}" class="search-result-item text-decoration-none">
+                                                <span class="search-result-media">
+                                                    ${imageHtml}
+                                                </span>
+                                                <span class="search-result-copy">
+                                                    <span class="search-result-title text-truncate">${item.name}</span>
+                                                    <span class="search-result-category text-truncate">${item.category}</span>
+                                                </span>
+                                                <span class="search-result-price">&#8377;${item.price.split('.')[0]}</span>
+                                            </a>
+                                        `;
+                                        searchResults.insertAdjacentHTML('beforeend', html);
+                                    });
+                                } else {
+                                    searchResults.innerHTML = `
+                                        <div class="search-dropdown-empty">
+                                            <i class="bi bi-search"></i>
+                                            <span>No products found</span>
+                                        </div>
+                                    `;
+                                }
+                            })
+                            .catch(() => {
+                                searchResults.classList.add('d-none');
+                            });
+                    }, 300);
+                });
+
+                searchInput.addEventListener('focus', () => {
+                    if (searchResults.innerHTML.trim() && searchInput.value.trim().length >= 2) {
+                        searchResults.classList.remove('d-none');
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!searchForm.contains(e.target) && !searchResults.contains(e.target)) {
+                        searchResults.classList.add('d-none');
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        window.EyetrackConfig = {
+            wishlistDataUrl: '{% url "wishlist_data_api" %}',
+            toggleWishlistUrl: '/wishlist/toggle/',
+            csrfToken: '{{ csrf_token }}',
+            isAuthenticated: {% if user.is_authenticated %}true{% else %} false{% endif %},
+        wishlistCount: { { wishlist_count |default: "0" } },
+        cartCount: { { cart_count |default: "0" } }
+        };
+    </script>
+    <script src="{% static 'js/site.js' %}?v=106" defer></script>
+
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
+                let originalOnsubmit = form.getAttribute('onsubmit');
+                let match = originalOnsubmit.match(/confirm\('([^']+)'\)/) || originalOnsubmit.match(/confirm\("([^"]+)"\)/);
+                if (match) {
+                    let message = match[1];
+                    form.removeAttribute('onsubmit');
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        Swal.fire({
+                            title: 'Confirm Action', text: message, icon: 'warning', showCancelButton: true,
+                            confirmButtonText: '<i class="bi bi-trash"></i> Yes, Proceed', cancelButtonText: 'Cancel', buttonsStyling: false,
+                            customClass: { popup: 'swal-glass-popup', title: 'swal-glass-title', confirmButton: 'swal-btn-confirm btn', cancelButton: 'swal-btn-cancel btn' }
+                        }).then((result) => { if (result.isConfirmed) form.submit(); });
+                    });
+                }
+            });
+            document.querySelectorAll('a[onclick*="confirm"]').forEach(link => {
+                let originalOnclick = link.getAttribute('onclick');
+                let match = originalOnclick.match(/confirm\('([^']+)'\)/) || originalOnclick.match(/confirm\("([^"]+)"\)/);
+                if (match) {
+                    let message = match[1];
+                    link.removeAttribute('onclick');
+                    link.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        let targetUrl = this.href;
+                        Swal.fire({
+                            title: 'Are you sure?', text: message, icon: 'warning', showCancelButton: true,
+                            confirmButtonText: '<i class="bi bi-exclamation-triangle"></i> Yes, Proceed', cancelButtonText: 'Cancel', buttonsStyling: false,
+                            customClass: { popup: 'swal-glass-popup', title: 'swal-glass-title', confirmButton: 'swal-btn-confirm btn', cancelButton: 'swal-btn-cancel btn' }
+                        }).then((result) => { if (result.isConfirmed) window.location.href = targetUrl; });
+                    });
+                }
+            });
+        });
+    </script>
+
+    <!-- Firebase Engine -->
+    {{ FIREBASE_CONFIG_JSON|json_script:"firebase-config-data" }}
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-messaging.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js";
+
+        const firebaseConfig = JSON.parse(document.getElementById('firebase-config-data').textContent);
+
+        // authDomain MUST stay as eyetrack-store.firebaseapp.com — do NOT override it.
+        // Firebase routes the OAuth callback through its own servers at
+        // eyetrack-store.firebaseapp.com/__/auth/handler, then redirects back
+        // to eyetracktechnologies.com. Overriding authDomain to the custom domain
+        // causes a "Not Found" 404 because Django has no /__/auth/handler route.
+
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+        const auth = getAuth(app);
+        const analytics = getAnalytics(app);
+
+        window.EyetrackFirebase = {
+            app,
+            auth,
+            analytics,
+            logEvent,
+            GoogleAuthProvider,
+            signInWithPopup,
+            signInWithRedirect,
+            getRedirectResult,
+            RecaptchaVerifier,
+            signInWithPhoneNumber
         };
 
-                                 = (type, btn) => {
-                                 = btn.ge                te                roduct - id');
-            if (!id) return;
-            const item = id, name: btn.getAt                    a-product - name') || 'Prod                                  price: btn.getAtt - product | url: btn.getAttribute('data-product-url') || '#',
-                image: btn.g                    'data-product-image') || '',
-                }; const items = read(type);
-        const exists = items.some((i) =>                      === String                                            ex                s;
-        if (exists) {
-            next = items.filter((i) => S                id) !== String(id));
-        } else {
-            if (type === 'com                    ms.length >= 4) next = items.slice(1);
-                    next = [...next, it                             }
-                        writ                ne                             refresh();
-            };
+        // Listen for foreground messages
+        onMessage(messaging, (payload) => {
+            console.log('Firebase ONMESSAGE triggered', payload);
+            if (window.Swal) {
+                Swal.fire({
+                    title: payload.notification?.title || 'System Notification',
+                    text: payload.notification?.body || '',
+                    icon: 'info',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 5000,
+                    customClass: { popup: 'swal-glass-popup' }
+                });
+            }
+        });
 
-        document.addE                ener('click', (ev                                  const wis                    vent.target                    ishlist-                -p                d]');
-        if (wishlistBtn) {
-            event.efault();
-            ent.stopPropagation();                             to                sh            ', wi            stBtn);
-            return;
+        console.log("Firebase engine is ready... Checking authentication state.");
+
+        {% if user.is_authenticated %}
+        console.log("Django User is Authenticated!");
+        {% if not user.profile.fcm_token %}
+        console.log("We do NOT have the FCM token in the database yet. Attempting to get it...");
+        // Request Notification Permission and Register Token
+        if ('Notification' in window) {
+            Notification.requestPermission().then((permission) => {
+                console.log("Notification permission status:", permission);
+                if (permission === 'granted') {
+                    console.log("Permission granted! Fetching Firebase token...");
+                    getToken(messaging, { vapidKey: firebaseConfig.vapidKey }).then((currentToken) => {
+                        if (currentToken) {
+                            console.log("Successfully fetched token:", currentToken);
+                            fetch('{% url "save_fcm_token" %}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': '{{ csrf_token }}'
+                                },
+                                body: JSON.stringify({ fcm_token: currentToken })
+                            }).then(res => console.log('Token saved to Django!', res.status));
+                        } else {
+                            console.log('No token returned from Firebase.');
+                        }
+                    }).catch((err) => {
+                        console.error('FIREBASE GETTOKEN ERROR: ', err);
+                    });
+                }
+            });
         }
-        const compareBtn = event.target.closest('.compare-btn[data-product-id]');
-        if (compareBtn) {
-            event.preventDefault();
-            event.stopPropagation();
-            toggle('compare', compareBtn);
-            return;
-        }
-        const wishRemove = event.target.closest('.wishlist-remove-btn[data-id]');
-        if (wishRemove) {
-            const id = wishRemove.getAttribute('data-id');
-            write('wishlist', read('wishlist').filter((i) => String(i.id) !== String(id)));
-            refresh();
-            return;
-        }
-        const compareRemove = event.target.closest('.compare-remove-page-btn[data-id]');
-        if (compareRemove) {
-            const id = compareRemove.getAttribute('data-id');
-            write('compare', read('compare').filter((i) => String(i.id) !== String(id)));
-            refresh();
-            return;
-        }
-        const wishClear = event.target.closest('[data-wishlist-clear]');
-        if (wishClear) {
-            write('wishlist', []);
-            refresh();
-            return;
-        }
-        const compareClear = event.target.closest('[data-compare-clear]');
-        if (compareClear) {
-            write('compare', []);
-            refresh();
-        }
+        {% else %}
+        console.log("We ALREADY have the user's FCM token in the database.");
+        {% endif %}
+        {% else %}
+        console.log("User is acting as a Guest. Cannot register FCM token.");
+        {% endif %}
+    </script>
+
+    {% block extra_js %}{% endblock %}
+    <!-- Notification Offcanvas Drawer -->
+    <div class="offcanvas offcanvas-end premium-drawer" tabindex="-1" id="notificationDrawer"
+        aria-labelledby="notificationDrawerLabel">
+        <div class="offcanvas-header p-3 d-flex justify-content-between align-items-center"
+            style="background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05) !important;">
+            <h5 class="offcanvas-title d-flex align-items-center gap-2 mb-0" id="notificationDrawerLabel"
+                style="font-family:'Outfit',sans-serif;font-weight:700;">
+                <div
+                    style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(245,158,11,0.05));border:1px solid rgba(245,158,11,0.3);display:flex;align-items:center;justify-content:center;color:#f59e0b;">
+                    <i class="bi bi-bell-fill"></i>
+                </div>
+                Notifications
+            </h5>
+            <div class="d-flex align-items-center gap-2">
+                <button type="button"
+                    class="btn btn-sm btn-outline-light d-flex align-items-center justify-content-center p-0"
+                    id="markAllReadBtn" title="Mark all as read"
+                    style="width: 32px; height: 32px; border-radius: 50%; border-color: rgba(255,255,255,0.1);">
+                    <i class="bi bi-check2-all" style="font-size: 1.1rem;"></i>
+                </button>
+                <button type="button" class="btn-close btn-close-white shadow-none ms-1" data-bs-dismiss="offcanvas"
+                    aria-label="Close" style="opacity: 0.5;"></button>
+            </div>
+        </div>
+        <div class="offcanvas-body p-3" id="notificationDrawerBody">
+            <div class="p-4 text-center text-secondary">
+                <div class="spinner-border spinner-border-sm text-accent" role="status"></div>
+                <p class="mt-3 text-sm" style="font-weight:500;letter-spacing:0.05em;">Loading updates...</p>
+            </div>
+        </div>
+    </div>
+    {% include 'support/chatbot.html' %}
+
+    <!-- ═══ PREMIUM MOBILE SHOP PANEL (d-lg-none) ═══ -->
+    <div class="mob-shop-overlay d-lg-none" id="mobShopOverlay" role="dialog" aria-modal="true"
+        aria-label="Shop categories">
+        <div class="mob-shop-panel">
+            <!-- drag handle -->
+            <div class="mob-shop-handle"></div>
+            <div class="mob-shop-header">
+                <div class="mob-shop-header-left">
+                    <span class="mob-shop-header-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+                    <span class="mob-shop-header-title">Shop</span>
+                </div>
+                <button type="button" class="mob-shop-close" id="mobShopClose" aria-label="Close">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="mob-shop-body">
+                <!-- Browse All -->
+                <a href="{% url 'product_list' %}" class="mob-shop-all-link">
+                    <span class="mob-shop-all-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+                    <span class="mob-shop-all-info">
+                        <strong>All Products</strong>
+                        <small>Browse the complete catalog</small>
+                    </span>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+                <p class="mob-shop-section-label">Product Categories</p>
+                <div class="mob-shop-cat-list">
+                    {% for cat in categories %}
+                    <a href="{% url 'products_by_category' cat.slug %}" class="mob-shop-cat-link">
+                        <span class="mob-shop-cat-icon"><i class="bi {{ cat.icon }}"></i></span>
+                        <span class="mob-shop-cat-info">
+                            <strong>{{ cat.name }}</strong>
+                            <small>Explore solutions</small>
+                        </span>
+                        <i class="bi bi-chevron-right mob-shop-cat-arrow"></i>
+                    </a>
+                    {% endfor %}
+                </div>
+                <p class="mob-shop-section-label">Services</p>
+                <a href="{% url 'services_page' %}" class="mob-shop-cat-link">
+                    <span class="mob-shop-cat-icon"><i class="bi bi-tools"></i></span>
+                    <span class="mob-shop-cat-info"><strong>Installation Services</strong><small>Professional
+                            setup</small></span>
+                    <i class="bi bi-chevron-right mob-shop-cat-arrow"></i>
+                </a>
+                <a href="{% url 'support_page' %}" class="mob-shop-cat-link">
+                    <span class="mob-shop-cat-icon"><i class="bi bi-headset"></i></span>
+                    <span class="mob-shop-cat-info"><strong>Support Center</strong><small>Get help fast</small></span>
+                    <i class="bi bi-chevron-right mob-shop-cat-arrow"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ PREMIUM MOBILE SEARCH OVERLAY (d-lg-none) ═══ -->
+    <div class="mob-search-overlay d-lg-none" id="mobSearchOverlay" role="dialog" aria-modal="true"
+        aria-label="Search products">
+        <div class="mob-search-panel">
+            <div class="mob-search-topbar">
+                <div class="mob-search-field-wrap">
+                    <i class="bi bi-search mob-search-ico"></i>
+                    <input type="text" id="mobSearchInput" class="mob-search-field"
+                        placeholder="Search cameras, DVR, NVR…" autocomplete="off" spellcheck="false">
+                    <button type="button" class="mob-search-clear d-none" id="mobSearchClear" aria-label="Clear">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                </div>
+                <button type="button" class="mob-search-cancel" id="mobSearchCancel">Cancel</button>
+            </div>
+
+            <div id="mobSearchBody" class="mob-search-body">
+                <!-- Hints shown by default -->
+                <div id="mobSearchHints">
+                    <p class="mob-search-section-label">Quick Browse</p>
+                    <div class="mob-search-chips-row">
+                        <a href="{% url 'product_list' %}?q=IP+Camera" class="mob-chip">IP Camera</a>
+                        <a href="{% url 'product_list' %}?q=CCTV" class="mob-chip">CCTV</a>
+                        <a href="{% url 'product_list' %}?q=DVR" class="mob-chip">DVR</a>
+                        <a href="{% url 'product_list' %}?q=NVR" class="mob-chip">NVR</a>
+                        <a href="{% url 'product_list' %}?q=Dome" class="mob-chip">Dome Camera</a>
+                        <a href="{% url 'product_list' %}?q=Bullet" class="mob-chip">Bullet Camera</a>
+                        <a href="{% url 'product_list' %}?q=PTZ" class="mob-chip">PTZ Camera</a>
+                    </div>
+                    <p class="mob-search-section-label mt-4">All Categories</p>
+                    <div class="mob-search-cat-list">
+                        {% for cat in categories %}
+                        <a href="{% url 'products_by_category' cat.slug %}" class="mob-search-cat-link">
+                            <span class="mob-search-cat-icon"><i class="bi {{ cat.icon }}"></i></span>
+                            <span class="mob-search-cat-name">{{ cat.name }}</span>
+                            <i class="bi bi-chevron-right mob-search-cat-arrow"></i>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- Results injected here -->
+                <div id="mobSearchResults" class="d-none"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            /* ─── Dock active state ─── */
+            var path = window.location.pathname;
+            var dockHome = document.getElementById('dockHome');
+            var dockShop = document.getElementById('dockShop');
+            var dockSearch = document.getElementById('dockSearch');
+            var dockCart = document.getElementById('dockCart');
+            var dockAccount = document.getElementById('dockAccount');
+
+            function setActive(el) {
+                [dockHome, dockShop, dockSearch, dockCart, dockAccount].forEach(function (d) {
+                    if (d) d.classList.remove('active');
+                });
+                if (el) el.classList.add('active');
+            }
+
+            if (path === '/' || path.indexOf('/products') === 0) setActive(dockHome);
+            else if (path.indexOf('/cart') === 0) setActive(dockCart);
+            else if (path.indexOf('/accounts') === 0) setActive(dockAccount);
+
+            /* ─── Shop bottom-sheet panel ─── */
+            var shopOverlay = document.getElementById('mobShopOverlay');
+            var shopClose = document.getElementById('mobShopClose');
+
+            function openMobShop() {
+                if (!shopOverlay) return;
+                setActive(dockShop);
+                shopOverlay.classList.add('is-open');
+                document.body.classList.add('mob-search-lock');
+            }
+            function closeMobShop() {
+                if (!shopOverlay) return;
+                shopOverlay.classList.remove('is-open');
+                document.body.classList.remove('mob-search-lock');
+            }
+
+            if (dockShop) dockShop.addEventListener('click', openMobShop);
+            if (shopClose) shopClose.addEventListener('click', closeMobShop);
+            if (shopOverlay) {
+                shopOverlay.addEventListener('click', function (e) {
+                    if (e.target === shopOverlay) closeMobShop();
+                });
+            }
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && shopOverlay && shopOverlay.classList.contains('is-open')) {
+                    closeMobShop();
+                }
             });
 
-        refresh();
-        }) ();
+            /* ─── Search overlay ─── */
+            var overlay = document.getElementById('mobSearchOverlay');
+            var mobInput = document.getElementById('mobSearchInput');
+            var mobCancel = document.getElementById('mobSearchCancel');
+            var mobClear = document.getElementById('mobSearchClear');
+            var mobHints = document.getElementById('mobSearchHints');
+            var mobResults = document.getElementById('mobSearchResults');
+            var searchTimer = null;
+            var liveSearchUrl = '{% url "live_search" %}';
+
+            function openMobSearch() {
+                if (!overlay) return;
+                setActive(dockSearch);
+                overlay.classList.add('is-open');
+                document.body.classList.add('mob-search-lock');
+                setTimeout(function () { if (mobInput) mobInput.focus(); }, 280);
+            }
+
+            function closeMobSearch() {
+                if (!overlay) return;
+                overlay.classList.remove('is-open');
+                document.body.classList.remove('mob-search-lock');
+                if (mobInput) { mobInput.value = ''; mobInput.blur(); }
+                if (mobClear) mobClear.classList.add('d-none');
+                if (mobHints) mobHints.classList.remove('d-none');
+                if (mobResults) { mobResults.innerHTML = ''; mobResults.classList.add('d-none'); }
+                clearTimeout(searchTimer);
+            }
+
+            if (dockSearch) {
+                dockSearch.addEventListener('click', openMobSearch);
+            }
+            if (mobCancel) {
+                mobCancel.addEventListener('click', closeMobSearch);
+            }
+            if (overlay) {
+                overlay.addEventListener('click', function (e) {
+                    if (e.target === overlay) closeMobSearch();
+                });
+            }
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && overlay && overlay.classList.contains('is-open')) {
+                    closeMobSearch();
+                }
+            });
+
+            if (mobInput) {
+                mobInput.addEventListener('input', function () {
+                    var q = mobInput.value.trim();
+
+                    if (mobClear) mobClear.classList.toggle('d-none', q.length === 0);
+
+                    if (q.length < 2) {
+                        clearTimeout(searchTimer);
+                        if (mobHints) mobHints.classList.remove('d-none');
+                        if (mobResults) { mobResults.innerHTML = ''; mobResults.classList.add('d-none'); }
+                        return;
+                    }
+
+                    if (mobHints) mobHints.classList.add('d-none');
+                    if (mobResults) {
+                        mobResults.classList.remove('d-none');
+                        mobResults.innerHTML = '<div class="mob-search-loading"><div class="spinner-border spinner-border-sm text-accent" role="status"></div><span>Searching…</span></div>';
+                    }
+
+                    clearTimeout(searchTimer);
+                    searchTimer = setTimeout(function () {
+                        fetch(liveSearchUrl + '?q=' + encodeURIComponent(q))
+                            .then(function (r) { return r.json(); })
+                            .then(function (data) {
+                                if (!mobResults) return;
+                                if (data.results && data.results.length > 0) {
+                                    var html = '';
+                                    data.results.forEach(function (item) {
+                                        var img = item.image
+                                            ? '<img loading="lazy" decoding="async" src="' + item.image + '" alt="" class="mob-res-thumb">'
+                                            : '<span class="mob-res-thumb mob-res-thumb-fb"><i class="bi bi-camera-video"></i></span>';
+                                        var price = item.price ? '&#8377;' + String(item.price).split('.')[0] : '';
+                                        html += '<a href="' + item.url + '" class="mob-res-item">' +
+                                            img +
+                                            '<span class="mob-res-info"><span class="mob-res-name">' + item.name + '</span><span class="mob-res-cat">' + item.category + '</span></span>' +
+                                            '<span class="mob-res-price">' + price + '</span>' +
+                                            '</a>';
+                                    });
+                                    mobResults.innerHTML = html;
+                                } else {
+                                    mobResults.innerHTML = '<div class="mob-search-empty"><i class="bi bi-search"></i><p>No products found for <strong>"' + q + '"</strong></p></div>';
+                                }
+                            })
+                            .catch(function () {
+                                if (mobResults) mobResults.innerHTML = '';
+                            });
+                    }, 320);
+                });
+
+                mobInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        var q = mobInput.value.trim();
+                        if (q) window.location.href = '{% url "product_list" %}?q=' + encodeURIComponent(q);
+                    }
+                });
+            }
+
+            if (mobClear) {
+                mobClear.addEventListener('click', function () {
+                    if (mobInput) { mobInput.value = ''; mobInput.focus(); }
+                    mobClear.classList.add('d-none');
+                    if (mobHints) mobHints.classList.remove('d-none');
+                    if (mobResults) { mobResults.innerHTML = ''; mobResults.classList.add('d-none'); }
+                    clearTimeout(searchTimer);
+                });
+            }
+        })();
     </script>
 </body>
 

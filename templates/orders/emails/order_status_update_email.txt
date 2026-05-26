@@ -1,0 +1,20 @@
+Hello {{ order.full_name }},
+
+Your Eyetrack Solutions order {{ order.formatted_id }} status has been updated.
+
+Status: {{ status_label }}
+
+{% if new_status == "Shipped" and shipment and shipment.tracking_number %}
+Tracking Number: {{ shipment.tracking_number }}
+Carrier: {{ shipment.carrier }}
+{% endif %}
+
+Track your order: {{ tracking_url }}
+
+{% if new_status == "Cancelled" %}
+If you did not request this cancellation or have any questions, please contact us at info@etsgrp.in
+{% endif %}
+
+Thank you for shopping with Eyetrack Solutions.
+— The Eyetrack Team
+info@etsgrp.in | +91 7994357565

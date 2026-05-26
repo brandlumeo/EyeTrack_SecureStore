@@ -1,0 +1,93 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">{{ page_title }}</h1>
+            <p class="admin-subtitle">{% if category %}Update existing category details{% else %}Define a new product category{% endif %}</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_dashboard:categories_overview' %}" class="btn btn-outline-light btn-sm mt-3 mt-md-0">
+                <i class="bi bi-arrow-left me-1"></i> Back to Categories
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="chart-container">
+            <form method="post" action="{% if category %}{% url 'admin_dashboard:category_edit' category.id %}{% else %}{% url 'admin_dashboard:category_add' %}{% endif %}">
+                {% csrf_token %}
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show bg-dark text-light border-secondary" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close btn-close-white" data-bs-alert="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <div class="row g-4">
+                    <div class="col-12">
+                        <label class="form-label text-secondary">Category Name <span class="text-danger">*</span></label>
+                        {{ form.name }}
+                        {% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors }}</div>{% endif %}
+                    </div>
+                    
+                    <div class="col-12">
+                        <label class="form-label text-secondary">URL Slug (URL identifier)</label>
+                        {{ form.slug }}
+                        {% if form.slug.errors %}<div class="text-danger small mt-1">{{ form.slug.errors }}</div>{% endif %}
+                        <small class="text-secondary d-block mt-1">Leave blank to auto-generate from name (e.g., "Smart Cameras" -> "smart-cameras")</small>
+                    </div>
+                    
+                    <div class="col-12">
+                        <label class="form-label text-secondary">Bootstrap Icon Class</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent text-secondary border-secondary">
+                                <i id="iconPreview" class="bi {% if category %}{{ category.icon }}{% else %}bi-grid{% endif %}" style="font-size: 1.2rem;"></i>
+                            </span>
+                            {{ form.icon }}
+                        </div>
+                        {% if form.icon.errors %}<div class="text-danger small mt-1">{{ form.icon.errors }}</div>{% endif %}
+                        <small class="text-secondary d-block mt-1">Example: <code>bi-camera-video</code>, <code>bi-cpu</code>, <code>bi-shield-lock</code>. Find icons at <a href="https://icons.getbootstrap.com/" target="_blank" class="text-accent">Bootstrap Icons</a></small>
+                    </div>
+                </div>
+                
+                <hr class="border-secondary my-4">
+                
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'admin_dashboard:categories_overview' %}" class="btn btn-outline-secondary text-light">Cancel</a>
+                    <button type="submit" class="btn btn-premium-cta">
+                        <i class="bi bi-save me-1"></i> Save Category
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Live icon preview
+    const iconInput = document.querySelector('input[name="icon"]');
+    const iconPreview = document.getElementById('iconPreview');
+    
+    if (iconInput && iconPreview) {
+        iconInput.addEventListener('input', function() {
+            const val = this.value.trim();
+            if (val) {
+                // Remove all classes then add bi and the value
+                iconPreview.className = 'bi ' + val;
+            } else {
+                iconPreview.className = 'bi bi-grid';
+            }
+        });
+    }
+</script>
+{% endblock %}

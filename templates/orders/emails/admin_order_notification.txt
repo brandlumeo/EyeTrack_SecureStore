@@ -1,0 +1,16 @@
+[ADMIN NOTIFICATION] - {{ event_type|title }}
+
+Order ID: {{ order.formatted_id }}
+Event: Order {{ event_type|title }}
+Customer Name: {{ order.full_name }}
+Customer Email: {{ order.email }}
+
+Total: {{ invoice_display.total_amount_display }}
+Payment Method: {{ order.get_payment_method_display }}
+Order Status: {{ order.get_order_status_display }}
+
+{% if event_type == 'cancelled' %}
+Please review this cancellation.
+{% endif %}
+
+See the attached PDF for full order details.

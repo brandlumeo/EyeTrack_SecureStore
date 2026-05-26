@@ -1,0 +1,148 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<!-- Header -->
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title"><i class="bi bi-kanban me-2 text-accent"></i>Delivery Board</h1>
+            <p class="admin-subtitle">{{ today|date:"l, F j, Y" }} — Daily operations overview</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_dashboard:delivery_agents' %}" class="btn btn-outline-light btn-sm me-2">
+                <i class="bi bi-people me-1"></i>Manage Agents
+            </a>
+            <a href="{% url 'admin_dashboard:orders_overview' %}" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-list-task me-1"></i>All Orders
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Counters -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-value text-warning">{{ unassigned_count }}</div>
+            <div class="stat-label"><i class="bi bi-exclamation-circle me-1"></i>Needs Agent Assignment</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-value text-info">{{ in_transit_count }}</div>
+            <div class="stat-label"><i class="bi bi-truck me-1"></i>Out for Delivery</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-value text-success">{{ delivered_count }}</div>
+            <div class="stat-label"><i class="bi bi-check-circle me-1"></i>Delivered Today</div>
+        </div>
+    </div>
+</div>
+
+<!-- Kanban Board -->
+<div class="row g-3">
+
+    <!-- Column 1: Needs Assignment -->
+    <div class="col-lg-4">
+        <div class="chart-container h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0"><span class="badge bg-warning text-dark me-2">{{ unassigned_count }}</span>Needs Assignment</h5>
+            </div>
+            {% for order in unassigned_orders %}
+            <div class="delivery-card mb-3 p-3 rounded" style="background: rgba(240,180,41,0.07); border: 1px solid rgba(240,180,41,0.2);">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <strong class="text-accent">{{ order.formatted_id }}</strong>
+                    <span class="badge {% if order.payment_method == 'cod' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %} text-uppercase" style="font-size: 0.65rem;">
+                        {{ order.payment_method|upper }}
+                    </span>
+                </div>
+                <div class="mb-1" style="font-weight:500;">{{ order.full_name }}</div>
+                <div class="text-secondary small mb-1"><i class="bi bi-telephone me-1"></i>{{ order.phone }}</div>
+                <div class="text-secondary small mb-2" style="font-size:0.75rem;">{{ order.address|truncatechars:60 }}</div>
+                <div class="text-secondary small mb-3">
+                    {% for item in order.items.all %}<span class="badge bg-dark border border-secondary me-1">{{ item.product.name|truncatechars:20 }} ×{{ item.quantity }}</span>{% endfor %}
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-light fw-bold">₹{{ order.total }}</span>
+                    <a href="{% url 'admin_dashboard:assign_delivery_agent' order.id %}" class="btn btn-sm btn-warning text-dark fw-semibold">
+                        <i class="bi bi-person-plus me-1"></i>Assign Agent
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center text-secondary py-5">
+                <i class="bi bi-check2-all d-block mb-2" style="font-size:2rem; opacity:0.3;"></i>
+                <small>All confirmed orders assigned</small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Column 2: Out for Delivery -->
+    <div class="col-lg-4">
+        <div class="chart-container h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0"><span class="badge bg-info text-dark me-2">{{ in_transit_count }}</span>Out for Delivery</h5>
+            </div>
+            {% for order in in_transit_orders %}
+            <div class="delivery-card mb-3 p-3 rounded" style="background: rgba(6,182,212,0.07); border: 1px solid rgba(6,182,212,0.2);">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <strong class="text-accent">{{ order.formatted_id }}</strong>
+                    {% if order.delivery_assignment %}
+                    <span class="badge bg-dark border border-info" style="font-size:0.65rem;">
+                        <i class="bi bi-person me-1"></i>{{ order.delivery_assignment.agent.name }}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="mb-1" style="font-weight:500;">{{ order.full_name }}</div>
+                <div class="text-secondary small mb-1"><i class="bi bi-telephone me-1"></i>{{ order.phone }}</div>
+                <div class="text-secondary small mb-2" style="font-size:0.75rem;">{{ order.address|truncatechars:60 }}</div>
+                {% if order.delivery_assignment.estimated_delivery %}
+                <div class="text-info small mb-2"><i class="bi bi-calendar-check me-1"></i>ETA: {{ order.delivery_assignment.estimated_delivery|date:"M j, Y" }}</div>
+                {% endif %}
+                <a href="{% url 'admin_dashboard:order_detail' order.id %}" class="btn btn-sm btn-outline-info w-100">
+                    <i class="bi bi-gear me-1"></i>Manage
+                </a>
+            </div>
+            {% empty %}
+            <div class="text-center text-secondary py-5">
+                <i class="bi bi-truck d-block mb-2" style="font-size:2rem; opacity:0.3;"></i>
+                <small>No orders currently in transit</small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Column 3: Delivered Today -->
+    <div class="col-lg-4">
+        <div class="chart-container h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0"><span class="badge bg-success me-2">{{ delivered_count }}</span>Delivered Today</h5>
+            </div>
+            {% for order in delivered_today %}
+            <div class="delivery-card mb-3 p-3 rounded" style="background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.2);">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <strong class="text-accent">{{ order.formatted_id }}</strong>
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                </div>
+                <div class="mb-1" style="font-weight:500;">{{ order.full_name }}</div>
+                {% if order.delivery_assignment %}
+                <div class="text-secondary small mb-1"><i class="bi bi-person me-1"></i>{{ order.delivery_assignment.agent.name }}</div>
+                {% endif %}
+                <div class="text-secondary small" style="font-size:0.75rem;">{{ order.updated_at|date:"H:i" }} · ₹{{ order.total }}
+                {% if order.payment_method == 'cod' %}<span class="badge bg-warning text-dark ms-1" style="font-size:0.6rem;">COD</span>{% endif %}</div>
+            </div>
+            {% empty %}
+            <div class="text-center text-secondary py-5">
+                <i class="bi bi-moon d-block mb-2" style="font-size:2rem; opacity:0.3;"></i>
+                <small>No deliveries completed today yet</small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

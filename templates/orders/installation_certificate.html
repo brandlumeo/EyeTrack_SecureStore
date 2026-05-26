@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Installation Completion Certificate</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #111827;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #f59e0b;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .certificate-title {
+            font-size: 32px;
+            color: #d97706;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #9ca3af;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 8px 0;
+            vertical-align: top;
+            font-size: 14px;
+        }
+        .label {
+            color: #6b7280;
+            width: 30%;
+        }
+        .value {
+            font-weight: bold;
+            color: #111827;
+        }
+        .warranty-box {
+            background-color: #fffbeb;
+            border: 1px solid #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .warranty-title {
+            color: #b45309;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+        .signatures {
+            margin-top: 60px;
+            display: table;
+            width: 100%;
+        }
+        .signature-block {
+            display: table-cell;
+            width: 50%;
+            text-align: center;
+        }
+        .signature-line {
+            border-top: 1px solid #111827;
+            width: 80%;
+            margin: 0 auto;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">EyeTrack Solutions</div>
+        <div class="certificate-title">Installation Certificate</div>
+        <p style="margin: 5px 0; color: #6b7280;">Professional Security & Automation Deployment</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Service Details</div>
+        <table>
+            <tr>
+                <td class="label">Certificate ID:</td>
+                <td class="value">CERT-{{ order.id|stringformat:"06d" }}</td>
+                <td class="label">Completion Date:</td>
+                <td class="value">{{ installation.certificate_generated_at|date:"M d, Y" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Order Number:</td>
+                <td class="value">{{ order.formatted_id }}</td>
+                <td class="label">Client Name:</td>
+                <td class="value">{{ order.full_name }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Installed Items</div>
+        <table>
+            <thead>
+                <tr style="border-bottom: 1px solid #f3f4f6;">
+                    <th style="text-align: left; padding: 10px 0; font-size: 12px; color: #9ca3af;">Product Name</th>
+                    <th style="text-align: center; padding: 10px 0; font-size: 12px; color: #9ca3af;">Qty</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #f9fafb;">{{ item.product.name }}</td>
+                    <td style="text-align: center; padding: 10px 0; border-bottom: 1px solid #f9fafb;">{{ item.quantity }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Service Professional</div>
+        <table>
+            <tr>
+                <td class="label">Technician:</td>
+                <td class="value">{{ installation.technician_name }}</td>
+            </tr>
+            <tr>
+                <td class="label">Verification:</td>
+                <td class="value">{% if installation.technician_verified %}EyeTrack Verified Expert{% else %}Standard Service Professional{% endif %}</td>
+            </tr>
+            {% if installation.technician_notes %}
+            <tr>
+                <td class="label">Service Notes:</td>
+                <td class="value" style="font-weight: normal; font-style: italic;">"{{ installation.technician_notes }}"</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+
+    <div class="warranty-box">
+        <div class="warranty-title">Installation Service Warranty</div>
+        <p style="margin: 0; font-size: 13px; color: #92400e;">
+            This installation is backed by a 90-day professional service guarantee from the date of completion. This covers the workmanship and wiring performed during the setup. Product hardware is covered separately by manufacturer warranties.
+        </p>
+    </div>
+
+    <div class="signatures">
+        <div class="signature-block">
+            <div class="signature-line"></div>
+            <div style="font-size: 12px;">Authorized Signatory<br>EyeTrack Solutions</div>
+        </div>
+        <div class="signature-block">
+            <div class="signature-line"></div>
+            <div style="font-size: 12px;">Client Acknowledgement<br>{{ order.full_name }}</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        EyeTrack Solutions | Payyoli-Perambra Rd, Kozhikode, Kerala 673522<br>
+        info@etsgrp.in | +91 7994357565 | www.eyetrack-tech.com
+    </div>
+</body>
+</html>

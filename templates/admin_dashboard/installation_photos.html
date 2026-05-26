@@ -1,0 +1,88 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">Installation Photos</h1>
+            <p class="admin-subtitle">Browse Before / During / After photos submitted by field technicians</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <select id="labelFilter" class="form-select form-select-sm" style="width:auto;display:inline-block;">
+                <option value="">All Labels</option>
+                {% for val, label in photo_labels %}
+                <option value="{{ val }}" {% if label_filter == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="chart-container mb-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div class="d-flex align-items-center gap-3">
+        <div style="font-size:1.8rem;color:#f59e0b;"><i class="bi bi-images"></i></div>
+        <div><span style="font-size:1.5rem;font-weight:700;font-family:'Outfit',sans-serif;">{{ total_count }}</span> <span class="text-secondary ms-1">Total Photos</span></div>
+    </div>
+    <div class="d-flex gap-2">
+        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search order / technician..." value="{{ search_query|default:'' }}" style="width:240px;">
+        <button class="btn btn-outline-light btn-sm" id="searchBtn"><i class="bi bi-search"></i></button>
+    </div>
+</div>
+
+<!-- Photo Grid -->
+<div class="row g-3">
+    {% for photo in photos %}
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+        <div class="chart-container p-0 overflow-hidden" style="border-radius:1rem;">
+            <div style="position:relative;">
+                <img loading="lazy" decoding="async" src="{{ photo.image.url }}" alt="{{ photo.get_label_display }}"
+                    style="width:100%;height:160px;object-fit:cover;display:block;">
+                <span style="position:absolute;top:8px;left:8px;font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+                    background:{% if photo.label == 'before' %}rgba(239,68,68,0.85){% elif photo.label == 'after' %}rgba(16,185,129,0.85){% else %}rgba(245,158,11,0.85){% endif %};
+                    color:#fff;padding:3px 8px;border-radius:4px;">{{ photo.get_label_display }}</span>
+            </div>
+            <div class="p-2">
+                <div style="font-size:0.75rem;font-weight:600;color:#f59e0b;">Order #{{ photo.booking.order_id }}</div>
+                <div class="text-secondary" style="font-size:0.7rem;">{{ photo.uploaded_at|date:"d M Y" }}</div>
+                <div class="d-flex gap-1 mt-2">
+                    <a href="{% url 'admin_dashboard:installation_photos_booking' photo.booking_id %}" class="btn btn-outline-light btn-sm w-100 py-1" style="font-size:0.7rem;">
+                        <i class="bi bi-collection me-1"></i>All
+                    </a>
+                    <form method="POST" action="{% url 'admin_dashboard:installation_photo_delete' photo.id %}" style="flex:1;" onsubmit="return confirm('Delete this photo?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-soft-danger btn-sm w-100 py-1" style="font-size:0.7rem;"><i class="bi bi-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center text-secondary py-5">
+        <i class="bi bi-images display-5 d-block mb-3 opacity-25"></i>
+        No installation photos found.
+    </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="mt-4"><ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if label_filter %}&label={{ label_filter }}{% endif %}"><i class="bi bi-chevron-left"></i></a></li>{% endif %}
+    {% for num in page_obj.paginator.page_range %}{% if page_obj.number == num %}<li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>{% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}<li class="page-item"><a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if label_filter %}&label={{ label_filter }}{% endif %}">{{ num }}</a></li>{% endif %}{% endfor %}
+    {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if label_filter %}&label={{ label_filter }}{% endif %}"><i class="bi bi-chevron-right"></i></a></li>{% endif %}
+</ul></nav>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('labelFilter').addEventListener('change', function(){
+        const url = new URL(window.location);
+        if(this.value) url.searchParams.set('label',this.value); else url.searchParams.delete('label');
+        url.searchParams.delete('page'); window.location.href=url;
+    });
+    function doSearch(){ const v=document.getElementById('searchInput').value; const url=new URL(window.location); if(v) url.searchParams.set('search',v); else url.searchParams.delete('search'); url.searchParams.delete('page'); window.location.href=url; }
+    document.getElementById('searchInput').addEventListener('keyup',e=>{ if(e.key==='Enter') doSearch(); });
+    document.getElementById('searchBtn').addEventListener('click', doSearch);
+</script>
+{% endblock %}

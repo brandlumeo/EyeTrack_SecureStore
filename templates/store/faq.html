@@ -1,141 +1,193 @@
 {% extends 'base.html' %}
 {% block title %}FAQ | Eyetrack Solutions{% endblock %}
-{% block meta_description %}Read frequently asked questions about CCTV products, installation, support, and checkout at Eyetrack Solutions.{% endblock %}
+{% block meta_description %}Read frequently asked questions about CCTV products, installation, support, and checkout at
+Eyetrack Solutions.{% endblock %}
 {% block extra_head %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    {"@type": "Question", "name": "Is payment real in this build?", "acceptedAnswer": {"@type": "Answer", "text": "No. Current checkout uses a simulated payment page for UI and order flow testing."}},
-    {"@type": "Question", "name": "Can I add Razorpay or Stripe later?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The payment step is isolated, so you can integrate Razorpay or Stripe later without redesigning the storefront."}},
-    {"@type": "Question", "name": "Can I change quantity in cart?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Use plus and minus controls in cart to update quantity before checkout."}},
-    {"@type": "Question", "name": "Will I get an order record?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Logged-in users can see all orders and item details from the order history page."}},
-    {"@type": "Question", "name": "Do you provide installation?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Installation plans are available for homes, retail, offices, and enterprise deployments."}},
-    {"@type": "Question", "name": "How soon can installation start?", "acceptedAnswer": {"@type": "Answer", "text": "Typical deployment planning starts within 24 hours for confirmed orders, depending on site complexity."}},
-    {"@type": "Question", "name": "Do you support multi-site projects?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Enterprise packages include multi-zone and multi-site architecture with central monitoring support."}},
-    {"@type": "Question", "name": "What support channels are available?", "acceptedAnswer": {"@type": "Answer", "text": "Support is available via email and phone. Critical incidents are triaged with priority service-level agreements."}},
-    {"@type": "Question", "name": "Do you offer maintenance plans?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Preventive maintenance and annual support options are available based on project size."}},
-    {"@type": "Question", "name": "How do I escalate unresolved issues?", "acceptedAnswer": {"@type": "Answer", "text": "Share your ticket reference with support and request escalation. Critical severity cases are prioritized for faster response."}}
+    {"@type": "Question", "name": "Is payment secure on this website?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, we use industry-standard encryption and secure payment gateways to ensure your transaction data is protected."}},
+    {"@type": "Question", "name": "What payment methods do you accept?", "acceptedAnswer": {"@type": "Answer", "text": "We accept all major Credit/Debit cards, Net Banking, UPI, and popular mobile wallets. Cash on Delivery (COD) is also available for select locations."}},
+    {"@type": "Question", "name": "Can I track my order after purchase?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, once your order is confirmed, you can track its status in real-time from your account dashboard under 'Order History'."}},
+    {"@type": "Question", "name": "Do you ship pan-India?", "acceptedAnswer": {"@type": "Answer", "text": "We currently specialize in Kerala with a focus on Kozhikode. You can check your pincode on the product page for instant serviceability verification."}},
+    {"@type": "Question", "name": "Do you provide professional installation?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, we provide expert on-site installation for all our products. You can opt for installation during checkout for serviceable locations."}},
+    {"@type": "Question", "name": "How long does installation take?", "acceptedAnswer": {"@type": "Answer", "text": "Most home installations are completed within 4-6 hours. Larger enterprise projects depend on site complexity."}},
+    {"@type": "Question", "name": "What is the warranty on your products?", "acceptedAnswer": {"@type": "Answer", "text": "Most products come with a 1 to 2-year manufacturer warranty. Specific details are listed on each product's page."}},
+    {"@type": "Question", "name": "How do I claim a warranty?", "acceptedAnswer": {"@type": "Answer", "text": "Contact our support team with your order ID. We will facilitate the repair or replacement as per the manufacturer's policy."}},
+    {"@type": "Question", "name": "What support channels are available?", "acceptedAnswer": {"@type": "Answer", "text": "Support is available 24/7 via email, phone, and WhatsApp. Critical incidents are triaged with priority SLAs."}}
   ]
 }
 </script>
 {% endblock %}
 {% block content %}
-<div class="faq-page">
-<section class="hero-premium page-section">
-    <div class="row g-4 align-items-center">
-        <div class="col-lg-8">
-            <p class="eyebrow mb-2">Frequently Asked Questions</p>
-            <h1 class="display-title mb-3">Everything about buying, installation, payment, and support.</h1>
-            <p class="lead-copy mb-3">Get clear answers for order flow, deployment planning, warranty, and troubleshooting so you can choose the right CCTV setup with confidence.</p>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="{% url 'product_list' %}" class="btn btn-premium-cta px-4">Browse Store</a>
-                <a href="{% url 'support_page' %}" class="btn btn-outline-light px-4">Contact Support</a>
+<div class="faq-page pb-5">
+    <div class="container">
+        <section class="hero-premium page-section">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-8">
+                    <p class="eyebrow mb-2">Frequently Asked Questions</p>
+                    <h1 class="display-title mb-3">Professional Answers for Your Security Needs.</h1>
+                    <p class="lead-copy mb-3">Get clear answers about our secure payment process, professional installation, 
+                        comprehensive warranty, and 24/7 technical support.</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'product_list' %}" class="btn btn-premium-cta px-4">Browse Store</a>
+                        <a href="{% url 'support_page' %}" class="btn btn-outline-light px-4">Contact Support</a>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="premium-stats-grid">
+                        <div class="premium-stat-card">
+                            <h3>24/7</h3>
+                            <p>Tech Support</p>
+                        </div>
+                        <div class="premium-stat-card">
+                            <h3>100%</h3>
+                            <p>Secure Pay</p>
+                        </div>
+                        <div class="premium-stat-card">
+                            <h3>On-Site</h3>
+                            <p>Installation</p>
+                        </div>
+                        <div class="premium-stat-card">
+                            <h3>AMC</h3>
+                            <p>Maintenance</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="premium-stats-grid">
-                <div class="premium-stat-card"><h3>24/7</h3><p>Critical Support</p></div>
-                <div class="premium-stat-card"><h3>2h</h3><p>Escalation SLA</p></div>
-                <div class="premium-stat-card"><h3>Secure</h3><p>Checkout Flow</p></div>
-                <div class="premium-stat-card"><h3>AMC</h3><p>Maintenance Options</p></div>
+        </section>
+
+        <section class="row g-4 page-section align-items-start">
+            <div class="col-lg-4 sticky-lg-top" style="top: 100px; z-index: 10;">
+                <div class="glass-card p-3 mb-3">
+                    <h5 class="mb-3">FAQ Categories</h5>
+                    <div class="d-grid gap-2">
+                        <a href="#buyingFaq" class="faq-category-card"><span>Buying & Checkout</span><span
+                                class="faq-badge">4</span></a>
+                        <a href="#installFaq" class="faq-category-card"><span>Installation</span><span
+                                class="faq-badge">3</span></a>
+                        <a href="#warrantyFaq" class="faq-category-card"><span>Warranty & Support</span><span
+                                class="faq-badge">3</span></a>
+                    </div>
+                </div>
+                <div class="support-glass-card rounded-4 p-4">
+                    <h6 class="mb-2 text-white">Need direct help?</h6>
+                    <p class="small text-secondary mb-3">If your case is urgent, contact the support desk for direct triage.
+                    </p>
+                    <a href="mailto:info@etsgrp.in" class="btn btn-premium-cta w-100 mb-2">Email Support</a>
+                    <a href="tel:+917994357565" class="btn btn-outline-light w-100">Call Support</a>
+                </div>
             </div>
-        </div>
+
+            <div class="col-lg-8">
+                <div class="glass-card p-4 mb-4" id="buyingFaq">
+                    <h3 class="h4 mb-4 text-white">Buying & Checkout</h3>
+                    <div class="accordion premium-accordion" id="faqBuyingAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#buyingOne">Is payment secure on this website?</button></h2>
+                            <div id="buyingOne" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion">
+                                <div class="accordion-body">Yes, we use industry-standard encryption and secure payment gateways (like Razorpay) to ensure your transaction data is fully protected.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#buyingTwo">What payment methods do you accept?</button></h2>
+                            <div id="buyingTwo" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion">
+                                <div class="accordion-body">We accept all major Credit/Debit cards, Net Banking, UPI, and popular mobile wallets. Cash on Delivery (COD) is also available for select locations in Kerala.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#buyingThree">Can I track my order after purchase?</button></h2>
+                            <div id="buyingThree" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion">
+                                <div class="accordion-body">Yes, once your order is confirmed, you can track its status in real-time from your account dashboard under 'Order History' or via the tracking link sent to your email.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#buyingFour">Do you ship pan-India?</button></h2>
+                            <div id="buyingFour" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion">
+                                <div class="accordion-body">We currently specialize in Kerala with a focus on Kozhikode. You can check your pincode on any product page for instant serviceability and delivery estimates.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 mb-4" id="installFaq">
+                    <h3 class="h4 mb-4 text-white">Installation</h3>
+                    <div class="accordion premium-accordion" id="faqInstallAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#installOne">Do you provide professional installation?</button></h2>
+                            <div id="installOne" class="accordion-collapse collapse" data-bs-parent="#faqInstallAccordion">
+                                <div class="accordion-body">Yes, we provide expert on-site installation for all our products. You can opt for installation during checkout for serviceable locations in and around Kozhikode.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#installTwo">How long does installation take?</button></h2>
+                            <div id="installTwo" class="accordion-collapse collapse" data-bs-parent="#faqInstallAccordion">
+                                <div class="accordion-body">Most residential installations are completed within 4-6 hours. Larger enterprise or multi-camera projects depend on site complexity and are scheduled as per your convenience.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#installThree">Do you support enterprise projects?</button></h2>
+                            <div id="installThree" class="accordion-collapse collapse"
+                                data-bs-parent="#faqInstallAccordion">
+                                <div class="accordion-body">Yes. We specialize in enterprise-grade security solutions, including multi-site monitoring, centralized storage, and advanced AI-enabled surveillance.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 mb-4" id="warrantyFaq">
+                    <h3 class="h4 mb-4 text-white">Warranty & Support</h3>
+                    <div class="accordion premium-accordion" id="faqSupportAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#supportOne">What is the warranty on your products?</button></h2>
+                            <div id="supportOne" class="accordion-collapse collapse" data-bs-parent="#faqSupportAccordion">
+                                <div class="accordion-body">Most products come with a 1 to 2-year manufacturer warranty. Specific warranty periods are listed on the technical specifications section of each product page.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#supportTwo">How do I claim a warranty or service?</button></h2>
+                            <div id="supportTwo" class="accordion-collapse collapse" data-bs-parent="#faqSupportAccordion">
+                                <div class="accordion-body">Simply contact our support team with your order ID. We provide on-site service support for all products installed by our team during the warranty period.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#supportThree">Is technical support available 24/7?</button></h2>
+                            <div id="supportThree" class="accordion-collapse collapse"
+                                data-bs-parent="#faqSupportAccordion">
+                                <div class="accordion-body">Yes. Our support desk is available round-the-clock for critical troubleshooting. You can reach us via WhatsApp, phone, or email for instant assistance.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="glass-card p-4 p-md-5 service-cta page-section">
+            <div class="row g-3 align-items-center">
+                <div class="col-lg-8">
+                    <p class="eyebrow mb-2">Still Have Questions?</p>
+                    <h3 class="h2 mb-2">Get tailored advice for your CCTV deployment.</h3>
+                    <p class="text-secondary mb-0">Our team can help you select products, plan installation, and define the
+                        right monitoring setup.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end d-grid gap-2">
+                    <a href="{% url 'support_page' %}" class="btn btn-premium-cta btn-lg">Contact Support</a>
+                    <a href="{% url 'services_page' %}" class="btn btn-outline-light btn-lg">View Services</a>
+                </div>
+            </div>
+        </section>
     </div>
-</section>
-
-<section class="row g-4 page-section align-items-start">
-    <div class="col-lg-4">
-        <div class="glass-card p-3 mb-3">
-            <h5 class="mb-3">FAQ Categories</h5>
-            <div class="d-grid gap-2">
-                <a href="#buyingFaq" class="compact-row"><span>Buying & Checkout</span><strong>4</strong></a>
-                <a href="#installFaq" class="compact-row"><span>Installation</span><strong>3</strong></a>
-                <a href="#warrantyFaq" class="compact-row"><span>Warranty & Support</span><strong>3</strong></a>
-            </div>
-        </div>
-        <div class="glass-card p-3">
-            <h6 class="mb-2">Need direct help?</h6>
-            <p class="small text-secondary mb-3">If your case is urgent, contact the support desk for direct triage.</p>
-            <a href="mailto:info@eyetrack-tech.com" class="btn btn-premium-cta w-100 mb-2">Email Support</a>
-            <a href="tel:+917994357565" class="btn btn-outline-light w-100">Call Support</a>
-        </div>
-    </div>
-
-    <div class="col-lg-8">
-        <div class="glass-card p-4 mb-3" id="buyingFaq">
-            <h3 class="h4 mb-3">Buying & Checkout</h3>
-            <div class="accordion premium-accordion" id="faqBuyingAccordion">
-                <div class="accordion-item bg-transparent border-secondary-subtle">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#buyingOne">Is payment real in this build?</button></h2>
-                    <div id="buyingOne" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion"><div class="accordion-body">No. Current checkout uses a simulated payment page for UI and order flow testing.</div></div>
-                </div>
-                <div class="accordion-item bg-transparent border-secondary-subtle">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#buyingTwo">Can I add Razorpay or Stripe later?</button></h2>
-                    <div id="buyingTwo" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion"><div class="accordion-body">Yes. The payment step is isolated, so you can integrate Razorpay/Stripe later without redesigning the storefront.</div></div>
-                </div>
-                <div class="accordion-item bg-transparent border-secondary-subtle">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#buyingThree">Can I change quantity in cart?</button></h2>
-                    <div id="buyingThree" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion"><div class="accordion-body">Yes. Use + and - controls in cart to update quantity before checkout.</div></div>
-                </div>
-                <div class="accordion-item bg-transparent border-secondary-subtle">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#buyingFour">Will I get an order record?</button></h2>
-                    <div id="buyingFour" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion"><div class="accordion-body">Yes. Logged-in users can see all orders and item details from the order history page.</div></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="glass-card p-4 mb-3" id="installFaq">
-            <h3 class="h4 mb-3">Installation</h3>
-            <div class="accordion premium-accordion" id="faqInstallAccordion">
-                <div class="accordion-item bg-transparent border-secondary-subtle">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#installOne">Do you provide installation?</button></h2>
-                    <div id="installOne" class="accordion-collapse collapse" data-bs-parent="#faqInstallAccordion"><div class="accordion-body">Yes. Installation plans are available for homes, retail, offices, and enterprise deployments.</div></div>
-                </div>
-                <div class="accordion-item bg-transparent border-secondary-subtle">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#installTwo">How soon can installation start?</button></h2>
-                    <div id="installTwo" class="accordion-collapse collapse" data-bs-parent="#faqInstallAccordion"><div class="accordion-body">Typical deployment planning starts within 24 hours for confirmed orders, depending on site complexity.</div></div>
-                </div>
-                <div class="accordion-item bg-transparent border-secondary-subtle">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#installThree">Do you support multi-site projects?</button></h2>
-                    <div id="installThree" class="accordion-collapse collapse" data-bs-parent="#faqInstallAccordion"><div class="accordion-body">Yes. Enterprise packages include multi-zone and multi-site architecture with central monitoring support.</div></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="glass-card p-4" id="warrantyFaq">
-            <h3 class="h4 mb-3">Warranty & Support</h3>
-            <div class="accordion premium-accordion" id="faqSupportAccordion">
-                <div class="accordion-item bg-transparent border-secondary-subtle">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#supportOne">What support channels are available?</button></h2>
-                    <div id="supportOne" class="accordion-collapse collapse" data-bs-parent="#faqSupportAccordion"><div class="accordion-body">Support is available via email and phone. Critical incidents are triaged with priority SLAs.</div></div>
-                </div>
-                <div class="accordion-item bg-transparent border-secondary-subtle">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#supportTwo">Do you offer maintenance plans?</button></h2>
-                    <div id="supportTwo" class="accordion-collapse collapse" data-bs-parent="#faqSupportAccordion"><div class="accordion-body">Yes. Preventive maintenance and annual support options are available based on project size.</div></div>
-                </div>
-                <div class="accordion-item bg-transparent border-secondary-subtle">
-                    <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#supportThree">How do I escalate unresolved issues?</button></h2>
-                    <div id="supportThree" class="accordion-collapse collapse" data-bs-parent="#faqSupportAccordion"><div class="accordion-body">Share your ticket reference with support and request escalation. Critical severity cases are prioritized for faster response.</div></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="glass-card p-4 p-md-5 service-cta page-section">
-    <div class="row g-3 align-items-center">
-        <div class="col-lg-8">
-            <p class="eyebrow mb-2">Still Have Questions?</p>
-            <h3 class="h2 mb-2">Get tailored advice for your CCTV deployment.</h3>
-            <p class="text-secondary mb-0">Our team can help you select products, plan installation, and define the right monitoring setup.</p>
-        </div>
-        <div class="col-lg-4 text-lg-end d-grid gap-2">
-            <a href="{% url 'support_page' %}" class="btn btn-premium-cta btn-lg">Contact Support</a>
-            <a href="{% url 'services_page' %}" class="btn btn-outline-light">View Services</a>
-        </div>
-    </div>
-</section>
 </div>
 {% endblock %}

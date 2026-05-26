@@ -1,0 +1,14 @@
+Hi {{ invoice_display.recipient_name }},
+
+Thanks for your order! We’ve received order {{ order.formatted_id }}.
+
+Payment Method: {{ order.get_payment_method_display }}
+Payment Status: {{ order.get_payment_status_display }}
+
+Order reference: {{ invoice_display.order_reference }}
+Total amount: Rs. {{ invoice_display.total_amount|floatformat:2 }}
+
+Track your order:
+{{ tracking_url }}
+
+Eyetrack Solutions

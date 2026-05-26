@@ -1,0 +1,125 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">Invoices</h1>
+            <p class="admin-subtitle">View all generated order invoices and their payment status</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <div class="d-flex gap-2 flex-wrap justify-content-md-end">
+                <select id="statusFilter" class="form-select form-select-sm" style="width:auto;">
+                    <option value="">All Statuses</option>
+                    <option value="Paid" {% if status_filter == 'Paid' %}selected{% endif %}>Paid</option>
+                    <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Failed" {% if status_filter == 'Failed' %}selected{% endif %}>Failed</option>
+                    <option value="Refunded" {% if status_filter == 'Refunded' %}selected{% endif %}>Refunded</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#f59e0b;"><i class="bi bi-receipt"></i></div>
+            <div><div class="stats-number" style="font-size:1.7rem;">{{ total_count }}</div><div class="stats-label">Total Invoices</div></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#10b981;"><i class="bi bi-check-circle-fill"></i></div>
+            <div><div class="stats-number" style="font-size:1.7rem;">{{ paid_count }}</div><div class="stats-label">Paid</div></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#f59e0b;"><i class="bi bi-hourglass-split"></i></div>
+            <div><div class="stats-number" style="font-size:1.7rem;">{{ pending_count }}</div><div class="stats-label">Pending</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="chart-container">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h5 class="mb-0">Invoice List</h5>
+        <div class="d-flex gap-2">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search invoice / customer..." value="{{ search_query|default:'' }}" style="width:240px;">
+            <button class="btn btn-outline-light btn-sm" id="searchBtn"><i class="bi bi-search"></i></button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-dark table-admin">
+            <thead>
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Subtotal</th>
+                    <th>Tax</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inv in invoices %}
+                <tr>
+                    <td><span style="font-weight:700;color:#f59e0b;font-family:'Outfit',sans-serif;">{{ inv.invoice_number }}</span></td>
+                    <td><a href="{% url 'admin_dashboard:order_detail' inv.order_id %}" class="text-info text-decoration-none">#{{ inv.order_id }}</a></td>
+                    <td>
+                        <div style="font-weight:500;">{{ inv.order.full_name }}</div>
+                        <small class="text-secondary">{{ inv.user.email|default:inv.order.email }}</small>
+                    </td>
+                    <td>₹{{ inv.subtotal|floatformat:2 }}</td>
+                    <td class="text-secondary">₹{{ inv.tax|floatformat:2 }}</td>
+                    <td style="font-weight:700;">₹{{ inv.total_amount|floatformat:2 }}</td>
+                    <td>
+                        {% if inv.payment_status == 'Paid' %}
+                            <span class="badge-status status-delivered">Paid</span>
+                        {% elif inv.payment_status == 'Pending' %}
+                            <span class="badge-status status-pending">Pending</span>
+                        {% elif inv.payment_status == 'Failed' %}
+                            <span class="badge-status status-cancelled">Failed</span>
+                        {% else %}
+                            <span class="badge-status status-processing">{{ inv.payment_status }}</span>
+                        {% endif %}
+                    </td>
+                    <td><small class="text-secondary">{{ inv.created_at|date:"d M Y" }}</small></td>
+                    <td>
+                        <a href="{% url 'admin_dashboard:invoice_detail' inv.id %}" class="btn btn-outline-light btn-sm" title="View"><i class="bi bi-eye"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="9" class="text-center text-secondary py-5"><i class="bi bi-receipt display-6 d-block mb-2 opacity-25"></i>No invoices found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-4"><ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}"><i class="bi bi-chevron-left"></i></a></li>{% endif %}
+        {% for num in page_obj.paginator.page_range %}{% if page_obj.number == num %}<li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>{% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}<li class="page-item"><a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a></li>{% endif %}{% endfor %}
+        {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}"><i class="bi bi-chevron-right"></i></a></li>{% endif %}
+    </ul></nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('statusFilter').addEventListener('change', function(){
+        const url = new URL(window.location);
+        if(this.value) url.searchParams.set('status', this.value); else url.searchParams.delete('status');
+        url.searchParams.delete('page'); window.location.href = url;
+    });
+    function doSearch(){ const v=document.getElementById('searchInput').value; const url=new URL(window.location); if(v) url.searchParams.set('search',v); else url.searchParams.delete('search'); url.searchParams.delete('page'); window.location.href=url; }
+    document.getElementById('searchInput').addEventListener('keyup',e=>{ if(e.key==='Enter') doSearch(); });
+    document.getElementById('searchBtn').addEventListener('click', doSearch);
+</script>
+{% endblock %}

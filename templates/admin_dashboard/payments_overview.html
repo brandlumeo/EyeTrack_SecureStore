@@ -1,0 +1,169 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<!-- Admin Header -->
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-7">
+            <h1 class="admin-title">Payment Transactions</h1>
+            <p class="admin-subtitle">Monitor and track all financial transactions on the platform</p>
+        </div>
+        <div class="col-md-5 text-md-end">
+            <div class="d-flex gap-2 justify-content-md-end mt-3 mt-md-0">
+                <select id="statusFilter" class="form-select form-select-sm" style="width: 150px;" onchange="filterPayments()">
+                    <option value="">All Statuses</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="paid" {% if status_filter == 'paid' %}selected{% endif %}>Paid / Completed</option>
+                    <option value="failed" {% if status_filter == 'failed' %}selected{% endif %}>Failed</option>
+                </select>
+                <button class="btn btn-premium-cta btn-sm">
+                    <i class="bi bi-download me-1"></i> Export Data
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payments Table -->
+<div class="chart-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Transaction History</h5>
+        <div class="d-flex gap-2">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search ID or Order..." value="{{ search_query|default:'' }}" style="width: 200px;">
+            <button class="btn btn-outline-light btn-sm" id="searchBtn">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-dark table-admin">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Transaction ID</th>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>
+                        <div style="font-size: 0.9rem;">{{ payment.created_at|date:"M d, Y" }}</div>
+                        <small class="text-secondary">{{ payment.created_at|date:"H:i" }}</small>
+                    </td>
+                    <td>
+                        {% if payment.transaction_id %}
+                            <code class="text-accent" style="font-size: 0.85rem;">{{ payment.transaction_id|truncatechars:20 }}</code>
+                        {% else %}
+                            <span class="text-secondary small">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'admin_dashboard:orders_overview' %}?search={{ payment.order.id }}" class="text-light text-decoration-none">
+                            <strong>{{ payment.order.formatted_id }}</strong>
+                        </a>
+                    </td>
+                    <td>
+                        <div style="font-weight: 500;">{{ payment.order.full_name }}</div>
+                        <small class="text-secondary">{{ payment.order.email }}</small>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; color: #fff;">₹{{ payment.amount|floatformat:2 }}</div>
+                    </td>
+                    <td>
+                        <span class="badge bg-dark border border-secondary text-secondary" style="text-transform: uppercase; font-size: 0.7rem;">
+                            {{ payment.payment_method }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if payment.status == 'paid' %}
+                            <span class="badge-status status-confirmed">Completed</span>
+                        {% elif payment.status == 'pending' %}
+                            <span class="badge-status status-pending">Pending</span>
+                        {% elif payment.status == 'failed' %}
+                            <span class="badge-status status-cancelled">Failed</span>
+                        {% else %}
+                            <span class="badge-status status-processing">{{ payment.status|title }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-secondary py-5">
+                        <i class="bi bi-credit-card-2-back d-block mb-3" style="font-size: 2.5rem; opacity: 0.3;"></i>
+                        No payment transactions found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Previous</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Next</a></li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filterPayments() {
+    const status = document.getElementById('statusFilter').value;
+    const currentUrl = new URL(window.location);
+    if (status) {
+        currentUrl.searchParams.set('status', status);
+    } else {
+        currentUrl.searchParams.delete('status');
+    }
+    currentUrl.searchParams.delete('page');
+    window.location.href = currentUrl.toString();
+}
+
+function performSearch() {
+    const searchTerm = document.getElementById('searchInput').value;
+    const currentUrl = new URL(window.location);
+    if (searchTerm) {
+        currentUrl.searchParams.set('search', searchTerm);
+    } else {
+        currentUrl.searchParams.delete('search');
+    }
+    currentUrl.searchParams.delete('page');
+    window.location.href = currentUrl.toString();
+}
+
+document.getElementById('searchInput').addEventListener('keyup', function(e) {
+    if (e.key === 'Enter') performSearch();
+});
+
+document.getElementById('searchBtn').addEventListener('click', performSearch);
+</script>
+{% endblock %}

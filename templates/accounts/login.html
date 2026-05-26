@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}Login | Eyetrack Solutions{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block extra_head %}
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+{% endblock %}
+
 {% block content %}
 <section class="auth-wrap row justify-content-center">
     <div class="col-lg-5">
@@ -9,10 +14,37 @@
             <p class="text-secondary small mb-4">Access your orders, checkout faster, and manage your security stack.</p>
             <form method="post" class="d-grid gap-3">
                 {% csrf_token %}
+
+                {# Google Identity Services button — no popups, no COOP issues #}
+                {# Google sign-in: styled button with real GSI button overlaid on top #}
+                <div style="position: relative; display: inline-block; width: 100%;">
+                    <button type="button" class="btn btn-outline-light w-100" id="firebase-google-login">
+                        <i class="bi bi-google me-2 text-danger"></i>Continue with Google
+                    </button>
+                    <div id="gsi-btn-overlay" style="position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;overflow:hidden;cursor:pointer;"></div>
+                </div>
+                <div id="firebase-auth-status" class="small text-center"></div>
+
+                <div class="d-flex align-items-center my-1">
+                    <hr class="flex-grow-1 bg-secondary border-0" style="height: 1px;">
+                    <span class="mx-2 text-secondary small">OR</span>
+                    <hr class="flex-grow-1 bg-secondary border-0" style="height: 1px;">
+                </div>
+                {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 mb-0">
+                        {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 {% for field in form %}
                 <div>
-                    <label class="form-label">{{ field.label }}</label>
+                    <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
                     {{ field }}
+                    {% if field.help_text %}
+                        <div class="text-secondary small mt-1">{{ field.help_text }}</div>
+                    {% endif %}
                     {% if field.errors %}
                         <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
                     {% endif %}
@@ -21,8 +53,76 @@
                 <button type="submit" class="btn btn-premium-cta">Login</button>
             </form>
             <p class="small mt-3 mb-1"><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+            <p class="small mt-1 mb-1"><a href="{% url 'resend_verification_email' %}">Need a new verification link?</a></p>
             <p class="small mt-1 mb-0">No account yet? <a href="{% url 'register' %}">Create one</a></p>
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const CSRF_TOKEN = '{{ csrf_token }}';
+    const REDIRECT_URL = "{% if next %}{{ next }}{% else %}{% url 'product_list' %}{% endif %}";
+    const GSI_ENDPOINT = '{% url "google_gsi_login" %}';
+    const GOOGLE_CLIENT_ID = '{{ GOOGLE_CLIENT_ID }}';
+
+    const authStatus = document.getElementById('firebase-auth-status');
+    const googleBtn = document.getElementById('firebase-google-login');
+    const overlay = document.getElementById('gsi-btn-overlay');
+
+    function handleGSICredential(response) {
+        authStatus.innerHTML = `<span class="text-success"><span class="spinner-border spinner-border-sm me-1"></span> Authenticating...</span>`;
+        if (googleBtn) googleBtn.disabled = true;
+
+        fetch(GSI_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF_TOKEN },
+            body: JSON.stringify({ credential: response.credential }),
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = REDIRECT_URL;
+            } else {
+                authStatus.innerHTML = `<span class="text-danger">Error: ${data.message}</span>`;
+                if (googleBtn) googleBtn.disabled = false;
+            }
+        })
+        .catch(() => {
+            authStatus.innerHTML = `<span class="text-danger">Failed to connect to server.</span>`;
+            if (googleBtn) googleBtn.disabled = false;
+        });
+    }
+
+    window.addEventListener('load', () => {
+        if (!GOOGLE_CLIENT_ID || typeof google === 'undefined' || !google.accounts) {
+            console.warn('GSI not available.');
+            return;
+        }
+
+        google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGSICredential,
+            ux_mode: 'redirect',
+            login_uri: window.location.origin + GSI_ENDPOINT,
+            auto_select: false,
+            cancel_on_tap_outside: true,
+        });
+
+        // Render real GSI button in the transparent overlay.
+        if (overlay) {
+            google.accounts.id.renderButton(overlay, {
+                type: 'standard',
+                theme: 'outline',
+                size: 'large',
+                ux_mode: 'redirect',
+                width: overlay.offsetWidth || 400,
+            });
+        }
+
+        // Auto One Tap prompt (shows top-right if not suppressed)
+        google.accounts.id.prompt();
+    });
+</script>
 {% endblock %}

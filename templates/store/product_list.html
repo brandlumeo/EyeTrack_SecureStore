@@ -1,12 +1,28 @@
 {% extends 'base.html' %}
-{% block title %}Premium CCTV Store | Eyetrack Solutions{% endblock %}
-{% block meta_description %}Browse premium CCTV cameras, compare features, and choose surveillance products with professional installation support from Eyetrack Solutions.{% endblock %}
-{% block meta_robots %}{% if q or min_price or max_price or in_stock or sort != 'featured' %}noindex, follow{% else %}index, follow{% endif %}{% endblock %}
-{% block og_title %}Premium CCTV Store | Eyetrack Solutions{% endblock %}
-{% block og_description %}Shop enterprise-grade CCTV products with secure checkout and installation support.{% endblock %}
-{% block twitter_title %}Premium CCTV Store | Eyetrack Solutions{% endblock %}
-{% block twitter_description %}Shop enterprise-grade CCTV products with secure checkout and installation support.{% endblock %}
+
+{# ==== META TAGS & SEO ==== #}
+{% block title %}Premium Security Store | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Browse premium CCTV cameras, smart locks, biometric systems, and video door phones with
+professional installation support from Eyetrack Solutions.{% endblock %}
+{% block meta_robots %}{% if q or min_price or max_price or in_stock or sort != 'featured' %}noindex, follow{% else
+%}index, follow{% endif %}{% endblock %}
+{% block og_title %}Premium Security & Surveillance Store | Eyetrack Solutions{% endblock %}
+{% block og_description %}Shop enterprise-grade security products with secure checkout and installation support.{% endblock %}
+{% block twitter_title %}Premium Security & Surveillance Store | Eyetrack Solutions{% endblock %}
+{% block twitter_description %}Shop enterprise-grade security products with secure checkout and installation support.{% endblock %}
+
 {% block content %}
+
+{# ==== ANNOUNCEMENT BAR ==== #}
+<div class="announcement-bar" id="announcementBar" role="alert">
+    <span><i class="bi bi-megaphone-fill me-2"></i>Free installation consultation on CCTV orders above &#8377;10,000 &mdash; <a href="{% url 'services_page' %}">Book Now &rarr;</a></span>
+    <button class="announcement-close" onclick="dismissAnnouncement()" aria-label="Dismiss">
+        <i class="bi bi-x-lg"></i>
+    </button>
+</div>
+
+{% if not category and not q %}
+{# ==== HERO SECTION ==== #}
 <section class="hero-premium hero-live mb-4 reveal">
     <div class="hero-live-bg" aria-hidden="true">
         <span class="orb orb-a"></span>
@@ -17,20 +33,21 @@
     <div class="row align-items-center g-4">
         <div class="col-lg-7">
             <p class="eyebrow mb-2">Secure Living. Smarter Monitoring.</p>
-            <h1 class="display-title mb-3">Ultra-premium CCTV eCommerce experience for homes and businesses.</h1>
-            <p class="lead-copy mb-4">Browse enterprise-grade surveillance cameras, compare by use case, and checkout with a safe placeholder payment flow you can replace later.</p>
+            <h1 class="display-title mb-3">Ultra-premium security eCommerce experience for homes and businesses.</h1>
+            <p class="lead-copy mb-4">Browse enterprise-grade surveillance, smart locks, and biometric solutions. Compare by use case and checkout with a safe placeholder payment flow.</p>
             <div class="d-flex flex-wrap gap-2">
                 <a href="#catalog" class="btn btn-premium-cta px-4">Explore Products</a>
                 <a href="{% url 'services_page' %}" class="btn btn-outline-light px-4">Installation Plans</a>
             </div>
-            <div class="d-flex flex-wrap gap-2 mt-3">
-                <span class="trust-chip"><i class="bi bi-check-circle"></i>Verified Brands</span>
-                <span class="trust-chip"><i class="bi bi-building-check"></i>Business-ready</span>
-                <span class="trust-chip"><i class="bi bi-shield-check"></i>Secure Checkout</span>
+            <div class="feature-list">
+                <div class="feature-item"><i class="bi bi-check-circle-fill"></i><span>Verified Brands</span></div>
+                <div class="feature-item"><i class="bi bi-building-check"></i><span>Business-ready</span></div>
+                <div class="feature-item"><i class="bi bi-shield-check"></i><span>Secure Checkout</span></div>
             </div>
         </div>
         <div class="col-lg-5">
             <div class="premium-stats-grid">
+                {# Display dynamic product count from context #}
                 <div class="premium-stat-card">
                     <h3>{{ result_count }}</h3>
                     <p>Products Matched</p>
@@ -52,181 +69,2394 @@
     </div>
 </section>
 
-<section id="catalog" class="mb-4">
-    <div class="mb-3">
-        <button id="filtersToggleBtn" class="btn btn-outline-light w-100 d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilters" aria-expanded="true" aria-controls="mobileFilters">
-            <span class="d-inline-flex align-items-center gap-2">
-                <i class="bi bi-sliders"></i>Filter & Sort
-                <span class="filter-count-badge d-lg-none" id="mobileFilterCount">0</span>
-            </span>
-            <i class="bi bi-chevron-up" id="filtersToggleIcon"></i>
-        </button>
+{# ==== TRUST STRIP ==== #}
+<section class="trust-strip mb-5 reveal">
+    <div class="trust-strip-inner">
+        <div class="trust-item"><i class="bi bi-truck"></i><span>3–7 Day Delivery</span></div>
+        <div class="trust-divider"></div>
+        <div class="trust-item"><i class="bi bi-tools"></i><span>Expert Installation</span></div>
+        <div class="trust-divider"></div>
+        <div class="trust-item"><i class="bi bi-shield-check"></i><span>1–3 Year Warranty</span></div>
+        <div class="trust-divider"></div>
+        <div class="trust-item"><i class="bi bi-headset"></i><span>24/7 Support</span></div>
+        <div class="trust-divider"></div>
+        <div class="trust-item"><i class="bi bi-lock-fill"></i><span>Secure Checkout</span></div>
+        <div class="trust-divider"></div>
+        <div class="trust-item"><i class="bi bi-patch-check-fill"></i><span>Certified Brands</span></div>
     </div>
-    <div class="row g-4">
-        <aside id="mobileFilters" class="col-lg-3 filter-dock collapse show">
-            <div class="glass-card p-3 mb-3 reveal">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">Search & Filter</h5>
-                    <a href="{% if category %}{% url 'products_by_category' category.slug %}{% else %}{% url 'product_list' %}{% endif %}" class="small text-decoration-none filter-reset-link">Reset</a>
+</section>
+{% endif %}
+
+{# ==== PREMIUM CATEGORY NAV BAR ==== #}
+{% if categories %}
+<section class="cat-nav-section mb-5">
+    <div class="cat-nav-header">
+        <span class="cat-nav-eyebrow">Browse by Category</span>
+        <div class="cat-nav-divider"></div>
+    </div>
+    <div class="cat-nav-track">
+        {# All Products #}
+        <a href="{% url 'product_list' %}" class="cat-nav-pill {% if not category %}active{% endif %}">
+            <div class="cat-nav-icon-ring">
+                <div class="cat-nav-icon-wrap">
+                    <i class="bi bi-grid-fill"></i>
                 </div>
-                <form method="get" class="d-grid gap-3" id="catalogFilterForm">
-                    <div>
-                        <label class="form-label small text-secondary">Keyword</label>
-                        <input type="text" class="form-control premium-input" name="q" value="{{ q }}" placeholder="Camera, AI, outdoor...">
+            </div>
+            <span class="cat-nav-name">All Security</span>
+            <span class="cat-nav-count">{{ total_product_count|default:result_count }}</span>
+        </a>
+        {# Dynamic Categories #}
+        {% for cat in categories %}
+        <a href="{% url 'products_by_category' cat.slug %}" class="cat-nav-pill {% if category and category.slug == cat.slug %}active{% endif %}">
+            <div class="cat-nav-icon-ring">
+                <div class="cat-nav-icon-wrap">
+                    <i class="bi {{ cat.icon|default:'bi-layers' }}"></i>
+                </div>
+            </div>
+            <span class="cat-nav-name">{{ cat.name }}</span>
+            {% if cat.product_count %}<span class="cat-nav-count">{{ cat.product_count }}</span>{% endif %}
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{# ==== MAIN CATALOG SECTION ==== #}
+<section id="catalog" class="mb-4">
+
+    {# ==== PREMIUM FILTER DROPDOWN PANEL (collapses/expands on button click) ==== #}
+    <div id="catalogFilterPanel" class="catalog-filter-panel collapse">
+        <div class="catalog-filter-inner">
+            <form method="get" id="catalogFilterForm">
+                <div class="filter-grid-row">
+                    <div class="filter-field-group">
+                        <label class="filter-label"><i class="bi bi-search me-1"></i>Keyword</label>
+                        <input type="text" class="form-control premium-input" name="q" value="{{ q }}"
+                            placeholder="Camera, AI, outdoor...">
                     </div>
-                    <div>
-                        <label class="form-label small text-secondary">Sort By</label>
+                    <div class="filter-field-group">
+                        <label class="filter-label"><i class="bi bi-sort-down me-1"></i>Sort By</label>
                         <select name="sort" class="form-select premium-input">
                             <option value="featured" {% if sort == 'featured' %}selected{% endif %}>Featured</option>
                             <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option>
-                            <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
-                            <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
-                            <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>Name: A-Z</option>
+                            <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low &rarr; High</option>
+                            <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High &rarr; Low</option>
+                            <option value="name_asc" {% if sort == 'name_asc' %}selected{% endif %}>Name: A&ndash;Z</option>
                         </select>
                     </div>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <label class="form-label small text-secondary">Min &#8377;</label>
-                            <input type="number" class="form-control premium-input" min="0" name="min_price" value="{{ min_price }}" placeholder="{{ min_catalog_price }}">
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label small text-secondary">Max &#8377;</label>
-                            <input type="number" class="form-control premium-input" min="0" name="max_price" value="{{ max_price }}" placeholder="{{ max_catalog_price }}">
+                    <div class="filter-field-group">
+                        <label class="filter-label"><i class="bi bi-currency-rupee me-1"></i>Price Range</label>
+                        <div class="d-flex gap-2">
+                            <input type="number" class="form-control premium-input" min="0" name="min_price"
+                                value="{{ min_price }}" placeholder="Min &#8377;">
+                            <input type="number" class="form-control premium-input" min="0" name="max_price"
+                                value="{{ max_price }}" placeholder="Max &#8377;">
                         </div>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="1" id="stockCheck" name="in_stock" {% if in_stock %}checked{% endif %}>
-                        <label class="form-check-label" for="stockCheck">Show in-stock only</label>
+                    <div class="filter-field-group">
+                        <label class="filter-label"><i class="bi bi-camera-video me-1"></i>Resolution</label>
+                        <select name="resolution" class="form-select premium-input">
+                            <option value="">Any Resolution</option>
+                            {% for res in available_resolutions %}
+                            <option value="{{ res }}" {% if resolution == res %}selected{% endif %}>{{ res }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <button type="submit" class="btn btn-premium-cta w-100">Apply Filters</button>
-                </form>
-            </div>
+                </div>
+                <div class="filter-actions-row">
+                    <div class="filter-checks">
+                        <label class="filter-check-label">
+                            <input class="form-check-input" type="checkbox" value="1" id="aiCheck" name="has_ai" {% if has_ai %}checked{% endif %}>
+                            <span>AI Detection</span>
+                        </label>
+                        <label class="filter-check-label">
+                            <input class="form-check-input" type="checkbox" value="1" id="stockCheck" name="in_stock" {% if in_stock %}checked{% endif %}>
+                            <span>In-stock Only</span>
+                        </label>
+                    </div>
+                    <div class="filter-categories-inline">
+                        <a class="filter-cat-chip {% if not category %}active{% endif %}" href="{% url 'product_list' %}">All</a>
+                        {% for cat in categories %}
+                        <a class="filter-cat-chip {% if category and category.slug == cat.slug %}active{% endif %}"
+                            href="{% url 'products_by_category' cat.slug %}">{{ cat.name }}</a>
+                        {% endfor %}
+                    </div>
+                    <div class="filter-btn-row">
+                        <a href="{% if category %}{% url 'products_by_category' category.slug %}{% else %}{% url 'product_list' %}{% endif %}"
+                            class="btn filter-reset-btn"><i class="bi bi-x-circle me-1"></i>Reset</a>
+                        <button type="submit" class="btn btn-premium-cta filter-apply-btn">
+                            <i class="bi bi-check2-circle me-1"></i>Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
-            <div class="glass-card p-3 mb-3 reveal">
-                <h5 class="mb-3">Categories</h5>
-                <a class="category-pill {% if not category %}active{% endif %}" href="{% url 'product_list' %}">All Products</a>
-                {% for cat in categories %}
-                    <a class="category-pill {% if category and category.slug == cat.slug %}active{% endif %}" href="{% url 'products_by_category' cat.slug %}">
-                        {{ cat.name }} <span>{{ cat.product_count }}</span>
-                    </a>
-                {% endfor %}
-            </div>
+    {# ==== PRODUCTS SECTION (full-width) ==== #}
+    <div>
 
-            <div class="glass-card p-3 reveal">
-                <h6 class="mb-2">Why Eyetrack?</h6>
-                <ul class="premium-list mb-0">
-                    <li>Certified installation teams</li>
-                    <li>Transparent warranty matrix</li>
-                    <li>Easy future payment gateway swap</li>
-                </ul>
-            </div>
-        </aside>
 
-        <div class="col-lg-9" id="catalogGridCol">
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-                <h4 class="mb-0">{% if category %}{{ category.name }}{% else %}All CCTV Products{% endif %}</h4>
-                <small class="text-secondary">{{ result_count }} product{{ result_count|pluralize }} found</small>
+        {% include 'store/includes/breadcrumbs.html' %}
+        <div class="catalog-header-row mb-3">
+            <div>
+                <h4 class="catalog-title mb-0">{% if category %}{{ category.name }}{% else %}All Security Products{% endif %}</h4>
+                {% if category %}<p class="catalog-subtitle mb-0 mt-1">{{ category.name }} collection</p>{% endif %}
             </div>
-            {% if q or min_price or max_price or in_stock or sort != 'featured' %}
+            <div class="d-flex align-items-center gap-2">
+                <span class="result-count-badge">
+                    <i class="bi bi-box-seam me-1"></i>{{ result_count }} Product{{ result_count|pluralize }}
+                </span>
+                <button class="btn catalog-filter-toggle-btn"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#catalogFilterPanel"
+                    aria-expanded="false"
+                    aria-controls="catalogFilterPanel"
+                    id="catalogFilterToggle">
+                    <i class="bi bi-sliders me-1"></i>
+                    <span>Filters</span>
+                    {% if q or min_price or max_price or in_stock or sort != 'featured' or resolution or has_ai %}
+                    <span class="filter-active-dot"></span>
+                    {% endif %}
+                    <i class="bi bi-chevron-down filter-toggle-caret ms-1"></i>
+                </button>
+            </div>
+        </div>
+
+            {# Active Filters Display #}
+            {% if q or min_price or max_price or in_stock or sort != 'featured' or resolution or has_ai %}
             <div class="active-filters mb-3">
                 {% if q %}<span class="active-filter-chip">Keyword: {{ q }}</span>{% endif %}
                 {% if min_price %}<span class="active-filter-chip">Min: &#8377; {{ min_price }}</span>{% endif %}
                 {% if max_price %}<span class="active-filter-chip">Max: &#8377; {{ max_price }}</span>{% endif %}
+                {% if resolution %}<span class="active-filter-chip">Res: {{ resolution }}</span>{% endif %}
+                {% if has_ai %}<span class="active-filter-chip">AI Enabled</span>{% endif %}
                 {% if in_stock %}<span class="active-filter-chip">In-stock only</span>{% endif %}
                 {% if sort != 'featured' %}<span class="active-filter-chip">Sort: {{ sort|title }}</span>{% endif %}
-                <a href="{% if category %}{% url 'products_by_category' category.slug %}{% else %}{% url 'product_list' %}{% endif %}" class="active-filter-clear">Clear all</a>
+                <a href="{% if category %}{% url 'products_by_category' category.slug %}{% else %}{% url 'product_list' %}{% endif %}"
+                    class="active-filter-clear">Clear all</a>
             </div>
             {% endif %}
 
+            {# ========== PRODUCTS LOOP - MAIN CONTENT ========== #}
             <div class="row g-3">
+                {# REQUIREMENT #1: DJANGO FOR-LOOP WRAPPING PRODUCTS #}
                 {% for product in products %}
-                <div class="col-md-6 col-xl-4">
-                    <article class="product-card h-100 d-flex flex-column reveal" data-href="{% url 'product_detail' product.slug %}" tabindex="0" aria-label="Open {{ product.name }} details">
-                        <a href="{% url 'product_detail' product.slug %}" class="product-image-wrap">
-                            {% if product.image %}
+                <div class="col-md-6 col-lg-4">
+                    <article class="product-card h-100 reveal"
+                        data-href="{% url 'product_detail' product.slug %}" tabindex="0"
+                        aria-label="Open {{ product.name }} details">
+
+                        {# REQUIREMENT #3: PRODUCT IMAGE WITH FALLBACK + BADGES #}
+                        <div class="product-image-wrap">
+                            <a href="{% url 'product_detail' product.slug %}" class="d-block w-100 h-100">
+                                {% if product.image %}
                                 <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
-                            {% else %}
-                                <div class="product-image placeholder-image">No Image</div>
-                            {% endif %}
-                        </a>
-                        <div class="p-3 d-flex flex-column flex-grow-1">
-                            {% if product.stock > 0 %}
-                                <span class="stock-pill in mb-2">In Stock</span>
-                            {% else %}
-                                <span class="stock-pill out mb-2">Out of Stock</span>
-                            {% endif %}
-                            <p class="small text-secondary mb-1">{{ product.category.name }}</p>
-                            <h6 class="product-title"><a href="{% url 'product_detail' product.slug %}">{{ product.name }}</a></h6>
-                            <p class="small text-secondary mb-3">{{ product.description|truncatechars:88 }}</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <div>
-                                    <p class="product-price mb-0">&#8377; {{ product.price }}</p>
-                                    <small class="text-secondary">Stock: {{ product.stock }}</small>
+                                {% else %}
+                                <div class="product-image placeholder-image d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-camera-video text-white-50" style="font-size: 3rem;"></i>
                                 </div>
-                                <div class="d-flex flex-wrap justify-content-end gap-2">
-                                    <button type="button" class="btn btn-outline-light btn-sm quick-view-btn" data-product-id="{{ product.id }}">View</button>
-                                    <form method="post" action="{% url 'add_to_cart' product.id %}" class="m-0">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                                        <button type="submit" class="btn btn-premium-cta btn-sm px-3">Add</button>
-                                    </form>
-                                </div>
+                                {% endif %}
+                            </a>
+
+                            {% if product.created_at >= new_cutoff %}
+                            <span class="card-badge card-badge--new">New</span>
+                            {% elif product.id in popular_product_ids %}
+                            <span class="card-badge card-badge--popular"><i class="bi bi-fire me-1"></i>Popular</span>
+                            {% endif %}
+
+                            <!-- Wishlist Toggle (Top Right) -->
+                            <button class="wishlist-heart-toggle wishlist-btn {% if product.id in wishlist_item_ids %}is-active{% endif %}" 
+                                data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}"
+                                data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}" title="Wishlist" aria-label="Wishlist">
+                                <i class="bi {% if product.id in wishlist_item_ids %}bi-heart-fill text-danger{% else %}bi-heart{% endif %}"></i>
+                            </button>
+
+                            <!-- Compare Toggle (Below Wishlist) -->
+                            <button class="compare-hover-btn compare-btn {% if product.id in compare_item_ids %}is-active{% endif %}" 
+                                data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}"
+                                data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}" data-product-category="{{ product.category.name }}" title="Compare" aria-label="Compare">
+                                <i class="bi bi-diagram-3"></i>
+                            </button>
+
+                            <!-- Quick View Overlay (Bottom Right) -->
+                            <button class="wishlist-quick-view-btn quick-view-btn" data-product-id="{{ product.id }}" title="Quick View" aria-label="Quick View">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+
+                        <div class="card-body-premium">
+                            {# Stock Status & Category #}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                 {% if product.stock <= 0 %}
+                                 <span class="stock-pill out">Out of Stock</span>
+                                 {% elif product.stock <= 5 %}
+                                 <span class="stock-pill low">
+                                     <i class="bi bi-fire"></i> {{ product.stock }} Left
+                                 </span>
+                                 {% else %}
+                                 <span class="stock-pill in">In Stock</span>
+                                 {% endif %}
+                                <span class="category-text">{{ product.category.name }}</span>
                             </div>
-                            <div class="d-flex gap-2 mt-2">
-                                <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 wishlist-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}"><i class="bi bi-heart me-1"></i>Wishlist</button>
-                                <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 compare-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}" data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}"><i class="bi bi-diagram-3 me-1"></i>Compare</button>
+
+                            {# REQUIREMENT #2: DYNAMIC PRODUCT NAME #}
+                            <h2 class="product-title-premium">
+                                <a href="{% url 'product_detail' product.slug %}">{{ product.name|truncatechars:55 }}</a>
+                            </h2>
+
+                            {# STAR RATING (annotated avg_rating) #}
+                            {% if product.avg_rating %}
+                            <div class="card-rating-row mb-2">
+                                <div class="card-stars" style="--rating: {{ product.avg_rating|floatformat:2 }}">★★★★★</div>
+                                <span class="card-rating-text">{{ product.avg_rating|floatformat:1 }} <span class="card-rating-count">({{ product.review_count }})</span></span>
+                            </div>
+                            {% else %}
+                            <div class="card-rating-row mb-2" style="opacity: 0;">
+                                <div class="card-stars" style="--rating: 0">★★★★★</div>
+                                <span class="card-rating-text">0.0 <span class="card-rating-count">(0)</span></span>
+                            </div>
+                            {% endif %}
+
+                            {# REQUIREMENT #2: DYNAMIC PRODUCT DESCRIPTION #}
+                            <p class="product-desc-premium">{{ product.description|truncatechars:70 }}</p>
+
+                            {# PRICE AREA #}
+                            <div class="card-footer-premium">
+                                <div class="price-box">
+                                    <span class="currency">&#8377;</span>
+                                    <span class="amount">{{ product.price|floatformat:0 }}</span>
+                                    {% if product.installation_available and product.installation_charge > 0 %}
+                                    <div class="install-badge-small"><i class="bi bi-wrench"></i> Setup: &#8377;{{ product.installation_charge|floatformat:0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <form method="post" action="{% url 'add_to_cart' product.id %}"
+                                    class="m-0 add-to-cart-form"
+                                    data-product-id="{{ product.id }}"
+                                    data-product-name="{{ product.name|escapejs }}"
+                                    data-product-price="{{ product.price }}"
+                                    data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                    data-product-url="{% url 'product_detail' product.slug %}"
+                                    data-installation-available="{% if product.installation_available %}true{% else %}false{% endif %}"
+                                    data-installation-charge="{{ product.installation_charge }}"
+                                    data-services-url="{% url 'services_page' %}"
+                                    data-update-install-url="{% url 'update_cart_installation' product.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                    <button type="submit" class="btn btn-premium-cta btn-sm" {% if product.stock <= 0 %}disabled{% endif %}>
+                                        <i class="bi bi-cart-plus me-1"></i>Add
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </article>
                 </div>
+
+                {# Empty State - No products found #}
                 {% empty %}
                 <div class="col-12">
-                    <div class="glass-card p-4 text-center">
-                        <h5>No products matched your filters.</h5>
-                        <p class="text-secondary mb-0">Try resetting price range, keyword, or stock options.</p>
+                    <div class="empty-state-wrap glass-card p-5 text-center">
+                        <div class="empty-state-icon mb-3">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <h5 class="mb-2">No products matched your search</h5>
+                        <p class="text-secondary mb-4">Try adjusting your filters, broadening your keyword, or exploring a different category below.</p>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
+                            <a href="{% if category %}{% url 'products_by_category' category.slug %}{% else %}{% url 'product_list' %}{% endif %}" class="btn btn-premium-cta">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i>Reset Filters
+                            </a>
+                            {% for cat in categories %}
+                            <a href="{% url 'products_by_category' cat.slug %}" class="btn btn-outline-light btn-sm">{{ cat.name }}</a>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
+                {# END OF FOR-LOOP #}
             </div>
-        </div>
+
+            {# ──── PAGINATION ──── #}
+            {% if paginator.num_pages > 1 %}
+            <nav aria-label="Product pages" class="mt-4">
+                <ul class="pagination justify-content-center gap-1 flex-wrap">
+                    {# Previous button #}
+                    <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+                        <a class="page-link premium-input"
+                            href="?{% if query_string %}{{ query_string }}&{% endif %}page={% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% else %}1{% endif %}"
+                            aria-label="Previous">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+
+                    {# Page number buttons #}
+                    {% for num in paginator.page_range %}
+                    {% if num == page_obj.number %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                    {% elif num == 1 or num == paginator.num_pages or num >= page_obj.number|add:"-2" and num <=
+                        page_obj.number|add:"2" %} <li class="page-item">
+                        <a class="page-link premium-input"
+                            href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {# Next button #}
+                        <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+                            <a class="page-link premium-input"
+                                href="?{% if query_string %}{{ query_string }}&{% endif %}page={% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}{{ paginator.num_pages }}{% endif %}"
+                                aria-label="Next">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                </ul>
+                <p class="text-center text-secondary small mt-2">
+                    Page {{ page_obj.number }} of {{ paginator.num_pages }}
+                    &nbsp;&middot;&nbsp;
+                    {{ paginator.count }} product{{ paginator.count|pluralize }} total
+                </p>
+            </nav>
+            {% endif %}
+            {# ──── END PAGINATION ──── #}
+
     </div>
 </section>
+
+
+{# ==== MOBILE FILTER DOCK ==== #}
 <div class="mobile-filter-dock d-lg-none">
-    <button class="btn btn-outline-light flex-grow-1 d-inline-flex align-items-center justify-content-center gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilters" aria-expanded="false" aria-controls="mobileFilters">
+    <button class="btn btn-outline-light flex-grow-1 d-inline-flex align-items-center justify-content-center gap-2"
+        type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilters" aria-expanded="false"
+        aria-controls="mobileFilters">
         <i class="bi bi-funnel"></i>Filters
         <span class="filter-count-badge" id="mobileFilterCountDock">0</span>
     </button>
-    <a href="{% if category %}{% url 'products_by_category' category.slug %}{% else %}{% url 'product_list' %}{% endif %}" class="btn btn-premium-cta">Clear</a>
+    <a href="{% if category %}{% url 'products_by_category' category.slug %}{% else %}{% url 'product_list' %}{% endif %}"
+        class="btn btn-premium-cta">Clear</a>
 </div>
 
-<section class="row g-3">
-    <div class="col-lg-6">
-        <div class="glass-card p-3 h-100 reveal">
-            <h5 class="mb-3">Featured Picks</h5>
-            <div class="row g-2">
-                {% for product in featured_products %}
-                <div class="col-6">
-                    <a href="{% url 'product_detail' product.slug %}" class="compact-product">
-                        <span>{{ product.name|truncatechars:24 }}</span>
-                        <strong>&#8377; {{ product.price }}</strong>
-                    </a>
+{# ==== PREMIUM FOOTER SECTIONS (Aligned with Catalog Grid) ==== #}
+<section class="footer-premium-sections mt-5 mb-4">
+    <div class="footer-premium-grid">
+        <div class="premium-section-card premium-section-card--recent d-none reveal" id="recentlyViewedContainer">
+            <div class="premium-section-topbar premium-section-topbar--spread">
+                <div class="section-label-row">
+                    <div class="section-label-icon"><i class="bi bi-clock-history"></i></div>
+                    <div class="section-heading-group">
+                        <span class="section-kicker">Continue Browsing</span>
+                        <h5 class="mb-0">Recently Viewed</h5>
+                    </div>
                 </div>
+                <button type="button" class="section-action-btn" onclick="clearRecentlyViewed()" aria-label="Clear recently viewed history">
+                    <i class="bi bi-trash3"></i>
+                    <span>Clear</span>
+                </button>
+            </div>
+            <div class="recently-viewed-grid" id="recentlyViewedTrack"></div>
+        </div>
+
+        <div class="premium-section-card premium-section-card--featured reveal">
+            <div class="premium-section-topbar">
+                <div class="section-label-row">
+                    <div class="section-label-icon"><i class="bi bi-stars"></i></div>
+                    <div class="section-heading-group">
+                        <span class="section-kicker">Curated Picks</span>
+                        <h5 class="mb-0">Featured Picks</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="section-stack">
+                {% for product in featured_products|slice:":4" %}
+                <a href="{% url 'product_detail' product.slug %}" class="featured-pick-row">
+                    <div class="fp-thumb">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                        <i class="bi bi-camera-video"></i>
+                        {% endif %}
+                    </div>
+                    <div class="fp-info">
+                        <span class="fp-name">{{ product.name|truncatechars:42 }}</span>
+                        <span class="fp-cat">{{ product.category.name }}</span>
+                    </div>
+                    <span class="fp-price">&#8377;{{ product.price }}</span>
+                </a>
                 {% endfor %}
             </div>
         </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="glass-card p-3 h-100 reveal">
-            <h5 class="mb-3">Fast-Moving Inventory</h5>
-            <div class="d-grid gap-2">
-                {% for product in top_sellers|slice:":4" %}
-                    <a href="{% url 'product_detail' product.slug %}" class="compact-row">
-                        <span>{{ product.name }}</span>
-                        <strong>&#8377; {{ product.price }}</strong>
-                    </a>
+
+        <div class="premium-section-card premium-section-card--inventory reveal">
+            <div class="premium-section-topbar">
+                <div class="section-label-row">
+                    <div class="section-label-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                    <div class="section-heading-group">
+                        <span class="section-kicker">High Demand</span>
+                        <h5 class="mb-0">Fast-Moving Inventory</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="section-stack">
+                {% for product in top_sellers|slice:":5" %}
+                <a href="{% url 'product_detail' product.slug %}" class="top-seller-row">
+                    <span class="ts-rank">{{ forloop.counter }}</span>
+                    <span class="ts-name">{{ product.name|truncatechars:40 }}</span>
+                    <span class="ts-price">&#8377;{{ product.price }}</span>
+                </a>
                 {% endfor %}
+            </div>
+        </div>
+
+        <div class="premium-section-card premium-section-card--use-cases reveal">
+            <div class="premium-section-topbar">
+                <div class="section-label-row">
+                    <div class="section-label-icon"><i class="bi bi-grid-fill"></i></div>
+                    <div class="section-heading-group">
+                        <span class="section-kicker">Browse by Intent</span>
+                        <h5 class="mb-0">Shop by Use Case</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="section-stack">
+                <a href="{% url 'product_list' %}?q=home+outdoor&sort=featured" class="use-case-list-item">
+                    <div class="uc-icon"><i class="bi bi-house-door"></i></div>
+                    <div class="uc-info">
+                        <span class="uc-title">Home Security</span>
+                        <span class="uc-desc">Indoor and outdoor cameras</span>
+                    </div>
+                    <i class="bi bi-chevron-right ms-auto"></i>
+                </a>
+                <a href="{% url 'product_list' %}?q=office+business&sort=featured" class="use-case-list-item">
+                    <div class="uc-icon"><i class="bi bi-building"></i></div>
+                    <div class="uc-info">
+                        <span class="uc-title">Business Surveillance</span>
+                        <span class="uc-desc">Enterprise cameras for offices</span>
+                    </div>
+                    <i class="bi bi-chevron-right ms-auto"></i>
+                </a>
+                <a href="{% url 'product_list' %}?q=biometric+access&sort=featured" class="use-case-list-item">
+                    <div class="uc-icon"><i class="bi bi-fingerprint"></i></div>
+                    <div class="uc-info">
+                        <span class="uc-title">Access Control</span>
+                        <span class="uc-desc">Biometric attendance systems</span>
+                    </div>
+                    <i class="bi bi-chevron-right ms-auto"></i>
+                </a>
+                <a href="{% url 'product_list' %}?q=outdoor+weatherproof&sort=featured" class="use-case-list-item">
+                    <div class="uc-icon"><i class="bi bi-cloud-sun"></i></div>
+                    <div class="uc-info">
+                        <span class="uc-title">Outdoor Perimeter</span>
+                        <span class="uc-desc">Weatherproof coverage for parking</span>
+                    </div>
+                    <i class="bi bi-chevron-right ms-auto"></i>
+                </a>
             </div>
         </div>
     </div>
 </section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    'use strict';
+
+    /* ── helper: format ₹ ─────────────────────────────────────── */
+    const fmt = n => '₹' + parseFloat(n).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+    /* ── get CSRF token from any form on the page ─────────────── */
+    function getCsrf() {
+        const el = document.querySelector('[name=csrfmiddlewaretoken]');
+        return el ? el.value : '';
+    }
+
+    /* ── build modal HTML ─────────────────────────────────────── */
+    function buildInstallModalHTML(data) {
+        const { name, price, image, cartCount, productId, installAvailable, installCharge, servicesUrl, updateInstallUrl } = data;
+
+        const imageHTML = image
+            ? `<img src="${image}" alt="${name}" class="install-modal-img">`
+            : `<div class="install-modal-img-fallback"><i class="bi bi-camera-video"></i></div>`;
+
+        /* Right-panel buttons depend on whether install is configured */
+        const hasRealCharge = installAvailable && parseFloat(installCharge) > 0;
+
+        const priceRow = hasRealCharge
+            ? `<div class="install-upsell-price">+ ${fmt(installCharge)} <span>/ unit</span></div>`
+            : `<div class="install-upsell-price-free"><i class="bi bi-chat-left-dots me-2"></i>Get a custom quote</div>`;
+
+        const yesBtn = hasRealCharge
+            ? `<button class="install-btn-yes" id="installYesBtn"
+                   data-product-id="${productId}"
+                   data-install-charge="${installCharge}"
+                   data-update-url="${updateInstallUrl}">
+                   <i class="bi bi-check-circle-fill me-2"></i>Yes, Add Installation
+               </button>`
+            : `<a href="${servicesUrl}" class="install-btn-yes" id="installYesBtn">
+                   <i class="bi bi-headset me-2"></i>Request Installation
+               </a>`;
+
+        return `
+        <div class="install-modal-root">
+            <!-- LEFT: product confirmation -->
+            <div class="install-modal-left">
+                <div class="install-confirm-badge"><i class="bi bi-check-lg me-1"></i>Added to cart!</div>
+                <div class="install-modal-thumb">${imageHTML}</div>
+                <h5 class="install-product-name">${name}</h5>
+                <p class="install-product-price">${fmt(price)}</p>
+                <div class="install-cart-pill">
+                    <i class="bi bi-cart3 me-1"></i>
+                    <span>${cartCount} item${cartCount !== 1 ? 's' : ''} in cart</span>
+                </div>
+            </div>
+
+            <!-- RIGHT: installation prompt -->
+            <div class="install-modal-right">
+                <div class="install-upsell-panel" id="installPanelContent">
+                    <div class="install-upsell-badge"><i class="bi bi-tools me-1"></i>Professional Installation</div>
+                    <h6 class="install-upsell-title">Want certified technicians to set this up?</h6>
+                    <ul class="install-upsell-perks">
+                        <li><i class="bi bi-check-circle-fill"></i> On-site expert installation</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Cable routing &amp; testing included</li>
+                        <li><i class="bi bi-check-circle-fill"></i> 30-day service warranty</li>
+                    </ul>
+                    ${priceRow}
+                    <div class="install-action-row">
+                        ${yesBtn}
+                        <button class="install-btn-no" id="installNoBtn">
+                            <i class="bi bi-x me-1"></i>No, Skip
+                        </button>
+                    </div>
+                    <p class="install-upsell-skip">You can also manage installation from your cart.</p>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    /* ── intercept every add-to-cart form submit ──────────────── */
+    document.addEventListener('submit', async function (e) {
+        const form = e.target.closest('.add-to-cart-form');
+        if (!form) return;
+        e.preventDefault();
+
+        const btn = form.querySelector('button[type=submit]');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>'; }
+
+        try {
+            /* Step 1: Add item to cart */
+            const fd = new FormData(form);
+            const resp = await fetch(form.action, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                body: fd
+            });
+            const json = await resp.json();
+
+            if (!json.ok) {
+                Swal.fire({
+                    title: 'Oops!', text: json.message, icon: 'warning',
+                    confirmButtonText: 'OK', buttonsStyling: false,
+                    customClass: { popup: 'swal-glass-popup', confirmButton: 'swal-btn-confirm btn' }
+                });
+                return;
+            }
+
+            /* Update all cart-count badges */
+            document.querySelectorAll('[data-cart-count]').forEach(el => el.textContent = json.cart_count);
+
+            const productId = form.dataset.productId;
+            const installAvailable = form.dataset.installationAvailable === 'true';
+            const installCharge = parseFloat(form.dataset.installationCharge || '0');
+            const updateInstallUrl = form.dataset.updateInstallUrl;
+
+            /* Step 2: Show installation prompt modal */
+            const html = buildInstallModalHTML({
+                name: form.dataset.productName,
+                price: form.dataset.productPrice,
+                image: form.dataset.productImage,
+                cartCount: json.cart_count,
+                productId: productId,
+                installAvailable: installAvailable,
+                installCharge: installCharge,
+                servicesUrl: form.dataset.servicesUrl,
+                updateInstallUrl: updateInstallUrl,
+            });
+
+            await Swal.fire({
+                html: html,
+                showConfirmButton: false,
+                showCloseButton: true,
+                width: '820px',
+                padding: 0,
+                background: 'transparent',
+                backdrop: 'rgba(0,0,0,0.75)',
+                customClass: {
+                    popup: 'install-swal-popup',
+                    closeButton: 'install-swal-close'
+                },
+                timer: 22000,
+                timerProgressBar: true,
+
+                /* Attach Yes/No click handlers once modal is open */
+                didOpen: (popup) => {
+                    const yesBtn   = popup.querySelector('#installYesBtn');
+                    const noBtn    = popup.querySelector('#installNoBtn');
+                    const panel    = popup.querySelector('#installPanelContent');
+
+                    /* NO — just close */
+                    if (noBtn) {
+                        noBtn.addEventListener('click', () => Swal.close());
+                    }
+
+                    /* YES — only fire AJAX if it's a <button> (link goes to services page) */
+                    if (yesBtn && yesBtn.tagName === 'BUTTON') {
+                        yesBtn.addEventListener('click', async () => {
+                            yesBtn.disabled = true;
+                            yesBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Adding...';
+
+                            try {
+                                const formData = new FormData();
+                                formData.append('csrfmiddlewaretoken', getCsrf());
+                                formData.append('action', 'add');
+
+                                const r = await fetch(yesBtn.dataset.updateUrl, {
+                                    method: 'POST',
+                                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                                    body: formData
+                                });
+                                const d = await r.json();
+
+                                if (d.ok) {
+                                    /* Show success state inside modal */
+                                    if (panel) {
+                                        panel.innerHTML = `
+                                        <div class="install-success-message">
+                                            <div class="install-success-icon-wrap">
+                                                <i class="bi bi-check-circle-fill"></i>
+                                            </div>
+                                            <h5>Installation Added!</h5>
+                                            <p>${fmt(d.installation_charge)}/unit has been added to your order.</p>
+                                            <p class="install-upsell-skip">Review &amp; confirm at checkout.</p>
+                                        </div>`;
+                                    }
+                                    setTimeout(() => Swal.close(), 2600);
+                                } else {
+                                    /* Fallback — redirect to services */
+                                    window.location.href = form.dataset.servicesUrl;
+                                }
+                            } catch (err) {
+                                console.error('Install update error:', err);
+                                yesBtn.disabled = false;
+                                yesBtn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Yes, Add Installation';
+                            }
+                        });
+                    }
+                }
+            });
+
+        } catch (err) {
+            console.error('Add to cart error:', err);
+        } finally {
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-cart-plus me-1"></i>Add to Cart'; }
+        }
+    });
+})();
+</script>
+
+<style>
+/* ════════════════════════════════════════════════════════
+   ANNOUNCEMENT BAR
+════════════════════════════════════════════════════════ */
+.announcement-bar {
+    background: linear-gradient(135deg, rgba(26, 35, 51, 0.85), rgba(11, 18, 32, 0.95));
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 999px;
+    padding: 0.65rem 3.5rem 0.65rem 2rem;
+    display: flex;
+    max-width: fit-content;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin: 0 auto 1.5rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #E2E8F0;
+    position: relative;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(245, 158, 11, 0.08);
+    animation: slideDownFade 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    backdrop-filter: blur(16px);
+    overflow: hidden;
+}
+.announcement-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.2), transparent);
+    animation: premiumShimmer 3.5s infinite linear;
+    pointer-events: none;
+}
+@keyframes premiumShimmer {
+    100% { left: 200%; }
+}
+@keyframes slideDownFade {
+    from { opacity: 0; transform: translateY(-15px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.announcement-bar a { 
+    color: #F59E0B; 
+    font-weight: 700; 
+    text-decoration: none; 
+    border-bottom: 1px solid rgba(245, 158, 11, 0.4);
+    padding-bottom: 1px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+.announcement-bar a:hover { 
+    color: #FCD34D;
+    border-bottom-color: #FCD34D;
+    transform: translateX(2px);
+}
+.announcement-bar .bi-megaphone-fill {
+    color: #F59E0B;
+    background: rgba(245, 158, 11, 0.12);
+    padding: 0.35rem 0.45rem;
+    border-radius: 50%;
+    font-size: 0.95rem;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
+}
+.announcement-close {
+    position: absolute;
+    right: 0.8rem; 
+    top: 50%; 
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.06); 
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #9CA3AF; 
+    cursor: pointer;
+    padding: 0; 
+    line-height: 1; 
+    font-size: 0.75rem;
+    transition: all 0.3s ease; 
+    border-radius: 50%;
+    width: 26px; 
+    height: 26px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}
+.announcement-close:hover { 
+    background: rgba(239, 68, 68, 0.15); 
+    color: #EF4444; 
+    border-color: rgba(239, 68, 68, 0.35);
+}
+
+/* ════════════════════════════════════════════════════════
+   TRUST STRIP
+════════════════════════════════════════════════════════ */
+.trust-strip {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 1rem;
+    padding: 0.85rem 1.5rem;
+    overflow: hidden;
+}
+.trust-strip-inner {
+    display: flex; align-items: center; justify-content: center;
+    flex-wrap: wrap; gap: 0;
+}
+.trust-item {
+    display: flex; align-items: center; gap: 0.45rem;
+    padding: 0.35rem 1.1rem;
+    font-size: 0.79rem;
+    color: rgba(255,255,255,0.58);
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+.trust-item:hover { color: rgba(255,255,255,0.85); }
+.trust-item i { color: #f59e0b; font-size: 0.9rem; flex-shrink: 0; }
+.trust-divider { width: 1px; height: 1.1rem; background: rgba(255,255,255,0.09); flex-shrink: 0; }
+@media (max-width: 576px) {
+    .trust-divider { display: none; }
+    .trust-item { padding: 0.3rem 0.6rem; font-size: 0.73rem; }
+}
+
+/* ════════════════════════════════════════════════════════
+   CATALOG HEADER — Ultra Premium
+════════════════════════════════════════════════════════ */
+.catalog-header-row {
+    display: flex; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.6), rgba(9, 14, 27, 0.8));
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 1rem;
+    backdrop-filter: blur(12px);
+    margin-bottom: 1.25rem !important;
+}
+.catalog-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.01em;
+}
+.catalog-subtitle { font-size: 0.78rem; color: rgba(255,255,255,0.38); }
+.result-count-badge {
+    display: inline-flex; align-items: center;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.22);
+    color: #f59e0b; font-size: 0.78rem; font-weight: 700;
+    padding: 6px 14px; border-radius: 999px; white-space: nowrap;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.08);
+}
+
+/* ════════════════════════════════════════════════════════
+   FILTERS TOGGLE BUTTON
+════════════════════════════════════════════════════════ */
+.catalog-filter-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.5rem 1rem;
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    color: #F59E0B;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border-radius: 999px;
+    transition: all 0.25s var(--easing-premium);
+    white-space: nowrap;
+}
+.catalog-filter-toggle-btn:hover {
+    background: rgba(245, 158, 11, 0.14);
+    border-color: rgba(245, 158, 11, 0.45);
+    color: #fbd38d;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.12);
+}
+.catalog-filter-toggle-btn[aria-expanded="true"] {
+    background: rgba(245, 158, 11, 0.18);
+    border-color: rgba(245, 158, 11, 0.5);
+    color: #fff;
+}
+.filter-toggle-caret {
+    transition: transform 0.3s var(--easing-premium);
+    font-size: 0.75rem;
+}
+.catalog-filter-toggle-btn[aria-expanded="true"] .filter-toggle-caret {
+    transform: rotate(180deg);
+}
+.filter-active-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #10b981; box-shadow: 0 0 6px rgba(16,185,129,0.6); flex-shrink: 0;
+}
+
+/* ════════════════════════════════════════════════════════
+   PREMIUM FILTER PANEL DROPDOWN
+════════════════════════════════════════════════════════ */
+.catalog-filter-panel { margin-bottom: 1rem; }
+.catalog-filter-inner {
+    background: linear-gradient(135deg, rgba(11, 18, 32, 0.96), rgba(6, 11, 22, 0.98));
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+.filter-grid-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+.filter-field-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.filter-label {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: rgba(255,255,255,0.45); margin-bottom: 0;
+}
+.filter-actions-row {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.25rem;
+}
+.filter-checks { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+.filter-check-label {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.85rem; font-weight: 500; color: rgba(255,255,255,0.7); cursor: pointer;
+}
+.filter-check-label .form-check-input {
+    margin: 0; width: 16px; height: 16px;
+    border-color: rgba(245,158,11,0.35); background-color: rgba(255,255,255,0.04);
+}
+.filter-check-label .form-check-input:checked { background-color: #f59e0b; border-color: #f59e0b; }
+.filter-categories-inline { display: flex; flex-wrap: wrap; gap: 0.4rem; flex: 1; }
+.filter-cat-chip {
+    display: inline-flex; align-items: center;
+    padding: 0.3rem 0.8rem; border-radius: 999px;
+    font-size: 0.78rem; font-weight: 600; text-decoration: none;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.6); transition: all 0.2s ease; white-space: nowrap;
+}
+.filter-cat-chip:hover {
+    background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: #f59e0b;
+}
+.filter-cat-chip.active {
+    background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.45); color: #fbd38d;
+}
+.filter-btn-row { display: flex; gap: 0.6rem; flex-shrink: 0; margin-left: auto; }
+.filter-reset-btn {
+    padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.55); font-size: 0.82rem; font-weight: 600;
+    border-radius: 10px; transition: all 0.2s ease;
+}
+.filter-reset-btn:hover {
+    background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.22); color: #fff;
+}
+.filter-apply-btn { padding: 0.5rem 1.25rem; font-size: 0.85rem; border-radius: 10px !important; }
+@media (max-width: 768px) {
+    .filter-grid-row { grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+    .filter-btn-row { margin-left: 0; width: 100%; }
+    .filter-reset-btn, .filter-apply-btn { flex: 1; text-align: center; }
+}
+@media (max-width: 480px) { .filter-grid-row { grid-template-columns: 1fr; } }
+
+/* ════════════════════════════════════════════════════════
+   PRODUCT CARD — BADGES
+════════════════════════════════════════════════════════ */
+.card-badge {
+    position: absolute; top: 0.6rem; left: 0.6rem; z-index: 2;
+    font-size: 0.61rem; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
+    pointer-events: none; backdrop-filter: blur(4px);
+}
+.card-badge--new {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff; box-shadow: 0 3px 10px rgba(16,185,129,0.4);
+}
+.card-badge--popular {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #0a0d14; box-shadow: 0 3px 10px rgba(245,158,11,0.4);
+}
+
+/* ════════════════════════════════════════════════════════
+   PRODUCT CARD — STAR RATINGS
+════════════════════════════════════════════════════════ */
+.card-rating-row { display: flex; align-items: center; gap: 0.35rem; }
+.card-stars {
+    --rating: 0;
+    position: relative; display: inline-block;
+    font-size: 0.87rem; letter-spacing: 1px;
+    color: rgba(255,255,255,0.1); line-height: 1;
+}
+.card-stars::before {
+    content: '★★★★★'; position: absolute; inset: 0;
+    color: #f59e0b; overflow: hidden;
+    width: calc(var(--rating) / 5 * 100%); white-space: nowrap;
+}
+.card-rating-text { font-size: 0.73rem; color: #f59e0b; font-weight: 700; }
+.card-rating-count { color: rgba(255,255,255,0.35); font-weight: 400; }
+
+/* ════════════════════════════════════════════════════════
+   PRODUCT CARD — PRICE & ACTIONS
+════════════════════════════════════════════════════════ */
+.card-price-area { padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.06); }
+.card-actions {
+    display: flex; align-items: center; gap: 0.6rem;
+}
+.card-actions .add-to-cart-form { flex: 1; }
+.product-title {
+    min-height: 2.8rem;
+    margin-bottom: 0.35rem;
+    line-height: 1.32;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.description-text {
+    min-height: 2.6rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.card-actions .quick-view-btn {
+    flex-shrink: 0; width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.card-actions .quick-view-btn:hover {
+    background: rgba(245,158,11,0.1);
+    border-color: rgba(245,158,11,0.4);
+    color: #f59e0b;
+}
+
+.card-sub-actions {
+    display: flex; gap: 0.6rem;
+}
+.card-sub-actions .btn {
+    flex: 1;
+    font-size: 0.75rem; font-weight: 600;
+    padding: 0.45rem 0.5rem;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease;
+}
+.card-sub-actions .btn:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.15);
+}
+.card-sub-actions .btn.active {
+    background: rgba(245,158,11,0.1);
+    border-color: rgba(245,158,11,0.4);
+    color: #f59e0b;
+}
+
+/* ════════════════════════════════════════════════════════
+   INSTALL CHARGE BADGE
+════════════════════════════════════════════════════════ */
+.install-charge-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(245,158,11,0.12);
+    border: 1px solid rgba(245,158,11,0.3);
+    color: #f59e0b;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 4px;
+    gap: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.install-charge-badge i { font-size: 0.65rem; }
+.product-card:hover .install-charge-badge { background: rgba(245,158,11,0.18); }
+
+/* ══ Installation Modal Popup ════════════════════════════ */
+.install-swal-popup {
+    border-radius: 1.5rem !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6) !important;
+    max-width: 820px !important;
+}
+
+.install-modal-root {
+    display: flex;
+    min-height: 440px;
+}
+
+/* ── Left panel ── */
+.install-modal-left {
+    flex: 0 0 270px;
+    background: linear-gradient(160deg, #0f1a2e, #0a1120);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2.25rem 1.5rem;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+}
+
+.install-confirm-badge {
+    position: absolute;
+    top: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 4px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(34,197,94,0.35);
+}
+
+.install-modal-thumb {
+    width: 120px;
+    height: 120px;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.install-modal-img { width: 100%; height: 100%; object-fit: cover; }
+.install-modal-img-fallback { font-size: 2.5rem; color: rgba(255,255,255,0.15); }
+
+.install-product-name {
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.install-product-price {
+    color: #f59e0b;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+.install-cart-pill {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 999px;
+    padding: 4px 16px;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── Right panel ── */
+.install-modal-right {
+    flex: 1;
+    background: linear-gradient(160deg, #111827, #0d1525);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.install-upsell-panel {
+    padding: 2rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    width: 100%;
+}
+
+.install-upsell-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(245,158,11,0.12);
+    border: 1px solid rgba(245,158,11,0.3);
+    color: #f59e0b;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 14px;
+    border-radius: 999px;
+    width: fit-content;
+}
+
+.install-upsell-title {
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.install-upsell-perks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+.install-upsell-perks li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.65);
+}
+.install-upsell-perks li i { color: #22c55e; font-size: 0.8rem; flex-shrink: 0; }
+
+.install-upsell-price {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #f59e0b;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 0.75rem;
+}
+.install-upsell-price span { font-size: 0.75rem; font-weight: 500; color: rgba(255,255,255,0.4); }
+
+.install-upsell-price-free {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 0.75rem;
+}
+
+/* ── Action buttons ── */
+.install-action-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.install-btn-yes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #0a0d14 !important;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 6px 20px rgba(245,158,11,0.35);
+    transition: all 0.25s ease;
+    animation: pulse-install 2s ease-in-out infinite;
+}
+.install-btn-yes:hover {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(245,158,11,0.45);
+    animation: none;
+}
+.install-btn-yes:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    animation: none;
+}
+
+@keyframes pulse-install {
+    0%, 100% { box-shadow: 0 6px 20px rgba(245,158,11,0.35); }
+    50% { box-shadow: 0 8px 30px rgba(245,158,11,0.6); }
+}
+
+.install-btn-no {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.55rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+.install-btn-no:hover {
+    color: rgba(255,255,255,0.7);
+    border-color: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.05);
+}
+
+.install-upsell-skip {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+    margin: 0;
+}
+
+/* ── Success state (after Yes is clicked) ── */
+.install-success-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9rem;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    width: 100%;
+    animation: fadeInScale 0.4s ease;
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.install-success-icon-wrap {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(34,197,94,0.15);
+    border: 2px solid rgba(34,197,94,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(34,197,94,0.2);
+}
+.install-success-icon-wrap i { font-size: 2rem; color: #22c55e; }
+.install-success-message h5 { color: #fff; font-weight: 700; font-size: 1.15rem; margin: 0; }
+.install-success-message p  { color: rgba(255,255,255,0.55); font-size: 0.9rem; margin: 0; }
+
+/* ── Close button ── */
+.install-swal-close {
+    color: rgba(255,255,255,0.4) !important;
+    font-size: 1.25rem !important;
+    top: 0.75rem !important;
+    right: 0.75rem !important;
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+    .install-modal-root { flex-direction: column; }
+    .install-modal-left { flex: none; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .install-swal-popup { width: 96vw !important; max-width: 96vw !important; }
+}
+
+/* ══ Announcement Bar ════════════════════════════════════ */
+.announcement-bar {
+    background: linear-gradient(135deg, rgba(26, 35, 51, 0.85), rgba(11, 18, 32, 0.95));
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 999px;
+    padding: 0.65rem 3.5rem 0.65rem 2rem;
+    display: flex;
+    max-width: fit-content;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin: 0 auto 1.25rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #E2E8F0;
+    position: relative;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(245, 158, 11, 0.08);
+    backdrop-filter: blur(16px);
+    overflow: hidden;
+}
+.announcement-bar a { 
+    color: #F59E0B; 
+    font-weight: 700; 
+    text-decoration: none; 
+    border-bottom: 1px solid rgba(245, 158, 11, 0.4);
+    padding-bottom: 1px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+.announcement-bar a:hover { 
+    color: #FCD34D;
+    border-bottom-color: #FCD34D;
+    transform: translateX(2px);
+}
+.announcement-bar .bi-megaphone-fill {
+    color: #F59E0B;
+    background: rgba(245, 158, 11, 0.12);
+    padding: 0.35rem 0.45rem;
+    border-radius: 50%;
+    font-size: 0.95rem;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
+}
+.announcement-close {
+    position: absolute;
+    right: 0.8rem; 
+    top: 50%; 
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.06); 
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #9CA3AF; 
+    cursor: pointer;
+    padding: 0; 
+    line-height: 1; 
+    font-size: 0.75rem;
+    transition: all 0.3s ease; 
+    border-radius: 50%;
+    width: 26px; 
+    height: 26px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}
+.announcement-close:hover { 
+    background: rgba(239, 68, 68, 0.15); 
+    color: #EF4444; 
+    border-color: rgba(239, 68, 68, 0.35);
+}
+
+/* ══ Trust Strip ═════════════════════════════════════════ */
+.trust-strip {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 1rem;
+    padding: 0.9rem 1.5rem;
+}
+.trust-strip-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+}
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1.25rem;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    white-space: nowrap;
+}
+.trust-item i { color: #f59e0b; font-size: 0.95rem; }
+.trust-divider { width: 1px; height: 1.25rem; background: rgba(255,255,255,0.1); }
+@media (max-width: 576px) {
+    .trust-divider { display: none; }
+    .trust-item { padding: 0.3rem 0.65rem; font-size: 0.75rem; }
+}
+
+/* ══ Product Card — Ultra Premium Redesign ══════════════════ */
+.product-card {
+    background: linear-gradient(180deg, rgba(17, 24, 39, 0.72), rgba(9, 14, 27, 0.92)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    border-radius: 1.25rem !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: all 0.4s var(--easing-premium);
+    overflow: visible !important; /* allows floating action buttons to be visible */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.product-card:hover {
+    border-color: rgba(245, 158, 11, 0.28) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(245, 158, 11, 0.12);
+    transform: translateY(-6px);
+}
+
+.product-image-wrap {
+    height: 240px;
+    background: #ffffff !important;
+    border-radius: 14px 14px 0 0;
+    position: relative;
+    overflow: hidden;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.02);
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.6s var(--easing-premium);
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.08) rotate(1deg);
+}
+
+.card-body-premium {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.category-text {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.product-title-premium {
+    font-size: 1.15rem !important;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+    min-height: 3.2rem;
+}
+
+.product-title-premium a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.product-title-premium a:hover {
+    color: var(--accent);
+}
+
+.product-desc-premium {
+    font-size: 0.88rem;
+    color: var(--text-soft);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
+}
+
+.card-footer-premium {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.price-box .currency {
+    font-size: 1rem;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.price-box .amount {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+}
+
+.install-badge-small {
+    font-size: 0.7rem;
+    color: var(--accent);
+    margin-top: 2px;
+}
+
+/* Floating Actions */
+.wishlist-heart-toggle {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    color: #ff4d4d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.wishlist-heart-toggle:hover {
+    transform: scale(1.15);
+    background: #fff;
+}
+
+.wishlist-heart-toggle i.bi-heart-fill {
+    color: #ff4d4d;
+}
+
+.wishlist-quick-view-btn, .compare-hover-btn {
+    position: absolute;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateX(15px);
+    transition: all 0.4s var(--easing-premium);
+    z-index: 10;
+}
+
+.wishlist-quick-view-btn { bottom: 12px; }
+.compare-hover-btn { bottom: 58px; transition-delay: 0.05s; }
+
+.product-card:hover .wishlist-quick-view-btn,
+.product-card:hover .compare-hover-btn {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+@media (max-width: 991px) {
+    .wishlist-quick-view-btn, 
+    .compare-hover-btn {
+        opacity: 1;
+        transform: translateX(0);
+        background: rgba(17, 24, 39, 0.9);
+    }
+}
+
+/* ══ Product Card — New/Popular Badges ══════════════════ */
+.card-badge {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.6rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+    z-index: 2;
+    pointer-events: none;
+}
+.card-badge--new {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(16,185,129,0.4);
+}
+.card-badge--popular {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #0a0d14;
+    box-shadow: 0 3px 10px rgba(245,158,11,0.4);
+}
+
+/* ══ Product Card — Star Ratings ════════════════════════ */
+.card-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.card-stars {
+    --rating: 0;
+    position: relative;
+    display: inline-block;
+    font-size: 0.88rem;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.1);
+    line-height: 1;
+}
+.card-stars::before {
+    content: '★★★★★';
+    position: absolute;
+    inset: 0;
+    color: #f59e0b;
+    overflow: hidden;
+    width: calc(var(--rating) / 5 * 100%);
+    white-space: nowrap;
+}
+.card-rating-text {
+    font-size: 0.74rem;
+    color: #f59e0b;
+    font-weight: 700;
+}
+.card-rating-count { color: rgba(255,255,255,0.38); font-weight: 400; }
+
+/* ════════════════════════════════════════════════════════
+   EMPTY STATE
+   Refined for better mobile stacking and visibility.
+════════════════════════════════════════════════════════ */
+.empty-state-wrap { 
+    animation: fadeInScale 0.4s ease;
+    margin-top: 1rem;
+    position: relative;
+    z-index: 5;
+}
+.empty-state-icon {
+    width: 68px; height: 68px; border-radius: 50%;
+    background: rgba(245,158,11,0.08); border: 2px solid rgba(245,158,11,0.2);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto;
+}
+.empty-state-icon i { font-size: 1.6rem; color: #f59e0b; }
+
+@media (max-width: 991px) {
+    .filter-dock {
+        position: static !important;
+        margin-bottom: 1.5rem !important;
+        width: 100% !important;
+    }
+    
+    .empty-state-wrap {
+        padding: 2.5rem 1.5rem !important;
+    }
+    
+    /* Ensure the grid column takes full width and doesn't overlap */
+    #catalogGridCol {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* ════════════════════════════════════════════════════════
+   SECTION LABEL ROW (Featured / Top Sellers headers)
+════════════════════════════════════════════════════════ */
+.section-label-row {
+    display: flex; align-items: center; gap: 0.65rem;
+}
+.section-label-icon {
+    width: 34px; height: 34px; border-radius: 0.6rem; flex-shrink: 0;
+    background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);
+    display: flex; align-items: center; justify-content: center;
+}
+.section-label-icon i { color: #f59e0b; font-size: 1rem; }
+
+/* ════════════════════════════════════════════════════════
+   FEATURED PICKS ROWS
+════════════════════════════════════════════════════════ */
+.featured-pick-row {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.55rem 0.65rem; border-radius: 0.75rem;
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06);
+    text-decoration: none; color: inherit;
+    transition: all 0.22s ease;
+}
+.featured-pick-row:hover {
+    background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.22);
+    transform: translateX(3px); color: inherit;
+}
+.fp-thumb {
+    flex-shrink: 0; width: 44px; height: 44px; border-radius: 0.55rem;
+    overflow: hidden; background: rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,0.07);
+}
+.fp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fp-thumb i { font-size: 1.15rem; color: rgba(255,255,255,0.18); }
+.fp-info { flex: 1; min-width: 0; }
+.fp-name {
+    display: block; font-size: 0.79rem; font-weight: 600;
+    color: rgba(255,255,255,0.82); white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+}
+.fp-cat {
+    display: block; font-size: 0.68rem; color: rgba(255,255,255,0.35);
+    margin-top: 1px;
+}
+.fp-price {
+    flex-shrink: 0; font-size: 0.82rem; font-weight: 700;
+    color: #f59e0b; white-space: nowrap;
+}
+
+/* ════════════════════════════════════════════════════════
+   TOP SELLERS ROWS
+════════════════════════════════════════════════════════ */
+.top-seller-row {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.55rem 0.65rem; border-radius: 0.75rem;
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06);
+    text-decoration: none; color: inherit;
+    transition: all 0.22s ease;
+}
+.top-seller-row:hover {
+    background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.22);
+    transform: translateX(3px); color: inherit;
+}
+.ts-rank {
+    flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.22);
+    color: #f59e0b; font-size: 0.7rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+}
+.ts-name {
+    flex: 1; font-size: 0.8rem; font-weight: 600;
+    color: rgba(255,255,255,0.78); white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+}
+.ts-price { flex-shrink: 0; font-size: 0.8rem; font-weight: 700; color: #f59e0b; }
+
+/* ════════════════════════════════════════════════════════
+   WHY EYETRACK SIDEBAR ITEMS
+════════════════════════════════════════════════════════ */
+.why-item {
+    display: flex; align-items: flex-start; gap: 0.65rem;
+    padding: 0.5rem 0.5rem; border-radius: 0.65rem;
+    transition: background 0.2s;
+}
+.why-item:hover { background: rgba(255,255,255,0.03); }
+.why-icon {
+    flex-shrink: 0; width: 30px; height: 30px; border-radius: 0.5rem;
+    background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.18);
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+}
+.why-icon i { color: #f59e0b; font-size: 0.85rem; }
+.why-title {
+    display: block; font-size: 0.79rem; font-weight: 700;
+    color: rgba(255,255,255,0.82);
+}
+.why-sub { display: block; font-size: 0.7rem; color: rgba(255,255,255,0.36); margin-top: 1px; }
+
+/* ════════════════════════════════════════════════════════
+   SHOP BY USE CASE
+════════════════════════════════════════════════════════ */
+.use-case-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.65rem;
+    padding: 1.75rem 1rem;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.use-case-card:hover {
+    background: rgba(245,158,11,0.06);
+    border-color: rgba(245,158,11,0.28);
+    transform: translateY(-5px);
+    box-shadow: 0 14px 36px rgba(0,0,0,0.28);
+    color: inherit;
+    text-decoration: none;
+}
+.use-case-icon {
+    width: 54px; height: 54px;
+    border-radius: 1rem;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.2);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.25s;
+}
+.use-case-card:hover .use-case-icon { background: rgba(245,158,11,0.18); }
+.use-case-icon i { font-size: 1.45rem; color: #f59e0b; }
+.use-case-card h6 { font-weight: 700; color: #fff; margin: 0; font-size: 0.88rem; }
+.use-case-card p { font-size: 0.76rem; color: rgba(255,255,255,0.42); margin: 0; line-height: 1.5; }
+.use-case-section-title { font-size: 1.5rem; font-weight: 800; color: #fff; }
+
+/* ════════════════════════════════════════════════════════
+   RECENTLY VIEWED
+════════════════════════════════════════════════════════ */
+.recently-viewed-section { padding-top: 0.5rem; }
+.recently-viewed-track {
+    display: flex;
+    gap: 0.85rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.08) transparent;
+}
+.use-case-list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.65rem 0.85rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 0.85rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.25s var(--easing-premium);
+}
+.use-case-list-item:hover {
+    background: rgba(245,158,11,0.08);
+    border-color: rgba(245,158,11,0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+.use-case-list-item .uc-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 0.6rem;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #f59e0b;
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+}
+.use-case-list-item:hover .uc-icon {
+    background: #f59e0b;
+    color: #000;
+}
+.use-case-list-item .uc-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.use-case-list-item .uc-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.use-case-list-item .uc-desc {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.use-case-list-item .bi-chevron-right {
+    color: rgba(255,255,255,0.2);
+    font-size: 0.8rem;
+    transition: color 0.2s;
+}
+.use-case-list-item:hover .bi-chevron-right {
+    color: #f59e0b;
+}
+
+/* Footer discovery panels - override legacy footer card styles */
+.footer-premium-sections { position: relative; }
+.footer-premium-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1.25rem;
+    align-items: stretch;
+}
+.premium-section-card {
+    position: relative;
+    grid-column: span 4;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 1.25rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(180deg, rgba(18, 25, 40, 0.92), rgba(10, 15, 27, 0.97));
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 22px 54px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04);
+    backdrop-filter: blur(18px);
+    overflow: hidden;
+}
+.premium-section-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(245,158,11,0.55), rgba(245,158,11,0.16), transparent);
+}
+.premium-section-card--recent {
+    grid-column: 1 / -1;
+    padding: 1.35rem;
+    background: linear-gradient(180deg, rgba(20, 28, 45, 0.96), rgba(11, 17, 31, 0.99));
+}
+.premium-section-topbar {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+}
+.premium-section-topbar--spread {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.section-label-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    min-width: 0;
+}
+.section-label-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 0.95rem;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, rgba(245,158,11,0.18), rgba(245,158,11,0.08));
+    border: 1px solid rgba(245,158,11,0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.section-label-icon i { color: #f59e0b; font-size: 1.05rem; }
+.section-heading-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+.section-kicker {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(245,158,11,0.72);
+}
+.section-heading-group h5 {
+    font-size: 1.22rem;
+    font-weight: 800;
+    color: #f8fafc;
+    line-height: 1.2;
+}
+.premium-section-card--recent .section-heading-group h5 { font-size: 1.4rem; }
+.section-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.52rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.74);
+    font-size: 0.78rem;
+    font-weight: 700;
+    transition: all 0.25s ease;
+}
+.section-action-btn:hover {
+    background: rgba(245,158,11,0.1);
+    border-color: rgba(245,158,11,0.3);
+    color: #f8fafc;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.2);
+}
+.section-stack {
+    display: grid;
+    gap: 0.8rem;
+    height: 100%;
+}
+.recently-viewed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.95rem;
+}
+.recently-viewed-item,
+.featured-pick-row,
+.top-seller-row,
+.use-case-list-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 1rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease, color 0.22s ease;
+}
+.recently-viewed-item:hover,
+.featured-pick-row:hover,
+.top-seller-row:hover,
+.use-case-list-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(245,158,11,0.28);
+    background: linear-gradient(180deg, rgba(245,158,11,0.1), rgba(255,255,255,0.03));
+    box-shadow: 0 18px 34px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.06);
+    color: inherit;
+}
+.recently-viewed-item {
+    padding: 0.95rem 1rem;
+    min-height: 102px;
+}
+.rv-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 0.95rem;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.rv-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.rv-thumb i { font-size: 1.35rem; color: rgba(255,255,255,0.26); }
+.rv-copy {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+}
+.rv-category {
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(245,158,11,0.72);
+}
+.rv-name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #f8fafc;
+}
+.rv-price {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #f59e0b;
+    white-space: nowrap;
+}
+.rv-open {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.52);
+    transition: all 0.22s ease;
+}
+.recently-viewed-item:hover .rv-open {
+    background: #f59e0b;
+    border-color: #f59e0b;
+    color: #0b1120;
+}
+.featured-pick-row {
+    padding: 0.8rem 0.9rem;
+    min-height: 76px;
+}
+.fp-thumb {
+    width: 52px;
+    height: 52px;
+    border-radius: 0.8rem;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.fp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fp-thumb i { font-size: 1.15rem; color: rgba(255,255,255,0.24); }
+.fp-info { flex: 1; min-width: 0; }
+.fp-name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: 0.86rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #f8fafc;
+}
+.fp-cat {
+    display: block;
+    margin-top: 0.18rem;
+    font-size: 0.71rem;
+    color: rgba(255,255,255,0.48);
+}
+.fp-price {
+    flex-shrink: 0;
+    font-size: 0.94rem;
+    font-weight: 800;
+    color: #f59e0b;
+    white-space: nowrap;
+}
+.top-seller-row {
+    padding: 0.8rem 0.9rem;
+    min-height: 76px;
+}
+.ts-rank {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(245,158,11,0.12);
+    border: 1px solid rgba(245,158,11,0.24);
+    color: #f59e0b;
+    font-size: 0.74rem;
+    font-weight: 800;
+}
+.ts-name {
+    flex: 1;
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: 0.86rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: rgba(248,250,252,0.92);
+}
+.ts-price {
+    flex-shrink: 0;
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #f59e0b;
+    white-space: nowrap;
+}
+.use-case-list-item {
+    padding: 0.9rem 1rem;
+    min-height: 86px;
+}
+.use-case-list-item .uc-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 0.9rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    color: #f59e0b;
+    flex-shrink: 0;
+    transition: all 0.22s ease;
+}
+.use-case-list-item:hover .uc-icon {
+    background: #f59e0b;
+    border-color: #f59e0b;
+    color: #0b1120;
+}
+.use-case-list-item .uc-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.use-case-list-item .uc-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #f8fafc;
+}
+.use-case-list-item .uc-desc {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: rgba(255,255,255,0.52);
+}
+.use-case-list-item .bi-chevron-right {
+    color: rgba(255,255,255,0.28);
+    font-size: 0.8rem;
+    transition: color 0.22s ease, transform 0.22s ease;
+}
+.use-case-list-item:hover .bi-chevron-right {
+    color: #f59e0b;
+    transform: translateX(2px);
+}
+@media (max-width: 1199.98px) {
+    .premium-section-card { grid-column: span 6; }
+    .premium-section-card--recent { grid-column: 1 / -1; }
+}
+@media (max-width: 767.98px) {
+    .footer-premium-grid { grid-template-columns: 1fr; }
+    .premium-section-card {
+        grid-column: auto;
+        padding: 1rem;
+        border-radius: 1.1rem;
+    }
+    .premium-section-card--recent { padding: 1rem; }
+    .premium-section-card--recent .section-heading-group h5 { font-size: 1.24rem; }
+    .recently-viewed-grid { grid-template-columns: 1fr; }
+    .premium-section-topbar--spread { align-items: flex-start; }
+    .recently-viewed-item,
+    .featured-pick-row,
+    .top-seller-row,
+    .use-case-list-item {
+        padding-left: 0.85rem;
+        padding-right: 0.85rem;
+    }
+}
+</style>
+
+<script>
+/* ── Announcement bar dismiss ─────────────────────────── */
+(function () {
+    if (localStorage.getItem('eyetrack_ann_v1') === '1') {
+        document.getElementById('announcementBar')?.remove();
+    }
+})();
+function dismissAnnouncement() {
+    localStorage.setItem('eyetrack_ann_v1', '1');
+    const bar = document.getElementById('announcementBar');
+    if (!bar) return;
+    bar.style.transition = 'opacity 0.3s, max-height 0.4s, margin 0.4s, padding 0.4s';
+    bar.style.opacity = '0';
+    bar.style.maxHeight = '0';
+    bar.style.marginBottom = '0';
+    bar.style.padding = '0';
+    bar.style.overflow = 'hidden';
+    setTimeout(() => bar.remove(), 420);
+}
+
+/* ── Recently viewed strip ────────────────────────────── */
+function clearRecentlyViewed() {
+    localStorage.removeItem('eyetrack_recently_viewed');
+    const container = document.getElementById('recentlyViewedContainer');
+    if (container) { container.style.transition = 'opacity 0.3s'; container.style.opacity = '0'; setTimeout(() => container.remove(), 320); }
+}
+
+(function () {
+    let viewed;
+    try { viewed = JSON.parse(localStorage.getItem('eyetrack_recently_viewed') || '[]'); } catch { viewed = []; }
+    const container = document.getElementById('recentlyViewedContainer');
+    const track = document.getElementById('recentlyViewedTrack');
+    if (!container || !track || !viewed.length) return;
+
+    const escapeHtml = value => String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    const formatPrice = value => {
+        const amount = Number.parseFloat(value);
+        return Number.isFinite(amount) ? amount.toLocaleString('en-IN') : escapeHtml(value);
+    };
+
+    viewed.slice(0, 4).forEach(p => {
+        if (!p.slug || !p.name) return;
+        const a = document.createElement('a');
+        a.href = '/product/' + encodeURIComponent(p.slug) + '/';
+        a.className = 'recently-viewed-item';
+
+        const safeName = escapeHtml(p.name);
+        const safeCategory = p.category ? `<span class="rv-category">${escapeHtml(p.category)}</span>` : '';
+        const imgHtml = p.image
+            ? `<img src="${escapeHtml(p.image)}" alt="${safeName}" loading="lazy" decoding="async">`
+            : `<i class="bi bi-camera-video"></i>`;
+
+        a.innerHTML = `
+            <div class="rv-thumb">
+                ${imgHtml}
+            </div>
+            <div class="rv-copy">
+                ${safeCategory}
+                <span class="rv-name">${safeName}</span>
+                <span class="rv-price">&#8377;${formatPrice(p.price)}</span>
+            </div>
+            <span class="rv-open" aria-hidden="true"><i class="bi bi-arrow-up-right"></i></span>
+        `;
+        track.appendChild(a);
+    });
+
+    if (track.children.length > 0) container.classList.remove('d-none');
+})();
+</script>
 {% endblock %}

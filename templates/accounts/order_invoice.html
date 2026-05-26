@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}Invoice {{ invoice.invoice_number }} | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<section class="account-layout page-section">
+    <div class="row g-4">
+        <div class="col-lg-4 col-xl-3 invoice-print-hide">
+            {% include 'accounts/_account_sidebar.html' %}
+        </div>
+        <div class="col-lg-8 col-xl-9">
+            <section class="invoice-page-shell">
+                <section class="glass-card invoice-page-hero">
+                    <div class="invoice-page-hero-copy">
+                        <a href="{% url 'order_tracking' invoiced_order.id %}" class="tracking-back-link"><i class="bi bi-arrow-left me-2"></i>Back to Order Tracking</a>
+                        <p class="eyebrow mb-2 mt-3">Invoice Center</p>
+                        <div class="invoice-page-title-row">
+                            <div>
+                                <h1 class="invoice-page-title mb-2">{{ invoice.invoice_number }}</h1>
+                                <p class="invoice-page-subtitle mb-0">A premium order invoice with itemized pricing, tax, shipping, and payment records.</p>
+                            </div>
+                            <div class="invoice-page-statuses">
+                                <span class="order-status-badge {{ invoiced_order.order_status }}">{{ invoiced_order.get_order_status_display }}</span>
+                                <span class="shipping-status-badge {{ invoiced_order.shipping_status }}">{{ invoiced_order.get_shipping_status_display }}</span>
+                            </div>
+                        </div>
+
+                        <div class="invoice-page-meta-grid">
+                            <div class="invoice-meta-card">
+                                <span>Order</span>
+                                <strong>{{ invoiced_order.formatted_id }}</strong>
+                            </div>
+                            <div class="invoice-meta-card">
+                                <span>Issued</span>
+                                <strong>{{ invoice_display.issued_date|date:"M d, Y" }}</strong>
+                            </div>
+                            <div class="invoice-meta-card">
+                                <span>Payment</span>
+                                <strong>{{ invoice_display.payment_status }}</strong>
+                            </div>
+                            <div class="invoice-meta-card">
+                                <span>Total</span>
+                                <strong>&#8377; {{ invoice_display.total_amount|floatformat:2 }}</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside class="invoice-page-actions invoice-print-hide">
+                        <a href="{% url 'order_invoice_download' invoiced_order.id %}" class="btn btn-premium-cta"><i class="bi bi-download me-2"></i>Download PDF</a>
+                        <button type="button" class="btn btn-outline-light" onclick="window.print()"><i class="bi bi-printer me-2"></i>Print Invoice</button>
+                        <a href="{% url 'order_tracking' invoiced_order.id %}" class="btn btn-outline-light"><i class="bi bi-truck me-2"></i>Track Order</a>
+                    </aside>
+                </section>
+
+                <section class="glass-card invoice-document page-section">
+                    <div class="invoice-document-head">
+                        <div class="invoice-brand-block">
+                            <p class="eyebrow mb-2">Eyetrack Solutions</p>
+                            <h2 class="invoice-brand-title mb-2">Tax Invoice</h2>
+                            <p class="invoice-brand-copy mb-0">Premium CCTV hardware, installation planning, and post-purchase support from one secure commerce platform.</p>
+                        </div>
+                        <div class="invoice-identity-block">
+                            <div class="invoice-kv-row">
+                                <span>Invoice Number</span>
+                                <strong>{{ invoice.invoice_number }}</strong>
+                            </div>
+                            <div class="invoice-kv-row">
+                                <span>Order Reference</span>
+                                <strong>{{ invoice_display.order_reference }}</strong>
+                            </div>
+                            <div class="invoice-kv-row">
+                                <span>Transaction Ref</span>
+                                <strong>{{ invoice_display.transaction_id }}</strong>
+                            </div>
+                            <div class="invoice-kv-row">
+                                <span>Payment Method</span>
+                                <strong>{{ invoice_display.payment_method }}</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="invoice-party-grid">
+                        <section class="invoice-party-card">
+                            <p class="invoice-party-label mb-2">Billed To</p>
+                            <h3 class="invoice-party-title mb-2">{{ invoice_display.recipient_name }}</h3>
+                            <p class="mb-2">{{ invoice_display.address }}</p>
+                            <div class="small text-secondary">{{ invoiced_order.email }}</div>
+                            <div class="small text-secondary">{{ invoiced_order.phone }}</div>
+                        </section>
+
+                        <section class="invoice-party-card">
+                            <p class="invoice-party-label mb-2">Merchant</p>
+                            <h3 class="invoice-party-title mb-2">Eyetrack Solutions</h3>
+                            <p class="mb-2">Payyoli-Perambra Rd, Kozhikode, Kerala 673522</p>
+                            <div class="small text-secondary">{{ invoice_display.support_email }}</div>
+                            <div class="small text-secondary">{{ invoice_display.support_phone }}</div>
+                        </section>
+                    </div>
+
+                    <div class="invoice-ledger-grid">
+                        <section class="invoice-ledger-card">
+                            <div class="invoice-section-head">
+                                <div>
+                                    <p class="eyebrow mb-2">Invoice Items</p>
+                                    <h3 class="h4 mb-0">Complete purchase breakdown</h3>
+                                </div>
+                                <div class="invoice-doc-chip">
+                                    <i class="bi bi-box-seam"></i>
+                                    <span>{{ invoice_display.item_count }} item{{ invoice_display.item_count|pluralize }} / {{ invoice_display.unit_count }} unit{{ invoice_display.unit_count|pluralize }}</span>
+                                </div>
+                            </div>
+
+                            <div class="invoice-table-wrap">
+                                <table class="invoice-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Qty</th>
+                                        <th>Unit Price</th>
+                                        <th>Total</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in invoice_items %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ item.product.name }}</strong>
+                                            <div class="small text-secondary">SKU reference tied to order item #{{ item.id }}</div>
+                                        </td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>&#8377; {{ item.price|floatformat:2 }}</td>
+                                        <td><strong>&#8377; {{ item.line_total|floatformat:2 }}</strong></td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <aside class="invoice-summary-card">
+                            <div class="invoice-section-head">
+                                <div>
+                                    <p class="eyebrow mb-2">Summary</p>
+                                    <h3 class="h4 mb-0">Payment details</h3>
+                                </div>
+                                <span class="invoice-status-pill">{{ invoice_display.payment_status }}</span>
+                            </div>
+
+                            <div class="invoice-summary-rows">
+                                <div class="invoice-summary-row">
+                                    <span>Subtotal</span>
+                                    <strong>&#8377; {{ invoice_display.subtotal|floatformat:2 }}</strong>
+                                </div>
+                                <div class="invoice-summary-row">
+                                    <span>Tax</span>
+                                    <strong>&#8377; {{ invoice_display.tax|floatformat:2 }}</strong>
+                                </div>
+                                <div class="invoice-summary-row">
+                                    <span>Shipping</span>
+                                    <strong>&#8377; {{ invoice_display.shipping_cost|floatformat:2 }}</strong>
+                                </div>
+                                <div class="invoice-summary-row total">
+                                    <span>Total Amount</span>
+                                    <strong>&#8377; {{ invoice_display.total_amount|floatformat:2 }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="invoice-note-card">
+                                <p class="invoice-party-label mb-2">Invoice Notes</p>
+                                {% if invoiced_order.order_notes %}
+                                    <p class="mb-0">{{ invoiced_order.order_notes }}</p>
+                                {% else %}
+                                    <p class="mb-0">No additional order notes were added to this invoice.</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="invoice-note-card">
+                                <p class="invoice-party-label mb-2">Support</p>
+                                <p class="mb-0">Need a corrected invoice or tax clarification? Contact {{ invoice_display.support_email }} and reference {{ invoice.invoice_number }}.</p>
+                            </div>
+                        </aside>
+                    </div>
+                </section>
+            </section>
+        </div>
+    </div>
+</section>
+{% endblock %}
