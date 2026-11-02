@@ -1,432 +1,72 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Professional Installation Services | Eyetrack Solutions{% endblock %}
-{% block meta_description %}Book a professional CCTV and security installation with Eyetrack Solutions. Expert technicians, verified profiles, and same-week appointments.{% endblock %}
-
+{% block meta_description %}Explore CCTV installation, remote monitoring setup, and maintenance with Eyetrack Solutions. Check coverage and choose the right installation plan.{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/services.css' %}?v=1">{% endblock %}
 {% block content %}
-<div class="services-page">
+<div class="svc-page">
+    <section class="svc-hero" aria-labelledby="services-title">
+        <div class="svc-hero-copy">
+            <p class="svc-eyebrow"><span></span> EYETRACK INSTALLATION SERVICES</p>
+            <h1 id="services-title">Security, installed<br>with <em>confidence.</em></h1>
+            <p class="svc-intro">The right equipment. The right expertise. From your first camera to a connected business, we bring your security system together.</p>
+            <div class="svc-actions"><a href="#book-installation" class="btn btn-premium-cta">Plan your installation <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="{% url 'support_page' %}" class="svc-text-link">Talk to our team <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>
+            <div class="svc-hero-notes"><span><i class="bi bi-patch-check" aria-hidden="true"></i> Verified technicians</span><span><i class="bi bi-phone" aria-hidden="true"></i> Mobile app setup</span><span><i class="bi bi-shield-check" aria-hidden="true"></i> Aftercare support</span></div>
+        </div>
+        <div class="svc-visual" aria-label="Installation includes camera placement, recording setup, and mobile access">
+            <div class="svc-visual-top"><span><span class="svc-status-dot"></span> A CONNECTED SECURITY SYSTEM</span><i class="bi bi-shield-lock" aria-hidden="true"></i></div>
+            <div class="svc-system-art" aria-hidden="true"><div class="svc-orbit svc-orbit-one"></div><div class="svc-orbit svc-orbit-two"></div><div class="svc-system-center"><i class="bi bi-camera-video"></i></div><div class="svc-node svc-node-home"><i class="bi bi-house-door"></i></div><div class="svc-node svc-node-phone"><i class="bi bi-phone"></i></div><div class="svc-node svc-node-record"><i class="bi bi-hdd-network"></i></div><span class="svc-art-label">Expert setup. Seamless connection.</span></div>
+            <div class="svc-visual-bottom"><span><i class="bi bi-check2-circle" aria-hidden="true"></i> Camera placement</span><span><i class="bi bi-check2-circle" aria-hidden="true"></i> Recording &amp; access</span><span><i class="bi bi-check2-circle" aria-hidden="true"></i> System handover</span></div>
+        </div>
+    </section>
 
-<!-- ═══ HERO ═══ -->
-<section class="hero-premium page-section">
-    <div class="row g-4 align-items-center">
-        <div class="col-lg-7">
-            <p class="eyebrow mb-2">Professional Installation</p>
-            <h1 class="display-title mb-3">Expert security deployment — booked in minutes.</h1>
-            <p class="lead-copy mb-4">From camera planning to post-install optimization, our certified field technicians deliver a turnkey security rollout for homes, offices, warehouses, and enterprise campuses.</p>
-            <div class="d-flex flex-wrap gap-3">
-                <a href="#book-installation" class="btn btn-premium-cta px-4"><i class="bi bi-calendar-check me-2"></i>Book an Installation</a>
-                <a href="{% url 'support_page' %}" class="btn btn-outline-light px-4"><i class="bi bi-headset me-2"></i>Talk to Support</a>
-            </div>
+    <section class="svc-section" aria-labelledby="plans-title">
+        <div class="svc-section-heading"><div><p class="svc-eyebrow">A FIT FOR EVERY SPACE</p><h2 id="plans-title">Your space. Your security plan.</h2></div><p>Purposeful installation, configured around<br class="d-none d-lg-block"> the way you live and work.</p></div>
+        <div class="svc-plan-grid">
+            <article class="svc-plan"><div class="svc-plan-top"><span class="svc-icon"><i class="bi bi-house-door" aria-hidden="true"></i></span><span class="svc-plan-label">01 / RESIDENTIAL</span></div><h3>Home Secure</h3><p class="svc-plan-subtitle">A little peace of mind, everywhere.</p><div class="svc-scale">1–4 <span>cameras</span></div><p>Essential coverage for your home, with easy access from your phone.</p><ul><li>Camera positioning &amp; calibration</li><li>Mobile app pairing &amp; alerts</li><li>Recording setup &amp; user handover</li></ul><a href="{% url 'product_list' %}" class="btn btn-outline-light">Explore home solutions <i class="bi bi-arrow-right" aria-hidden="true"></i></a></article>
+            <article class="svc-plan svc-plan-featured"><div class="svc-plan-top"><span class="svc-icon"><i class="bi bi-buildings" aria-hidden="true"></i></span><span class="svc-plan-label">02 / BUSINESS</span></div><h3>Business Shield</h3><p class="svc-plan-subtitle">Keep an eye on what you’re building.</p><div class="svc-scale">5–16 <span>cameras</span></div><p>Connected surveillance for retail spaces, offices, and growing teams.</p><ul><li>DVR / NVR &amp; playback optimization</li><li>Entry / exit analytics setup</li><li>Multi-user access configuration</li></ul><a href="{% url 'product_list' %}" class="btn btn-premium-cta">Explore business solutions <i class="bi bi-arrow-right" aria-hidden="true"></i></a></article>
+            <article class="svc-plan"><div class="svc-plan-top"><span class="svc-icon"><i class="bi bi-diagram-3" aria-hidden="true"></i></span><span class="svc-plan-label">03 / ENTERPRISE</span></div><h3>Command Vision</h3><p class="svc-plan-subtitle">A bigger picture. A connected operation.</p><div class="svc-scale">Multi-site <span>coverage</span></div><p>Planned security architecture for campuses, warehouses, and facilities.</p><ul><li>Central command dashboard</li><li>Zone-based surveillance policies</li><li>Failover-ready architecture</li></ul><a href="{% url 'support_page' %}" class="btn btn-outline-light">Discuss your project <i class="bi bi-arrow-right" aria-hidden="true"></i></a></article>
         </div>
-        <div class="col-lg-5">
-            <div class="premium-stats-grid">
-                <div class="premium-stat-card"><h3>500+</h3><p>Installations Done</p></div>
-                <div class="premium-stat-card"><h3>98%</h3><p>Client Satisfaction</p></div>
-                <div class="premium-stat-card"><h3>24h</h3><p>Deployment Start SLA</p></div>
-                <div class="premium-stat-card"><h3>AMC</h3><p>Maintenance Plans</p></div>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
-<!-- ═══ HOW IT WORKS ═══ -->
-<section class="page-section">
-    <div class="text-center mb-5">
-        <p class="eyebrow mb-2">Simple Process</p>
-        <h2 class="h2 mb-0">How it works</h2>
-    </div>
-    <div class="row g-4">
-        <div class="col-md-3 col-6">
-            <div class="how-step-card">
-                <div class="how-step-num">01</div>
-                <div class="how-step-icon"><i class="bi bi-cart-check"></i></div>
-                <h5>Add to Cart</h5>
-                <p class="small text-secondary">Select any product with Professional Installation option at checkout.</p>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="how-step-card">
-                <div class="how-step-num">02</div>
-                <div class="how-step-icon"><i class="bi bi-calendar3"></i></div>
-                <h5>Pick a Slot</h5>
-                <p class="small text-secondary">Choose your preferred date and time window during checkout.</p>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="how-step-card">
-                <div class="how-step-num">03</div>
-                <div class="how-step-icon"><i class="bi bi-person-workspace"></i></div>
-                <h5>Technician Assigned</h5>
-                <p class="small text-secondary">A verified expert is assigned and you receive their profile on your tracking page.</p>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="how-step-card">
-                <div class="how-step-num">04</div>
-                <div class="how-step-icon"><i class="bi bi-shield-check"></i></div>
-                <h5>Live & Secured</h5>
-                <p class="small text-secondary">System goes live. You get a completion certificate and post-install support.</p>
-            </div>
-        </div>
-    </div>
-</section>
+    <section class="svc-process svc-section" aria-labelledby="process-title"><div class="svc-section-heading"><div><p class="svc-eyebrow">FROM PLAN TO PEACE OF MIND</p><h2 id="process-title">Four steps. One secure setup.</h2></div></div><ol class="svc-steps"><li><span>01</span><h3>Choose your devices</h3><p>Add a product with professional installation to your cart.</p></li><li><span>02</span><h3>Find your time</h3><p>Choose a date at least five days ahead and an available time window at checkout.</p></li><li><span>03</span><h3>Meet your expert</h3><p>View your assigned technician’s profile and contact details on your tracking page.</p></li><li><span>04</span><h3>You’re connected</h3><p>Complete system handover, your installation certificate, and post-install support.</p></li></ol></section>
 
-<!-- ═══ SERVICE TIERS ═══ -->
-<section class="page-section">
-    <div class="text-center mb-5">
-        <p class="eyebrow mb-2">Service Plans</p>
-        <h2 class="h2 mb-0">Pick your deployment scale</h2>
-    </div>
-    <div class="row g-4">
-        <div class="col-md-4">
-            <article class="service-tier-card h-100">
-                <p class="tier-tag">Starter</p>
-                <h4>Home Secure Pack</h4>
-                <p class="text-secondary small">1–4 camera setup with app onboarding, recording configuration, and user handover.</p>
-                <ul class="service-list">
-                    <li>Camera angle calibration</li>
-                    <li>Mobile app pairing</li>
-                    <li>Basic alert setup</li>
-                </ul>
-                <a href="{% url 'product_list' %}" class="btn btn-outline-light btn-sm mt-3 w-100">Browse Starter Products</a>
-            </article>
-        </div>
-        <div class="col-md-4">
-            <article class="service-tier-card h-100 featured">
-                <p class="tier-tag">Business</p>
-                <h4>Retail &amp; Office Shield</h4>
-                <p class="text-secondary small">5–16 camera layout with DVR/NVR tuning, role-based access, and performance hardening.</p>
-                <ul class="service-list">
-                    <li>Live + playback optimization</li>
-                    <li>Entry/exit analytics setup</li>
-                    <li>Multi-user permission controls</li>
-                </ul>
-                <a href="{% url 'product_list' %}" class="btn btn-premium-cta btn-sm mt-3 w-100">Browse Business Products</a>
-            </article>
-        </div>
-        <div class="col-md-4">
-            <article class="service-tier-card h-100">
-                <p class="tier-tag">Enterprise</p>
-                <h4>Multi-Site Command Vision</h4>
-                <p class="text-secondary small">High-capacity architecture for plants, campuses, and warehouse networks.</p>
-                <ul class="service-list">
-                    <li>Central command dashboard</li>
-                    <li>Zone-based surveillance policy</li>
-                    <li>Failover-ready architecture</li>
-                </ul>
-                <a href="{% url 'support_page' %}" class="btn btn-outline-light btn-sm mt-3 w-100">Contact Enterprise Sales</a>
-            </article>
-        </div>
-    </div>
-</section>
+    <section class="svc-booking svc-section" id="book-installation" aria-labelledby="booking-title">
+        <div class="svc-booking-copy"><p class="svc-eyebrow">LET’S GET YOU SET UP</p><h2 id="booking-title">Professional care.<br>From start to secured.</h2><p>Installation is added to eligible products during checkout. Choose your equipment, select your installation slot, and follow every step from your account.</p><div class="svc-booking-benefits"><span><i class="bi bi-person-check" aria-hidden="true"></i> A verified expert assigned to your order</span><span><i class="bi bi-file-earmark-check" aria-hidden="true"></i> Completion certificate after installation</span><span><i class="bi bi-headset" aria-hidden="true"></i> Direct contact and aftercare assistance</span></div><a href="{% url 'product_list' %}" class="btn btn-premium-cta">Find products with installation <i class="bi bi-arrow-right" aria-hidden="true"></i></a><div class="svc-account-link">{% if is_authenticated %}<a href="{% url 'account_dashboard' %}">View your existing bookings <i class="bi bi-arrow-right" aria-hidden="true"></i></a>{% else %}<a href="{{ login_url }}">Already booked? Sign in to track your installation <i class="bi bi-arrow-right" aria-hidden="true"></i></a>{% endif %}</div></div>
+        <div class="svc-coverage"><span class="svc-icon"><i class="bi bi-geo-alt" aria-hidden="true"></i></span><p class="svc-eyebrow">LOCAL EXPERTISE, AT YOUR DOOR</p><h3>Are we in your area?</h3><p>Check installation availability before you choose your setup.</p><label for="svc-pincode-input">Your delivery pincode</label><div class="svc-pin-group"><input type="text" id="svc-pincode-input" class="form-control" placeholder="6-digit pincode" maxlength="6" inputmode="numeric" autocomplete="postal-code" aria-describedby="svc-pincode-result"><button class="btn btn-premium-cta" id="svc-pincode-btn" type="button">Check <i class="bi bi-arrow-right" aria-hidden="true"></i></button></div><div id="svc-pincode-result" class="svc-pin-result" role="status" aria-live="polite"></div><div class="svc-coverage-help"><i class="bi bi-chat-square-text" aria-hidden="true"></i><div><strong>Planning something more complex?</strong><a href="{% url 'support_page' %}">Let’s talk through your project.</a></div></div></div>
+    </section>
 
-<!-- ═══ BOOKING SECTION ═══ -->
-<section class="page-section" id="book-installation">
-    <div class="row g-5 align-items-start">
-
-        <!-- Left: Technician Trust Panel -->
-        <div class="col-lg-5">
-            <p class="eyebrow mb-2">Our Certified Team</p>
-            <h2 class="h3 mb-3">Every installation is assigned a verified expert.</h2>
-            <p class="text-secondary mb-4">Unlike generic contractors, every EyeTrack technician has a verified profile with a photo, expertise badge, and star rating — visible to you on your order tracking page.</p>
-            <div class="d-flex flex-column gap-3">
-                <div class="tech-trust-pill"><i class="bi bi-patch-check-fill text-info me-2"></i><span>Verified background-checked professionals</span></div>
-                <div class="tech-trust-pill"><i class="bi bi-star-fill text-warning me-2"></i><span>Avg. 4.8/5 rating across all jobs</span></div>
-                <div class="tech-trust-pill"><i class="bi bi-shield-lock-fill text-success me-2"></i><span>Installation certificate issued on completion</span></div>
-                <div class="tech-trust-pill"><i class="bi bi-telephone-fill text-accent me-2"></i><span>Direct call button on your tracking page</span></div>
-            </div>
-
-            <!-- Pincode Checker -->
-            <div class="glass-card p-4 mt-4">
-                <h5 class="mb-1"><i class="bi bi-geo-alt-fill text-accent me-2"></i>Check Service Availability</h5>
-                <p class="small text-secondary mb-3">Enter your pincode to verify if installation service is available in your area.</p>
-                <div class="input-group">
-                    <input type="text" id="svc-pincode-input" class="form-control premium-input" placeholder="Enter 6-digit pincode" maxlength="6" inputmode="numeric">
-                    <button class="btn btn-premium-cta px-3" id="svc-pincode-btn" type="button"><i class="bi bi-search"></i></button>
-                </div>
-                <div id="svc-pincode-result" class="mt-2 small"></div>
-            </div>
-        </div>
-
-        <!-- Right: Booking CTA Card -->
-        <div class="col-lg-7">
-            <div class="booking-cta-card">
-                <div class="booking-cta-header">
-                    <i class="bi bi-calendar2-week-fill booking-cta-icon"></i>
-                    <div>
-                        <h3 class="mb-1">Schedule Your Installation</h3>
-                        <p class="text-secondary small mb-0">Installation is booked at checkout after adding a product with installation service.</p>
-                    </div>
-                </div>
-
-                <div class="booking-steps-visual">
-                    <div class="booking-step-row">
-                        <div class="bsr-dot done"><i class="bi bi-check-lg"></i></div>
-                        <div class="bsr-line"></div>
-                        <div class="bsr-content">
-                            <strong>Step 1 — Add product with installation</strong>
-                            <p class="small text-secondary mb-0">Look for the "Professional Install Available" badge on product pages.</p>
-                        </div>
-                    </div>
-                    <div class="booking-step-row">
-                        <div class="bsr-dot done"><i class="bi bi-check-lg"></i></div>
-                        <div class="bsr-line"></div>
-                        <div class="bsr-content">
-                            <strong>Step 2 — Select slot at checkout</strong>
-                            <p class="small text-secondary mb-0">Pick a date (min. 5 days ahead) and a morning or afternoon window.</p>
-                        </div>
-                    </div>
-                    <div class="booking-step-row">
-                        <div class="bsr-dot active"><i class="bi bi-person-workspace"></i></div>
-                        <div class="bsr-line invisible"></div>
-                        <div class="bsr-content">
-                            <strong>Step 3 — Track your technician</strong>
-                            <p class="small text-secondary mb-0">See your expert's verified profile, rating, and contact button on the order tracking page.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-grid gap-3 mt-4">
-                    <a href="{% url 'product_list' %}" class="btn btn-premium-cta btn-lg">
-                        <i class="bi bi-bag-plus me-2"></i>Browse Products with Installation
-                    </a>
-                    {% if is_authenticated %}
-                    <a href="{% url 'account_dashboard' %}" class="btn btn-outline-light">
-                        <i class="bi bi-box-seam me-2"></i>View My Existing Bookings
-                    </a>
-                    {% else %}
-                    <a href="{{ login_url }}" class="btn btn-outline-light">
-                        <i class="bi bi-person-check me-2"></i>Login to View Your Bookings
-                    </a>
-                    {% endif %}
-                </div>
-
-                <div class="booking-guarantee-strip mt-4">
-                    <span><i class="bi bi-award-fill text-warning me-1"></i> Quality Guaranteed</span>
-                    <span><i class="bi bi-arrow-counterclockwise text-info me-1"></i> Free Re-visit if Needed</span>
-                    <span><i class="bi bi-lock-fill text-success me-1"></i> Secure &amp; Insured</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ═══ COVERAGE MATRIX ═══ -->
-<section class="row g-4 page-section align-items-start">
-    <div class="col-lg-7">
-        <div class="glass-card p-4 h-100">
-            <h3 class="h4 mb-4">Service Coverage Matrix</h3>
-            <div class="table-responsive">
-                <table class="premium-table align-middle mb-0">
-                    <thead><tr><th>Capability</th><th style="text-align:center;">Starter</th><th style="text-align:center;">Business</th><th style="text-align:center;">Enterprise</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Installation</strong></td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td></tr>
-                        <tr><td><strong>Remote Monitoring Setup</strong></td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td></tr>
-                        <tr><td><strong>Analytics Tuning</strong></td><td style="text-align:center;">−</td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td></tr>
-                        <tr><td><strong>Central Command Dashboard</strong></td><td style="text-align:center;">−</td><td style="text-align:center;">−</td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td></tr>
-                        <tr><td><strong>Preventive Maintenance</strong></td><td style="text-align:center;">Optional</td><td style="text-align:center;">Included</td><td style="text-align:center;">Included</td></tr>
-                        <tr><td><strong>Completion Certificate</strong></td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td><td style="text-align:center;"><i class="bi bi-check-lg text-success"></i></td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-5">
-        <div class="glass-card p-4">
-            <h3 class="h4 mb-3">Customer Outcomes</h3>
-            <div class="mini-info-card mb-3"><h6>Retail Chain Upgrade</h6><p>Reduced incident response time by 41% with centralized multi-store feeds.</p></div>
-            <div class="mini-info-card mb-3"><h6>Warehouse 24x7 Vision</h6><p>Improved night-shift visibility with long-range cameras and alert logic.</p></div>
-            <div class="mini-info-card"><h6>Residential Smart Watch</h6><p>Delivered remote phone monitoring with secure family access controls.</p></div>
-        </div>
-    </div>
-</section>
-
-<!-- ═══ TESTIMONIALS ═══ -->
-<section class="row g-3 page-section">
-    <div class="col-md-4"><div class="quote-card h-100"><p>"Installation was clean and zero-downtime. The team trained our staff perfectly."</p><small>Operations Manager, Retail Client</small></div></div>
-    <div class="col-md-4"><div class="quote-card h-100"><p>"We moved from basic cameras to a proper command center in one rollout."</p><small>Facility Head, Manufacturing</small></div></div>
-    <div class="col-md-4"><div class="quote-card h-100"><p>"Great support and clarity. They treated our home setup like enterprise quality."</p><small>Homeowner, Premium Residence</small></div></div>
-</section>
-
-<!-- ═══ FINAL CTA ═══ -->
-<section class="glass-card p-4 p-md-5 service-cta page-section">
-    <div class="row g-3 align-items-center">
-        <div class="col-lg-8">
-            <p class="eyebrow mb-2">Ready to Deploy?</p>
-            <h3 class="h2 mb-2">Build your CCTV stack with professional implementation.</h3>
-            <p class="text-secondary mb-0">Choose your devices now and coordinate installation scheduling right after checkout.</p>
-        </div>
-        <div class="col-lg-4 text-lg-end d-grid gap-2">
-            <a href="{% url 'product_list' %}" class="btn btn-premium-cta btn-lg">Start Shopping</a>
-            <a href="{% url 'faq_page' %}" class="btn btn-outline-light">Read FAQ</a>
-        </div>
-    </div>
-</section>
-
+    <section class="svc-section" aria-labelledby="included-title"><div class="svc-section-heading"><div><p class="svc-eyebrow">THE DETAILS, MADE CLEAR</p><h2 id="included-title">What’s included in your plan.</h2></div></div><div class="svc-comparison-wrap"><table class="svc-comparison"><caption class="visually-hidden">Installation capabilities by service plan</caption><thead><tr><th scope="col">Service capability</th><th scope="col">Home Secure</th><th scope="col">Business Shield</th><th scope="col">Command Vision</th></tr></thead><tbody><tr><th scope="row">Professional installation</th><td>Included</td><td>Included</td><td>Included</td></tr><tr><th scope="row">Remote monitoring setup</th><td>Included</td><td>Included</td><td>Included</td></tr><tr><th scope="row">Analytics tuning</th><td>—</td><td>Included</td><td>Included</td></tr><tr><th scope="row">Central command dashboard</th><td>—</td><td>—</td><td>Included</td></tr><tr><th scope="row">Preventive maintenance</th><td>Optional</td><td>Included</td><td>Included</td></tr><tr><th scope="row">Completion certificate</th><td>Included</td><td>Included</td><td>Included</td></tr></tbody></table></div></section>
+    <section class="svc-closing"><div><p class="svc-eyebrow">GOOD SECURITY STARTS WITH A CONVERSATION</p><h2>Let’s find the right setup for you.</h2></div><a href="{% url 'support_page' %}" class="btn btn-premium-cta">Talk to an expert <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></section>
 </div>
-
-<style>
-/* ── How it Works Steps ── */
-.how-step-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    text-align: center;
-    height: 100%;
-    transition: transform 0.25s ease, border-color 0.25s ease;
-}
-.how-step-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(245,158,11,0.3);
-}
-.how-step-num {
-    font-size: 0.65rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    color: rgba(245,158,11,0.5);
-    margin-bottom: 0.75rem;
-}
-.how-step-icon {
-    font-size: 1.8rem;
-    color: var(--accent, #f59e0b);
-    margin-bottom: 0.75rem;
-}
-.how-step-card h5 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-
-/* ── Tech Trust Pills ── */
-.tech-trust-pill {
-    display: flex;
-    align-items: center;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 0.6rem;
-    padding: 0.75rem 1rem;
-    font-size: 0.88rem;
-    color: rgba(255,255,255,0.8);
-}
-
-/* ── Booking CTA Card ── */
-.booking-cta-card {
-    background: linear-gradient(145deg, rgba(14,20,35,0.97), rgba(10,15,28,0.99));
-    border: 1px solid rgba(245,158,11,0.2);
-    border-radius: 1.25rem;
-    padding: 2rem;
-    box-shadow: 0 20px 60px -15px rgba(0,0,0,0.6), 0 0 0 1px rgba(245,158,11,0.05) inset;
-}
-.booking-cta-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.booking-cta-icon {
-    font-size: 2rem;
-    color: var(--accent, #f59e0b);
-    flex-shrink: 0;
-    margin-top: 2px;
-}
-.booking-steps-visual {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
-.booking-step-row {
-    display: grid;
-    grid-template-columns: 36px 2px 1fr;
-    gap: 0 1rem;
-    align-items: start;
-    margin-bottom: 1rem;
-}
-.bsr-dot {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 700;
-    flex-shrink: 0;
-    z-index: 1;
-}
-.bsr-dot.done {
-    background: rgba(16,185,129,0.15);
-    border: 1.5px solid rgba(16,185,129,0.4);
-    color: #34d399;
-}
-.bsr-dot.active {
-    background: rgba(245,158,11,0.15);
-    border: 1.5px solid rgba(245,158,11,0.4);
-    color: #fbbf24;
-}
-.bsr-line {
-    width: 2px;
-    background: rgba(255,255,255,0.06);
-    min-height: 40px;
-    margin: 4px auto 0;
-}
-.bsr-line.invisible { background: transparent; }
-.bsr-content {
-    padding-top: 6px;
-    padding-bottom: 1rem;
-}
-.bsr-content strong { font-size: 0.9rem; }
-
-/* ── Booking Guarantee Strip ── */
-.booking-guarantee-strip {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(255,255,255,0.03);
-    border-radius: 0.6rem;
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.6);
-}
-</style>
-
+{% endblock %}
+{% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const pincodeInput = document.getElementById('svc-pincode-input');
-    const pincodeBtn = document.getElementById('svc-pincode-btn');
-    const pincodeResult = document.getElementById('svc-pincode-result');
-
-    function checkPincode() {
-        const pincode = pincodeInput.value.trim();
-        if (pincode.length !== 6 || !/^\d+$/.test(pincode)) {
-            pincodeResult.innerHTML = '<span class="text-danger"><i class="bi bi-exclamation-circle me-1"></i>Enter a valid 6-digit pincode.</span>';
-            return;
-        }
-        pincodeBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-        pincodeBtn.disabled = true;
-
-        fetch(`/api/check-serviceability/?pincode=${pincode}`)
-            .then(r => r.json())
-            .then(data => {
-                if (data.is_serviceable || data.ok) {
-                    pincodeResult.innerHTML = `<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Great news! Installation service is available in <strong>${pincode}</strong>.</span>`;
-                } else {
-                    const msg = data.message || 'Service not available in this area yet.';
-                    pincodeResult.innerHTML = `<span class="text-warning"><i class="bi bi-exclamation-triangle-fill me-1"></i>${msg}</span>`;
-                }
-            })
-            .catch(() => {
-                pincodeResult.innerHTML = '<span class="text-danger"><i class="bi bi-wifi-off me-1"></i>Could not check. Please try again.</span>';
-            })
-            .finally(() => {
-                pincodeBtn.innerHTML = '<i class="bi bi-search"></i>';
-                pincodeBtn.disabled = false;
-            });
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('svc-pincode-input');
+    const button = document.getElementById('svc-pincode-btn');
+    const result = document.getElementById('svc-pincode-result');
+    async function checkPincode() {
+        if (button.disabled) return;
+        const pincode = input.value.trim();
+        result.replaceChildren();
+        if (!/^\d{6}$/.test(pincode)) { result.textContent = 'Please enter a valid 6-digit pincode.'; result.dataset.state = 'error'; input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
+        input.removeAttribute('aria-invalid');
+        button.disabled = true;
+        button.textContent = 'Checking…';
+        result.dataset.state = 'loading';
+        result.textContent = 'Checking installation coverage…';
+        try {
+            const response = await fetch(`/api/check-serviceability/?pincode=${encodeURIComponent(pincode)}`);
+            if (!response.ok) throw new Error('Coverage request failed');
+            const data = await response.json();
+            if (data.is_serviceable && data.installation_available) { result.dataset.state = 'success'; result.textContent = `Installation service is available in ${pincode}.`; }
+            else { result.dataset.state = 'unavailable'; result.textContent = data.is_serviceable ? 'Delivery is available here, but installation is not currently offered. Contact our team for help.' : (data.message || 'Installation is not available in this area yet. Contact our team for help.'); }
+        } catch { result.dataset.state = 'error'; result.textContent = 'We couldn’t check coverage. Please try again.'; }
+        finally { button.textContent = 'Check →'; button.disabled = false; }
     }
-
-    pincodeBtn.addEventListener('click', checkPincode);
-    pincodeInput.addEventListener('keydown', e => { if (e.key === 'Enter') checkPincode(); });
+    button.addEventListener('click', checkPincode);
+    input.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); checkPincode(); } });
 });
 </script>
 {% endblock %}

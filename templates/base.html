@@ -669,7 +669,7 @@
     </style>
 
     {% block extra_head %}{% endblock %}
-    <link href="{% static 'css/theme-red-navy.css' %}?v=1" rel="stylesheet">
+    <link href="{% static 'css/theme-red-navy.css' %}?v=3" rel="stylesheet">
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
@@ -969,135 +969,23 @@
         </div>
     </main>
 
-    {% block pre_footer %}
-    {% if request.resolver_match.url_name != 'support_page' %}
-    <section class="pre-footer-contact">
-        <div class="container">
-            <div class="pre-footer-contact-card">
-                <div>
-                    <p class="eyebrow mb-2">Need Assistance?</p>
-                    <h2 class="h3 mb-2">Contact our team directly before checkout.</h2>
-                    <p class="text-secondary mb-0">Get expert guidance on camera selection, installation planning, and
-                        warranty support.</p>
-                </div>
-                <div class="pre-footer-actions">
-                    <a href="tel:+917994357565" class="btn btn-premium-cta"><i class="bi bi-telephone me-2"></i>Call
-                        Us</a>
-                    <a href="mailto:info@etsgrp.in" class="btn btn-outline-light"><i
-                            class="bi bi-envelope me-2"></i>Email</a>
-                </div>
-            </div>
-        </div>
-    </section>
-    {% endif %}
-    {% endblock %}
+    {% block pre_footer %}{% endblock %}
 
     {% block footer %}
-    <footer class="footer-shell mt-5">
-        <div class="container py-5">
-            <div class="footer-top-band">
-                <div class="footer-brand-block">
-                    <p class="footer-kicker mb-2">Eyetrack Solutions</p>
-                    <h5 class="footer-title mb-2">Built for secure commerce and dependable surveillance operations.</h5>
-                    <p class="footer-copy mb-0">Premium CCTV hardware, installation planning, and post-deployment
-                        support aligned into one streamlined customer experience.</p>
-                </div>
-                <div class="footer-signal-grid">
-                    <div class="footer-signal-card">
-                        <span class="footer-signal-icon"><i class="bi bi-shield-lock"></i></span>
-                        <div>
-                            <strong>Secure Checkout</strong>
-                            <small>Trusted purchase flow</small>
-                        </div>
-                    </div>
-                    <div class="footer-signal-card">
-                        <span class="footer-signal-icon"><i class="bi bi-headset"></i></span>
-                        <div>
-                            <strong>Support Coverage</strong>
-                            <small>Fast assistance when needed</small>
-                        </div>
-                    </div>
-                    <div class="footer-signal-card">
-                        <span class="footer-signal-icon"><i class="bi bi-tools"></i></span>
-                        <div>
-                            <strong>Installation Ready</strong>
-                            <small>Planning to deployment</small>
-                        </div>
-                    </div>
-                </div>
+    <footer class="footer-shell premium-footer mt-5" aria-label="Site footer">
+        <div class="container">
+            <div class="pf-invitation">
+                <div><p class="pf-eyebrow">YOUR SECURITY. OUR COMMITMENT.</p><h2>A safer space<br>starts <span>here.</span></h2></div>
+                <div class="pf-invitation-action"><p>Expert advice. Thoughtful installation.<br>Support that stays with you.</p><a href="{% url 'support_page' %}" class="btn btn-premium-cta">Let’s talk security <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div>
             </div>
-            <div class="row g-4 footer-main-grid">
-                <div class="col-lg-4">
-                    <div class="footer- contact-card">
-                        <p class="footer-column-label mb-2">Direct Contact</p>
-                        <a href="mailto:info@etsgrp.in"
-                            class="footer-contact-primary">info@etsgrp.in</a>
-                        <a href="tel:+917994357565" class="footer-contact-secondary">+91 7994357565</a>
-                        <p class="footer-contact-meta mb-3">Payyoli-Perambra Rd, Kozhikode, Kerala 673522</p>
-                        <p class="footer-contact-meta mb-3">Mon-Sat, 9:00 AM - 6:00 PM</p>
-
-                        <div class="footer-social-links mt-2 d-flex gap-3">
-                            <a href="https://www.instagram.com/eyetrack_solutions_pvt.ltd/" target="_blank"
-                                rel="noopener noreferrer" class="social-icon-link" aria-label="Instagram">
-                                <i class="bi bi-instagram"></i>
-                            </a>
-                            <a href="https://www.facebook.com/profile.php?id=61573098895103" target="_blank"
-                                rel="noopener noreferrer" class="social-icon-link" aria-label="Facebook">
-                                <i class="bi bi-facebook"></i>
-                            </a>
-                            <a href="https://www.linkedin.com/company/109270992/admin/dashboard/" target="_blank"
-                                rel="noopener noreferrer" class="social-icon-link" aria-label="LinkedIn">
-                                <i class="bi bi-linkedin"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-2">
-                    <p class="footer-column-label mb-3">Explore</p>
-                    <a href="{% url 'product_list' %}" class="footer-link d-block mb-2">Store</a>
-                    <a href="{% url 'services_page' %}" class="footer-link d-block mb-2">Installations</a>
-                    <a href="{% url 'about_page' %}" class="footer-link d-block mb-2">About</a>
-                    <a href="{% url 'faq_page' %}" class="footer-link d-block">FAQ</a>
-                </div>
-                <div class="col-6 col-lg-2">
-                    <p class="footer-column-label mb-3">Customer Tools</p>
-                    <a href="{% url 'wishlist_page' %}" class="footer-link d-block mb-2">Wishlist</a>
-                    <a href="{% url 'compare_page' %}" class="footer-link d-block mb-2">Compare</a>
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'order_history' %}" class="footer-link d-block mb-2">My Orders</a>
-                    {% else %}
-                    <a href="{% url 'login' %}" class="footer-link d-block mb-2">Login or Register</a>
-                    {% endif %}
-                    <a href="{% url 'support_page' %}" class="footer-link d-block">Support Center</a>
-                </div>
-                <div class="col-lg-4">
-                    <p class="footer-column-label mb-3">Policies</p>
-                    <div class="footer-policy-grid">
-                        <a href="{% url 'privacy_policy_page' %}" class="footer-policy-tile">
-                            <strong>Privacy Policy</strong>
-                            <small>Data handling and account protection</small>
-                        </a>
-                        <a href="{% url 'terms_page' %}" class="footer-policy-tile">
-                            <strong>Terms of Service</strong>
-                            <small>Platform and purchasing terms</small>
-                        </a>
-                        <a href="{% url 'refund_policy_page' %}" class="footer-policy-tile">
-                            <strong>Return Policy</strong>
-                            <small>Eligibility and return guidance</small>
-                        </a>
-                        <a href="{% url 'shipping_policy_page' %}" class="footer-policy-tile">
-                            <strong>Shipping Policy</strong>
-                            <small>Dispatch, delivery, and timelines</small>
-                        </a>
-                    </div>
-                </div>
+            <div class="pf-main">
+                <div class="pf-brand"><a href="{% url 'product_list' %}" class="pf-brand-link" aria-label="Eyetrack Solutions home"><img src="{% static 'img/company-logo.png' %}" width="48" height="48" alt=""><span>EYETRACK<small>SOLUTIONS</small></span></a><p>Connected security.<br>Considered from every angle.</p><div class="pf-socials"><a href="https://www.instagram.com/eyetrack_solutions_pvt.ltd/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a><a href="https://www.facebook.com/profile.php?id=61573098895103" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a><a href="https://www.linkedin.com/company/109270992/admin/dashboard/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="bi bi-linkedin" aria-hidden="true"></i></a></div></div>
+                <nav class="pf-column" aria-label="Explore"><h3>Explore</h3><a href="{% url 'product_list' %}">Shop all products</a><a href="{% url 'services_page' %}">Installation services</a><a href="{% url 'about_page' %}">Our story</a><a href="{% url 'faq_page' %}">Frequently asked questions</a></nav>
+                <nav class="pf-column" aria-label="Customer care"><h3>Here to help</h3><a href="{% url 'support_page' %}">Support center</a>{% if user.is_authenticated %}<a href="{% url 'order_history' %}">Track your orders</a><a href="{% url 'account_dashboard' %}">Your account</a>{% else %}<a href="{% url 'login' %}">Sign in to your account</a><a href="{% url 'register' %}">Create an account</a>{% endif %}<a href="{% url 'wishlist_page' %}">Your wishlist</a><a href="{% url 'compare_page' %}">Compare products</a></nav>
+                <div class="pf-column pf-contact"><h3>Let’s connect</h3><a class="pf-contact-email" href="mailto:info@etsgrp.in">info@etsgrp.in <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="tel:+917994357565">+91 7994357565</a><address>Payyoli-Perambra Rd<br>Kozhikode, Kerala 673522</address><p class="pf-hours"><span></span> Mon–Sat, 9:00 AM – 6:00 PM</p></div>
             </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="container d-flex justify-content-between align-items-center py-3 flex-wrap gap-2">
-                <small class="text-secondary">© 2026 Eyetrack Solutions. All rights reserved.</small>
-                <small class="text-secondary">Engineered for secure commerce and scalable surveillance.</small>
-            </div>
+            <div class="pf-assurance" aria-label="Our services"><span><i class="bi bi-shield-lock" aria-hidden="true"></i> Secure checkout</span><span><i class="bi bi-tools" aria-hidden="true"></i> Professional installation</span><span><i class="bi bi-headset" aria-hidden="true"></i> Dedicated support</span></div>
+            <div class="pf-bottom"><small>© {% now "Y" %} Eyetrack Solutions. All rights reserved.</small><nav aria-label="Legal policies"><a href="{% url 'privacy_policy_page' %}">Privacy</a><a href="{% url 'terms_page' %}">Terms</a><a href="{% url 'refund_policy_page' %}">Returns</a><a href="{% url 'shipping_policy_page' %}">Shipping</a></nav></div>
         </div>
     </footer>
     {% endblock %}

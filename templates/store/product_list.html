@@ -23,48 +23,27 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 
 {% if not category and not q %}
 {# ==== HERO SECTION ==== #}
-<section class="hero-premium hero-live mb-4 reveal">
-    <div class="hero-live-bg" aria-hidden="true">
-        <span class="orb orb-a"></span>
-        <span class="orb orb-b"></span>
-        <span class="orb orb-c"></span>
-        <span class="beam"></span>
-    </div>
-    <div class="row align-items-center g-4">
-        <div class="col-lg-7">
-            <p class="eyebrow mb-2">Secure Living. Smarter Monitoring.</p>
-            <h1 class="display-title mb-3">Ultra-premium security eCommerce experience for homes and businesses.</h1>
-            <p class="lead-copy mb-4">Browse enterprise-grade surveillance, smart locks, and biometric solutions. Compare by use case and checkout with a safe placeholder payment flow.</p>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="#catalog" class="btn btn-premium-cta px-4">Explore Products</a>
-                <a href="{% url 'services_page' %}" class="btn btn-outline-light px-4">Installation Plans</a>
+<section class="hero-premium hero-live reference-hero mb-4" aria-labelledby="homeHeroTitle">
+    <div class="reference-hero-layout">
+        <div class="reference-hero-copy">
+            <p class="eyebrow">Secure Living. Smarter Monitoring.</p>
+            <h1 class="display-title" id="homeHeroTitle"><span>Ultra-premium</span><span class="hero-highlight">security eCommerce</span><span>experience for homes</span><span>and businesses.</span></h1>
+            <p class="lead-copy">Browse enterprise-grade surveillance, smart locks, and biometric solutions.<br class="hero-desktop-break"> Compare by use case and checkout with a safe placeholder payment flow.</p>
+            <div class="reference-hero-actions">
+                <a href="#catalog" class="btn btn-premium-cta">Explore Products <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                <a href="{% url 'services_page' %}" class="btn btn-outline-light">Installation Plans</a>
             </div>
-            <div class="feature-list">
-                <div class="feature-item"><i class="bi bi-check-circle-fill"></i><span>Verified Brands</span></div>
-                <div class="feature-item"><i class="bi bi-building-check"></i><span>Business-ready</span></div>
-                <div class="feature-item"><i class="bi bi-shield-check"></i><span>Secure Checkout</span></div>
+            <div class="feature-list reference-hero-features">
+                <div class="feature-item"><i class="bi bi-check-circle-fill" aria-hidden="true"></i><span>Verified Brands</span></div>
+                <div class="feature-item"><i class="bi bi-buildings" aria-hidden="true"></i><span>Business-ready</span></div>
+                <div class="feature-item"><i class="bi bi-shield-check" aria-hidden="true"></i><span>Secure Checkout</span></div>
             </div>
         </div>
-        <div class="col-lg-5">
-            <div class="premium-stats-grid">
-                {# Display dynamic product count from context #}
-                <div class="premium-stat-card">
-                    <h3>{{ result_count }}</h3>
-                    <p>Products Matched</p>
-                </div>
-                <div class="premium-stat-card">
-                    <h3>24/7</h3>
-                    <p>Remote Monitoring</p>
-                </div>
-                <div class="premium-stat-card">
-                    <h3>4K</h3>
-                    <p>Ultra HD Ready</p>
-                </div>
-                <div class="premium-stat-card">
-                    <h3>99.9%</h3>
-                    <p>Uptime Target</p>
-                </div>
-            </div>
+        <div class="premium-stats-grid reference-hero-stats" aria-label="Store highlights">
+            <div class="premium-stat-card"><h3>{{ result_count }}</h3><p>Products Matched</p></div>
+            <div class="premium-stat-card"><h3>24/7</h3><p>Remote Monitoring</p></div>
+            <div class="premium-stat-card"><h3>4K</h3><p>Ultra HD Ready</p></div>
+            <div class="premium-stat-card"><h3>99.9%</h3><p>Uptime Target</p></div>
         </div>
     </div>
 </section>
