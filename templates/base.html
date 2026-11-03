@@ -669,7 +669,7 @@
     </style>
 
     {% block extra_head %}{% endblock %}
-    <link href="{% static 'css/theme-red-navy.css' %}?v=3" rel="stylesheet">
+    <link href="{% static 'css/theme-red-navy.css' %}?v=4" rel="stylesheet">
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
@@ -742,40 +742,12 @@
                                 class="nav-link premium-link dropdown-toggle {% if current == 'product_list' or current == 'products_by_category' or current == 'product_detail' %}active{% endif %}"
                                 href="{% url 'product_list' %}" id="categoryDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shop-dropdown-panel"
-                                aria-labelledby="categoryDropdown">
-                                <li class="shop-dropdown-grid">
-                                    <div class="shop-dropdown-intro">
-                                        <p class="shop-dropdown-kicker mb-2">Security commerce</p>
-                                        <h6 class="shop-dropdown-title mb-2">Choose the right surveillance stack.</h6>
-                                        <p class="shop-dropdown-copy mb-3">Browse cameras, system bundles, and
-                                            site-ready solutions curated for homes, offices, and industrial setups.</p>
-                                        <a class="shop-dropdown-featured" href="{% url 'product_list' %}">
-                                            <span class="shop-dropdown-featured-icon"><i
-                                                    class="bi bi-grid-1x2-fill"></i></span>
-                                            <span>
-                                                <strong>Browse all products</strong>
-                                                <small>See the full catalog</small>
-                                            </span>
-                                        </a>
-                                    </div>
-                                    <div class="shop-dropdown-links">
-                                        <div class="shop-dropdown-section-label">Service Lines</div>
-                                        <div class="shop-dropdown-link-grid">
-                                            {% for cat in categories %}
-                                            <a class="shop-dropdown-link"
-                                                href="{% url 'products_by_category' cat.slug %}">
-                                                <span class="shop-dropdown-link-icon"><i
-                                                        class="bi {{ cat.icon }}"></i></span>
-                                                <span>
-                                                    <strong>{{ cat.name }}</strong>
-                                                    <small>Explore solutions</small>
-                                                </span>
-                                            </a>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                </li>
+                            <ul class="dropdown-menu dropdown-menu-end shop-simple-menu" aria-labelledby="categoryDropdown">
+                                <li><a class="dropdown-item" href="{% url 'product_list' %}">All products</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                {% for cat in categories %}
+                                <li><a class="dropdown-item" href="{% url 'products_by_category' cat.slug %}">{{ cat.name }}</a></li>
+                                {% endfor %}
                             </ul>
                         </li>
                         <li class="nav-item"><a
