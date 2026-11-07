@@ -27,6 +27,7 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 {% static 'img/logo-3d.png' as hero_logo %}
 {% static 'img/logo-wire.png' as hero_wire %}
 <section class="hero-3d" aria-labelledby="homeHeroTitle" style="--hero-logo: url('{{ hero_logo }}')">
+    <script>document.currentScript.parentElement.classList.add('hero-3d--pending')</script>
     <div class="hero-3d__sky" aria-hidden="true"><span class="hero-3d__stars"></span></div>
     <div class="hero-3d__inner">
         <div class="hero-3d__copy">
@@ -78,7 +79,7 @@ professional installation support from Eyetrack Solutions.{% endblock %}
     </div>
     <button class="hero-3d__motion" type="button" aria-pressed="false" aria-label="Pause logo animation" hidden><span aria-hidden="true">&#8545;</span> <span class="hero-3d__motion-label">Pause animation</span></button>
 </section>
-<script src="{% static 'js/hero.js' %}?v=6" defer></script>
+<script src="{% static 'js/hero.js' %}?v=7" defer></script>
 
 {# ==== TRUST STRIP ==== #}
 <section class="trust-strip mb-5 reveal">

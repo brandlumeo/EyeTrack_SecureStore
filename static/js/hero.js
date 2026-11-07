@@ -18,9 +18,17 @@
         [2.35, 'Applying materials'], [3.5, 'Final render'], [BUILD_SECONDS, 'Render complete'],
     ];
     const loaded = (img) => !img || (img.complete && img.naturalWidth > 0);
+    const reveal = () => hero.classList.remove('hero-3d--pending');
+    if (motion.matches) reveal();
+    // Never keep the stage hidden: show the finished logo if images are slow.
+    let gaveUp = false;
+    setTimeout(() => {
+        if (!hero.classList.contains('hero-3d--build')) { gaveUp = true; reveal(); }
+    }, 5000);
     const startBuild = () => {
-        if (motion.matches || hero.classList.contains('hero-3d--build')) return;
+        if (gaveUp || motion.matches || hero.classList.contains('hero-3d--build')) return reveal();
         hero.classList.add('hero-3d--build');
+        reveal();
         // The HUD clock only advances while the CSS animations are running.
         let elapsed = 0;
         let last = performance.now();
