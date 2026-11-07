@@ -11,8 +11,11 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.views.decorators.http import require_POST, require_GET
 from django.views.decorators.csrf import csrf_exempt
+
+import json
 
 import razorpay
 
@@ -1759,8 +1762,80 @@ def support_page(request):
     return render(request, "store/support.html")
 
 
+# Single source for the FAQ page: the visible questions and the FAQPage
+# structured data (JSON-LD) are both built from this list, so they always match.
+FAQ_SECTIONS = (
+    {
+        "id": "buying",
+        "title": "Buying & Checkout",
+        "icon": "bi-bag-check",
+        "items": (
+            ("Is payment secure on this website?",
+             "Yes, we use industry-standard encryption and secure payment gateways (like Razorpay) to ensure your transaction data is fully protected."),
+            ("What payment methods do you accept?",
+             "We accept all major Credit/Debit cards, Net Banking, UPI, and popular mobile wallets. Cash on Delivery (COD) is also available for select locations in Kerala."),
+            ("Can I track my order after purchase?",
+             "Yes, once your order is confirmed, you can track its status in real-time from your account dashboard under 'Order History' or via the tracking link sent to your email."),
+            ("Do you ship pan-India?",
+             "We currently specialize in Kerala with a focus on Kozhikode. You can check your pincode on any product page for instant serviceability and delivery estimates."),
+        ),
+    },
+    {
+        "id": "installation",
+        "title": "Installation",
+        "icon": "bi-tools",
+        "items": (
+            ("Do you provide professional installation?",
+             "Yes, we provide expert on-site installation for all our products. You can opt for installation during checkout for serviceable locations in and around Kozhikode."),
+            ("How long does installation take?",
+             "Most residential installations are completed within 4-6 hours. Larger enterprise or multi-camera projects depend on site complexity and are scheduled as per your convenience."),
+            ("Do you support enterprise projects?",
+             "Yes. We specialize in enterprise-grade security solutions, including multi-site monitoring, centralized storage, and advanced AI-enabled surveillance."),
+        ),
+    },
+    {
+        "id": "warranty",
+        "title": "Warranty & Support",
+        "icon": "bi-shield-check",
+        "items": (
+            ("What is the warranty on your products?",
+             "Most products come with a 1 to 2-year manufacturer warranty. Specific warranty periods are listed on the technical specifications section of each product page."),
+            ("How do I claim a warranty or service?",
+             "Simply contact our support team with your order ID. We provide on-site service support for all products installed by our team during the warranty period."),
+            ("Is technical support available 24/7?",
+             "Yes. Our support desk is available round-the-clock for critical troubleshooting. You can reach us via WhatsApp, phone, or email for instant assistance."),
+        ),
+    },
+)
+
+
 def faq_page(request):
-    return render(request, "store/faq.html")
+    sections = []
+    number = 0
+    for section in FAQ_SECTIONS:
+        items = []
+        for question, answer in section["items"]:
+            number += 1
+            items.append({"n": number, "question": question, "answer": answer})
+        sections.append({**section, "items": items, "count": len(items)})
+    faq_schema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
+            for section in FAQ_SECTIONS for q, a in section["items"]
+        ],
+    }
+    # Escape <, > and & so the JSON can never close the <script> tag early.
+    faq_jsonld = (
+        json.dumps(faq_schema, ensure_ascii=False)
+        .replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
+    )
+    return render(request, "store/faq.html", {
+        "faq_sections": sections,
+        "faq_total": number,
+        "faq_jsonld": mark_safe(faq_jsonld),
+    })
 
 
 def privacy_policy_page(request):

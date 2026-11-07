@@ -1,193 +1,116 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}FAQ | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Read frequently asked questions about CCTV products, installation, support, and checkout at
 Eyetrack Solutions.{% endblock %}
 {% block extra_head %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {"@type": "Question", "name": "Is payment secure on this website?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, we use industry-standard encryption and secure payment gateways to ensure your transaction data is protected."}},
-    {"@type": "Question", "name": "What payment methods do you accept?", "acceptedAnswer": {"@type": "Answer", "text": "We accept all major Credit/Debit cards, Net Banking, UPI, and popular mobile wallets. Cash on Delivery (COD) is also available for select locations."}},
-    {"@type": "Question", "name": "Can I track my order after purchase?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, once your order is confirmed, you can track its status in real-time from your account dashboard under 'Order History'."}},
-    {"@type": "Question", "name": "Do you ship pan-India?", "acceptedAnswer": {"@type": "Answer", "text": "We currently specialize in Kerala with a focus on Kozhikode. You can check your pincode on the product page for instant serviceability verification."}},
-    {"@type": "Question", "name": "Do you provide professional installation?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, we provide expert on-site installation for all our products. You can opt for installation during checkout for serviceable locations."}},
-    {"@type": "Question", "name": "How long does installation take?", "acceptedAnswer": {"@type": "Answer", "text": "Most home installations are completed within 4-6 hours. Larger enterprise projects depend on site complexity."}},
-    {"@type": "Question", "name": "What is the warranty on your products?", "acceptedAnswer": {"@type": "Answer", "text": "Most products come with a 1 to 2-year manufacturer warranty. Specific details are listed on each product's page."}},
-    {"@type": "Question", "name": "How do I claim a warranty?", "acceptedAnswer": {"@type": "Answer", "text": "Contact our support team with your order ID. We will facilitate the repair or replacement as per the manufacturer's policy."}},
-    {"@type": "Question", "name": "What support channels are available?", "acceptedAnswer": {"@type": "Answer", "text": "Support is available 24/7 via email, phone, and WhatsApp. Critical incidents are triaged with priority SLAs."}}
-  ]
-}
-</script>
+{# Built in the view from the same list as the questions below, so Google's FAQ data always matches the page. #}
+<script type="application/ld+json">{{ faq_jsonld }}</script>
+<link href="{% static 'css/faq.css' %}?v=1" rel="stylesheet">
 {% endblock %}
 {% block content %}
-<div class="faq-page pb-5">
-    <div class="container">
-        <section class="hero-premium page-section">
-            <div class="row g-4 align-items-center">
-                <div class="col-lg-8">
-                    <p class="eyebrow mb-2">Frequently Asked Questions</p>
-                    <h1 class="display-title mb-3">Professional Answers for Your Security Needs.</h1>
-                    <p class="lead-copy mb-3">Get clear answers about our secure payment process, professional installation, 
-                        comprehensive warranty, and 24/7 technical support.</p>
-                    <div class="d-flex flex-wrap gap-2">
-                        <a href="{% url 'product_list' %}" class="btn btn-premium-cta px-4">Browse Store</a>
-                        <a href="{% url 'support_page' %}" class="btn btn-outline-light px-4">Contact Support</a>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="premium-stats-grid">
-                        <div class="premium-stat-card">
-                            <h3>24/7</h3>
-                            <p>Tech Support</p>
-                        </div>
-                        <div class="premium-stat-card">
-                            <h3>100%</h3>
-                            <p>Secure Pay</p>
-                        </div>
-                        <div class="premium-stat-card">
-                            <h3>On-Site</h3>
-                            <p>Installation</p>
-                        </div>
-                        <div class="premium-stat-card">
-                            <h3>AMC</h3>
-                            <p>Maintenance</p>
-                        </div>
-                    </div>
-                </div>
+<div class="fq">
+    {# ==== HERO ==== #}
+    <section class="fq-hero" aria-labelledby="fqTitle">
+        <div class="fq-hero__inner">
+            <p class="fq-hero__kicker">Help Centre <span aria-hidden="true">&middot;</span> Frequently Asked Questions</p>
+            <h1 class="fq-hero__title" id="fqTitle">How can we <span>help</span> you?</h1>
+            <p class="fq-hero__lede">Clear answers on secure payments, professional installation, warranty and 24/7 technical support.</p>
+
+            <form class="fq-search" role="search" onsubmit="return false">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <label class="visually-hidden" for="fqSearch">Search the FAQ</label>
+                <input type="search" id="fqSearch" class="fq-search__input" placeholder="Search questions — e.g. warranty, UPI, installation time" autocomplete="off">
+                <span class="fq-search__count" id="fqCount" aria-live="polite">{{ faq_total }} answers</span>
+            </form>
+
+            <nav class="fq-chips" aria-label="FAQ topics">
+                {% for section in faq_sections %}
+                <a href="#fq-{{ section.id }}" class="fq-chip"><i class="bi {{ section.icon }}" aria-hidden="true"></i>{{ section.title }}<span>{{ section.count }}</span></a>
+                {% endfor %}
+            </nav>
+
+            <ul class="fq-facts" aria-label="Service highlights">
+                <li><i class="bi bi-headset" aria-hidden="true"></i>24/7 tech support</li>
+                <li><i class="bi bi-lock-fill" aria-hidden="true"></i>100% secure payments</li>
+                <li><i class="bi bi-tools" aria-hidden="true"></i>On-site installation</li>
+                <li><i class="bi bi-arrow-repeat" aria-hidden="true"></i>AMC maintenance plans</li>
+            </ul>
+        </div>
+    </section>
+
+    {# ==== QUESTIONS ==== #}
+    <div class="fq-body">
+        <aside class="fq-side" aria-label="FAQ sections">
+            <div class="fq-side__card">
+                <p class="fq-side__label">Topics</p>
+                <nav class="fq-toc">
+                    {% for section in faq_sections %}
+                    <a href="#fq-{{ section.id }}" class="fq-toc__link" data-section="fq-{{ section.id }}">
+                        <i class="bi {{ section.icon }}" aria-hidden="true"></i>
+                        <span>{{ section.title }}</span>
+                        <em>{{ section.count }}</em>
+                    </a>
+                    {% endfor %}
+                </nav>
             </div>
-        </section>
-
-        <section class="row g-4 page-section align-items-start">
-            <div class="col-lg-4 sticky-lg-top" style="top: 100px; z-index: 10;">
-                <div class="glass-card p-3 mb-3">
-                    <h5 class="mb-3">FAQ Categories</h5>
-                    <div class="d-grid gap-2">
-                        <a href="#buyingFaq" class="faq-category-card"><span>Buying & Checkout</span><span
-                                class="faq-badge">4</span></a>
-                        <a href="#installFaq" class="faq-category-card"><span>Installation</span><span
-                                class="faq-badge">3</span></a>
-                        <a href="#warrantyFaq" class="faq-category-card"><span>Warranty & Support</span><span
-                                class="faq-badge">3</span></a>
-                    </div>
-                </div>
-                <div class="support-glass-card rounded-4 p-4">
-                    <h6 class="mb-2 text-white">Need direct help?</h6>
-                    <p class="small text-secondary mb-3">If your case is urgent, contact the support desk for direct triage.
-                    </p>
-                    <a href="mailto:info@etsgrp.in" class="btn btn-premium-cta w-100 mb-2">Email Support</a>
-                    <a href="tel:+917994357565" class="btn btn-outline-light w-100">Call Support</a>
-                </div>
+            <div class="fq-side__help">
+                <p class="fq-side__help-title">Need a quick answer?</p>
+                <p>Our support desk triages urgent cases directly.</p>
+                <a href="tel:+917994357565" class="fq-side__help-link"><i class="bi bi-telephone-fill" aria-hidden="true"></i>+91 79943 57565</a>
+                <a href="mailto:info@etsgrp.in" class="fq-side__help-link"><i class="bi bi-envelope-fill" aria-hidden="true"></i>info@etsgrp.in</a>
             </div>
+        </aside>
 
-            <div class="col-lg-8">
-                <div class="glass-card p-4 mb-4" id="buyingFaq">
-                    <h3 class="h4 mb-4 text-white">Buying & Checkout</h3>
-                    <div class="accordion premium-accordion" id="faqBuyingAccordion">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#buyingOne">Is payment secure on this website?</button></h2>
-                            <div id="buyingOne" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion">
-                                <div class="accordion-body">Yes, we use industry-standard encryption and secure payment gateways (like Razorpay) to ensure your transaction data is fully protected.</div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#buyingTwo">What payment methods do you accept?</button></h2>
-                            <div id="buyingTwo" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion">
-                                <div class="accordion-body">We accept all major Credit/Debit cards, Net Banking, UPI, and popular mobile wallets. Cash on Delivery (COD) is also available for select locations in Kerala.</div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#buyingThree">Can I track my order after purchase?</button></h2>
-                            <div id="buyingThree" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion">
-                                <div class="accordion-body">Yes, once your order is confirmed, you can track its status in real-time from your account dashboard under 'Order History' or via the tracking link sent to your email.</div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#buyingFour">Do you ship pan-India?</button></h2>
-                            <div id="buyingFour" class="accordion-collapse collapse" data-bs-parent="#faqBuyingAccordion">
-                                <div class="accordion-body">We currently specialize in Kerala with a focus on Kozhikode. You can check your pincode on any product page for instant serviceability and delivery estimates.</div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="fq-main">
+            {% for section in faq_sections %}
+            <section class="fq-section" id="fq-{{ section.id }}" aria-labelledby="fq-{{ section.id }}-title">
+                <header class="fq-section__head">
+                    <span class="fq-section__icon"><i class="bi {{ section.icon }}" aria-hidden="true"></i></span>
+                    <h2 class="fq-section__title" id="fq-{{ section.id }}-title">{{ section.title }}</h2>
+                    <span class="fq-section__count" data-total="{{ section.count }}">{{ section.count }} question{{ section.count|pluralize }}</span>
+                </header>
+                <div class="fq-list">
+                    {% for item in section.items %}
+                    <details class="fq-item">
+                        <summary class="fq-item__q">
+                            <span class="fq-item__n">{{ item.n|stringformat:"02d" }}</span>
+                            <span class="fq-item__text">{{ item.question }}</span>
+                            <span class="fq-item__toggle" aria-hidden="true"></span>
+                        </summary>
+                        <div class="fq-item__a"><p>{{ item.answer }}</p></div>
+                    </details>
+                    {% endfor %}
                 </div>
+            </section>
+            {% endfor %}
 
-                <div class="glass-card p-4 mb-4" id="installFaq">
-                    <h3 class="h4 mb-4 text-white">Installation</h3>
-                    <div class="accordion premium-accordion" id="faqInstallAccordion">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#installOne">Do you provide professional installation?</button></h2>
-                            <div id="installOne" class="accordion-collapse collapse" data-bs-parent="#faqInstallAccordion">
-                                <div class="accordion-body">Yes, we provide expert on-site installation for all our products. You can opt for installation during checkout for serviceable locations in and around Kozhikode.</div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#installTwo">How long does installation take?</button></h2>
-                            <div id="installTwo" class="accordion-collapse collapse" data-bs-parent="#faqInstallAccordion">
-                                <div class="accordion-body">Most residential installations are completed within 4-6 hours. Larger enterprise or multi-camera projects depend on site complexity and are scheduled as per your convenience.</div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#installThree">Do you support enterprise projects?</button></h2>
-                            <div id="installThree" class="accordion-collapse collapse"
-                                data-bs-parent="#faqInstallAccordion">
-                                <div class="accordion-body">Yes. We specialize in enterprise-grade security solutions, including multi-site monitoring, centralized storage, and advanced AI-enabled surveillance.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-card p-4 mb-4" id="warrantyFaq">
-                    <h3 class="h4 mb-4 text-white">Warranty & Support</h3>
-                    <div class="accordion premium-accordion" id="faqSupportAccordion">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#supportOne">What is the warranty on your products?</button></h2>
-                            <div id="supportOne" class="accordion-collapse collapse" data-bs-parent="#faqSupportAccordion">
-                                <div class="accordion-body">Most products come with a 1 to 2-year manufacturer warranty. Specific warranty periods are listed on the technical specifications section of each product page.</div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#supportTwo">How do I claim a warranty or service?</button></h2>
-                            <div id="supportTwo" class="accordion-collapse collapse" data-bs-parent="#faqSupportAccordion">
-                                <div class="accordion-body">Simply contact our support team with your order ID. We provide on-site service support for all products installed by our team during the warranty period.</div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button collapsed" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#supportThree">Is technical support available 24/7?</button></h2>
-                            <div id="supportThree" class="accordion-collapse collapse"
-                                data-bs-parent="#faqSupportAccordion">
-                                <div class="accordion-body">Yes. Our support desk is available round-the-clock for critical troubleshooting. You can reach us via WhatsApp, phone, or email for instant assistance.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="fq-empty" id="fqEmpty" hidden>
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <p class="fq-empty__title">No answers match “<span id="fqEmptyTerm"></span>”.</p>
+                <p>Try a different word, or ask our team directly.</p>
+                <a href="https://wa.me/917994357565" class="fq-btn fq-btn--primary" target="_blank" rel="noopener"><i class="bi bi-whatsapp" aria-hidden="true"></i> Ask on WhatsApp</a>
             </div>
-        </section>
-
-        <section class="glass-card p-4 p-md-5 service-cta page-section">
-            <div class="row g-3 align-items-center">
-                <div class="col-lg-8">
-                    <p class="eyebrow mb-2">Still Have Questions?</p>
-                    <h3 class="h2 mb-2">Get tailored advice for your CCTV deployment.</h3>
-                    <p class="text-secondary mb-0">Our team can help you select products, plan installation, and define the
-                        right monitoring setup.</p>
-                </div>
-                <div class="col-lg-4 text-lg-end d-grid gap-2">
-                    <a href="{% url 'support_page' %}" class="btn btn-premium-cta btn-lg">Contact Support</a>
-                    <a href="{% url 'services_page' %}" class="btn btn-outline-light btn-lg">View Services</a>
-                </div>
-            </div>
-        </section>
+        </div>
     </div>
+
+    {# ==== CONTACT ==== #}
+    <section class="fq-contact" aria-labelledby="fqContactTitle">
+        <div class="fq-contact__copy">
+            <p class="fq-contact__kicker">Still have questions?</p>
+            <h2 class="fq-contact__title" id="fqContactTitle">Get tailored advice for your security setup.</h2>
+            <p>Our team can help you choose products, plan the installation and define the right monitoring setup.</p>
+            <div class="fq-contact__actions">
+                <a href="{% url 'support_page' %}" class="fq-btn fq-btn--primary">Contact Support <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                <a href="{% url 'services_page' %}" class="fq-btn fq-btn--ghost">View Services</a>
+            </div>
+        </div>
+        <ul class="fq-channels">
+            <li><a href="https://wa.me/917994357565" target="_blank" rel="noopener"><i class="bi bi-whatsapp" aria-hidden="true"></i><span><strong>WhatsApp</strong>Chat with our team</span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></li>
+            <li><a href="tel:+917994357565"><i class="bi bi-telephone-fill" aria-hidden="true"></i><span><strong>Call us</strong>+91 79943 57565</span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></li>
+            <li><a href="mailto:info@etsgrp.in"><i class="bi bi-envelope-fill" aria-hidden="true"></i><span><strong>Email</strong>info@etsgrp.in</span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></li>
+        </ul>
+    </section>
 </div>
+<script src="{% static 'js/faq.js' %}?v=1" defer></script>
 {% endblock %}
