@@ -56,7 +56,7 @@
                     </td>
                     <td>{{ addr.full_name }}</td>
                     <td>{{ addr.city }}, {{ addr.state }}</td>
-                    <td><span style="font-family:'Outfit',sans-serif;font-weight:600;color:#f59e0b;">{{ addr.pincode }}</span></td>
+                    <td><span style="font-family:var(--font-heading);font-weight:600;color:#f59e0b;">{{ addr.pincode }}</span></td>
                     <td><span class="badge-status status-processing">{{ addr.get_address_type_display }}</span></td>
                     <td>{% if addr.is_default %}<span class="badge-status status-delivered">Default</span>{% else %}<span class="text-secondary">—</span>{% endif %}</td>
                     <td>

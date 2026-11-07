@@ -1,4 +1,3 @@
-@import url("premium-fonts.css");
 
 /* Red & Navy corporate theme. Loaded after page styles for a consistent palette. */
 :root {
@@ -365,7 +364,7 @@ input::placeholder, textarea::placeholder { color: #63718b !important; opacity: 
 }
 .main-shell .reference-hero .display-title {
     margin: 0 0 18px;
-    font-family: Arial, 'Manrope', sans-serif;
+    font-family: var(--font-premium);
     font-size: clamp(40px,4.2vw,72px);
     line-height: .99;
     font-weight: 800;
@@ -572,10 +571,16 @@ body .stock-status-badge.low-stock {
     border-color: #e0c28a !important;
 }
 
-/* Premium typography: locally bundled fonts, consistent across all layouts. */
+/* Brand typography (loaded from Google Fonts in base.html):
+   Poppins    – headings and banners            → --font-heading
+   Inter      – body copy, product descriptions → --font-body
+   Montserrat – premium headings (hero, brand)  → --font-premium
+   Roboto     – product details, specs, prices  → --font-specs */
 :root {
-    --font-body: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
-    --font-heading: 'Outfit', 'Segoe UI', sans-serif;
+    --font-body: 'Inter', 'Segoe UI', sans-serif;
+    --font-heading: 'Poppins', 'Segoe UI', sans-serif;
+    --font-premium: 'Montserrat', 'Poppins', 'Segoe UI', sans-serif;
+    --font-specs: 'Roboto', 'Segoe UI', sans-serif;
     --bs-body-font-family: var(--font-body);
 }
 body { font-family: var(--font-body) !important; font-weight: 400; line-height: 1.65; }
@@ -694,6 +699,38 @@ body :where(.amount, .fp-price, .ts-price, .rv-price, .order-total, .stats-numbe
     letter-spacing: -.025em;
 }
 body .accordion-button { font-family: var(--font-heading) !important; font-weight: 500; letter-spacing: -.01em; line-height: 1.45; }
+
+/* Banners → Poppins */
+body :where(.announcement-bar, .announcement-bar *, .trust-strip .trust-item span) {
+    font-family: var(--font-heading) !important;
+}
+
+/* Premium headings → Montserrat */
+body .main-shell .hero-3d .hero-3d__title,
+body .hero-3d__tagline,
+body .display-title,
+body .brand-wordmark,
+body .pf-brand-link > span {
+    font-family: var(--font-premium) !important;
+}
+body .main-shell .hero-3d .hero-3d__title { font-weight: 800; letter-spacing: -.03em; }
+
+/* Product details, specifications and prices → Roboto */
+body :where(
+    [class*="spec-"], [class^="spec"], .spec-chip,
+    .product-highlights-card, .product-highlights-list, .product-highlights-list li,
+    .compare-grid-body, .compare-grid-body *,
+    .price-box, .amount, .detail-price, .dynamic-price-value, .product-price,
+    .fp-price, .ts-price, .rv-price, .install-product-price, .install-upsell-price,
+    .order-total
+) {
+    font-family: var(--font-specs) !important;
+    letter-spacing: 0;
+}
+body :where(.amount, .detail-price, .dynamic-price-value, .product-price, .fp-price, .ts-price, .rv-price) {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
 body :where(.form-control, .form-select) { letter-spacing: -.01em; }
 body th { font-weight: 600; font-size: .8rem; letter-spacing: .025em; }
 

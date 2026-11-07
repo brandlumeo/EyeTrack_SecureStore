@@ -44,7 +44,7 @@ html {
 }
 
 body {
-    font-family: "Manrope", "Noto Sans", "Segoe UI Symbol", sans-serif;
+    font-family: var(--font-body);
     background:
         radial-gradient(circle at 16% 0%, rgba(245, 158, 11, 0.12) 0%, rgba(17, 24, 39, 0.92) 24%, rgba(11, 18, 32, 0.98) 56%, #070b14 100%);
     color: var(--text);
@@ -69,7 +69,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     letter-spacing: -0.03em;
     line-height: 1.12;
 }
@@ -1305,7 +1305,7 @@ a:hover {
 }
 
 .brand-mark {
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     letter-spacing: 0.02em;
     font-size: 1rem;
     position: relative;
@@ -1637,7 +1637,7 @@ a:hover {
     padding: 0.74rem 1.3rem;
     box-shadow: 0 5px 15px rgba(245, 158, 11, 0.25);
     transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
 }
 
 .btn-accent:hover {
@@ -1654,7 +1654,7 @@ a:hover {
     border-radius: 999px;
     padding: 0.74rem 1.3rem;
     transition: all 180ms ease;
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
 }
 
 .btn-accent-dark:hover {
@@ -2047,7 +2047,7 @@ a:hover {
 }
 
 .display-title {
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     font-size: clamp(1.9rem, 4.6vw, 3.45rem);
     line-height: 0.98;
     letter-spacing: -0.05em;
@@ -2385,7 +2385,7 @@ a:hover {
 }
 
 .tracking-page-title {
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     font-size: clamp(2rem, 4vw, 3rem);
     line-height: 1.02;
     color: #f7fbff;
@@ -2478,7 +2478,7 @@ a:hover {
 }
 
 .tracking-page-product-title {
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     font-size: 1.12rem;
     line-height: 1.25;
     color: #f6fbff;
@@ -2944,7 +2944,7 @@ a:hover {
 }
 
 .order-track-title {
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     font-size: clamp(2.1rem, 4vw, 3.2rem);
     line-height: 1;
     color: #f7fbff;
@@ -3036,7 +3036,7 @@ a:hover {
 }
 
 .order-track-summary-title {
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     font-size: 1.35rem;
     color: #f7fbff;
 }
@@ -3395,7 +3395,7 @@ a:hover {
 }
 
 .invoice-page-title {
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     font-size: clamp(2rem, 4vw, 3.1rem);
     line-height: 1;
     color: #f7fbff;
@@ -3477,7 +3477,7 @@ a:hover {
 }
 
 .invoice-brand-title {
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     font-size: 1.8rem;
     color: #f7fbff;
 }
@@ -4445,7 +4445,7 @@ textarea:focus {
 
 .detail-price {
     font-size: 1.8rem;
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     color: #ffffff;
     font-weight: 700;
 }
@@ -4861,7 +4861,7 @@ textarea:focus {
 }
 
 .display-amount {
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     font-size: clamp(2rem, 4vw, 2.9rem);
     color: #ffbe54;
     letter-spacing: -0.04em;
@@ -5161,7 +5161,7 @@ textarea:focus {
 }
 
 .service-tier-card h4 {
-    font-family: "Sora", sans-serif;
+    font-family: var(--font-heading);
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
 }
@@ -7739,7 +7739,7 @@ textarea:focus {
 
 .notif-title {
     font-weight: 600;
-    font-family: 'Outfit', sans-serif;
+    font-family: var(--font-heading);
     color: #f9fafb;
     line-height: 1.3;
 }
@@ -8150,7 +8150,7 @@ textarea:focus {
 }
 
 .order-id-badge {
-    font-family: 'Sora', sans-serif;
+    font-family: var(--font-heading);
     font-weight: 700;
     color: var(--accent);
     font-size: 0.95rem;
@@ -9051,7 +9051,7 @@ body.mob-search-lock {
     border: none;
     color: #fff;
     font-size: 1rem;
-    font-family: 'Manrope', sans-serif;
+    font-family: var(--font-body);
     font-weight: 500;
     outline: none;
     min-width: 0;
@@ -9084,7 +9084,7 @@ body.mob-search-lock {
     color: var(--accent);
     font-size: 0.9rem;
     font-weight: 700;
-    font-family: 'Manrope', sans-serif;
+    font-family: var(--font-body);
     padding: 0.4rem 0;
     white-space: nowrap;
     cursor: pointer;

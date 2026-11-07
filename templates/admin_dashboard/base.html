@@ -7,7 +7,6 @@
 
 <style>
     /* Premium Font Import */
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
     :root {
         --bg-dark: #070c14;
@@ -25,7 +24,7 @@
 
     body {
         background: var(--bg-dark) !important;
-        font-family: 'Inter', sans-serif;
+        font-family: var(--font-body);
         color: var(--text-primary);
         -webkit-font-smoothing: antialiased;
     }
@@ -42,7 +41,7 @@
     h6,
     .admin-title,
     .stats-number {
-        font-family: 'Outfit', sans-serif;
+        font-family:var(--font-heading);
     }
 
     .admin-dashboard {
@@ -125,7 +124,7 @@
         font-weight: 800;
     }
     .sidebar-brand-name {
-        font-family: 'Outfit', sans-serif;
+        font-family:var(--font-heading);
         font-weight: 700;
         font-size: 0.92rem;
         color: var(--text-primary);
