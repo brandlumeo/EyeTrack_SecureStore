@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {# ==== META TAGS & SEO ==== #}
 {% block title %}Premium Security Store | Eyetrack Solutions{% endblock %}
@@ -23,68 +24,81 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 
 {% if not category and not q %}
 {# ==== HERO SECTION ==== #}
-<section class="hero-cc mb-4" aria-labelledby="homeHeroTitle">
-    <div class="hero-cc__bg" aria-hidden="true"></div>
-    <div class="hero-cc__layout">
-        <div class="hero-cc__copy">
-            <p class="hero-cc__kicker"><span class="hero-cc__pulse" aria-hidden="true"></span>Secure Living. Smarter Monitoring.</p>
-            <h1 class="hero-cc__h1" id="homeHeroTitle">See everything.<br><span>Protect</span> what matters.</h1>
-            <p class="hero-cc__lede">Enterprise-grade CCTV, smart locks and biometric systems for homes and businesses &mdash; with expert installation from survey to setup.</p>
-            <div class="hero-cc__actions">
-                <a href="#catalog" class="hero-cc__btn hero-cc__btn--primary">Explore Products <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-                <a href="{% url 'services_page' %}" class="hero-cc__btn hero-cc__btn--ghost"><i class="bi bi-tools" aria-hidden="true"></i> Installation Plans</a>
+{% static 'img/logo-3d.png' as hero_logo %}
+<section class="hero-3d" aria-labelledby="homeHeroTitle" style="--hero-logo: url('{{ hero_logo }}')">
+    <div class="hero-3d__sky" aria-hidden="true"><span class="hero-3d__stars"></span></div>
+    <div class="hero-3d__inner">
+        <div class="hero-3d__copy">
+            <p class="hero-3d__kicker">Eyetrack Solutions <span aria-hidden="true">&middot;</span> Enterprise Security Store</p>
+            <h1 class="hero-3d__title" id="homeHeroTitle">See everything.<br><span>Protect</span> what matters.</h1>
+            <p class="hero-3d__lede">Enterprise-grade CCTV, smart locks and biometric systems for homes and businesses &mdash; with expert installation from survey to setup.</p>
+            <div class="hero-3d__actions">
+                <a href="#catalog" class="hero-3d__btn"><i class="bi bi-shield-check" aria-hidden="true"></i> Explore Products</a>
+                <a href="{% url 'services_page' %}" class="hero-3d__link">Installation plans <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
             </div>
-            <dl class="hero-cc__stats">
-                <div><dt>{{ total_product_count }}+</dt><dd>Products</dd></div>
-                <div><dt>4K</dt><dd>Ultra HD ready</dd></div>
-                <div><dt>24/7</dt><dd>Expert support</dd></div>
-            </dl>
+            <a href="#catalog" class="hero-3d__scroll" aria-label="Scroll to products">
+                <span class="hero-3d__mouse" aria-hidden="true"><span></span></span>
+                Scroll to explore
+            </a>
         </div>
 
-        <div class="hero-cc__visual" aria-label="Featured products">
-            {% with main=featured_products.0 %}
-            <div class="hero-cc__monitor">
-                <div class="hero-cc__monitor-bar">
-                    <span class="hero-cc__rec"><span aria-hidden="true"></span>REC</span>
-                    <span class="hero-cc__cam">CAM 01 &middot; LIVE</span>
-                    <span class="hero-cc__clock" id="heroCcClock">--:--:--</span>
+        <div class="hero-3d__visual" aria-hidden="true">
+            <div class="hero-3d__stage" id="hero3dStage">
+                <div class="hero-3d__glow"></div>
+                <div class="hero-3d__scene">
+                    <svg class="hero-3d__orbit hero-3d__orbit--a" viewBox="0 0 400 400"><defs><linearGradient id="h3dGa" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff2e44"/><stop offset="1" stop-color="#ff8a1f"/></linearGradient></defs><circle class="hero-3d__ring" cx="200" cy="200" r="180" stroke="url(#h3dGa)"/><circle class="hero-3d__comet" cx="200" cy="200" r="180"/></svg>
+                    <svg class="hero-3d__orbit hero-3d__orbit--b" viewBox="0 0 400 400"><defs><linearGradient id="h3dGb" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#2f6bff"/><stop offset="1" stop-color="#9fc2ff"/></linearGradient></defs><circle class="hero-3d__ring" cx="200" cy="200" r="180" stroke="url(#h3dGb)"/><circle class="hero-3d__comet" cx="200" cy="200" r="180"/></svg>
+                    <svg class="hero-3d__orbit hero-3d__orbit--c" viewBox="0 0 400 400"><defs><linearGradient id="h3dGc" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd23f"/><stop offset="1" stop-color="#ed0920"/></linearGradient></defs><circle class="hero-3d__ring" cx="200" cy="200" r="180" stroke="url(#h3dGc)"/><circle class="hero-3d__comet" cx="200" cy="200" r="180"/></svg>
+                    <div class="hero-3d__logo">
+                        {# stacked copies give the logo real thickness when it turns #}
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-14px">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-12px">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-10px">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-8px">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-6px">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-4px">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-2px">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__face" width="482" height="601" fetchpriority="high">
+                        <span class="hero-3d__shine"></span>
+                    </div>
                 </div>
-                {% if main %}
-                <a href="{% url 'product_detail' main.slug %}" class="hero-cc__feed">
-                    {% if main.image %}<img src="{{ main.image.url }}" alt="{{ main.name }}" loading="eager">{% else %}<i class="bi bi-camera-video" aria-hidden="true"></i>{% endif %}
-                    <span class="hero-cc__corners" aria-hidden="true"></span>
-                    <span class="hero-cc__feed-label">
-                        <small>Featured</small>
-                        <strong>{{ main.name|truncatechars:38 }}</strong>
-                        <em>&#8377;{{ main.price|floatformat:0 }}</em>
-                    </span>
-                </a>
-                {% else %}
-                <div class="hero-cc__feed"><i class="bi bi-camera-video" aria-hidden="true"></i><span class="hero-cc__corners" aria-hidden="true"></span></div>
-                {% endif %}
-                {% if featured_products|length > 1 %}
-                <div class="hero-cc__thumbs">
-                    {% for p in featured_products|slice:"1:4" %}
-                    <a href="{% url 'product_detail' p.slug %}" class="hero-cc__thumb" title="{{ p.name }}">
-                        {% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy">{% else %}<i class="bi bi-camera-video" aria-hidden="true"></i>{% endif %}
-                        <span>CAM 0{{ forloop.counter|add:1 }}</span>
-                    </a>
-                    {% endfor %}
-                </div>
-                {% endif %}
             </div>
-            {% endwith %}
-            <div class="hero-cc__chip hero-cc__chip--a"><i class="bi bi-shield-fill-check" aria-hidden="true"></i><span><strong>Verified brands</strong>1&ndash;3 yr warranty</span></div>
-            <div class="hero-cc__chip hero-cc__chip--b"><i class="bi bi-lock-fill" aria-hidden="true"></i><span><strong>Secure checkout</strong>Encrypted payments</span></div>
+            <p class="hero-3d__tagline">Secure Living. Smarter Monitoring.</p>
         </div>
     </div>
 </section>
 <script>
 (function () {
-    var el = document.getElementById('heroCcClock');
-    if (!el) return;
-    function tick() { el.textContent = new Date().toLocaleTimeString('en-GB'); }
-    tick(); setInterval(tick, 1000);
+    var stage = document.getElementById('hero3dStage');
+    if (!stage || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var hero = stage.closest('.hero-3d');
+    // twinkling particles
+    var sky = hero.querySelector('.hero-3d__stars');
+    for (var i = 0; i < 26; i++) {
+        var s = document.createElement('i');
+        s.style.left = (Math.random() * 100).toFixed(2) + '%';
+        s.style.top = (Math.random() * 100).toFixed(2) + '%';
+        s.style.animationDelay = (Math.random() * 5).toFixed(2) + 's';
+        s.style.animationDuration = (3 + Math.random() * 4).toFixed(2) + 's';
+        sky.appendChild(s);
+    }
+    // gentle tilt toward the pointer
+    if (!window.matchMedia('(hover: hover)').matches) return;
+    var raf = 0;
+    hero.addEventListener('pointermove', function (e) {
+        var r = stage.getBoundingClientRect();
+        var x = (e.clientX - (r.left + r.width / 2)) / window.innerWidth;
+        var y = (e.clientY - (r.top + r.height / 2)) / window.innerHeight;
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(function () {
+            stage.style.setProperty('--tilt-y', (x * 18).toFixed(2) + 'deg');
+            stage.style.setProperty('--tilt-x', (-y * 12).toFixed(2) + 'deg');
+        });
+    });
+    hero.addEventListener('pointerleave', function () {
+        stage.style.setProperty('--tilt-y', '0deg');
+        stage.style.setProperty('--tilt-x', '0deg');
+    });
 })();
 </script>
 
