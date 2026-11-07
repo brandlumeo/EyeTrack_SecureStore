@@ -6,7 +6,7 @@
     --h3d-navy: #0b174f;
     --h3d-red: #ed0920;
     --h3d-red-hover: #c7081c;
-    --h3d-orange: #ff7a1f;
+    --h3d-orange: #ed0920;
     --h3d-text: #ffffff;
     --h3d-muted: rgba(222, 230, 255, .76);
 
@@ -22,8 +22,8 @@
     align-items: center;
     color: var(--h3d-text);
     background:
-        radial-gradient(55% 75% at 76% 48%, rgba(32, 72, 200, .55) 0%, rgba(11, 23, 79, 0) 70%),
-        linear-gradient(100deg, #01020a 0%, #030824 30%, #0b174f 62%, #12308f 100%);
+        radial-gradient(55% 75% at 76% 48%, rgba(18, 54, 106, .65) 0%, rgba(11, 23, 79, 0) 70%),
+        linear-gradient(100deg, #01020a 0%, #030824 30%, #0b174f 62%, #12366a 100%);
 }
 
 /* ---------- Sky / particles ---------- */
@@ -69,7 +69,7 @@
     font: 600 .8rem/1.4 var(--font-body, sans-serif);
     letter-spacing: .2em;
     text-transform: uppercase;
-    color: #ff7a59;
+    color: #ffffff;
 }
 .hero-3d__kicker span { margin-inline: .35em; color: rgba(255, 255, 255, .45); }
 
@@ -83,7 +83,7 @@
     color: var(--h3d-text) !important;
 }
 .main-shell .hero-3d .hero-3d__title span {
-    background: linear-gradient(90deg, #ff2e44 0%, #ff7a1f 100%);
+    background: linear-gradient(90deg, #ed0920 0%, #ed0920 100%);
     -webkit-background-clip: text;
             background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -194,7 +194,7 @@
     position: absolute;
     inset: 16%;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(237, 9, 32, .5) 0%, rgba(255, 122, 31, .2) 40%, rgba(11, 23, 79, 0) 72%);
+    background: radial-gradient(circle, rgba(237, 9, 32, .5) 0%, rgba(18, 54, 106, .2) 40%, rgba(11, 23, 79, 0) 72%);
     filter: blur(28px);
     opacity: 0;
     animation: h3d-fade 1.2s ease 1s forwards, h3d-pulse 5s ease-in-out 2.2s infinite;
@@ -217,8 +217,8 @@
     overflow: visible;
 }
 .hero-3d__orbit--a { transform: rotateZ(-8deg) rotateX(76deg); filter: drop-shadow(0 0 6px rgba(255, 60, 70, .9)); }
-.hero-3d__orbit--b { transform: rotateZ(38deg) rotateX(70deg) scale(.9); filter: drop-shadow(0 0 6px rgba(90, 140, 255, .9)); }
-.hero-3d__orbit--c { transform: rotateZ(-48deg) rotateX(68deg) scale(.82); filter: drop-shadow(0 0 6px rgba(255, 170, 40, .9)); }
+.hero-3d__orbit--b { transform: rotateZ(38deg) rotateX(70deg) scale(.9); filter: drop-shadow(0 0 6px rgba(18, 54, 106, .9)); }
+.hero-3d__orbit--c { transform: rotateZ(-48deg) rotateX(68deg) scale(.82); filter: drop-shadow(0 0 6px rgba(237, 9, 32, .6)); }
 
 .hero-3d__ring {
     fill: none;
@@ -248,12 +248,12 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 48%;
+    width: 58%;
     transform-style: preserve-3d;
     transform: translate(-50%, -50%);
     animation:
         h3d-enter 1.5s cubic-bezier(.2, .8, .2, 1) .9s both,
-        h3d-turn 8s ease-in-out 2.4s infinite;
+        h3d-turn 12s ease-in-out 2.4s infinite;
 }
 .hero-3d__face {
     position: relative;
@@ -340,4 +340,30 @@
     .hero-3d__actions { gap: 16px; }
     .hero-3d__btn { width: 100%; justify-content: center; }
     .hero-3d__stage { width: min(280px, 86%); }
+}
+
+/* Keep the brand reveal spacious, legible and controllable. */
+.hero-3d__stage::after {
+    content: ""; position: absolute; inset: auto 18% 3%; height: 8%;
+    background: radial-gradient(ellipse, rgba(0,0,0,.5), transparent 70%);
+    pointer-events: none;
+}
+.hero-3d__motion {
+    position: absolute; right: max(24px, calc((100% - 1180px) / 2)); bottom: 20px;
+    display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px;
+    border: 1px solid rgba(255,255,255,.35); border-radius: 999px;
+    background: rgba(11,23,79,.8); color: #fff; font: 500 .75rem/1.4 var(--font-body, sans-serif);
+    cursor: pointer;
+}
+.hero-3d__motion:hover { background: var(--h3d-navy); border-color: #fff; }
+.hero-3d__motion:focus-visible { outline: 3px solid white; outline-offset: 4px; }
+.hero-3d[data-paused="true"] *, .hero-3d[data-offscreen="true"] * { animation-play-state: paused !important; }
+.hero-3d[data-paused="true"] .hero-3d__scene { transform: none; }
+@media (max-width: 991.98px) {
+    .hero-3d__inner { padding-bottom: 80px; }
+    .hero-3d__visual { margin-top: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hero-3d__motion { display: none; }
+    .hero-3d__scene { transform: none !important; }
 }
