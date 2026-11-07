@@ -25,6 +25,7 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 {% if not category and not q %}
 {# ==== HERO SECTION ==== #}
 {% static 'img/logo-3d.png' as hero_logo %}
+{% static 'img/logo-wire.png' as hero_wire %}
 <section class="hero-3d" aria-labelledby="homeHeroTitle" style="--hero-logo: url('{{ hero_logo }}')">
     <div class="hero-3d__sky" aria-hidden="true"><span class="hero-3d__stars"></span></div>
     <div class="hero-3d__inner">
@@ -45,22 +46,31 @@ professional installation support from Eyetrack Solutions.{% endblock %}
         <div class="hero-3d__visual" aria-hidden="true">
             <div class="hero-3d__stage" id="hero3dStage">
                 <div class="hero-3d__glow"></div>
+                <div class="hero-3d__floor"></div>
                 <div class="hero-3d__scene">
                     <svg class="hero-3d__orbit hero-3d__orbit--a" viewBox="0 0 400 400"><defs><linearGradient id="h3dGa" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ed0920"/><stop offset="1" stop-color="#c7081c"/></linearGradient></defs><circle class="hero-3d__ring" cx="200" cy="200" r="180" stroke="url(#h3dGa)"/><circle class="hero-3d__comet" cx="200" cy="200" r="180"/></svg>
                     <svg class="hero-3d__orbit hero-3d__orbit--b" viewBox="0 0 400 400"><defs><linearGradient id="h3dGb" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#12366a"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs><circle class="hero-3d__ring" cx="200" cy="200" r="180" stroke="url(#h3dGb)"/><circle class="hero-3d__comet" cx="200" cy="200" r="180"/></svg>
                     <svg class="hero-3d__orbit hero-3d__orbit--c" viewBox="0 0 400 400"><defs><linearGradient id="h3dGc" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ed0920"/></linearGradient></defs><circle class="hero-3d__ring" cx="200" cy="200" r="180" stroke="url(#h3dGc)"/><circle class="hero-3d__comet" cx="200" cy="200" r="180"/></svg>
                     <div class="hero-3d__logo">
                         {# stacked copies give the logo real thickness when it turns #}
-                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-14px">
-                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-12px">
-                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-10px">
-                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-8px">
-                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-6px">
-                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-4px">
-                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-2px">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-14px;--i:6">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-12px;--i:5">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-10px;--i:4">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-8px;--i:3">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-6px;--i:2">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-4px;--i:1">
+                        <img src="{{ hero_logo }}" alt="" class="hero-3d__depth" style="--z:-2px;--i:0">
+                        <img src="{{ hero_wire }}" alt="" class="hero-3d__wire" width="482" height="601">
                         <img src="{{ hero_logo }}" alt="" class="hero-3d__face" width="482" height="601" fetchpriority="high">
+                        <span class="hero-3d__scan"></span>
                         <span class="hero-3d__shine"></span>
                     </div>
+                </div>
+                <div class="hero-3d__hud">
+                    <span class="hero-3d__corner hero-3d__corner--tl"></span><span class="hero-3d__corner hero-3d__corner--tr"></span>
+                    <span class="hero-3d__corner hero-3d__corner--bl"></span><span class="hero-3d__corner hero-3d__corner--br"></span>
+                    <div class="hero-3d__hud-bar"><span>Eyetrack &middot; S-01</span><span class="hero-3d__hud-step" id="hero3dStep">Initialising</span><span class="hero-3d__hud-pct" id="hero3dPct">0%</span></div>
+                    <span class="hero-3d__hud-progress"><i></i></span>
                 </div>
             </div>
             <p class="hero-3d__tagline">Secure Living. Smarter Monitoring.</p>
@@ -68,7 +78,7 @@ professional installation support from Eyetrack Solutions.{% endblock %}
     </div>
     <button class="hero-3d__motion" type="button" aria-pressed="false" aria-label="Pause logo animation" hidden><span aria-hidden="true">&#8545;</span> <span class="hero-3d__motion-label">Pause animation</span></button>
 </section>
-<script src="{% static 'js/hero.js' %}?v=5" defer></script>
+<script src="{% static 'js/hero.js' %}?v=6" defer></script>
 
 {# ==== TRUST STRIP ==== #}
 <section class="trust-strip mb-5 reveal">
