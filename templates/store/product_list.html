@@ -14,13 +14,15 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 
 {% block content %}
 
-{# ==== ANNOUNCEMENT BAR ==== #}
+{# ==== ANNOUNCEMENT BAR (category/search pages; the homepage shows it inside the hero) ==== #}
+{% if category or q %}
 <div class="announcement-bar" id="announcementBar" role="alert">
     <span><i class="bi bi-megaphone-fill me-2"></i>Free installation consultation on CCTV orders above &#8377;10,000 &mdash; <a href="{% url 'services_page' %}">Book Now &rarr;</a></span>
     <button class="announcement-close" onclick="dismissAnnouncement()" aria-label="Dismiss">
         <i class="bi bi-x-lg"></i>
     </button>
 </div>
+{% endif %}
 
 {% if not category and not q %}
 {# ==== HERO SECTION ==== #}
@@ -31,6 +33,11 @@ professional installation support from Eyetrack Solutions.{% endblock %}
     <div class="hero-3d__sky" aria-hidden="true"><span class="hero-3d__stars"></span></div>
     <div class="hero-3d__inner">
         <div class="hero-3d__copy">
+            <div class="hero-3d__notice" id="announcementBar" role="status">
+                <i class="bi bi-megaphone-fill" aria-hidden="true"></i>
+                <span>Free installation consultation on CCTV orders above &#8377;10,000 &mdash; <a href="{% url 'services_page' %}">Book Now &rarr;</a></span>
+                <button type="button" class="hero-3d__notice-close" onclick="dismissAnnouncement()" aria-label="Dismiss announcement"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+            </div>
             <p class="hero-3d__kicker">Eyetrack Solutions <span aria-hidden="true">&middot;</span> Enterprise Security Store</p>
             <h1 class="hero-3d__title" id="homeHeroTitle">See everything.<br><span>Protect</span> what matters.</h1>
             <p class="hero-3d__lede">Enterprise-grade CCTV, smart locks and biometric systems for homes and businesses &mdash; with expert installation from survey to setup.</p>

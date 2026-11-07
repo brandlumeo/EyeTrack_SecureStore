@@ -16,6 +16,8 @@
     /* full-bleed: break out of the page container */
     width: 100vw;
     margin-left: calc(50% - 50vw);
+    /* sit flush under the navbar: cancel the page container's top padding (.pt-4) */
+    margin-top: -1.5rem;
     margin-bottom: 2rem;
     min-height: clamp(560px, 80vh, 780px);
     display: flex;
@@ -62,7 +64,53 @@
 .hero-3d__copy > :nth-child(2) { animation-delay: .1s; }
 .hero-3d__copy > :nth-child(3) { animation-delay: .2s; }
 .hero-3d__copy > :nth-child(4) { animation-delay: .3s; }
-.hero-3d__copy > :nth-child(5) { animation-delay: .45s; }
+.hero-3d__copy > :nth-child(5) { animation-delay: .4s; }
+.hero-3d__copy > :nth-child(6) { animation-delay: .5s; }
+
+/* announcement pill at the top of the hero (homepage) */
+.hero-3d__notice {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 100%;
+    margin: 0 0 26px;
+    padding: 7px 8px 7px 14px;
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .07);
+    -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+    font-size: .82rem;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, .88);
+}
+.hero-3d__notice > i { color: #ff6b7a; }
+.hero-3d__notice a {
+    color: #fff !important;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 107, 122, .8);
+    text-underline-offset: 3px;
+    white-space: nowrap;
+}
+.hero-3d__notice a:hover { text-decoration-color: #fff; }
+.hero-3d__notice-close {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .1);
+    color: rgba(255, 255, 255, .8);
+    font-size: .7rem;
+    cursor: pointer;
+    transition: background-color .2s ease, color .2s ease;
+}
+.hero-3d__notice-close:hover { background: rgba(255, 255, 255, .22); color: #fff; }
+.hero-3d__notice-close:focus-visible { outline: 2px solid #ffb3bd; outline-offset: 2px; }
 
 .hero-3d__kicker {
     margin: 0 0 22px;
