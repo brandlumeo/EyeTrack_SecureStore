@@ -189,40 +189,8 @@
 .hero-3d__link:hover i { transform: translateX(4px); }
 
 .hero-3d__btn:focus-visible,
-.hero-3d__link:focus-visible,
-.hero-3d__scroll:focus-visible { outline: 3px solid #ffb3bd; outline-offset: 4px; }
+.hero-3d__link:focus-visible { outline: 3px solid #ffb3bd; outline-offset: 4px; }
 
-.hero-3d__scroll {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-top: clamp(40px, 6vw, 72px);
-    color: rgba(255, 255, 255, .7) !important;
-    font-size: .72rem;
-    font-weight: 600;
-    letter-spacing: .22em;
-    text-transform: uppercase;
-    text-decoration: none;
-}
-.hero-3d__mouse {
-    position: relative;
-    width: 22px;
-    height: 34px;
-    border: 2px solid rgba(255, 255, 255, .7);
-    border-radius: 12px;
-}
-.hero-3d__mouse span {
-    position: absolute;
-    left: 50%;
-    top: 6px;
-    width: 4px;
-    height: 7px;
-    margin-left: -2px;
-    border-radius: 2px;
-    background: #fff;
-    animation: h3d-wheel 1.8s ease-in-out infinite;
-}
 
 /* ---------- Visual: 3D logo stage ---------- */
 .hero-3d__visual {
@@ -363,7 +331,6 @@
 @keyframes h3d-focus { from { filter: blur(14px) brightness(1.8); } to { filter: none; } }
 @keyframes h3d-shine { 0% { background-position: 160% 0; } 45%, 100% { background-position: -60% 0; } }
 @keyframes h3d-twinkle { 0%, 100% { opacity: 0; } 50% { opacity: .9; } }
-@keyframes h3d-wheel { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(12px); } }
 
 @media (prefers-reduced-motion: reduce) {
     .hero-3d *, .hero-3d *::before, .hero-3d *::after { animation: none !important; transition: none !important; }
@@ -377,7 +344,6 @@
     .hero-3d { min-height: 0; }
     .hero-3d__inner { grid-template-columns: 1fr; gap: 8px; padding-block: 48px 40px; }
     .hero-3d__stage { width: min(340px, 82%); }
-    .hero-3d__scroll { display: none; }
 }
 
 @media (max-width: 575.98px) {
@@ -390,29 +356,18 @@
     .hero-3d__stage { width: min(280px, 86%); }
 }
 
-/* Keep the brand reveal spacious, legible and controllable. */
+/* Soft contact shadow under the model. */
 .hero-3d__stage::after {
     content: ""; position: absolute; inset: auto 18% 3%; height: 8%;
     background: radial-gradient(ellipse, rgba(0,0,0,.5), transparent 70%);
     pointer-events: none;
 }
-.hero-3d__motion {
-    position: absolute; right: max(24px, calc((100% - 1180px) / 2)); bottom: 20px;
-    display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px;
-    border: 1px solid rgba(255,255,255,.35); border-radius: 999px;
-    background: rgba(11,23,79,.8); color: #fff; font: 500 .75rem/1.4 var(--font-body, sans-serif);
-    cursor: pointer;
-}
-.hero-3d__motion:hover { background: var(--h3d-navy); border-color: #fff; }
-.hero-3d__motion:focus-visible { outline: 3px solid white; outline-offset: 4px; }
-.hero-3d[data-paused="true"] *, .hero-3d[data-offscreen="true"] * { animation-play-state: paused !important; }
-.hero-3d[data-paused="true"] .hero-3d__scene { transform: none; }
+/* Animations rest while the hero is scrolled out of view (set by hero.js). */
+.hero-3d[data-offscreen="true"] * { animation-play-state: paused !important; }
 @media (max-width: 991.98px) {
-    .hero-3d__inner { padding-bottom: 80px; }
     .hero-3d__visual { margin-top: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
-    .hero-3d__motion { display: none; }
     .hero-3d__scene { transform: none !important; }
 }
 

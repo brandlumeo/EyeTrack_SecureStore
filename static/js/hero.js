@@ -3,8 +3,6 @@
     if (!stage) return;
     const hero = stage.closest('.hero-3d');
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const button = hero.querySelector('.hero-3d__motion');
-    let paused = false;
     let frame = 0;
     // Model build: wireframe -> extrude -> materials -> render (timed in hero.css).
     const face = hero.querySelector('.hero-3d__face');
@@ -29,11 +27,12 @@
         if (gaveUp || motion.matches || hero.classList.contains('hero-3d--build')) return reveal();
         hero.classList.add('hero-3d--build');
         reveal();
-        // The HUD clock only advances while the CSS animations are running.
+        // The HUD clock only advances while the CSS animations are running
+        // (they rest while the hero is off-screen).
         let elapsed = 0;
         let last = performance.now();
         const tick = (now) => {
-            const running = !paused && hero.dataset.offscreen !== 'true';
+            const running = hero.dataset.offscreen !== 'true';
             if (running) elapsed += (now - last) / 1000;
             last = now;
             const t = Math.min(elapsed, BUILD_SECONDS);
@@ -50,22 +49,13 @@
     const whenReady = () => { if (loaded(face) && loaded(wire)) startBuild(); };
     [face, wire].forEach((img) => img && !loaded(img) && img.addEventListener('load', whenReady, { once: true }));
     whenReady();
-    button.hidden = false;
-    button.addEventListener('click', () => {
-        paused = !paused;
-        hero.dataset.paused = String(paused);
-        button.setAttribute('aria-pressed', String(paused));
-        button.setAttribute('aria-label', `${paused ? 'Resume' : 'Pause'} logo animation`);
-        button.querySelector('.hero-3d__motion-label').textContent = `${paused ? 'Resume' : 'Pause'} animation`;
-        button.firstElementChild.textContent = paused ? '▷' : 'Ⅱ';
-    });
     const reset = () => {
         cancelAnimationFrame(frame);
         stage.style.setProperty('--tilt-x', '0deg');
         stage.style.setProperty('--tilt-y', '0deg');
     };
     hero.addEventListener('pointermove', (event) => {
-        if (paused || motion.matches || event.pointerType !== 'mouse') return;
+        if (motion.matches || event.pointerType !== 'mouse') return;
         cancelAnimationFrame(frame);
         frame = requestAnimationFrame(() => {
             const rect = stage.getBoundingClientRect();
