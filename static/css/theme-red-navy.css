@@ -1009,3 +1009,92 @@ body .product-card .btn-premium-cta.btn-sm:disabled { background: #c3cbd8 !impor
     body .product-card, body .product-card .product-image, body .product-card::before { transition: none !important; }
     body .product-card:hover, body .product-card:hover .product-image { transform: none !important; }
 }
+
+/* =====================================================================
+   Light-theme readability fixes
+   Several components still carried colours from the old dark theme
+   (white / near-white text) while the red & navy theme gave them white
+   backgrounds, which made their text invisible. Found with a contrast
+   audit of every page, logged out and logged in.
+   ===================================================================== */
+
+/* Notification drawer (bell icon after login) */
+body .premium-drawer.offcanvas { color: var(--navy) !important; }
+body .premium-drawer .offcanvas-title,
+body #notificationDrawerLabel { color: var(--navy) !important; }
+body .premium-drawer .offcanvas-header { border-bottom-color: var(--stroke) !important; }
+body .premium-drawer .text-secondary { color: #5b6685 !important; }
+body .premium-drawer a { color: var(--red); }
+body .premium-drawer a:hover { color: var(--red-hover); }
+body .premium-drawer #markAllReadBtn { color: var(--navy) !important; border-color: #cfd6e4 !important; }
+body .premium-drawer #markAllReadBtn:hover { background: var(--navy) !important; color: #fff !important; }
+
+/* Add / edit address form */
+body .af-page-subtitle { color: #5b6685 !important; }
+body .af-label { color: #34405e !important; }
+body .af-optional { color: #6b7590 !important; }
+body .af-default-row label { color: var(--navy) !important; }
+body .af-default-row small { color: #5b6685 !important; }
+body .af-default-row:hover { border-color: #cfd6e4 !important; }
+body .af-default-row input[type="checkbox"] { accent-color: var(--red); }
+body .af-type-chip {
+    color: #34405e !important;
+    background: #f4f7fb !important;
+    border-color: #d6dce8 !important;
+}
+body .af-type-chip:hover { color: var(--navy) !important; border-color: var(--navy) !important; }
+body .af-type-chip.active {
+    color: var(--red) !important;
+    background: #fff1f2 !important;
+    border-color: var(--red) !important;
+}
+body .af-location-btn { color: var(--red) !important; border-color: var(--red) !important; }
+body .af-location-btn:hover { background: #fff1f2 !important; }
+
+/* Cart page trust cards */
+body .cart-trust-body h6 { color: var(--navy) !important; }
+body .cart-trust-body p { color: #5b6685 !important; }
+
+/* Support page */
+body .info-note {
+    color: #7a3d00 !important;
+    background: #fff4e8 !important;
+    border-color: #f6d2ad !important;
+}
+body .support-flow .timeline-item > span {
+    color: var(--red) !important;
+    background: #fff1f2 !important;
+    border-color: #f6c2c8 !important;
+}
+body .premium-table thead th {
+    color: var(--navy) !important;
+    background: #eef2f8 !important;
+}
+
+/* Disabled (out-of-stock) "Add" buttons keep a readable label */
+body .btn-premium-cta:disabled,
+body .btn-premium-cta.disabled {
+    color: #4a5672 !important;
+    background: #e3e8f0 !important;
+    border-color: #d3dae6 !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
+/* Out-of-stock product-card "Add" button: readable label on the grey */
+body .product-card .btn-premium-cta.btn-sm:disabled,
+body .product-card .btn-premium-cta.btn-sm.disabled { color: #4a5672 !important; background: #e3e8f0 !important; }
+
+/* Mobile shop panel: its dark header lost its white title to the generic
+   [class$="-title"] navy rule */
+body .mob-shop-header-title { color: #fff !important; }
+
+/* Mobile search panel (still on the old gold palette) */
+body .mob-chip { color: var(--navy) !important; }
+body .mob-chip:hover, body .mob-chip:active { color: var(--red) !important; border-color: var(--red) !important; }
+body .mob-search-cancel, body #mobSearchCancel { color: var(--red) !important; }
+body .mob-search-section-label { color: #5b6685 !important; }
+
+/* WhatsApp / success buttons: deeper green so white labels stay legible */
+body .btn-success { background: #128c4a !important; border-color: #128c4a !important; color: #fff !important; }
+body .btn-success:hover { background: #0e7a40 !important; border-color: #0e7a40 !important; }

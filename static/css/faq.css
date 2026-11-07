@@ -310,7 +310,7 @@ body .fq .fq-section__title { margin: 0; font-size: clamp(1.3rem, 2vw, 1.6rem); 
     flex: none;
     font: 700 .78rem/1 var(--font-specs, var(--font-body));
     letter-spacing: .04em;
-    color: #9aa3ba;
+    color: #6b7590;
     transition: color .2s ease;
 }
 .fq-item[open] .fq-item__n { color: var(--fq-red); }
