@@ -388,7 +388,8 @@
     width: 100%;
     height: auto;
     transform: translateZ(1.5px);
-    filter: drop-shadow(0 0 3px rgba(255, 90, 105, .65));
+    /* the wireframe asset is crisp white lines; the red halo is added here */
+    filter: drop-shadow(0 0 1.5px rgba(255, 110, 125, .95)) drop-shadow(0 0 6px rgba(237, 9, 32, .7));
 }
 .hero-3d__scan {
     position: absolute;

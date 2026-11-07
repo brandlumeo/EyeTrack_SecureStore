@@ -24,7 +24,7 @@
     let gaveUp = false;
     setTimeout(() => {
         if (!hero.classList.contains('hero-3d--build')) { gaveUp = true; reveal(); }
-    }, 5000);
+    }, 8000);
     const startBuild = () => {
         if (gaveUp || motion.matches || hero.classList.contains('hero-3d--build')) return reveal();
         hero.classList.add('hero-3d--build');
