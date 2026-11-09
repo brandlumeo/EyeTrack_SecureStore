@@ -318,9 +318,10 @@ def dashboard(request):
     )['total'] or Decimal('0.00')
     
     # Last 30 days revenue
-    revenue_30_days = Order.objects.filter(
+    order_activity_30_days = Order.objects.filter(
         created_at__date__gte=last_30_days
-    ).aggregate(total=Sum('total'))['total'] or Decimal('0.00')
+    ).aggregate(total=Sum('total'), count=Count('id'))
+    revenue_30_days = order_activity_30_days['total'] or Decimal('0.00')
     
     # Last 7 days revenue
     revenue_7_days = Order.objects.filter(
@@ -440,6 +441,10 @@ def dashboard(request):
         
         # Overview Statistics
         'total_orders': total_orders,
+        'orders_30_days': order_activity_30_days['count'],
+        'total_installations': total_installations,
+        'pending_installations': pending_installations,
+        'active_installations': active_installations,
         'total_products': total_products,
         'total_users': total_users,
         'total_categories': total_categories,

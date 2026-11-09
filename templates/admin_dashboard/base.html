@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block title %}{{ page_title }} | Admin Dashboard{% endblock %}
+{% block body_class %}admin-workspace{% endblock %}
 
 {% block extra_head %}
 
@@ -41,7 +42,7 @@
     h6,
     .admin-title,
     .stats-number {
-        font-family:var(--font-heading);
+        font-family: var(--font-heading);
     }
 
     .admin-dashboard {
@@ -124,7 +125,7 @@
         font-weight: 800;
     }
     .sidebar-brand-name {
-        font-family:var(--font-heading);
+        font-family: var(--font-heading);
         font-weight: 700;
         font-size: 0.92rem;
         color: var(--text-primary);
@@ -564,14 +565,150 @@
             font-size: 1.75rem;
         }
     }
+    /* Admin workspace palette and shared component treatment. */
+    body.admin-workspace {
+        --bg-dark: #f3f6fa;
+        --card-glass: #fff;
+        --card-strong: #fff;
+        --text-primary: #172c48;
+        --text-secondary: #4b5f79;
+        --border-subtle: #dce5ef;
+        --accent-gold: #2457a6;
+        --border-gold: #b9cbea;
+        --text: var(--text-primary);
+        --text-soft: var(--text-secondary);
+        --text-faint: var(--text-secondary);
+        --stroke-soft: var(--border-subtle);
+        color-scheme: light;
+        padding-bottom: 0;
+    }
+
+    .admin-workspace :is(.topbar-shell, #siteHeader, .floating-buttons, .premium-tools-dock, .scroll-progress),
+    .admin-workspace .admin-dashboard::before,
+    .admin-workspace .admin-dashboard::after {
+        display: none !important;
+    }
+
+    .admin-workspace .main-shell > .container {
+        max-width: 1550px;
+        padding-inline: clamp(1rem, 3vw, 2.5rem);
+    }
+
+    .admin-workspace-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem 1.25rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.25rem;
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--border-subtle);
+        border-radius: 0.875rem;
+        background: #fff;
+    }
+
+    .admin-workspace-bar a { color: var(--text-primary); }
+    .admin-workspace-brand img { width: 2rem; height: 2rem; object-fit: contain; }
+    .admin-workspace .admin-content { min-width: 0; padding: 0 0 1rem; background: transparent; }
+    .admin-workspace .admin-sidebar { min-height: 0; top: 1rem; }
+
+    .admin-workspace :is(.admin-sidebar, .admin-header, .chart-container, .stats-card) {
+        background: #fff;
+        border: 1px solid var(--border-subtle);
+        border-radius: 0.875rem;
+        box-shadow: 0 3px 12px rgb(20 45 79 / 6%);
+        backdrop-filter: none;
+    }
+
+    .admin-workspace :is(.stats-card, .chart-container, .admin-header)::before,
+    .admin-workspace .stats-card::after { display: none; }
+
+    .admin-workspace .admin-title,
+    .admin-workspace .stats-number {
+        background: none;
+        color: var(--text-primary);
+        -webkit-text-fill-color: currentColor;
+        text-shadow: none;
+    }
+
+    .admin-workspace .dashboard-overview-header .admin-title { color: #fff; }
+    .admin-workspace .sidebar-avatar { background: #18365e; color: #fff; box-shadow: none; }
+    .admin-workspace .sidebar-role-badge { background: #edf3fd; color: #2457a6; border-color: #cfddf4; }
+    .admin-workspace .admin-nav-link { color: var(--text-secondary); }
+    .admin-workspace .admin-nav-link:is(:hover, .active) {
+        background: #edf3fd;
+        border-color: #cfddf4;
+        color: #183f7a;
+        box-shadow: none;
+    }
+    .admin-workspace .admin-nav-link.active::before { background: #2457a6; }
+
+    .admin-workspace .admin-content :is(.form-control, .form-select) {
+        background-color: #fff !important;
+        border-color: #b8c8db;
+        color: var(--text-primary) !important;
+    }
+    .admin-workspace .form-control::placeholder { color: #5e7089; }
+    .admin-workspace .admin-content :is(.form-control, .form-select):focus {
+        border-color: #2457a6;
+        box-shadow: 0 0 0 3px #2457a622;
+    }
+    .admin-workspace .admin-content .bg-dark-soft { background-color: #eef3f9 !important; }
+    .admin-workspace .admin-content :is(.text-secondary, .text-muted, .text-light-50, .text-light-70) {
+        color: var(--text-secondary) !important;
+    }
+    .admin-workspace .admin-content :is(.text-white, .text-light):not(.badge, .btn, .alert, .bg-dark, .bg-primary, .bg-success, .bg-danger, .bg-info) {
+        color: var(--text-primary) !important;
+    }
+
+    .admin-workspace .table-admin {
+        --bs-table-color: #172c48;
+        --bs-table-bg: #fff;
+        --bs-table-striped-color: #172c48;
+        --bs-table-striped-bg: #f7f9fc;
+        --bs-table-hover-color: #172c48;
+        --bs-table-hover-bg: #eef4fc;
+        --bs-table-border-color: #dce5ef;
+    }
+    .admin-workspace .table-admin th { background: #edf2f8; color: #405571; }
+    .admin-workspace .table-admin :is(th, td) { padding: 0.8rem; }
+    .admin-workspace .table-admin tbody tr:hover td { background: #eef4fc !important; color: #172c48; }
+    .admin-workspace .table-admin tbody tr:hover { box-shadow: none; }
+    .admin-workspace .btn-outline-light { color: #183f7a; background: #fff; border-color: #b8c8db; }
+    .admin-workspace .btn-outline-light:hover { color: #183f7a; background: #edf3fd; border-color: #91afd8; }
+    .admin-workspace .pagination .page-link { background: #fff; color: #183f7a; border-color: #dce5ef; }
+    .admin-workspace .pagination .active > .page-link { background: #2457a6; color: #fff; border-color: #2457a6; }
+    .admin-workspace :is(a, button):focus-visible { outline: 2px solid #2457a6; outline-offset: 3px; }
+
+    @media (max-width: 767.98px) {
+        .admin-workspace .admin-sidebar { position: static; max-height: 55vh; }
+        .admin-workspace :is(.chart-container, .admin-header) { padding: 1rem; }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid admin-dashboard mt-3">
-    <div class="row px-lg-3 g-0">
+<div class="admin-dashboard">
+    <div class="admin-workspace-bar">
+        <a class="admin-workspace-brand d-flex align-items-center gap-2 fw-bold" href="{% url 'admin_dashboard:dashboard' %}">
+            <img src="{% static 'img/company-logo.png' %}" alt="">
+            <span>EyeTrack Admin</span>
+        </a>
+        <div class="d-flex align-items-center flex-wrap gap-2">
+            <button type="button" class="btn btn-outline-light btn-sm d-md-none" data-bs-toggle="collapse"
+                data-bs-target="#adminNavigation" aria-controls="adminNavigation" aria-expanded="false">
+                <i class="bi bi-list me-1" aria-hidden="true"></i> Menu
+            </button>
+            <a href="{% url 'product_list' %}" class="btn btn-outline-light btn-sm">Storefront</a>
+            <form action="{% url 'logout' %}" method="post" class="m-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+            </form>
+        </div>
+    </div>
+    <div class="row g-3 g-xl-4">
         <!-- Sidebar -->
-        <div class="col-xl-2 col-lg-3 col-md-4 mb-4">
+        <div class="col-xl-2 col-lg-3 col-md-4 collapse d-md-block" id="adminNavigation">
             <div class="admin-sidebar">
                 <!-- Identity Header -->
                 <div class="sidebar-identity">
