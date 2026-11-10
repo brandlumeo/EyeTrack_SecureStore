@@ -2,30 +2,21 @@
 {% load static %}
 {% block title %}Compare Products | Eyetrack Solutions{% endblock %}
 {% block meta_robots %}noindex, follow{% endblock %}
-{% block extra_head %}<link rel="stylesheet" href="{% static 'css/compare.css' %}?v=1">{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/compare.css' %}?v=2">{% endblock %}
 {% block content %}
 <div class="cmp-page mobile-actionbar-space">
-    <section class="cmp-hero" aria-labelledby="compare-title">
-        <div>
-            <p class="cmp-kicker">Compare</p>
-            <h1 id="compare-title">Compare products side by side</h1>
-            <p class="cmp-lede">Check specs, price and stock across up to four products before you buy.</p>
+    <div class="cmp-head compare-toolbar">
+        <h1 id="compare-title">Product Compare</h1>
+        <div class="cmp-tools">
+            <span class="cmp-count" aria-live="polite"><strong id="comparePageCount">0</strong> of 4 selected</span>
+            <button type="button" class="btn cmp-tool" id="compareShareBtn" data-compare-share><i class="bi bi-share" aria-hidden="true"></i> Share</button>
+            <button type="button" class="btn cmp-tool" id="compareExportBtn" data-compare-export><i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> PDF</button>
+            <button type="button" class="btn cmp-tool cmp-tool-danger" id="comparePageClearBtn" data-compare-clear><i class="bi bi-trash3" aria-hidden="true"></i> Clear</button>
         </div>
-        <div class="cmp-count" aria-live="polite"><strong id="comparePageCount">0</strong><span>of 4 selected</span></div>
-    </section>
+    </div>
 
-    <section class="cmp-panel" aria-label="Comparison table">
-        <div class="cmp-toolbar compare-toolbar">
-            <a href="{% url 'product_list' %}" class="cmp-back"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to shop</a>
-            <div class="cmp-tools">
-                <button type="button" class="btn cmp-tool" id="compareShareBtn" data-compare-share><i class="bi bi-share" aria-hidden="true"></i> Share</button>
-                <button type="button" class="btn cmp-tool" id="compareExportBtn" data-compare-export><i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> Export PDF</button>
-                <button type="button" class="btn cmp-tool cmp-tool-danger" id="comparePageClearBtn" data-compare-clear><i class="bi bi-trash3" aria-hidden="true"></i> Clear</button>
-            </div>
-        </div>
-
+    <section class="cmp-panel" aria-labelledby="compare-title">
         <p class="cmp-note" id="compareCategoryNote" style="display: none;"></p>
-
         <div class="compare-grid-shell compare-print-shell" id="comparePageTable">
             <div id="comparePageBody" class="compare-grid-body"></div>
         </div>

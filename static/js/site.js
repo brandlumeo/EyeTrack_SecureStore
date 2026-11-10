@@ -1169,15 +1169,15 @@
                 return `
                     <td class="compare-data-cell">
                         <div class="compare-product-header">
-                            ${image}
+                            <button type="button" class="compare-remove-product compare-remove-page-btn" data-id="${item.id}" aria-label="Remove ${item.name || 'product'} from compare">Remove <i class="bi bi-x-lg" aria-hidden="true"></i></button>
+                            <div class="compare-product-media">
+                                ${image}
+                                <div class="compare-product-badges">${bestPriceBadge}${bestStockBadge}</div>
+                            </div>
                             <h6 class="compare-product-name">${item.name || '-'}</h6>
                             <p class="compare-product-price">${item.price ? `₹${item.price}` : '-'}</p>
-                            <div class="d-flex gap-2 flex-wrap justify-content-center mb-2">
-                                ${bestPriceBadge}${bestStockBadge}
-                            </div>
                             <div class="compare-product-actions">
-                                <a class="btn btn-sm compare-view-product d-inline-flex align-items-center justify-content-center gap-1" href="${item.url || item.product_url || '#'}"><i class="bi bi-eye"></i>View</a>
-                                <button class="btn btn-sm compare-remove-product d-inline-flex align-items-center justify-content-center gap-1 compare-remove-page-btn" data-id="${item.id}"><i class="bi bi-trash3"></i>Remove</button>
+                                <a class="btn compare-view-product" href="${item.url || item.product_url || '#'}">View Details</a>
                             </div>
                         </div>
                     </td>
@@ -1350,13 +1350,13 @@
 
             const rows = [
                 {
-                    label: 'Product',
+                    label: '',
                     value: productCells,
-                    className: ''
+                    className: 'compare-products-row'
                 },
                 {
                     label: 'Category',
-                    value: liveItems.map((item) => `<td class="compare-data-cell">${item.category || '-'}</td>`).join(''),
+                    value: liveItems.map((item) => `<td class="compare-data-cell">${item.category ? `<span class="compare-pill">${item.category}</span>` : '-'}</td>`).join(''),
                     className: ''
                 },
                 ...specRows,
@@ -1367,9 +1367,21 @@
                 },
             ];
 
+            const specIcons = {
+                'Category': 'folder2', 'Camera Type': 'camera-video', 'Resolution': 'badge-hd', 'Camera Resolution': 'badge-hd',
+                'Night Vision Range': 'moon-stars', 'Night Vision': 'moon-stars', 'Field of View': 'arrows-angle-expand',
+                'Lens': 'record-circle', 'Frame Rate': 'speedometer2', 'Weatherproof': 'cloud-drizzle',
+                'Connectivity': 'wifi', 'Connectivity Type': 'wifi', 'Power Source': 'plug', 'Storage Support': 'device-hdd',
+                'Audio Support': 'mic', 'Audio Communication': 'mic', 'AI Detection': 'cpu', 'Warranty': 'shield-check',
+                'Screen Size': 'display', 'Unlock Method': 'unlock', 'Mobile App Support': 'phone',
+                'Installation Type': 'tools', 'Description': 'card-text',
+            };
+            const labelHtml = (label) => (label
+                ? `<i class="bi bi-${specIcons[label] || 'dot'}" aria-hidden="true"></i><span>${label}</span>`
+                : '');
             tbody.innerHTML = rows.map((row) => `
                 <div class="compare-grid-row ${row.className}" style="grid-template-columns: ${compareGridTemplate};">
-                    <div class="compare-attribute-name">${row.label}</div>
+                    <div class="compare-attribute-name">${labelHtml(row.label)}</div>
                     ${row.value}
                 </div>
             `).join('')
