@@ -71,6 +71,8 @@ urlpatterns = [
 
     # FAQ Management
     path('leads/', views.quote_requests_overview, name='quote_requests'),
+    path('service-requests/', views.tickets_overview, name='tickets_overview'),
+    path('service-requests/<int:ticket_id>/', views.ticket_manage, name='ticket_manage'),
     path('projects/', views.projects_overview, name='projects_overview'),
     path('projects/add/', views.project_edit, name='project_add'),
     path('projects/edit/<int:project_id>/', views.project_edit, name='project_edit'),

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 class FAQCategory(models.Model):
@@ -83,3 +84,85 @@ class QuoteRequest(models.Model):
         if len(digits) == 10:
             digits = "91" + digits
         return digits
+
+
+class ServiceTicket(models.Model):
+    """An after-sales service request raised by a customer from their account."""
+
+    class Category(models.TextChoices):
+        CAMERA_OFFLINE = "camera_offline", "Camera offline / no picture"
+        RECORDING = "recording", "Recording or playback problem"
+        MOBILE_VIEW = "mobile_view", "Mobile app / remote viewing"
+        NIGHT_VISION = "night_vision", "Night vision or image quality"
+        DAMAGE = "damage", "Physical damage or cabling"
+        ACCESS_CONTROL = "access_control", "Smart lock / biometric / door phone"
+        INSTALLATION = "installation", "Installation follow-up"
+        OTHER = "other", "Something else"
+
+    class Status(models.TextChoices):
+        OPEN = "open", "Open"
+        IN_PROGRESS = "in_progress", "In progress"
+        WAITING_CUSTOMER = "waiting_customer", "Waiting for your reply"
+        VISIT_SCHEDULED = "visit_scheduled", "Technician visit scheduled"
+        RESOLVED = "resolved", "Resolved"
+        CLOSED = "closed", "Closed"
+
+    class Priority(models.TextChoices):
+        NORMAL = "normal", "Normal"
+        URGENT = "urgent", "Urgent"
+
+    OPEN_STATUSES = (Status.OPEN, Status.IN_PROGRESS, Status.WAITING_CUSTOMER, Status.VISIT_SCHEDULED)
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="service_tickets")
+    order = models.ForeignKey("orders.Order", on_delete=models.SET_NULL, null=True, blank=True, related_name="service_tickets")
+    category = models.CharField(max_length=30, choices=Category.choices, default=Category.CAMERA_OFFLINE)
+    subject = models.CharField(max_length=150)
+    description = models.TextField()
+    contact_phone = models.CharField(max_length=20)
+    site_location = models.CharField(max_length=200, blank=True, help_text="Area / city where the equipment is installed")
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.OPEN)
+    priority = models.CharField(max_length=10, choices=Priority.choices, default=Priority.NORMAL)
+    assigned_technician = models.ForeignKey("orders.Technician", on_delete=models.SET_NULL, null=True, blank=True,
+                                            related_name="service_tickets")
+    visit_date = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    closed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        return "%s - %s" % (self.reference, self.subject)
+
+    @property
+    def reference(self):
+        return "SR-%05d" % self.pk if self.pk else "SR-new"
+
+    @property
+    def is_open(self):
+        return self.status in self.OPEN_STATUSES
+
+
+class TicketMessage(models.Model):
+    ticket = models.ForeignKey(ServiceTicket, on_delete=models.CASCADE, related_name="messages")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="ticket_messages")
+    from_staff = models.BooleanField(default=False)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at", "id"]
+
+    def __str__(self):
+        return "Message on %s" % self.ticket.reference
+
+
+class TicketAttachment(models.Model):
+    ticket = models.ForeignKey(ServiceTicket, on_delete=models.CASCADE, related_name="attachments")
+    message = models.ForeignKey(TicketMessage, on_delete=models.CASCADE, null=True, blank=True, related_name="attachments")
+    image = models.ImageField(upload_to="service_tickets/%Y/%m/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["uploaded_at", "id"]

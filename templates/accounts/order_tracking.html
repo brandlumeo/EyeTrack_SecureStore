@@ -537,8 +537,9 @@
                         
                         <section class="glass-card order-track-panel p-4 border border-secondary border-opacity-25" style="background: rgba(245, 158, 11, 0.03);">
                             <h2 class="h6 text-white mb-2"><i class="bi bi-headset text-accent me-2"></i>Need Help?</h2>
-                            <p class="text-secondary small mb-3">Use your order number when speaking with support.</p>
-                            <a href="mailto:info@etsgrp.in" class="btn btn-premium-cta w-100 btn-sm">Contact Support</a>
+                            <p class="text-secondary small mb-3">Something not working? Raise a service request for this order and track our reply here.</p>
+                            <a href="{% url 'ticket_create' %}?order={{ tracked_order.pk }}" class="btn btn-premium-cta w-100 btn-sm mb-2">Raise a service request</a>
+                            <a href="mailto:info@etsgrp.in" class="btn btn-outline-light w-100 btn-sm">Email support</a>
                         </section>
                     </div>
                 </section>

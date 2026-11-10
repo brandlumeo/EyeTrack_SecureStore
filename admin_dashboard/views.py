@@ -19,7 +19,7 @@ from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
 import decimal
 
-from orders.models import Order, OrderItem, Payment, Shipment, DeliveryAgent, DeliveryAssignment, InstallationBooking, InstallationPhoto, Invoice, ReturnRequest
+from orders.models import Order, OrderItem, Payment, Shipment, DeliveryAgent, DeliveryAssignment, InstallationBooking, InstallationPhoto, Invoice, ReturnRequest, Technician
 from orders.utils import render_to_pdf
 from store.models import Product, Category, Coupon, Review, ServiceableArea, ReviewMedia
 from accounts.models import Profile, Address, Notification
@@ -1606,6 +1606,106 @@ def quote_request_update(request, lead_id):
     lead.save(update_fields=['status', 'admin_notes', 'updated_at'])
     messages.success(request, f'Lead "{lead.name}" updated.')
     return redirect(request.META.get('HTTP_REFERER') or 'admin_dashboard:quote_requests')
+
+
+@login_required
+@user_passes_test(is_admin)
+def tickets_overview(request):
+    """After-sales service requests raised by customers."""
+    from support.models import ServiceTicket
+    search = request.GET.get('search', '').strip()
+    status = request.GET.get('status', 'active')
+    priority = request.GET.get('priority', '')
+    qs = ServiceTicket.objects.select_related('user', 'order', 'assigned_technician')
+    if status == 'active':
+        qs = qs.filter(status__in=ServiceTicket.OPEN_STATUSES)
+    elif status in ServiceTicket.Status.values:
+        qs = qs.filter(status=status)
+    if priority in ServiceTicket.Priority.values:
+        qs = qs.filter(priority=priority)
+    if search:
+        query = Q(subject__icontains=search) | Q(user__email__icontains=search) | Q(user__first_name__icontains=search) | Q(contact_phone__icontains=search)
+        if search.upper().startswith('SR-') and search[3:].isdigit():
+            query |= Q(pk=int(search[3:]))
+        qs = qs.filter(query)
+    qs = qs.order_by('-priority', '-updated_at')  # 'urgent' sorts before 'normal'
+    page_obj = Paginator(qs, 25).get_page(request.GET.get('page'))
+    counts = dict(ServiceTicket.objects.values_list('status').annotate(n=Count('id')))
+    return render(request, 'admin_dashboard/tickets_overview.html', {
+        'page_title': 'Service Requests',
+        'tickets': page_obj,
+        'page_obj': page_obj,
+        'search_query': search,
+        'status_filter': status,
+        'priority_filter': priority,
+        'status_choices': ServiceTicket.Status.choices,
+        'priority_choices': ServiceTicket.Priority.choices,
+        'active_count': sum(counts.get(s, 0) for s in ServiceTicket.OPEN_STATUSES),
+        'waiting_count': counts.get(ServiceTicket.Status.OPEN, 0),
+        'urgent_count': ServiceTicket.objects.filter(priority=ServiceTicket.Priority.URGENT, status__in=ServiceTicket.OPEN_STATUSES).count(),
+    })
+
+
+@login_required
+@user_passes_test(is_admin)
+def ticket_manage(request, ticket_id):
+    """Conversation, reply and status/assignment updates for one service request."""
+    from support.models import ServiceTicket
+    from support.tickets import notify_customer, save_photos, validate_photos
+    ticket = get_object_or_404(
+        ServiceTicket.objects.select_related('user', 'order', 'assigned_technician').prefetch_related('messages__author', 'attachments'),
+        pk=ticket_id,
+    )
+    if request.method == 'POST':
+        body = request.POST.get('body', '').strip()[:5000]
+        old_status = ticket.status
+        new_status = request.POST.get('status', ticket.status)
+        if new_status in ServiceTicket.Status.values:
+            ticket.status = new_status
+        if request.POST.get('priority') in ServiceTicket.Priority.values:
+            ticket.priority = request.POST['priority']
+        tech_id = request.POST.get('assigned_technician', '')
+        ticket.assigned_technician = Technician.objects.filter(pk=tech_id, is_active=True).first() if tech_id.isdigit() else None
+        visit = request.POST.get('visit_date', '').strip()
+        try:
+            ticket.visit_date = date.fromisoformat(visit) if visit else None
+        except ValueError:
+            messages.warning(request, 'Visit date was not understood and was left unchanged.')
+        if ticket.status == ServiceTicket.Status.CLOSED and old_status != ServiceTicket.Status.CLOSED:
+            ticket.closed_at = timezone.now()
+        elif ticket.status != ServiceTicket.Status.CLOSED:
+            ticket.closed_at = None
+        ticket.save()
+
+        photos, photo_errors = validate_photos(request.FILES.getlist('photos'))
+        if body or photos:
+            message = ticket.messages.create(author=request.user, from_staff=True, body=body or '(photo attached)')
+            save_photos(ticket, photos, message=message)
+        for error in photo_errors:
+            messages.warning(request, 'Photo skipped: %s' % error)
+
+        status_changed = ticket.status != old_status
+        if body or status_changed:
+            parts = []
+            if body:
+                parts.append('Our support team replied: "%s"' % (body[:160] + ('...' if len(body) > 160 else '')))
+            if status_changed:
+                parts.append('Status: %s.' % ticket.get_status_display())
+            if ticket.status == ServiceTicket.Status.VISIT_SCHEDULED and ticket.visit_date:
+                parts.append('Visit date: %s.' % ticket.visit_date.strftime('%a, %d %b %Y'))
+            notify_customer(ticket, 'Update on your service request', ' '.join(parts), request)
+        messages.success(request, '%s updated.' % ticket.reference)
+        return redirect('admin_dashboard:ticket_manage', ticket_id=ticket.pk)
+
+    return render(request, 'admin_dashboard/ticket_manage.html', {
+        'page_title': ticket.reference,
+        'ticket': ticket,
+        'intro_photos': [a for a in ticket.attachments.all() if a.message_id is None],
+        'status_choices': ServiceTicket.Status.choices,
+        'priority_choices': ServiceTicket.Priority.choices,
+        'technicians': Technician.objects.filter(is_active=True).order_by('name'),
+        'customer_orders': ticket.user.orders.order_by('-created_at')[:5],
+    })
 
 
 @login_required

@@ -10,7 +10,8 @@
             <h1 class="display-title mb-3">Need help with setup, order, warranty, or monitoring?</h1>
             <p class="lead-copy mb-3">Our technical support team helps with CCTV onboarding, performance tuning, alert optimization, and post-installation troubleshooting for every plan size.</p>
             <div class="d-flex flex-wrap gap-2">
-                <a href="{% url 'faq_page' %}" class="btn btn-premium-cta px-4">Open FAQ</a>
+                <a href="{% url 'ticket_create' %}" class="btn btn-premium-cta px-4">Raise a service request</a>
+                <a href="{% url 'faq_page' %}" class="btn btn-outline-light px-4">Open FAQ</a>
                 <a href="{% url 'services_page' %}" class="btn btn-outline-light px-4">View Service Plans</a>
             </div>
         </div>
