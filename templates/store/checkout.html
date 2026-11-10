@@ -138,13 +138,15 @@
                             data-city="{{ saved_address.city|escape }}"
                             data-state="{{ saved_address.state|escape }}"
                             data-pincode="{{ saved_address.pincode|escape }}"
+                            data-summary="{{ saved_address.address|escape }}"
                             {% if saved_address.id == selected_address_id %}selected{% endif %}
                         >
                             {{ saved_address.label }} - {{ saved_address.city }}
                         </option>
                         {% endfor %}
                     </select>
-                    <small style="color:rgba(156,163,175,0.75); font-size:0.78rem;">Choose a saved address to auto-fill below.</small>
+                    <p class="mt-2 mb-1" id="checkoutSavedAddressSummary" {% if not selected_address_display %}hidden{% endif %}><i class="bi bi-geo-alt me-1" aria-hidden="true"></i><span>{{ selected_address_display }}</span></p>
+                    <small style="color:rgba(156,163,175,0.75); font-size:0.78rem;">We&rsquo;ll deliver to the selected address. Choose &ldquo;Enter address manually&rdquo; to use a different one.</small>
                 </div>
                 {% endif %}
                 <div class="col-md-6">
@@ -193,7 +195,8 @@
                         </label>
                     </div>
                 </div>
-                <div class="col-12">
+                {# Disabled while a saved address is selected: the browser then neither requires nor submits these fields. #}
+                <fieldset class="col-12 border-0 p-0 m-0" id="manualAddressFields" {% if selected_address_display %}disabled hidden{% endif %}>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="checkout-form-label">House No. / Building / Apartment *</label>
@@ -226,9 +229,11 @@
                         <div class="col-md-6">
                             <label class="checkout-form-label">Pincode *</label>
                             <input type="text" name="addr_pincode" id="id_addr_pincode" class="form-control premium-input checkout-field" placeholder="6-digit Pincode" pattern="[0-9]{6}" maxlength="6" required>
-                            <div id="pincodeMessage" class="small mt-1" style="display: none; font-weight: 500;"></div>
                         </div>
                     </div>
+                </fieldset>
+                <div class="col-12 mt-1">
+                    <div id="pincodeMessage" class="small" style="display: none; font-weight: 500;"></div>
                 </div>
                 {% if has_installation %}
                 <div class="col-12 mt-4 install-schedule-box">
@@ -624,26 +629,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (savedAddressSelect) {
-        savedAddressSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            if (selectedOption.value) {
-                const pincode = selectedOption.getAttribute('data-pincode');
-                if (pincodeInput) {
-                    pincodeInput.value = pincode;
-                    validatePincode(pincode);
-                }
+        const manualFields = document.getElementById('manualAddressFields');
+        const savedSummary = document.getElementById('checkoutSavedAddressSummary');
+
+        // A saved address replaces the manual fields; "Enter address manually" brings them back.
+        const applySavedAddress = function () {
+            const selectedOption = savedAddressSelect.options[savedAddressSelect.selectedIndex];
+            const useSaved = Boolean(selectedOption.value);
+            if (manualFields) {
+                manualFields.disabled = useSaved;
+                manualFields.hidden = useSaved;
+            }
+            if (savedSummary) {
+                savedSummary.hidden = !useSaved;
+                savedSummary.querySelector('span').textContent = useSaved ? selectedOption.getAttribute('data-summary') : '';
+            }
+            const pincode = useSaved ? selectedOption.getAttribute('data-pincode') : (pincodeInput ? pincodeInput.value : '');
+            if (pincode && pincode.length === 6) {
+                validatePincode(pincode);
             } else {
-                if (pincodeInput) pincodeInput.value = '';
                 pincodeMessage.style.display = 'none';
                 checkoutSubmitBtn.disabled = false;
             }
-        });
-        
-        // Initial check if a saved address is already selected on page load
-        if (savedAddressSelect.value) {
-            const initialPincode = savedAddressSelect.options[savedAddressSelect.selectedIndex].getAttribute('data-pincode');
-            if (initialPincode) validatePincode(initialPincode);
-        }
+        };
+
+        savedAddressSelect.addEventListener('change', applySavedAddress);
+        applySavedAddress();
     }
 
 });

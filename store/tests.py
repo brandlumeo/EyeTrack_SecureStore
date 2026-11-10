@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from accounts.models import Address
 from orders.models import Invoice, Order, Payment, Shipment
-from .models import CameraSpecification, Category, Product
+from .models import CameraSpecification, Category, Product, ServiceableArea
 from .views import _build_compare_specs, _build_product_specs, quick_view_product
 
 
@@ -24,6 +24,35 @@ class StoreFlowTests(TestCase):
             image="products/test.jpg",
         )
         self.user = User.objects.create_user(username="buyer", email="buyer@example.com", password="StrongPass123!")
+        ServiceableArea.objects.create(pincode="673001", delivery_available=True)
+
+    def checkout_data(self, **overrides):
+        """A complete manual checkout submission (structured address, serviceable pincode)."""
+        data = {
+            "full_name": "Buyer Test",
+            "email": "buyer@example.com",
+            "phone": "9999999999",
+            "addr_house": "12 Rose Villa",
+            "addr_street": "MG Road",
+            "addr_city": "Kozhikode",
+            "addr_state": "Kerala",
+            "addr_pincode": "673001",
+        }
+        data.update(overrides)
+        return data
+
+    def save_address(self):
+        return Address.objects.create(
+            user=self.user,
+            full_name="Saved Buyer",
+            phone_number="8888888888",
+            house_street="221B Baker Street",
+            city="Kozhikode",
+            state="Kerala",
+            pincode="673001",
+            country="India",
+            is_default=True,
+        )
 
     def test_add_to_cart_requires_post(self):
         response = self.client.get(reverse("add_to_cart", args=[self.product.id]))
@@ -61,15 +90,7 @@ class StoreFlowTests(TestCase):
         session.save()
         self.client.login(username="buyer", password="StrongPass123!")
 
-        response = self.client.post(
-            reverse("checkout"),
-            data={
-                "full_name": "Buyer Test",
-                "email": "buyer@example.com",
-                "phone": "9999999999",
-                "address": "Sample Address",
-            },
-        )
+        response = self.client.post(reverse("checkout"), data=self.checkout_data())
 
         self.assertRedirects(response, reverse("cart"))
         self.assertEqual(Order.objects.count(), 0)
@@ -79,40 +100,25 @@ class StoreFlowTests(TestCase):
         session = self.client.session
         session["cart"] = {str(self.product.id): 1}
         session.save()
-        Address.objects.create(
-            user=self.user,
-            full_name="Saved Buyer",
-            phone_number="8888888888",
-            house_street="221B Baker Street",
-            city="Kozhikode",
-            state="Kerala",
-            pincode="673001",
-            country="India",
-            is_default=True,
-        )
+        address = self.save_address()
 
         response = self.client.get(reverse("checkout"))
 
         self.assertContains(response, 'id="checkoutSavedAddress"', html=False)
         self.assertContains(response, 'value="Saved Buyer"', html=False)
         self.assertContains(response, "221B Baker Street, Kozhikode, Kerala 673001, India")
+        # each option carries its real address data, so the page can show and validate it
+        self.assertContains(response, 'data-pincode="673001"', html=False)
+        # the default address is preselected, so the manual fields start collapsed and disabled
+        self.assertContains(response, 'id="manualAddressFields" disabled hidden', html=False)
+        self.assertEqual(response.context["selected_address_id"], str(address.id))
 
     def test_checkout_can_use_saved_address_selection(self):
         self.client.login(username="buyer", password="StrongPass123!")
         session = self.client.session
         session["cart"] = {str(self.product.id): 1}
         session.save()
-        address = Address.objects.create(
-            user=self.user,
-            full_name="Saved Buyer",
-            phone_number="8888888888",
-            house_street="221B Baker Street",
-            city="Kozhikode",
-            state="Kerala",
-            pincode="673001",
-            country="India",
-            is_default=True,
-        )
+        address = self.save_address()
 
         response = self.client.post(
             reverse("checkout"),
@@ -121,16 +127,38 @@ class StoreFlowTests(TestCase):
                 "full_name": "",
                 "email": "",
                 "phone": "",
-                "address": "",
             },
         )
 
         order = Order.objects.get()
-        self.assertRedirects(response, reverse("razorpay_checkout", args=[order.id]))
+        self.assertRedirects(response, reverse("razorpay_checkout", args=[order.id]), fetch_redirect_response=False)
         self.assertEqual(order.full_name, "Saved Buyer")
         self.assertEqual(order.email, "buyer@example.com")
         self.assertEqual(order.phone, "8888888888")
         self.assertEqual(order.address, "221B Baker Street, Kozhikode, Kerala 673001, India")
+
+    def test_manual_address_overrides_selected_saved_address(self):
+        self.client.login(username="buyer", password="StrongPass123!")
+        session = self.client.session
+        session["cart"] = {str(self.product.id): 1}
+        session.save()
+        address = self.save_address()
+
+        self.client.post(reverse("checkout"), data=self.checkout_data(saved_address=str(address.id)))
+
+        order = Order.objects.get()
+        self.assertEqual(order.address, "12 Rose Villa\nMG Road\nKozhikode, Kerala - 673001")
+
+    def test_checkout_rejects_unserviceable_pincode(self):
+        self.client.login(username="buyer", password="StrongPass123!")
+        session = self.client.session
+        session["cart"] = {str(self.product.id): 1}
+        session.save()
+
+        response = self.client.post(reverse("checkout"), data=self.checkout_data(addr_pincode="110001"))
+
+        self.assertRedirects(response, reverse("checkout"), fetch_redirect_response=False)
+        self.assertEqual(Order.objects.count(), 0)
 
     def test_simulated_payment_reduces_stock_and_confirms_order(self):
         self.client.login(username="buyer", password="StrongPass123!")
@@ -139,18 +167,10 @@ class StoreFlowTests(TestCase):
         session.save()
 
         with self.captureOnCommitCallbacks(execute=True):
-            checkout_response = self.client.post(
-                reverse("checkout"),
-                data={
-                    "full_name": "Buyer Test",
-                    "email": "buyer@example.com",
-                    "phone": "9999999999",
-                    "address": "Sample Address",
-                },
-            )
+            checkout_response = self.client.post(reverse("checkout"), data=self.checkout_data())
         order = Order.objects.get()
         # Note: payment_method default is ONLINE, redirects to razorpay_checkout
-        self.assertRedirects(checkout_response, reverse("razorpay_checkout", args=[order.id]))
+        self.assertRedirects(checkout_response, reverse("razorpay_checkout", args=[order.id]), fetch_redirect_response=False)
         self.assertEqual(order.order_status, Order.OrderStatus.PENDING)
 
 class ProductSpecMappingTests(TestCase):
