@@ -361,3 +361,22 @@ class AccountEmailFailureTests(TestCase):
         self.assertContains(response, reverse("resend_verification_email"))
         self.assertContains(response, "already registered but not verified")
         self.assertContains(response, "Use the resend verification email option below.")
+
+
+class FcmTokenSaveTests(TestCase):
+    def test_saving_a_token_removes_it_from_other_accounts(self):
+        import json
+        first = User.objects.create_user(username="first", email="first@example.com", password="StrongPass123!")
+        second = User.objects.create_user(username="second", email="second@example.com", password="StrongPass123!")
+        Profile.objects.create(user=first, fcm_token="shared-browser-token")
+        other = Profile.objects.create(user=User.objects.create_user("third", password="x"), fcm_token="other-device")
+        self.client.login(username="second", password="StrongPass123!")
+
+        response = self.client.post(reverse("save_fcm_token"), data=json.dumps({"fcm_token": "shared-browser-token"}),
+                                    content_type="application/json")
+
+        self.assertEqual(response.json()["status"], "success")
+        self.assertEqual(Profile.objects.get(user=second).fcm_token, "shared-browser-token")
+        self.assertIsNone(Profile.objects.get(user=first).fcm_token)
+        other.refresh_from_db()
+        self.assertEqual(other.fcm_token, "other-device")  # unrelated tokens are untouched
