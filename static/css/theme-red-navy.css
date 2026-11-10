@@ -1098,3 +1098,50 @@ body .mob-search-section-label { color: #5b6685 !important; }
 /* WhatsApp / success buttons: deeper green so white labels stay legible */
 body .btn-success { background: #128c4a !important; border-color: #128c4a !important; color: #fff !important; }
 body .btn-success:hover { background: #0e7a40 !important; border-color: #0e7a40 !important; }
+
+/* ==== Responsive fixes (site-wide) ==== */
+
+/* Desktop nav: never wrap the Quote / Cart buttons. */
+@media (min-width: 992px) {
+    #siteNav .nav-quote-btn, #siteNav .cart-btn { white-space: nowrap; }
+}
+/* Small laptops / landscape tablets: fit everything on one row. */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .brand-mark .brand-secondary { display: none; }
+    #siteNav .premium-search-form { max-width: 170px !important; min-width: 0; margin-inline: .75rem !important; }
+    #siteNav .premium-search-input { min-width: 0; padding-inline: .7rem; font-size: .82rem; }
+    #siteNav .navbar-nav { gap: 0 !important; }
+    body #siteNav .premium-link { font-size: .8rem; padding-inline: .42rem !important; }
+    #siteNav .nav-item.ms-lg-2 { margin-left: .3rem !important; }
+    #siteNav .nav-quote-btn, #siteNav .cart-btn { padding-inline: .6rem !important; }
+}
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+    #siteNav .premium-search-form { max-width: 250px !important; }
+}
+
+/* Floating Wishlist / Compare dock: tuck into the corner so it does not cover page text. */
+@media (min-width: 992px) and (max-width: 1359.98px) {
+    .premium-tools-dock { left: .75rem; bottom: 1rem; gap: .45rem; }
+    .premium-tools-dock .premium-tool-btn { width: 2.6rem; height: 2.6rem; }
+    .premium-tools-dock .premium-tool-label { display: none; }
+}
+
+/* Product page on phones/tablets: let the single column shrink to the screen. */
+@media (max-width: 991.98px) {
+    body.page-product-detail .pd-hero { grid-template-columns: minmax(0, 1fr); }
+    body.page-product-detail .pd-gallery, body.page-product-detail .pd-info { min-width: 0; }
+}
+
+/* Mobile search sheet: the field shrinks so "Cancel" stays on screen. */
+body .mob-search-field-wrap { min-width: 0 !important; }
+
+/* Footer column headings stay small on phones (a global mobile h3 rule enlarged them). */
+@media (max-width: 991.98px) {
+    body .premium-footer .pf-column h3 { font-size: .7rem !important; line-height: 1.4; }
+}
+
+/* Policy pages: the light gradient heading was nearly invisible on the light theme. */
+body .text-primary-gradient {
+    display: block; background: none; color: var(--navy);
+    -webkit-text-fill-color: currentColor;
+}
