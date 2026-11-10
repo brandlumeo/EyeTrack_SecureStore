@@ -112,31 +112,36 @@ def _quote_summary(lead):
     return "\n".join(lines)
 
 
-def _notify_staff_of_quote(lead, admin_url):
-    """Email the configured admins and drop a bell notification for staff users."""
+def _notify_staff_of_quote(lead):
+    """Drop a bell notification for every active staff user.
+
+    Runs inside the request: it is a few quick inserts, and doing it in the
+    background email thread meant a slow SMTP server (or the host reaping the
+    thread after the response) silently swallowed the alert.
+    """
     from accounts.models import Notification
 
-    summary = _quote_summary(lead)
-    recipients = [email for _, email in getattr(settings, "ADMINS", []) if email]
-    if recipients:
-        try:
-            send_mail(
-                subject=f"New site survey request: {lead.name} ({lead.get_site_type_display()})",
-                message=f"{summary}\n\nManage lead: {admin_url}",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=recipients,
-                fail_silently=False,
-            )
-        except Exception:
-            logger.exception("Failed to send quote request email for lead %s", lead.pk)
-
+    link = reverse("admin_dashboard:quote_requests")
+    message = f"{lead.name} - {lead.get_site_type_display()}, {lead.get_camera_count_display()}"
     for user in get_user_model().objects.filter(is_staff=True, is_active=True):
-        Notification.send(
-            user=user,
-            title="New site survey request",
-            message=f"{lead.name} - {lead.get_site_type_display()}, {lead.get_camera_count_display()}",
-            link=reverse("admin_dashboard:quote_requests"),
+        Notification.send(user=user, title="New site survey request", message=message, link=link)
+
+
+def _email_admins_about_quote(lead, admin_url):
+    """Email the configured admins. Called in a background thread."""
+    recipients = [email for _, email in getattr(settings, "ADMINS", []) if email]
+    if not recipients:
+        return
+    try:
+        send_mail(
+            subject=f"New site survey request: {lead.name} ({lead.get_site_type_display()})",
+            message=f"{_quote_summary(lead)}\n\nManage lead: {admin_url}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=recipients,
+            fail_silently=False,
         )
+    except Exception:
+        logger.exception("Failed to send quote request email for lead %s", lead.pk)
 
 
 @require_http_methods(["GET", "POST"])
@@ -155,9 +160,15 @@ def quote_request(request):
             lead.source_page = request.META.get("HTTP_REFERER", "")[:255]
             lead.save()
 
+            try:
+                _notify_staff_of_quote(lead)
+            except Exception:
+                # The lead is saved and visible in the inbox; never fail the customer's request over an alert.
+                logger.exception("Failed to create staff notifications for lead %s", lead.pk)
+
             admin_url = request.build_absolute_uri(reverse("admin_dashboard:quote_requests"))
             from orders.emails import send_email_async
-            send_email_async(_notify_staff_of_quote, lead, admin_url)
+            send_email_async(_email_admins_about_quote, lead, admin_url)
 
             whatsapp_text = "Hi Eyetrack, I just requested a free site survey.\n" + _quote_summary(lead)
             whatsapp_url = f"https://wa.me/{settings.BUSINESS_WHATSAPP}?text={quote(whatsapp_text)}"

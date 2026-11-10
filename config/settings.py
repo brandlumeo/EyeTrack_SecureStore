@@ -158,6 +158,8 @@ BUSINESS_WHATSAPP = config('BUSINESS_WHATSAPP', default='917994357565')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@eyetrack-tech.com')
 EMAIL_HOST = config('EMAIL_HOST', default='')
 EMAIL_PORT = config('EMAIL_PORT', cast=int, default=587)
+# Seconds before an SMTP connection gives up, so a stalled mail server can't hang the sending thread.
+EMAIL_TIMEOUT = config('EMAIL_TIMEOUT', cast=int, default=15)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool, default=True)
