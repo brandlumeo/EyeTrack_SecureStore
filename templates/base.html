@@ -783,6 +783,9 @@
                                         <a class="shop-dropdown-aside-link" href="{% url 'solutions_page' %}"><i class="bi bi-grid-1x2"></i>Solutions by industry</a>
                                         <a class="shop-dropdown-aside-link" href="{% url 'home_security' %}"><i class="bi bi-house-heart"></i>Home security</a>
                                         <a class="shop-dropdown-aside-link" href="{% url 'compare_page' %}"><i class="bi bi-layout-split"></i>Compare products</a>
+                                        <a class="shop-dropdown-aside-link" href="{% url 'system_builder' %}"><i class="bi bi-magic"></i>Build your system</a>
+                                        <a class="shop-dropdown-aside-link" href="{% url 'project_list' %}"><i class="bi bi-images"></i>Our projects</a>
+                                        <a class="shop-dropdown-aside-link" href="{% url 'tools_hub' %}"><i class="bi bi-calculator"></i>Storage &amp; lens calculators</a>
                                         <a class="shop-dropdown-survey" href="{% url 'quote_request' %}">
                                             <strong><i class="bi bi-calendar-check me-1"></i>Free site survey</strong>
                                             <small>An expert plans your cameras &amp; gives an installed price.</small>
@@ -902,6 +905,12 @@
                         </a>
                         <a href="{% url 'quote_request' %}" class="mobile-nav-link">
                             <i class="bi bi-calendar-check"></i> <span>Free Site Survey</span>
+                        </a>
+                        <a href="{% url 'tools_hub' %}" class="mobile-nav-link">
+                            <i class="bi bi-calculator"></i> <span>Planning Tools</span>
+                        </a>
+                        <a href="{% url 'project_list' %}" class="mobile-nav-link">
+                            <i class="bi bi-images"></i> <span>Our Projects</span>
                         </a>
                         <a href="tel:{{ BUSINESS_PHONE }}" class="mobile-nav-link">
                             <i class="bi bi-telephone"></i> <span>Call {{ BUSINESS_PHONE }}</span>
@@ -1080,7 +1089,9 @@
                     <a href="{% url 'product_list' %}" class="footer-link d-block mb-2">Store</a>
                     <a href="{% url 'services_page' %}" class="footer-link d-block mb-2">Installations</a>
                     <a href="{% url 'about_page' %}" class="footer-link d-block mb-2">About</a>
-                    <a href="{% url 'faq_page' %}" class="footer-link d-block">FAQ</a>
+                    <a href="{% url 'faq_page' %}" class="footer-link d-block mb-2">FAQ</a>
+                    <a href="{% url 'tools_hub' %}" class="footer-link d-block mb-2">Planning tools</a>
+                    <a href="{% url 'project_list' %}" class="footer-link d-block">Our projects</a>
                 </div>
                 <div class="col-6 col-lg-2">
                     <p class="footer-column-label mb-3">Customer Tools</p>

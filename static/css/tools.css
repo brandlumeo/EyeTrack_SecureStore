@@ -1,0 +1,205 @@
+/* ==========================================================================
+   CCTV planning tools (system builder, calculators, camera guide).
+   Loaded only on tool pages; builds on home-sections.css card styles.
+   ========================================================================== */
+
+.tools-hero { margin-bottom: 2rem; }
+.tools-hero .lead-copy { max-width: 640px; color: var(--text-soft); }
+
+.tools-crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.85rem;
+}
+
+.tools-crumbs a {
+    padding: 0.3rem 0.75rem;
+    border: 1px solid rgba(249, 250, 251, 0.12);
+    border-radius: var(--ets-radius-pill, 999px);
+    color: var(--text-soft);
+    text-decoration: none;
+}
+
+.tools-crumbs a:hover,
+.tools-crumbs a.active { border-color: var(--accent); color: var(--accent); }
+
+.tool-panel {
+    border: 1px solid rgba(249, 250, 251, 0.1);
+    background: linear-gradient(180deg, rgba(249, 250, 251, 0.06), rgba(26, 35, 51, 0.3));
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+}
+
+.tool-panel h2 { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
+
+.tool-field { margin-bottom: 1rem; }
+.tool-field label,
+.tool-legend {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-soft);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.tool-hint { display: block; margin-top: 0.3rem; color: var(--muted); font-size: 0.78rem; }
+.tool-error { color: var(--ets-color-danger, #ff9aab); font-size: 0.85rem; margin-bottom: 1rem; }
+
+/* Big result numbers */
+.tool-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem; }
+.tool-stat {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    background: rgba(249, 250, 251, 0.04);
+    border: 1px solid rgba(249, 250, 251, 0.08);
+}
+.tool-stat strong {
+    display: block;
+    font-family: var(--ets-font-heading, "Sora", "Segoe UI", sans-serif);
+    font-size: 1.6rem;
+    color: var(--accent);
+    line-height: 1.15;
+}
+.tool-stat span { color: var(--muted); font-size: 0.8rem; }
+.tool-stat--wide strong { font-size: 1.15rem; }
+
+.tool-table { width: 100%; font-size: 0.88rem; border-collapse: collapse; }
+.tool-table th,
+.tool-table td { padding: 0.55rem 0.5rem; border-bottom: 1px solid var(--stroke-soft); text-align: left; color: var(--text-soft); }
+.tool-table th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.tool-table tr.is-match td { color: var(--text); background: rgba(245, 163, 0, 0.08); }
+
+.dori-pill {
+    display: inline-block;
+    padding: 0.1rem 0.55rem;
+    border-radius: var(--ets-radius-pill, 999px);
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(249, 250, 251, 0.08);
+    color: var(--text-soft);
+}
+.dori-pill[data-level="Identify"] { background: rgba(117, 213, 165, 0.18); color: #75d5a5; }
+.dori-pill[data-level="Recognise"] { background: rgba(150, 202, 255, 0.18); color: #96caff; }
+.dori-pill[data-level="Observe"] { background: rgba(245, 163, 0, 0.16); color: var(--accent); }
+
+.tool-note { color: var(--muted); font-size: 0.8rem; margin: 1rem 0 0; }
+
+/* Hub cards */
+.tool-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+
+/* ---- System builder ---- */
+.builder-progress { display: flex; gap: 0.35rem; margin-bottom: 1.25rem; }
+.builder-progress span { flex: 1; height: 4px; border-radius: 4px; background: rgba(249, 250, 251, 0.1); }
+.builder-progress span.done { background: var(--accent); }
+
+.builder-step { border: 0; padding: 0; margin: 0 0 1.5rem; }
+.builder-step legend { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; float: none; }
+.builder-step .tool-hint { margin: 0 0 0.9rem; }
+
+.choice-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.6rem; }
+.choice-grid--wide { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.choice-card { position: relative; margin: 0; }
+.choice-card input { position: absolute; opacity: 0; pointer-events: none; }
+.choice-card span {
+    display: block;
+    height: 100%;
+    padding: 0.75rem 0.9rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(249, 250, 251, 0.12);
+    background: rgba(249, 250, 251, 0.03);
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color 150ms ease, background 150ms ease;
+}
+.choice-card input:checked + span { border-color: var(--accent); background: var(--ets-color-accent-subtle, rgb(245 163 0 / 12%)); color: var(--text); }
+.choice-card input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.counter { display: inline-flex; align-items: center; gap: 0.5rem; }
+.counter button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(249, 250, 251, 0.18);
+    background: transparent;
+    color: var(--text);
+    font-size: 1.2rem;
+    line-height: 1;
+}
+.counter button:hover { border-color: var(--accent); color: var(--accent); }
+.counter input { width: 80px; text-align: center; font-size: 1.1rem; font-weight: 700; }
+.counter-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+
+.builder-nav { display: flex; justify-content: space-between; gap: 0.75rem; }
+.js-builder .builder-step { display: none; }
+.js-builder .builder-step.is-active { display: block; }
+.builder-nav [data-step-prev][hidden],
+.builder-nav [data-step-next][hidden],
+.builder-nav [type="submit"][hidden] { display: none; }
+
+.plan-camera { display: flex; gap: 0.9rem; padding: 0.9rem 0; border-bottom: 1px solid var(--stroke-soft); }
+.plan-camera:last-child { border-bottom: 0; }
+.plan-camera .plan-count {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--ets-color-accent-subtle, rgb(245 163 0 / 12%));
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 1.15rem;
+}
+.plan-camera strong { color: var(--text); display: block; }
+.plan-camera small { color: var(--muted); }
+
+.plan-tips { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
+.plan-tips li { display: flex; gap: 0.55rem; color: var(--text-soft); font-size: 0.9rem; }
+.plan-tips i { color: var(--accent); }
+
+.plan-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; }
+.plan-product {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(249, 250, 251, 0.1);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.88rem;
+}
+.plan-product:hover { border-color: var(--accent); color: var(--text); }
+.plan-product img { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; background: rgba(255, 255, 255, 0.04); border-radius: 8px; }
+.plan-product .price { color: var(--accent); font-weight: 700; }
+
+/* ---- Camera guide ---- */
+.guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+.guide-card h2 { display: flex; align-items: center; gap: 0.6rem; font-size: 1.15rem; }
+.guide-card h2 i { color: var(--accent); }
+.guide-card dl { margin: 0 0 1rem; font-size: 0.88rem; }
+.guide-card dt { color: var(--muted); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.65rem; }
+.guide-card dd { color: var(--text-soft); margin: 0.15rem 0 0; }
+
+.tools-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(245, 163, 0, 0.35);
+    background: linear-gradient(135deg, rgba(245, 163, 0, 0.12), rgba(26, 35, 51, 0.3));
+}
+.tools-cta p { margin: 0; color: var(--text-soft); }
+.tools-cta strong { color: var(--text); display: block; font-size: 1.05rem; }
+
+@media (max-width: 575.98px) {
+    .tool-panel { padding: 1.1rem; }
+    .tool-stat strong { font-size: 1.35rem; }
+    .tool-table { font-size: 0.8rem; }
+}

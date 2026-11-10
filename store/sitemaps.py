@@ -16,6 +16,12 @@ class StaticViewSitemap(Sitemap):
             "home_security",
             "services_page",
             "quote_request",
+            "project_list",
+            "tools_hub",
+            "system_builder",
+            "storage_calculator",
+            "lens_calculator",
+            "camera_guide",
             "support_page",
             "faq_page",
             "privacy_policy_page",
@@ -51,3 +57,15 @@ class CategorySitemap(Sitemap):
 
     def location(self, obj):
         return reverse("products_by_category", kwargs={"category_slug": obj.slug})
+
+
+class ProjectSitemap(Sitemap):
+    priority = 0.6
+    changefreq = "monthly"
+
+    def items(self):
+        from .models import Project
+        return Project.objects.filter(is_published=True).order_by("order", "id")
+
+    def lastmod(self, obj):
+        return obj.updated_at

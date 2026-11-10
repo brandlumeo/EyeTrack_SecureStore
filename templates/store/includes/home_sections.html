@@ -5,7 +5,7 @@
             <p class="eyebrow mb-2">Complete systems</p>
             <h2 class="home-section-title" id="packagesTitle">Ready-made CCTV packages, fully installed</h2>
         </div>
-        <p class="home-section-lead">Cameras, recorder, storage, cabling and installation in one plan. Final spec is confirmed after a free site survey.</p>
+        <p class="home-section-lead">Cameras, recorder, storage, cabling and installation in one plan. Final spec is confirmed after a free site survey. Not sure which? <a href="{% url 'system_builder' %}" class="home-section-link">Build your system <i class="bi bi-arrow-right"></i></a></p>
     </div>
     <div class="package-grid">
         <article class="package-card">
@@ -100,8 +100,26 @@
     </ol>
 </section>
 
-{# ==== RECENT INSTALLATIONS (real "after" photos from installation bookings) ==== #}
-{% if installation_photos %}
+{# ==== OUR WORK: featured projects from the admin dashboard, else real "after" installation photos ==== #}
+{% if featured_projects %}
+<section class="home-section mb-5 reveal" aria-labelledby="projectsTitle">
+    <div class="home-section-head">
+        <div>
+            <p class="eyebrow mb-2">Our work</p>
+            <h2 class="home-section-title" id="projectsTitle">Recent projects</h2>
+        </div>
+        <a href="{% url 'project_list' %}" class="home-section-link">All projects <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="install-gallery">
+        {% for p in featured_projects %}
+        <a href="{{ p.get_absolute_url }}" class="install-shot" title="{{ p.title }}">
+            <img src="{{ p.cover_image.url }}" alt="{{ p.title }}" loading="lazy" decoding="async">
+            <figcaption>{{ p.get_site_type_display }} &middot; {{ p.location }}</figcaption>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% elif installation_photos %}
 <section class="home-section mb-5 reveal" aria-labelledby="installsTitle">
     <div class="home-section-head">
         <div>

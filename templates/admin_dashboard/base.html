@@ -688,6 +688,10 @@
                         <i class="bi bi-person-lines-fill"></i>
                         <span>Leads &amp; Quotes</span>
                     </a>
+                    <a href="{% url 'admin_dashboard:projects_overview' %}" class="admin-nav-link {% if 'project_' in request.resolver_match.url_name or request.resolver_match.url_name == 'projects_overview' %}active{% endif %}">
+                        <i class="bi bi-images"></i>
+                        <span>Projects Gallery</span>
+                    </a>
 
                     <!-- Configuration -->
                     <div class="nav-group-label">Configuration</div>

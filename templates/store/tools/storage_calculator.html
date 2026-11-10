@@ -1,0 +1,93 @@
+{% extends 'store/tools/base_tools.html' %}
+
+{% block title %}CCTV Storage & HDD Calculator | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Calculate how much hard disk storage your CCTV cameras need for 7, 15, 30 or 90 days of recording, by resolution, codec and frame rate.{% endblock %}
+
+{% block tool_content %}
+<header class="tools-hero">
+    <p class="eyebrow mb-2">Storage calculator</p>
+    <h1 class="home-section-title mb-3">How much hard disk does your CCTV need?</h1>
+    <p class="lead-copy">Pick your cameras and how long footage should be kept. We size the recorder&rsquo;s hard disk with 10% headroom.</p>
+</header>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <form method="get" action="{% url 'storage_calculator' %}" class="tool-panel" data-calc data-api="{% url 'storage_api' %}">
+            <h2>Your system</h2>
+            <div class="row g-3">
+                <div class="col-6 tool-field">
+                    <label for="id_cameras">Number of cameras</label>
+                    <input type="number" name="cameras" id="id_cameras" min="1" max="128" value="{{ form.cameras.value|default_if_none:4 }}" class="form-control premium-input" inputmode="numeric">
+                </div>
+                <div class="col-6 tool-field">
+                    <label for="id_resolution">Resolution</label>
+                    <select name="resolution" id="id_resolution" class="form-select premium-input">
+                        {% for value, label in form.fields.resolution.choices %}<option value="{{ value }}" {% if form.resolution.value|stringformat:"s" == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-6 tool-field">
+                    <label for="id_days">Keep recordings for</label>
+                    <select name="days" id="id_days" class="form-select premium-input">
+                        {% for value, label in form.fields.days.choices %}<option value="{{ value }}" {% if form.days.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-6 tool-field">
+                    <label for="id_codec">Compression</label>
+                    <select name="codec" id="id_codec" class="form-select premium-input">
+                        {% for value, label in form.fields.codec.choices %}<option value="{{ value }}" {% if form.codec.value|stringformat:"s" == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-6 tool-field">
+                    <label for="id_fps">Frame rate</label>
+                    <select name="fps" id="id_fps" class="form-select premium-input">
+                        {% for value, label in form.fields.fps.choices %}<option value="{{ value }}" {% if form.fps.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-6 tool-field">
+                    <label for="id_hours">Hours recorded per day</label>
+                    <input type="number" name="hours" id="id_hours" min="1" max="24" value="{{ form.hours.value|default_if_none:24 }}" class="form-control premium-input" inputmode="numeric">
+                </div>
+                <div class="col-6 tool-field">
+                    <label for="id_mode">Recording mode</label>
+                    <select name="mode" id="id_mode" class="form-select premium-input">
+                        {% for value, label in form.fields.mode.choices %}<option value="{{ value }}" {% if form.mode.value|stringformat:"s" == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-6 tool-field">
+                    <label for="id_activity">Activity (motion mode) %</label>
+                    <input type="number" name="activity" id="id_activity" min="5" max="100" value="{{ form.activity.value|default_if_none:30 }}" class="form-control premium-input" inputmode="numeric">
+                    <span class="tool-hint">Share of the day with movement.</span>
+                </div>
+            </div>
+            {% if form.errors %}<div class="tool-error">{% for field, errs in form.errors.items %}{{ errs|striptags }} {% endfor %}</div>{% endif %}
+            <div class="tool-error d-none" data-calc-error></div>
+            <button type="submit" class="btn btn-premium-cta" data-calc-submit>Calculate</button>
+        </form>
+    </div>
+
+    <div class="col-lg-7">
+        <section class="tool-panel" aria-live="polite" aria-labelledby="storageResultTitle">
+            <h2 id="storageResultTitle">Estimated storage</h2>
+            {% if result %}
+            <div class="tool-stats">
+                <div class="tool-stat"><strong data-out="hdd">{{ result.hdd.drives }} &times; {{ result.hdd.size_tb }} TB</strong><span>Recommended hard disk</span></div>
+                <div class="tool-stat"><strong><span data-out="total_tb">{{ result.total_tb }}</span> TB</strong><span>Footage for <span data-out="days">{{ result.days }}</span> days</span></div>
+                <div class="tool-stat"><strong><span data-out="bandwidth_mbps">{{ result.bandwidth_mbps }}</span> Mbps</strong><span>Total recording bitrate</span></div>
+            </div>
+            {% with line=result.lines.0 %}
+            <table class="tool-table">
+                <tbody>
+                    <tr><th scope="row">Bitrate per camera</th><td><span data-out="mbps_each">{{ line.mbps_each }}</span> Mbps</td></tr>
+                    <tr><th scope="row">Storage per camera per day</th><td><span data-out="gb_per_day_each">{{ line.gb_per_day_each }}</span> GB</td></tr>
+                    <tr><th scope="row">Total footage</th><td><span data-out="total_gb">{{ result.total_gb }}</span> GB</td></tr>
+                </tbody>
+            </table>
+            {% endwith %}
+            {% else %}
+            <p class="text-secondary">Fix the highlighted inputs to see the estimate.</p>
+            {% endif %}
+            <p class="tool-note">Typical bitrates for good-quality recording at 25 fps (H.265: 2MP 2 Mbps, 4MP 4 Mbps, 5MP 5 Mbps, 8MP 8 Mbps; H.264 roughly 1.5&ndash;2&times;). Busy scenes, night noise and smart codecs change real usage.</p>
+        </section>
+    </div>
+</div>
+{% endblock %}

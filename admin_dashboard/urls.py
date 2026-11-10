@@ -71,6 +71,11 @@ urlpatterns = [
 
     # FAQ Management
     path('leads/', views.quote_requests_overview, name='quote_requests'),
+    path('projects/', views.projects_overview, name='projects_overview'),
+    path('projects/add/', views.project_edit, name='project_add'),
+    path('projects/edit/<int:project_id>/', views.project_edit, name='project_edit'),
+    path('projects/delete/<int:project_id>/', views.project_delete, name='project_delete'),
+    path('projects/toggle/<int:project_id>/', views.project_toggle_publish, name='project_toggle_publish'),
     path('leads/<int:lead_id>/update/', views.quote_request_update, name='quote_request_update'),
     path('faqs/', views.faqs_overview, name='faqs_overview'),
     path('faqs/add/', views.faq_edit, name='faq_add'),

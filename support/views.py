@@ -149,7 +149,7 @@ def quote_request(request):
     wants_json = request.headers.get("x-requested-with") == "XMLHttpRequest"
     initial = {
         key: request.GET[key]
-        for key in ("site_type", "camera_count", "package")
+        for key in ("site_type", "camera_count", "package", "message")
         if request.GET.get(key)
     }
     form = QuoteRequestForm(request.POST or None, initial=initial)

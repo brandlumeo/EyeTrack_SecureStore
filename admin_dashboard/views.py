@@ -5,7 +5,7 @@ Provides comprehensive admin interface with analytics and management features
 from django import forms
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
-from django.db.models import Count, Sum, Avg, Q
+from django.db.models import Count, Sum, Avg, Max, Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
@@ -35,6 +35,7 @@ from admin_dashboard.forms import (
     BiometricSpecForm, SmartLockSpecForm, NetworkSpecForm, VideoDoorPhoneSpecForm,
     DeliveryAgentForm, AssignAgentForm,
     ServiceableAreaForm, FAQCategoryForm, FAQForm,
+    ProjectForm, validate_gallery_uploads,
 )
 
 
@@ -1602,6 +1603,110 @@ def quote_request_update(request, lead_id):
     lead.save(update_fields=['status', 'admin_notes', 'updated_at'])
     messages.success(request, f'Lead "{lead.name}" updated.')
     return redirect(request.META.get('HTTP_REFERER') or 'admin_dashboard:quote_requests')
+
+
+@login_required
+@user_passes_test(is_admin)
+def projects_overview(request):
+    """Completed installations shown in the public projects gallery."""
+    from store.models import Project
+    search = request.GET.get('search', '').strip()
+    # Explicit order: Meta.ordering is not applied to queries with aggregates (photo_count).
+    qs = Project.objects.annotate(photo_count=Count('images')).order_by('order', '-completed_on', '-created_at')
+    if search:
+        qs = qs.filter(Q(title__icontains=search) | Q(location__icontains=search))
+    paginator = Paginator(qs, 25)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    context = {
+        'page_title': 'Projects Gallery',
+        'projects': page_obj,
+        'page_obj': page_obj,
+        'search_query': search,
+        'total_count': Project.objects.count(),
+        'published_count': Project.objects.filter(is_published=True).count(),
+        'featured_count': Project.objects.filter(is_featured=True, is_published=True).count(),
+    }
+    return render(request, 'admin_dashboard/projects_overview.html', context)
+
+
+def _save_project_gallery(request, project):
+    """Apply caption/order edits, removals and new uploads for a project's gallery photos."""
+    remove_ids = {int(i) for i in request.POST.getlist('delete_image') if i.isdigit()}
+    for image in project.images.all():
+        if image.id in remove_ids:
+            image.image.delete(save=False)
+            image.delete()
+            continue
+        image.caption = request.POST.get(f'caption_{image.id}', image.caption).strip()[:150]
+        order = request.POST.get(f'order_{image.id}', '')
+        image.order = int(order) if order.isdigit() else image.order
+        image.save(update_fields=['caption', 'order'])
+
+    files, errors = validate_gallery_uploads(request.FILES.getlist('gallery_images'))
+    next_order = (project.images.aggregate(m=Max('order'))['m'] or 0) + 1
+    for offset, upload in enumerate(files):
+        project.images.create(image=upload, order=next_order + offset)
+    return len(files), errors
+
+
+@login_required
+@user_passes_test(is_admin)
+def project_edit(request, project_id=None):
+    """Add or edit a project, including its gallery photos."""
+    from store.models import Project
+    project = get_object_or_404(Project, id=project_id) if project_id else None
+
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, request.FILES, instance=project)
+        if form.is_valid():
+            project = form.save()
+            added, errors = _save_project_gallery(request, project)
+            for error in errors:
+                messages.warning(request, f'Photo skipped - {error}')
+            note = f' {added} photo{"s" if added != 1 else ""} added.' if added else ''
+            messages.success(request, f'Project "{project.title}" saved.{note}')
+            if 'save_continue' in request.POST:
+                return redirect('admin_dashboard:project_edit', project_id=project.id)
+            return redirect('admin_dashboard:projects_overview')
+        messages.error(request, 'Please correct the errors below.')
+    else:
+        form = ProjectForm(instance=project)
+
+    return render(request, 'admin_dashboard/project_form.html', {
+        'page_title': 'Edit Project' if project else 'Add Project',
+        'form': form,
+        'project': project,
+        'images': project.images.all() if project else [],
+    })
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def project_delete(request, project_id):
+    from store.models import Project
+    project = get_object_or_404(Project, id=project_id)
+    title = project.title
+    for image in project.images.all():
+        image.image.delete(save=False)
+    project.cover_image.delete(save=False)
+    project.delete()
+    messages.success(request, f'Project "{title}" deleted.')
+    return redirect('admin_dashboard:projects_overview')
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def project_toggle_publish(request, project_id):
+    from store.models import Project
+    project = get_object_or_404(Project, id=project_id)
+    project.is_published = not project.is_published
+    if not project.is_published:
+        project.is_featured = False
+    project.save(update_fields=['is_published', 'is_featured', 'updated_at'])
+    messages.success(request, f'"{project.title}" is now {"published" if project.is_published else "hidden"}.')
+    return redirect(request.META.get('HTTP_REFERER') or 'admin_dashboard:projects_overview')
 
 
 @login_required

@@ -1,0 +1,76 @@
+{% extends 'store/tools/base_tools.html' %}
+
+{% block title %}CCTV Lens & Field of View Calculator | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Find the right CCTV lens (2.8 mm, 3.6 mm, 6 mm, 12 mm or varifocal) for your distance and coverage width, and check if faces will be identifiable.{% endblock %}
+
+{% block tool_content %}
+<header class="tools-hero">
+    <p class="eyebrow mb-2">Lens calculator</p>
+    <h1 class="home-section-title mb-3">Which lens covers your area &mdash; and will faces be clear?</h1>
+    <p class="lead-copy">Enter how far the camera is from the area and how wide it is. We work out the lens and the pixel density at that distance.</p>
+</header>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <form method="get" action="{% url 'lens_calculator' %}" class="tool-panel" data-calc data-api="{% url 'lens_api' %}">
+            <h2>Camera position</h2>
+            <div class="row g-3">
+                <div class="col-6 tool-field">
+                    <label for="id_distance">Distance to area (m)</label>
+                    <input type="number" name="distance" id="id_distance" min="1" max="200" step="0.5" value="{{ form.distance.value|default_if_none:10 }}" class="form-control premium-input" inputmode="decimal">
+                </div>
+                <div class="col-6 tool-field">
+                    <label for="id_width">Width to cover (m)</label>
+                    <input type="number" name="width" id="id_width" min="0.5" max="200" step="0.5" value="{{ form.width.value|default_if_none:6 }}" class="form-control premium-input" inputmode="decimal">
+                    <span class="tool-hint">A doorway is ~1 m, a gate 3&ndash;5 m.</span>
+                </div>
+                <div class="col-6 tool-field">
+                    <label for="id_resolution">Camera resolution</label>
+                    <select name="resolution" id="id_resolution" class="form-select premium-input">
+                        {% for value, label in form.fields.resolution.choices %}<option value="{{ value }}" {% if form.resolution.value|stringformat:"s" == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-6 tool-field">
+                    <label for="id_sensor">Sensor size</label>
+                    <select name="sensor" id="id_sensor" class="form-select premium-input">
+                        {% for value, label in form.fields.sensor.choices %}<option value="{{ value }}" {% if form.sensor.value|stringformat:"s" == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                    <span class="tool-hint">Most 2&ndash;4MP cameras use 1/2.8&Prime;.</span>
+                </div>
+            </div>
+            {% if form.errors %}<div class="tool-error">{% for field, errs in form.errors.items %}{{ errs|striptags }} {% endfor %}</div>{% endif %}
+            <div class="tool-error d-none" data-calc-error></div>
+            <button type="submit" class="btn btn-premium-cta" data-calc-submit>Calculate</button>
+        </form>
+    </div>
+
+    <div class="col-lg-7">
+        <section class="tool-panel" aria-live="polite" aria-labelledby="lensResultTitle">
+            <h2 id="lensResultTitle">Recommended lens</h2>
+            {% if result %}
+            <div class="tool-stats">
+                <div class="tool-stat"><strong><span data-out="focal_mm">{{ result.focal_mm }}</span> mm</strong><span>Exact focal length (<span data-out="fov_deg">{{ result.fov_deg }}</span>&deg; view)</span></div>
+                <div class="tool-stat"><strong><span data-out="pixels_per_m">{{ result.pixels_per_m }}</span> px/m</strong><span>Detail across the area: <span class="dori-pill" data-out="dori" data-level="{{ result.dori.name }}">{{ result.dori.name }}</span></span></div>
+                <div class="tool-stat tool-stat--wide"><strong data-out="suggestion">{{ result.suggestion }}</strong><span>What to fit</span></div>
+            </div>
+            <p class="text-secondary" data-out="dori_description">{{ result.dori.description }}.</p>
+
+            <h3 class="tool-legend mt-3">Standard lenses at this distance</h3>
+            <div class="table-responsive">
+                <table class="tool-table">
+                    <thead><tr><th>Lens</th><th>View</th><th>Covers</th><th>Detail</th></tr></thead>
+                    <tbody data-out-rows>
+                        {% for o in result.options %}
+                        <tr><td>{{ o.lens_mm }} mm</td><td>{{ o.fov_deg }}&deg;</td><td>{{ o.scene_width_m }} m wide</td><td>{{ o.pixels_per_m }} px/m <span class="dori-pill" data-level="{{ o.dori }}">{{ o.dori }}</span></td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-secondary">Fix the highlighted inputs to see the estimate.</p>
+            {% endif %}
+            <p class="tool-note">Detail levels follow IEC 62676-4 (DORI): Identify &ge; 250 px/m, Recognise &ge; 125, Observe &ge; 62, Detect &ge; 25. Sensor widths are approximate; lighting and focus also affect real detail.</p>
+        </section>
+    </div>
+</div>
+{% endblock %}

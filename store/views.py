@@ -18,7 +18,7 @@ import razorpay
 
 from orders.emails import send_order_invoice_email, send_order_placed_email, send_email_async, send_admin_order_notification_email
 from orders.models import Order, OrderItem, Payment, Shipment
-from .models import Category, Product, CameraSpecification, Wishlist, Review, ReviewMedia, Coupon, ServiceableArea, StockNotification, ReviewHelpful
+from .models import Category, Product, CameraSpecification, Wishlist, Review, ReviewMedia, Coupon, ServiceableArea, StockNotification, ReviewHelpful, Project
 from .forms import ReviewForm
 from .specs import (
     SPEC_TYPE_BIOMETRIC,
@@ -564,6 +564,7 @@ def product_list(request, category_slug=None):
             .order_by("-uploaded_at")[:8]
         )
         context["home_faqs"] = FAQ.objects.filter(is_active=True).order_by("order", "created_at")[:6]
+        context["featured_projects"] = Project.objects.filter(is_published=True, is_featured=True).order_by("order", "-completed_on")[:4]
         context["quote_form"] = QuoteRequestForm()
 
     return render(request, "store/product_list.html", context)
