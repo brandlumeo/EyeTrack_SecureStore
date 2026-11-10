@@ -1186,8 +1186,6 @@
 
             // Determine category and create appropriate spec rows
             const category = categories.values().next().value;
-            console.log('Compare category:', category);
-            console.log('First product specs:', liveItems[0]?.specs);
 
             let specRows = [];
 
@@ -1384,13 +1382,7 @@
             const categoryNoteEl = document.getElementById('compareCategoryNote');
             if (category && liveItems.length > 0) {
                 categoryNoteEl.style.display = 'block';
-                categoryNoteEl.innerHTML = `
-                    <i class="bi bi-info-circle me-2"></i>
-                    <strong>Category-Specific Comparison:</strong> Showing ${category} specifications.
-                    ${category === 'CCTV Cameras' ? 'Camera specs include resolution, lens, connectivity, etc.' :
-                        category === 'Video Door Phones' ? 'VDP specs include screen size, unlock methods, app support, etc.' :
-                            'Product specifications based on category.'}
-                `;
+                categoryNoteEl.innerHTML = `<i class="bi bi-info-circle me-1"></i> Showing specifications for <strong>${category}</strong>. Highlighted cells mark the best value.`;
             } else {
                 categoryNoteEl.style.display = 'none';
             }
