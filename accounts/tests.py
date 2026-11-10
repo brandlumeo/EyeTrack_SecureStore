@@ -380,3 +380,46 @@ class FcmTokenSaveTests(TestCase):
         self.assertIsNone(Profile.objects.get(user=first).fcm_token)
         other.refresh_from_db()
         self.assertEqual(other.fcm_token, "other-device")  # unrelated tokens are untouched
+
+
+class PushPromptTimingTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="pushprompt", email="pp@example.com", password="StrongPass123!")
+        Profile.objects.create(user=self.user, phone_number="9999999999")
+
+    def login(self):
+        self.client.login(username="pushprompt", password="StrongPass123!")
+
+    def order(self, status):
+        return Order.objects.create(user=self.user, full_name="Push Prompt", email="pp@example.com", phone="9999999999",
+                                    address="Kozhikode", total="100.00", order_status=status)
+
+    def test_permission_is_only_requested_from_the_opt_in_button(self):
+        self.login()
+        html = self.client.get(reverse("account_dashboard")).content.decode()
+        self.assertEqual(html.count("Notification.requestPermission()"), 1)
+        click_handler = html.index("document.querySelectorAll('[data-push-enable]')")
+        self.assertGreater(html.index("Notification.requestPermission()"), click_handler)
+        # messaging is created after the sign-in helpers and only for supported browsers
+        self.assertLess(html.index("window.EyetrackFirebase = {"), html.index("const messaging = getMessaging(app);"))
+        self.assertIn("isSupported()", html)
+
+    def test_prompt_card_on_dashboard_and_active_order_tracking(self):
+        self.login()
+        self.assertContains(self.client.get(reverse("account_dashboard")), "data-push-prompt hidden")
+        shipped = self.order(Order.OrderStatus.SHIPPED)
+        self.assertContains(self.client.get(reverse("order_tracking", args=[shipped.id])), "Get updates for this order")
+        delivered = self.order(Order.OrderStatus.DELIVERED)
+        # the script in base.html mentions the selector on every page; check for the card element itself
+        self.assertNotContains(self.client.get(reverse("order_tracking", args=[delivered.id])), "aria-label=\"Order update notifications\"")
+
+    def test_saved_token_is_exposed_only_to_the_signed_in_owner(self):
+        Profile.objects.filter(user=self.user).update(fcm_token="this-device-token")
+        self.assertNotContains(self.client.get(reverse("login")), "push-saved-token")
+        self.login()
+        self.assertContains(self.client.get(reverse("account_dashboard")), '"this-device-token"')
+
+    def test_guests_never_get_the_prompt(self):
+        html = self.client.get(reverse("login")).content.decode()
+        self.assertNotIn("Order update notifications", html)
+        self.assertNotIn("requestPermission", html)

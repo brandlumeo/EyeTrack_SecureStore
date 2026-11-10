@@ -1465,9 +1465,10 @@
 
     <!-- Firebase Engine -->
     {{ FIREBASE_CONFIG_JSON|json_script:"firebase-config-data" }}
+    {% if user.is_authenticated %}{{ user.profile.fcm_token|default:""|json_script:"push-saved-token" }}{% endif %}
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-messaging.js";
+        import { getMessaging, getToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-messaging.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
         import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js";
 
@@ -1480,7 +1481,6 @@
         // causes a "Not Found" 404 because Django has no /__/auth/handler route.
 
         const app = initializeApp(firebaseConfig);
-        const messaging = getMessaging(app);
         const auth = getAuth(app);
         const analytics = getAnalytics(app);
 
@@ -1497,60 +1497,92 @@
             signInWithPhoneNumber
         };
 
-        // Listen for foreground messages
-        onMessage(messaging, (payload) => {
-            console.log('Firebase ONMESSAGE triggered', payload);
-            if (window.Swal) {
-                Swal.fire({
-                    title: payload.notification?.title || 'System Notification',
-                    text: payload.notification?.body || '',
-                    icon: 'info',
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 5000,
-                    customClass: { popup: 'swal-glass-popup' }
-                });
-            }
+        {% if user.is_authenticated %}
+        // ---- Push notifications (order updates) ----
+        // Messaging is set up only where the browser supports web push and only after sign-in helpers
+        // exist: getMessaging() throws in unsupported browsers (older Safari, in-app browsers), which
+        // previously stopped Google/phone sign-in from loading. The permission prompt is never shown on
+        // page load; customers opt in from the [data-push-prompt] card on order and account pages.
+        const PUSH_SNOOZE_KEY = 'eyetrackPushPromptSnoozedAt';
+        const PUSH_SNOOZE_MS = 30 * 24 * 60 * 60 * 1000;
+        const savedPushToken = JSON.parse(document.getElementById('push-saved-token').textContent);
+        const storage = {
+            get(key) { try { return window.localStorage.getItem(key); } catch (e) { return null; } },
+            set(key, value) { try { window.localStorage.setItem(key, value); } catch (e) { /* private mode */ } }
+        };
+
+        // Register this device's current token with the account (only when it differs from the saved one).
+        const registerPushToken = (messaging) =>
+            getToken(messaging, { vapidKey: firebaseConfig.vapidKey }).then((token) => {
+                if (!token || token === savedPushToken) return token;
+                return fetch('{% url "save_fcm_token" %}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                    body: JSON.stringify({ fcm_token: token })
+                }).then(() => token);
+            });
+
+        const pushPrompts = () => document.querySelectorAll('[data-push-prompt]');
+        const setPromptMessage = (text, done) => pushPrompts().forEach((prompt) => {
+            prompt.querySelector('[data-push-message]').textContent = text;
+            if (done) prompt.querySelectorAll('[data-push-enable], [data-push-dismiss]').forEach((b) => { b.hidden = true; });
         });
 
-        console.log("Firebase engine is ready... Checking authentication state.");
+        isSupported().catch(() => false).then((supported) => {
+            if (!supported || !('Notification' in window)) return;
+            const messaging = getMessaging(app);
 
-        {% if user.is_authenticated %}
-        console.log("Django User is Authenticated!");
-        {% if not user.profile.fcm_token %}
-        console.log("We do NOT have the FCM token in the database yet. Attempting to get it...");
-        // Request Notification Permission and Register Token
-        if ('Notification' in window) {
-            Notification.requestPermission().then((permission) => {
-                console.log("Notification permission status:", permission);
-                if (permission === 'granted') {
-                    console.log("Permission granted! Fetching Firebase token...");
-                    getToken(messaging, { vapidKey: firebaseConfig.vapidKey }).then((currentToken) => {
-                        if (currentToken) {
-                            console.log("Successfully fetched token:", currentToken);
-                            fetch('{% url "save_fcm_token" %}', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRFToken': '{{ csrf_token }}'
-                                },
-                                body: JSON.stringify({ fcm_token: currentToken })
-                            }).then(res => console.log('Token saved to Django!', res.status));
-                        } else {
-                            console.log('No token returned from Firebase.');
-                        }
-                    }).catch((err) => {
-                        console.error('FIREBASE GETTOKEN ERROR: ', err);
+            onMessage(messaging, (payload) => {
+                if (window.Swal) {
+                    Swal.fire({
+                        title: payload.notification?.title || 'System Notification',
+                        text: payload.notification?.body || '',
+                        icon: 'info',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000,
+                        customClass: { popup: 'swal-glass-popup' }
                     });
                 }
             });
-        }
-        {% else %}
-        console.log("We ALREADY have the user's FCM token in the database.");
-        {% endif %}
-        {% else %}
-        console.log("User is acting as a Guest. Cannot register FCM token.");
+
+            if (Notification.permission === 'granted') {
+                registerPushToken(messaging).catch((err) => console.error('Push token registration failed:', err));
+                return;
+            }
+            const snoozedAt = Number(storage.get(PUSH_SNOOZE_KEY) || 0);
+            if (Notification.permission === 'denied' || Date.now() - snoozedAt < PUSH_SNOOZE_MS) return;
+
+            pushPrompts().forEach((prompt) => { prompt.hidden = false; });
+            document.querySelectorAll('[data-push-enable]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    button.disabled = true;
+                    Notification.requestPermission().then((permission) => {
+                        if (permission === 'granted') {
+                            return registerPushToken(messaging).then(() => {
+                                setPromptMessage("You're all set: we'll send order updates to this device.", true);
+                                setTimeout(() => pushPrompts().forEach((prompt) => { prompt.hidden = true; }), 4000);
+                            });
+                        }
+                        if (permission === 'denied') {
+                            setPromptMessage('Notifications are blocked for this site. You can allow them in your browser settings.', true);
+                        } else {
+                            button.disabled = false;
+                        }
+                    }).catch((err) => {
+                        console.error('Push opt-in failed:', err);
+                        setPromptMessage("We couldn't turn on notifications right now. Please try again later.", true);
+                    });
+                });
+            });
+            document.querySelectorAll('[data-push-dismiss]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    storage.set(PUSH_SNOOZE_KEY, String(Date.now()));
+                    pushPrompts().forEach((prompt) => { prompt.hidden = true; });
+                });
+            });
+        });
         {% endif %}
     </script>
 

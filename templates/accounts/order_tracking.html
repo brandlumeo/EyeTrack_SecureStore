@@ -9,6 +9,9 @@
         </div>
         <div class="col-lg-8 col-xl-9">
             <section class="order-track-view">
+                {% if tracked_order.order_status != 'delivered' and tracked_order.order_status != 'cancelled' %}
+                {% include 'accounts/includes/push_prompt.html' with push_title="Get updates for this order" %}
+                {% endif %}
                 <section class="glass-card order-track-hero mb-4 p-4">
                     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                         <div>

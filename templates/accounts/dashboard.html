@@ -8,6 +8,7 @@
             {% include 'accounts/_account_sidebar.html' %}
         </div>
         <div class="col-lg-8 col-xl-9">
+            {% include 'accounts/includes/push_prompt.html' %}
             <div class="account-section-grid">
                 <a href="{% url 'order_history' %}" class="glass-card p-4 account-panel-link"><div class="account-panel-icon"><i class="bi bi-bag-check"></i></div><h3>My Orders</h3><p>Review your latest purchases and order statuses.</p></a>
                 <a href="{% url 'wishlist_page' %}" class="glass-card p-4 account-panel-link"><div class="account-panel-icon"><i class="bi bi-heart"></i></div><h3>Wishlist</h3><p>Open your saved products and move them to cart faster.</p></a>
