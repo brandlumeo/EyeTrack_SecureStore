@@ -67,6 +67,11 @@ body .cmp-page .compare-data-cell.compare-best { background:#eef4ff; box-shadow:
 body .cmp-page .compare-check { padding:3px 10px; font-size:.76rem; color:#17663d; background:#eaf7ef; border-color:#bfe5cd; }
 body .cmp-page .compare-check.no { color:#a10a20; background:#fff1f2; border-color:#f6c6cc; }
 
+/* Description: one line per row, under a single navy label block */
+body .cmp-page .compare-desc-row .compare-data-cell { padding:9px 18px; font-size:.86rem; color:#374151; }
+body .cmp-page .compare-desc-row .compare-attribute-name { align-items:flex-start; padding-top:10px; }
+body .cmp-page .compare-desc-row:has(+ .compare-desc-more) .compare-attribute-name { border-bottom-color:transparent; }
+
 /* Empty state */
 .cmp-empty { text-align:center; padding:56px 16px 48px; background:#fff; border-radius:16px; }
 .cmp-empty-icon { width:64px; height:64px; margin:0 auto 18px; display:grid; place-items:center; border-radius:18px; background:var(--cmp-tile); color:var(--cmp-navy); font-size:1.6rem; }

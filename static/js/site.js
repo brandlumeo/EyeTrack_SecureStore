@@ -1096,6 +1096,33 @@
         const numberFromSpec = (item, key) => toNumber(getSpec(item, key));
         const dataCell = (content, className = '') => `<div class="compare-data-cell${className ? ` ${className}` : ''}">${content}</div>`;
 
+        const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (ch) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+        }[ch]));
+        // One description line per row: use the admin's line breaks, or split a paragraph into sentences.
+        const descriptionLines = (text) => {
+            const value = String(text || '').trim();
+            if (!value) return [];
+            let lines = value.split(/\r?\n+/).map((line) => line.replace(/^[\s•\-–*]+/, '').trim()).filter(Boolean);
+            if (lines.length === 1) {
+                lines = value.split(/(?<=[.!?])\s+(?=[A-Z0-9])/).map((line) => line.trim()).filter(Boolean);
+            }
+            return lines.slice(0, 12);
+        };
+        const descriptionRows = (items) => {
+            const perItem = items.map((item) => descriptionLines(item.description));
+            const count = Math.max(1, ...perItem.map((lines) => lines.length));
+            return Array.from({ length: count }, (_, index) => ({
+                label: index === 0 ? 'Description' : '',
+                value: perItem.map((lines) => {
+                    const line = lines[index];
+                    const content = line ? escapeHtml(line) : (index === 0 ? '-' : '');
+                    return `<td class="compare-data-cell">${content}</td>`;
+                }).join(''),
+                className: index === 0 ? 'compare-desc-row' : 'compare-desc-row compare-desc-more',
+            }));
+        };
+
         const getStockBadgeClass = (stock) => {
             if (stock === 0) return 'compare-stock-badge out-of-stock';
             if (stock < 5) return 'compare-stock-badge low-stock';
@@ -1360,11 +1387,7 @@
                     className: ''
                 },
                 ...specRows,
-                {
-                    label: 'Description',
-                    value: liveItems.map((item) => `<td class="compare-data-cell">${(item.description || '-').toString().slice(0, 140)}</td>`).join(''),
-                    className: ''
-                },
+                ...descriptionRows(liveItems),
             ];
 
             const specIcons = {
