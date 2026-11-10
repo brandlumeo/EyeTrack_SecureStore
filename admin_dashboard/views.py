@@ -1560,6 +1560,52 @@ def serviceable_area_delete(request, area_id):
 
 @login_required
 @user_passes_test(is_admin)
+def quote_requests_overview(request):
+    """Site survey / quotation leads captured from the storefront."""
+    from support.models import QuoteRequest
+    search = request.GET.get('search', '').strip()
+    status = request.GET.get('status', '').strip()
+    qs = QuoteRequest.objects.all()
+    if search:
+        qs = qs.filter(Q(name__icontains=search) | Q(phone__icontains=search) | Q(location__icontains=search) | Q(pincode__icontains=search))
+    if status:
+        qs = qs.filter(status=status)
+
+    paginator = Paginator(qs, 25)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    counts = dict(QuoteRequest.objects.values_list('status').annotate(n=Count('id')))
+
+    context = {
+        'page_title': 'Leads & Quote Requests',
+        'leads': page_obj,
+        'page_obj': page_obj,
+        'search_query': search,
+        'status_filter': status,
+        'status_choices': QuoteRequest.Status.choices,
+        'total_count': sum(counts.values()),
+        'new_count': counts.get(QuoteRequest.Status.NEW, 0),
+        'won_count': counts.get(QuoteRequest.Status.WON, 0),
+    }
+    return render(request, 'admin_dashboard/quote_requests.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def quote_request_update(request, lead_id):
+    from support.models import QuoteRequest
+    lead = get_object_or_404(QuoteRequest, id=lead_id)
+    new_status = request.POST.get('status')
+    if new_status in QuoteRequest.Status.values:
+        lead.status = new_status
+    lead.admin_notes = request.POST.get('admin_notes', lead.admin_notes).strip()
+    lead.save(update_fields=['status', 'admin_notes', 'updated_at'])
+    messages.success(request, f'Lead "{lead.name}" updated.')
+    return redirect(request.META.get('HTTP_REFERER') or 'admin_dashboard:quote_requests')
+
+
+@login_required
+@user_passes_test(is_admin)
 def faqs_overview(request):
     """List all FAQ entries grouped by category."""
     from support.models import FAQ, FAQCategory

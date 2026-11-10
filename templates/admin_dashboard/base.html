@@ -682,6 +682,13 @@
                         <span>Review Media</span>
                     </a>
 
+                    <!-- Sales -->
+                    <div class="nav-group-label">Sales</div>
+                    <a href="{% url 'admin_dashboard:quote_requests' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'quote_requests' %}active{% endif %}">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <span>Leads &amp; Quotes</span>
+                    </a>
+
                     <!-- Configuration -->
                     <div class="nav-group-label">Configuration</div>
                     <a href="{% url 'admin_dashboard:serviceable_areas' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'serviceable_areas' or request.resolver_match.url_name == 'serviceable_area_add' or request.resolver_match.url_name == 'serviceable_area_edit' %}active{% endif %}">

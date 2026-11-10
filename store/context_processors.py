@@ -88,3 +88,12 @@ def firebase_config(request):
         },
         "GOOGLE_CLIENT_ID": settings.GOOGLE_CLIENT_ID,
     }
+
+
+def business_contact(request):
+    """Expose the business phone / WhatsApp numbers used by contact CTAs."""
+    from django.conf import settings
+    return {
+        "BUSINESS_PHONE": settings.BUSINESS_PHONE,
+        "BUSINESS_WHATSAPP": settings.BUSINESS_WHATSAPP,
+    }

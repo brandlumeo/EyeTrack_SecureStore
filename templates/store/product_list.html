@@ -85,6 +85,7 @@ professional installation support from Eyetrack Solutions.{% endblock %}
         <div class="trust-item"><i class="bi bi-patch-check-fill"></i><span>Certified Brands</span></div>
     </div>
 </section>
+{% if is_landing %}{% include 'store/includes/home_protect.html' %}{% endif %}
 {% endif %}
 
 {# ==== PREMIUM CATEGORY NAV BAR ==== #}
@@ -426,6 +427,8 @@ professional installation support from Eyetrack Solutions.{% endblock %}
     </div>
 </section>
 
+
+{% if is_landing %}{% include 'store/includes/home_sections.html' %}{% endif %}
 
 {# ==== MOBILE FILTER DOCK ==== #}
 <div class="mobile-filter-dock d-lg-none">

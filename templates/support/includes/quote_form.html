@@ -1,0 +1,56 @@
+{# Site survey / quote form. Expects `form` (QuoteRequestForm). Submits via AJAX when JS is available. #}
+<form method="post" action="{% url 'quote_request' %}" class="quote-form" data-quote-form novalidate>
+    {% csrf_token %}
+    {{ form.website }}
+    {{ form.package }}
+    <div class="quote-package-chip{% if not form.package.value %} d-none{% endif %}" data-quote-package-chip>
+        <i class="bi bi-box-seam"></i><span data-quote-package-label>{{ form.package.value|default:"" }}</span>
+    </div>
+    <div class="row g-3">
+        <div class="col-sm-6">
+            <label class="quote-label" for="{{ form.name.id_for_label }}">Your name *</label>
+            <input type="text" name="name" id="{{ form.name.id_for_label }}" class="form-control premium-input" value="{{ form.name.value|default:'' }}" required maxlength="120" autocomplete="name">
+            <div class="quote-error" data-error-for="name">{{ form.name.errors|striptags }}</div>
+        </div>
+        <div class="col-sm-6">
+            <label class="quote-label" for="{{ form.phone.id_for_label }}">Mobile number *</label>
+            <input type="tel" name="phone" id="{{ form.phone.id_for_label }}" class="form-control premium-input" value="{{ form.phone.value|default:'' }}" required maxlength="20" inputmode="tel" autocomplete="tel" placeholder="10-digit mobile">
+            <div class="quote-error" data-error-for="phone">{{ form.phone.errors|striptags }}</div>
+        </div>
+        <div class="col-sm-6">
+            <label class="quote-label" for="{{ form.site_type.id_for_label }}">Property type</label>
+            <select name="site_type" id="{{ form.site_type.id_for_label }}" class="form-select premium-input">
+                {% for value, label in form.fields.site_type.choices %}
+                <option value="{{ value }}" {% if form.site_type.value == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-sm-6">
+            <label class="quote-label" for="{{ form.camera_count.id_for_label }}">Cameras needed</label>
+            <select name="camera_count" id="{{ form.camera_count.id_for_label }}" class="form-select premium-input">
+                {% for value, label in form.fields.camera_count.choices %}
+                <option value="{{ value }}" {% if form.camera_count.value == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-sm-6">
+            <label class="quote-label" for="{{ form.location.id_for_label }}">Area / city</label>
+            <input type="text" name="location" id="{{ form.location.id_for_label }}" class="form-control premium-input" value="{{ form.location.value|default:'' }}" maxlength="200" placeholder="e.g. Perambra, Kozhikode">
+        </div>
+        <div class="col-sm-6">
+            <label class="quote-label" for="{{ form.pincode.id_for_label }}">Pincode</label>
+            <input type="text" name="pincode" id="{{ form.pincode.id_for_label }}" class="form-control premium-input" value="{{ form.pincode.value|default:'' }}" maxlength="6" inputmode="numeric" pattern="\d{6}">
+            <div class="quote-error" data-error-for="pincode">{{ form.pincode.errors|striptags }}</div>
+        </div>
+        <div class="col-12">
+            <label class="quote-label" for="{{ form.message.id_for_label }}">Anything we should know? <span class="text-secondary">(optional)</span></label>
+            <textarea name="message" id="{{ form.message.id_for_label }}" rows="2" class="form-control premium-input" placeholder="Night vision, audio, remote viewing on mobile...">{{ form.message.value|default:'' }}</textarea>
+        </div>
+        <div class="col-12 d-flex flex-wrap align-items-center gap-3">
+            <button type="submit" class="btn btn-premium-cta px-4" data-quote-submit>
+                <i class="bi bi-calendar-check me-2"></i>Book Free Site Survey
+            </button>
+            <small class="quote-privacy"><i class="bi bi-lock-fill me-1"></i>No spam. We only call to plan your survey.</small>
+        </div>
+    </div>
+</form>

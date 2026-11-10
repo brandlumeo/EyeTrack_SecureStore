@@ -15,6 +15,7 @@ class StaticViewSitemap(Sitemap):
             "solutions_page",
             "home_security",
             "services_page",
+            "quote_request",
             "support_page",
             "faq_page",
             "privacy_policy_page",

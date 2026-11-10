@@ -1,7 +1,20 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from .models import FAQCategory, FAQ
 import json
+import logging
+from urllib.parse import quote
+
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
+
+from .forms import QuoteRequestForm
+from .models import FAQCategory, FAQ, QuoteRequest
+
+logger = logging.getLogger(__name__)
 
 def faq_view(request):
     faq_categories = FAQCategory.objects.prefetch_related('faqs').all()
@@ -79,3 +92,84 @@ def _create_default_faqs():
         answer="Yes, we offer professional installation services. You can select this option during checkout for eligible products.",
         order=1
     )
+
+
+def _quote_summary(lead):
+    lines = [
+        f"Name: {lead.name}",
+        f"Phone: {lead.phone}",
+        f"Site: {lead.get_site_type_display()}",
+        f"Cameras: {lead.get_camera_count_display()}",
+    ]
+    if lead.package:
+        lines.append(f"Package: {lead.package}")
+    if lead.location or lead.pincode:
+        lines.append(f"Location: {' '.join(filter(None, [lead.location, lead.pincode]))}")
+    if lead.email:
+        lines.append(f"Email: {lead.email}")
+    if lead.message:
+        lines.append(f"Notes: {lead.message}")
+    return "\n".join(lines)
+
+
+def _notify_staff_of_quote(lead, admin_url):
+    """Email the configured admins and drop a bell notification for staff users."""
+    from accounts.models import Notification
+
+    summary = _quote_summary(lead)
+    recipients = [email for _, email in getattr(settings, "ADMINS", []) if email]
+    if recipients:
+        try:
+            send_mail(
+                subject=f"New site survey request: {lead.name} ({lead.get_site_type_display()})",
+                message=f"{summary}\n\nManage lead: {admin_url}",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=recipients,
+                fail_silently=False,
+            )
+        except Exception:
+            logger.exception("Failed to send quote request email for lead %s", lead.pk)
+
+    for user in get_user_model().objects.filter(is_staff=True, is_active=True):
+        Notification.send(
+            user=user,
+            title="New site survey request",
+            message=f"{lead.name} - {lead.get_site_type_display()}, {lead.get_camera_count_display()}",
+            link=reverse("admin_dashboard:quote_requests"),
+        )
+
+
+@require_http_methods(["GET", "POST"])
+def quote_request(request):
+    wants_json = request.headers.get("x-requested-with") == "XMLHttpRequest"
+    initial = {
+        key: request.GET[key]
+        for key in ("site_type", "camera_count", "package")
+        if request.GET.get(key)
+    }
+    form = QuoteRequestForm(request.POST or None, initial=initial)
+
+    if request.method == "POST":
+        if form.is_valid() and not form.cleaned_data.get("website"):
+            lead = form.save(commit=False)
+            lead.source_page = request.META.get("HTTP_REFERER", "")[:255]
+            lead.save()
+
+            admin_url = request.build_absolute_uri(reverse("admin_dashboard:quote_requests"))
+            from orders.emails import send_email_async
+            send_email_async(_notify_staff_of_quote, lead, admin_url)
+
+            whatsapp_text = "Hi Eyetrack, I just requested a free site survey.\n" + _quote_summary(lead)
+            whatsapp_url = f"https://wa.me/{settings.BUSINESS_WHATSAPP}?text={quote(whatsapp_text)}"
+            if wants_json:
+                return JsonResponse({"ok": True, "whatsapp_url": whatsapp_url, "name": lead.name})
+            messages.success(request, f"Thanks {lead.name}! Our team will call you shortly to plan your free site survey.")
+            request.session["quote_whatsapp_url"] = whatsapp_url
+            return redirect("quote_request")
+        if wants_json:
+            return JsonResponse({"ok": False, "errors": form.errors.get_json_data()}, status=400)
+
+    return render(request, "support/quote_request.html", {
+        "form": form,
+        "whatsapp_url": request.session.pop("quote_whatsapp_url", None),
+    })

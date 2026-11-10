@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Free CCTV Site Survey & Quote | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Book a free CCTV site survey in Kozhikode and across Kerala. Eyetrack Solutions plans camera placement, recommends the right system and gives a clear installed price.{% endblock %}
+
+{% block content %}
+<section class="quote-page">
+    <div class="row g-4 align-items-start">
+        <div class="col-lg-5">
+            <p class="eyebrow mb-2">Free Site Survey</p>
+            <h1 class="home-section-title mb-3">Get the right CCTV setup, with a clear installed price.</h1>
+            <p class="text-secondary mb-4">Tell us about your property. A security expert will call you, visit the site, plan camera positions and share a written quotation &mdash; no obligation.</p>
+            <ul class="quote-benefits">
+                <li><i class="bi bi-geo-alt-fill"></i><span><strong>On-site visit</strong>Camera placement planned around blind spots and entry points.</span></li>
+                <li><i class="bi bi-receipt"></i><span><strong>Transparent quote</strong>Cameras, recorder, storage, cabling and installation itemised.</span></li>
+                <li><i class="bi bi-phone"></i><span><strong>Mobile viewing setup</strong>We configure live view on your phone before we leave.</span></li>
+                <li><i class="bi bi-shield-check"></i><span><strong>Warranty &amp; support</strong>Brand warranty plus local after-sales service.</span></li>
+            </ul>
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <a href="tel:{{ BUSINESS_PHONE }}" class="btn btn-outline-light"><i class="bi bi-telephone me-2"></i>Call {{ BUSINESS_PHONE }}</a>
+                <a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light"><i class="bi bi-whatsapp me-2"></i>WhatsApp</a>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="quote-card">
+                {% if whatsapp_url %}
+                <div class="quote-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <div>
+                        <strong>Request received.</strong>
+                        <p class="mb-2">Want a faster response? Send your details to us on WhatsApp.</p>
+                        <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-premium-cta btn-sm"><i class="bi bi-whatsapp me-2"></i>Continue on WhatsApp</a>
+                    </div>
+                </div>
+                {% endif %}
+                {% include 'support/includes/quote_form.html' %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

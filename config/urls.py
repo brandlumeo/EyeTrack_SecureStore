@@ -36,6 +36,7 @@ urlpatterns = [
     path('admin-dashboard/', include('admin_dashboard.urls')),
     path('support/', include('support.urls')),
     path('faq/', support_views.faq_view, name='faq'),
+    path('get-quote/', support_views.quote_request, name='quote_request'),
     path('', include('store.urls')),
     path('accounts/', include('accounts.urls')),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),

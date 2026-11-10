@@ -87,6 +87,10 @@
     color: rgba(209, 213, 219, 0.9) !important;
     font-size: 0.93rem;
 }
+.co-trust { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin: 1rem 0 0; padding: .85rem; border: 1px solid rgba(245,158,11,0.15); border-radius: .75rem; background: rgba(245,158,11,0.05); list-style: none; }
+.co-trust li { display: flex; align-items: center; gap: .45rem; color: rgba(229, 231, 235, 0.92); font-size: .78rem; font-weight: 600; }
+.co-trust i { color: #f59e0b; font-size: 1rem; }
+.co-trust-pay { margin: .6rem 0 0; color: rgba(156, 163, 175, 0.95); font-size: .76rem; text-align: center; }
 </style>
 
 <section class="mb-4">
@@ -426,6 +430,13 @@
             </div>
             <div class="mt-4">
                 <button type="submit" class="btn btn-premium-cta w-100" id="checkoutSubmitBtn">Place Order and Continue to Payment</button>
+                <ul class="co-trust" aria-label="Why buy from Eyetrack">
+                    <li><i class="bi bi-shield-check" aria-hidden="true"></i>Genuine brand warranty</li>
+                    <li><i class="bi bi-receipt" aria-hidden="true"></i>GST invoice included</li>
+                    <li><i class="bi bi-tools" aria-hidden="true"></i>Expert installation</li>
+                    <li><i class="bi bi-headset" aria-hidden="true"></i>Local after-sales support</li>
+                </ul>
+                <p class="co-trust-pay">Pay securely via Razorpay &middot; UPI, cards, net banking &amp; EMI on eligible cards</p>
             </div>
         </div>
     </div>

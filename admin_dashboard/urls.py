@@ -70,6 +70,8 @@ urlpatterns = [
     path('serviceable-areas/delete/<int:area_id>/', views.serviceable_area_delete, name='serviceable_area_delete'),
 
     # FAQ Management
+    path('leads/', views.quote_requests_overview, name='quote_requests'),
+    path('leads/<int:lead_id>/update/', views.quote_request_update, name='quote_request_update'),
     path('faqs/', views.faqs_overview, name='faqs_overview'),
     path('faqs/add/', views.faq_edit, name='faq_add'),
     path('faqs/edit/<int:faq_id>/', views.faq_edit, name='faq_edit'),

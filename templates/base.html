@@ -47,6 +47,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="{% static 'css/site.css' %}?v=61" rel="stylesheet">
+    <link href="{% static 'css/home-sections.css' %}?v=1" rel="stylesheet">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -679,9 +680,10 @@
     <div class="topbar-shell">
         <div class="container d-flex flex-wrap justify-content-between gap-2 py-2">
             <div class="small topbar-text"><i class="bi bi-shield-lock me-1"></i>Enterprise CCTV Commerce Platform</div>
-            <div class="small topbar-text d-flex gap-3">
-                <span><i class="bi bi-headset me-1"></i>24/7 Support</span>
-                <span><i class="bi bi-patch-check me-1"></i>Warranty Assured</span>
+            <div class="small topbar-text d-flex flex-wrap gap-3 topbar-actions">
+                <a href="tel:{{ BUSINESS_PHONE }}"><i class="bi bi-telephone me-1"></i>{{ BUSINESS_PHONE }}</a>
+                <a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp me-1"></i>WhatsApp</a>
+                <a href="{% url 'quote_request' %}" class="topbar-cta"><i class="bi bi-calendar-check me-1"></i>Free Site Survey</a>
             </div>
         </div>
     </div>
@@ -774,6 +776,18 @@
                                             {% endfor %}
                                         </div>
                                     </div>
+                                    <div class="shop-dropdown-links shop-dropdown-aside">
+                                        <div class="shop-dropdown-section-label">Packages &amp; Services</div>
+                                        <a class="shop-dropdown-aside-link" href="{% url 'product_list' %}#packages"><i class="bi bi-box-seam"></i>Ready-made CCTV kits</a>
+                                        <a class="shop-dropdown-aside-link" href="{% url 'services_page' %}"><i class="bi bi-tools"></i>Installation plans</a>
+                                        <a class="shop-dropdown-aside-link" href="{% url 'solutions_page' %}"><i class="bi bi-grid-1x2"></i>Solutions by industry</a>
+                                        <a class="shop-dropdown-aside-link" href="{% url 'home_security' %}"><i class="bi bi-house-heart"></i>Home security</a>
+                                        <a class="shop-dropdown-aside-link" href="{% url 'compare_page' %}"><i class="bi bi-layout-split"></i>Compare products</a>
+                                        <a class="shop-dropdown-survey" href="{% url 'quote_request' %}">
+                                            <strong><i class="bi bi-calendar-check me-1"></i>Free site survey</strong>
+                                            <small>An expert plans your cameras &amp; gives an installed price.</small>
+                                        </a>
+                                    </div>
                                 </li>
                             </ul>
                         </li>
@@ -819,6 +833,11 @@
                             </button>
                         </li>
                         {% endif %}
+                        <li class="nav-item ms-lg-2 d-flex align-items-center">
+                            <a href="{% url 'quote_request' %}" class="btn btn-outline-light btn-sm px-3 nav-quote-btn d-inline-flex align-items-center {% if current == 'quote_request' %}active{% endif %}" style="height: 38px;">
+                                <i class="bi bi-calendar-check me-2"></i>Get Quote
+                            </a>
+                        </li>
                         <li class="nav-item ms-lg-2 d-flex align-items-center">
                             <a href="{% url 'cart' %}"
                                 class="btn btn-premium-cta btn-sm px-3 cart-btn d-inline-flex align-items-center justify-content-center position-relative"
@@ -881,6 +900,12 @@
                         <a href="{% url 'solutions_page' %}" class="mobile-nav-link">
                             <i class="bi bi-grid-1x2"></i> <span>Solutions</span>
                         </a>
+                        <a href="{% url 'quote_request' %}" class="mobile-nav-link">
+                            <i class="bi bi-calendar-check"></i> <span>Free Site Survey</span>
+                        </a>
+                        <a href="tel:{{ BUSINESS_PHONE }}" class="mobile-nav-link">
+                            <i class="bi bi-telephone"></i> <span>Call {{ BUSINESS_PHONE }}</span>
+                        </a>
                     </div>
 
                     <div class="mobile-nav-group mt-3 pb-5">
@@ -919,6 +944,10 @@
                 <i class="bi bi-grid"></i>
                 <span>Shop</span>
             </button>
+            <a href="{% url 'quote_request' %}" class="dock-item dock-item--quote" id="dockQuote">
+                <span class="dock-quote-orb"><i class="bi bi-calendar-check"></i></span>
+                <span>Get Quote</span>
+            </a>
             <button type="button" class="dock-item" id="dockSearch" aria-label="Open Search">
                 <i class="bi bi-search"></i>
                 <span>Search</span>
@@ -927,10 +956,6 @@
                 <i class="bi bi-cart3"></i>
                 <span class="dock-badge" data-cart-count>{{ cart_count }}</span>
                 <span>Cart</span>
-            </a>
-            <a href="{% url 'account_dashboard' %}" class="dock-item" id="dockAccount">
-                <i class="bi bi-person"></i>
-                <span>Account</span>
             </a>
         </div>
     </header>
@@ -980,10 +1005,9 @@
                         warranty support.</p>
                 </div>
                 <div class="pre-footer-actions">
-                    <a href="tel:+917994357565" class="btn btn-premium-cta"><i class="bi bi-telephone me-2"></i>Call
-                        Us</a>
-                    <a href="mailto:info@etsgrp.in" class="btn btn-outline-light"><i
-                            class="bi bi-envelope me-2"></i>Email</a>
+                    <a href="{% url 'quote_request' %}" class="btn btn-premium-cta"><i class="bi bi-calendar-check me-2"></i>Free Site Survey</a>
+                    <a href="tel:{{ BUSINESS_PHONE }}" class="btn btn-outline-light"><i class="bi bi-telephone me-2"></i>Call Us</a>
+                    <a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light"><i class="bi bi-whatsapp me-2"></i>WhatsApp</a>
                 </div>
             </div>
         </div>
@@ -1519,6 +1543,7 @@
         {% endif %}
     </script>
 
+    <script src="{% static 'js/quote-form.js' %}?v=1" defer></script>
     {% block extra_js %}{% endblock %}
     <!-- Notification Offcanvas Drawer -->
     <div class="offcanvas offcanvas-end premium-drawer" tabindex="-1" id="notificationDrawer"

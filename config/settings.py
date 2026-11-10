@@ -81,6 +81,7 @@ TEMPLATES = [
                 'store.context_processors.wishlist_count',
                 'store.context_processors.categories',
                 'store.context_processors.firebase_config',
+                'store.context_processors.business_contact',
             ],
         },
     },
@@ -152,6 +153,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+BUSINESS_PHONE = config('BUSINESS_PHONE', default='+917994357565')
+BUSINESS_WHATSAPP = config('BUSINESS_WHATSAPP', default='917994357565')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@eyetrack-tech.com')
 EMAIL_HOST = config('EMAIL_HOST', default='')
 EMAIL_PORT = config('EMAIL_PORT', cast=int, default=587)

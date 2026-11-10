@@ -543,6 +543,29 @@ def product_list(request, category_slug=None):
         "new_cutoff": new_cutoff,
         "popular_product_ids": popular_product_ids,
     }
+
+    # Homepage-only sections (testimonials, installation gallery, FAQ, quote form)
+    is_landing = not category and not query and page_obj.number == 1
+    context["is_landing"] = is_landing
+    if is_landing:
+        from orders.models import InstallationPhoto
+        from support.forms import QuoteRequestForm
+        from support.models import FAQ
+
+        context["testimonials"] = (
+            Review.objects.filter(status=True, rating__gte=4)
+            .exclude(review="")
+            .select_related("user", "product")
+            .order_by("-created_at")[:6]
+        )
+        context["installation_photos"] = (
+            InstallationPhoto.objects.filter(label=InstallationPhoto.PhotoLabel.AFTER)
+            .select_related("booking")
+            .order_by("-uploaded_at")[:8]
+        )
+        context["home_faqs"] = FAQ.objects.filter(is_active=True).order_by("order", "created_at")[:6]
+        context["quote_form"] = QuoteRequestForm()
+
     return render(request, "store/product_list.html", context)
 
 
