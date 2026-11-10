@@ -159,3 +159,17 @@ class ProjectAdminTests(TestCase):
         make_project(title="First", order=1)
         r = self.client.get(reverse("admin_dashboard:projects_overview"))
         self.assertEqual([p.title for p in r.context["projects"]], ["First", "Second"])
+
+
+class DashboardAbandonedCartTests(TestCase):
+    def test_dashboard_counts_carts_from_session_payloads(self):
+        from django.contrib.sessions.backends.db import SessionStore
+        cart_session = SessionStore()
+        cart_session["cart"] = {"7": {"price": "1500.00", "quantity": 2}}
+        cart_session.create()
+        SessionStore().create()  # a session without a cart is ignored
+        self.client.force_login(User.objects.create_user("boss", password="x", is_staff=True))
+        r = self.client.get(reverse("admin_dashboard:dashboard"))
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.context["abandoned_carts_count"], 1)
+        self.assertEqual(str(r.context["abandoned_revenue_potential"]), "3000.00")

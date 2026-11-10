@@ -15,6 +15,7 @@ import csv
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST
+from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
 import decimal
 
@@ -407,11 +408,13 @@ def dashboard(request):
     abandoned_carts_count = 0
     abandoned_revenue_potential = Decimal('0.00')
     
-    # Get all non-expired sessions
-    sessions = Session.objects.filter(expire_date__gte=timezone.now())
-    for s in sessions:
+    # Get all non-expired sessions. Only the payload is loaded: reading expire_date as well meant one
+    # malformed date (e.g. '9294-10-00', left by the old MyISAM tables) crashed the whole dashboard.
+    session_payloads = Session.objects.filter(expire_date__gte=timezone.now()).values_list('session_data', flat=True)
+    session_store = SessionStore()
+    for payload in session_payloads:
         try:
-            data = s.get_decoded()
+            data = session_store.decode(payload)
             if 'cart' in data and data['cart']:
                 cart = data['cart']
                 has_items = False
