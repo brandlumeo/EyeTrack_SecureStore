@@ -2,13 +2,18 @@
 {% load static %}
 {% block title %}Professional Installation Services | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Explore CCTV installation, remote monitoring setup, and maintenance with Eyetrack Solutions. Check coverage and choose the right installation plan.{% endblock %}
-{% block extra_head %}<link rel="stylesheet" href="{% static 'css/services.css' %}?v=5">{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/services.css' %}?v=6">{% endblock %}
 {% block content %}
 <div class="svc-page">
     <section class="svc-hero" aria-labelledby="services-title">
-        <h1 id="services-title">Professional installation services</h1>
-        <p class="svc-intro">CCTV setup, mobile access and aftercare by verified Eyetrack technicians.</p>
-        <div class="svc-actions"><a href="#book-installation" class="btn btn-premium-cta">Plan your installation <i class="bi bi-arrow-right" aria-hidden="true"></i></a><a href="{% url 'support_page' %}" class="svc-text-link">Talk to our team <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>
+        <video class="svc-hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1">
+            <source src="{% static 'video/services-hero.mp4' %}" type="video/mp4">
+        </video>
+        <div class="svc-hero-inner">
+            <h1 id="services-title">Professional installation services</h1>
+            <p class="svc-intro">CCTV setup, mobile access and aftercare by verified Eyetrack technicians.</p>
+            <div class="svc-actions"><a href="#book-installation" class="btn btn-premium-cta">Plan your installation <i class="bi bi-arrow-right" aria-hidden="true"></i></a><a href="{% url 'support_page' %}" class="svc-text-link">Talk to our team <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>
+        </div>
     </section>
 
     <section class="svc-section" aria-labelledby="plans-title">
