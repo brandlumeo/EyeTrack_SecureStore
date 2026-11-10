@@ -1746,6 +1746,10 @@ def about_page(request):
     return render(request, "store/about.html")
 
 
+def solutions_page(request):
+    return render(request, "store/solutions.html")
+
+
 def services_page(request):
     from django.contrib.auth.models import User
     context = {

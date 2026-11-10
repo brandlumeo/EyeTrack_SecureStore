@@ -1,9 +1,12 @@
 from django.urls import path
+from django.views.generic import TemplateView
 from . import views
 
 urlpatterns = [
      path('', views.product_list, name='product_list'),
      path('about/', views.about_page, name='about_page'),
+     path('solutions/', views.solutions_page, name='solutions_page'),
+     path('solutions/home-security/', TemplateView.as_view(template_name='store/home_security.html'), name='home_security'),
      path('services/', views.services_page, name='services_page'),
      path('wishlist/', views.wishlist_page, name='wishlist_page'),
      path('wishlist/toggle/<int:product_id>/', views.toggle_wishlist, name='toggle_wishlist'),

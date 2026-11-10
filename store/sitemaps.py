@@ -12,6 +12,8 @@ class StaticViewSitemap(Sitemap):
         return [
             "product_list",
             "about_page",
+            "solutions_page",
+            "home_security",
             "services_page",
             "support_page",
             "faq_page",

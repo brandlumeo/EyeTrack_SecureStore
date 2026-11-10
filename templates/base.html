@@ -784,8 +784,8 @@
                                 class="nav-link premium-link {% if current == 'support_page' %}active{% endif %}"
                                 href="{% url 'support_page' %}">Support</a></li>
                         <li class="nav-item"><a
-                                class="nav-link premium-link {% if current == 'faq_page' %}active{% endif %}"
-                                href="{% url 'faq_page' %}">FAQ</a></li>
+                                class="nav-link premium-link {% if current == 'solutions_page' or current == 'home_security' %}active{% endif %}"
+                                href="{% url 'solutions_page' %}">Solutions</a></li>
                         {% if user.is_authenticated %}
                         <li class="nav-item"><a
                                 class="nav-link premium-link {% if current == 'account_dashboard' or current == 'profile' or current == 'address_list' or current == 'address_add' or current == 'address_edit' or current == 'order_history' or current == 'order_tracking' or current == 'order_invoice' %}active{% endif %}"
@@ -878,8 +878,8 @@
                         <a href="{% url 'support_page' %}" class="mobile-nav-link">
                             <i class="bi bi-headset"></i> <span>Support Center</span>
                         </a>
-                        <a href="{% url 'faq_page' %}" class="mobile-nav-link">
-                            <i class="bi bi-question-circle"></i> <span>FAQs</span>
+                        <a href="{% url 'solutions_page' %}" class="mobile-nav-link">
+                            <i class="bi bi-grid-1x2"></i> <span>Solutions</span>
                         </a>
                     </div>
 

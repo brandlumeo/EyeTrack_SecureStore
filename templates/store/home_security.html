@@ -1,0 +1,59 @@
+{% extends 'store/solutions.html' %}
+{% block title %}Home Security Solutions | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Plan CCTV coverage, video door phones and smart locks for your home. Explore equipment and request installation planning from EyeTrack.{% endblock %}
+
+{% block content %}
+<div class="solutions-page">
+    <nav aria-label="Breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{% url 'solutions_page' %}">Solutions</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Home security</li>
+        </ol>
+    </nav>
+    <section class="solutions-hero mb-4" aria-labelledby="home-security-title">
+        <p class="eyebrow mb-3">Home security</p>
+        <h1 id="home-security-title" class="mb-3">Start with the places that matter at home.</h1>
+        <p class="mb-4">Plan how you’ll see visitors, monitor the areas around your home and control who can enter.</p>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="#home-coverage" class="btn btn-light px-4">Explore the coverage plan</a>
+            <a href="{% url 'services_page' %}" class="btn btn-outline-light px-4">Plan installation</a>
+        </div>
+    </section>
+
+    <section id="home-coverage" class="mb-4" aria-labelledby="home-coverage-title">
+        <h2 id="home-coverage-title" class="h3 mb-3">A simple coverage plan</h2>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <section class="solutions-card h-100">
+                    <i class="bi bi-door-open mb-3" aria-hidden="true"></i>
+                    <h2>01 · Front door</h2>
+                    <p>Choose a video door phone to see and speak with visitors. Check whether you need an indoor monitor or phone access.</p>
+                    <a class="mt-auto" href="{% url 'products_by_category' 'homegate-automation' %}">Browse video door phones</a>
+                </section>
+            </div>
+            <div class="col-md-4">
+                <section class="solutions-card h-100">
+                    <i class="bi bi-camera-video mb-3" aria-hidden="true"></i>
+                    <h2>02 · Outdoor approaches</h2>
+                    <p>Mark the gate, driveway and side entrances you want to see. Check lighting, weather exposure and where power or cabling can reach.</p>
+                    <a class="mt-auto" href="{% url 'products_by_category' 'cctv-installation' %}">Browse CCTV cameras</a>
+                </section>
+            </div>
+            <div class="col-md-4">
+                <section class="solutions-card h-100">
+                    <i class="bi bi-lock mb-3" aria-hidden="true"></i>
+                    <h2>03 · Controlled entry</h2>
+                    <p>Pick the door you want to secure and check its material, thickness and lock type before choosing a smart lock.</p>
+                    <a class="mt-auto" href="{% url 'products_by_category' 'smart-locks' %}">Browse smart locks</a>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <section class="solutions-card" aria-labelledby="home-install-title">
+        <h2 id="home-install-title">Ready to plan an installation?</h2>
+        <p>Have your PIN code, property type and the areas you want covered ready. This helps the team discuss camera placement, recording and installation options with you.</p>
+        <a href="{% url 'services_page' %}">Go to Installation Services</a>
+    </section>
+</div>
+{% endblock %}
