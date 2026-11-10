@@ -1,10 +1,12 @@
 from django.urls import path
 from . import views
+from .video_views import static_video
 
 urlpatterns = [
      path('', views.product_list, name='product_list'),
      path('about/', views.about_page, name='about_page'),
      path('services/', views.services_page, name='services_page'),
+     path('video/<str:name>', static_video, name='static_video'),
      path('wishlist/', views.wishlist_page, name='wishlist_page'),
      path('wishlist/toggle/<int:product_id>/', views.toggle_wishlist, name='toggle_wishlist'),
      path('compare/', views.compare_page, name='compare_page'),
