@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}{{ product.name }} | Eyetrack Solutions{% endblock %}
-{% block meta_description %}{{ product.description|truncatechars:150 }}{% endblock %}
+{% block meta_description %}{{ seo_description }}{% endblock %}
 {% block og_type %}product{% endblock %}
 {% block og_title %}{{ product.name }} | Eyetrack Solutions{% endblock %}
-{% block og_description %}{{ product.description|truncatechars:150 }}{% endblock %}
+{% block og_description %}{{ seo_description }}{% endblock %}
 {% block twitter_title %}{{ product.name }} | Eyetrack Solutions{% endblock %}
-{% block twitter_description %}{{ product.description|truncatechars:150 }}{% endblock %}
+{% block twitter_description %}{{ seo_description }}{% endblock %}
 {% block body_class %}page-product-detail{% endblock %}
 {% block social_image_meta %}
 {% if product.image %}
@@ -27,7 +27,6 @@
   "name": "{{ product.name|escapejs }}",
   "description": "{{ product.description|truncatechars:220|escapejs }}",
   {% if product.image %}"image": ["{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}"],{% endif %}
-  "brand": { "@type": "Brand", "name": "Eyetrack Solutions" },
   "sku": "ETS-{{ product.id|stringformat:'05d' }}",
   "category": "{{ product.category.name|escapejs }}",
   "offers": {
@@ -36,9 +35,22 @@
     "priceCurrency": "INR",
     "price": "{{ product.price }}",
     "availability": "{% if product.stock > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
-    "itemCondition": "https://schema.org/NewCondition"
-  }
+    "itemCondition": "https://schema.org/NewCondition",
+    "seller": { "@id": "{{ request.scheme }}://{{ request.get_host }}/#business" }
+  }{% if total_reviews_count %},
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ avg_rating|floatformat:1 }}",
+    "reviewCount": "{{ total_reviews_count }}"
+  }{% endif %}
 }
+</script>
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+  {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},{% if product.category %}
+  {"@type": "ListItem", "position": 2, "name": "{{ product.category.name|escapejs }}", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'products_by_category' product.category.slug %}"},{% endif %}
+  {"@type": "ListItem", "position": {% if product.category %}3{% else %}2{% endif %}, "name": "{{ product.name|escapejs }}"}
+]}
 </script>
 {% endblock %}
 {% block page_css %}
@@ -82,12 +94,12 @@
             <div class="thumbnail-grid pd-thumbs">
                 {% if product.image %}
                 <button type="button" class="thumbnail-item active" data-src="{{ product.image.url }}" aria-label="View image 1">
-                    <img loading="lazy" decoding="async" src="{{ product.image.url }}" alt="">
+                    <img loading="lazy" decoding="async" src="{{ product.image.url }}" alt="{{ product.name }}">
                 </button>
                 {% endif %}
                 {% for item in product.gallery_images.all %}
                 <button type="button" class="thumbnail-item" data-src="{{ item.image.url }}" aria-label="View image {{ forloop.counter|add:1 }}">
-                    <img loading="lazy" decoding="async" src="{{ item.image.url }}" alt="">
+                    <img loading="lazy" decoding="async" src="{{ item.image.url }}" alt="{{ product.name }}, photo {{ forloop.counter|add:1 }}">
                 </button>
                 {% endfor %}
             </div>

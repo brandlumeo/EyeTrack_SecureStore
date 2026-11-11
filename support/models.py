@@ -1,4 +1,8 @@
+import os
+
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.utils.text import slugify
 
@@ -226,3 +230,65 @@ class ViewingGuide(models.Model):
             problem, sep, fix = line.partition(":")
             out.append((problem.strip(), fix.strip()) if sep else ("", line))
         return out
+
+
+DOWNLOAD_EXTENSIONS = ["pdf", "zip", "doc", "docx", "xls", "xlsx", "jpg", "jpeg", "png"]
+
+
+class Download(models.Model):
+    """A manual, datasheet, brochure or software link listed in the download centre at /support/downloads/."""
+
+    class Kind(models.TextChoices):
+        MANUAL = "manual", "User manual"
+        DATASHEET = "datasheet", "Datasheet"
+        BROCHURE = "brochure", "Brochure"
+        SOFTWARE = "software", "Software"
+        APP = "app", "Mobile app"
+        OTHER = "other", "Other"
+
+    title = models.CharField(max_length=150)
+    kind = models.CharField("type", max_length=20, choices=Kind.choices, default=Kind.MANUAL)
+    brand = models.CharField(max_length=60, blank=True, help_text="e.g. Hikvision, Dahua, CP Plus. Leave blank for general documents.")
+    description = models.CharField(max_length=250, blank=True)
+    file = models.FileField(upload_to="downloads/", blank=True,
+                            validators=[FileExtensionValidator(DOWNLOAD_EXTENSIONS)],
+                            help_text="PDF, ZIP, Word, Excel or image, up to 25 MB.")
+    external_url = models.URLField(blank=True, help_text="Or link to the manufacturer's download page instead of uploading a file.")
+    is_published = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+    download_count = models.PositiveIntegerField(default=0, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["order", "kind", "title"]
+
+    def __str__(self):
+        return self.title
+
+    def clean(self):
+        if not self.file and not self.external_url:
+            raise ValidationError("Upload a file or enter a link.")
+        if self.file and self.external_url:
+            raise ValidationError("Choose either a file or a link, not both.")
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse("download_file", args=[self.pk])
+
+    @property
+    def is_external(self):
+        return not self.file and bool(self.external_url)
+
+    @property
+    def extension(self):
+        return os.path.splitext(self.file.name)[1].lstrip(".").upper() if self.file else ""
+
+    @property
+    def size_label(self):
+        try:
+            size = self.file.size if self.file else 0
+        except OSError:
+            return ""
+        if not size:
+            return ""
+        return "%.1f MB" % (size / 1048576) if size >= 1048576 else "%d KB" % max(1, size // 1024)

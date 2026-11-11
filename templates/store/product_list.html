@@ -2,15 +2,20 @@
 {% load static %}
 
 {# ==== META TAGS & SEO ==== #}
-{% block title %}Premium Security Store | Eyetrack Solutions{% endblock %}
-{% block meta_description %}Browse premium CCTV cameras, smart locks, biometric systems, and video door phones with
-professional installation support from Eyetrack Solutions.{% endblock %}
-{% block meta_robots %}{% if q or min_price or max_price or in_stock or sort != 'featured' %}noindex, follow{% else
-%}index, follow{% endif %}{% endblock %}
-{% block og_title %}Premium Security & Surveillance Store | Eyetrack Solutions{% endblock %}
-{% block og_description %}Shop enterprise-grade security products with secure checkout and installation support.{% endblock %}
-{% block twitter_title %}Premium Security & Surveillance Store | Eyetrack Solutions{% endblock %}
-{% block twitter_description %}Shop enterprise-grade security products with secure checkout and installation support.{% endblock %}
+{% block title %}{{ seo_title }}{% endblock %}
+{% block meta_description %}{{ seo_description }}{% endblock %}
+{% block meta_robots %}{{ seo_robots }}{% endblock %}
+{% block canonical_url %}{{ seo_canonical }}{% endblock %}
+{% block og_title %}{{ seo_title }}{% endblock %}
+{% block og_description %}{{ seo_description }}{% endblock %}
+{% block twitter_title %}{{ seo_title }}{% endblock %}
+{% block twitter_description %}{{ seo_description }}{% endblock %}
+{% block extra_head %}{{ block.super }}{% if seo_breadcrumbs %}
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{% for name, url in seo_breadcrumbs %}
+  {"@type": "ListItem", "position": {{ forloop.counter }}, "name": "{{ name|escapejs }}", "item": "{{ url }}"}{% if not forloop.last %},{% endif %}{% endfor %}
+]}
+</script>{% endif %}{% endblock %}
 
 {% block content %}
 
@@ -28,9 +33,9 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 {# ==== HERO SECTION ==== #}
 <section class="hero-3d" aria-labelledby="homeHeroTitle">
     <div class="hero-3d__backgrounds" aria-hidden="true">
-        <img class="is-current" src="{% static 'img/home-hero-cctv.png' %}" alt="" fetchpriority="high">
-        <img src="{% static 'img/home-hero-biometrics.png' %}" alt="" decoding="async">
-        <img src="{% static 'img/home-hero-laptops.png' %}" alt="" decoding="async">
+        <img class="is-current" src="{% static 'img/home-hero-cctv.webp' %}" alt="" fetchpriority="high">
+        <img src="{% static 'img/home-hero-biometrics.webp' %}" alt="" decoding="async">
+        <img src="{% static 'img/home-hero-laptops.webp' %}" alt="" decoding="async">
     </div>
     <div class="hero-3d__inner">
         <div class="hero-3d__copy">
@@ -208,7 +213,7 @@ professional installation support from Eyetrack Solutions.{% endblock %}
         {% include 'store/includes/breadcrumbs.html' %}
         <div class="catalog-header-row mb-3">
             <div>
-                <h4 class="catalog-title mb-0">{% if category %}{{ category.name }}{% else %}All Security Products{% endif %}</h4>
+                {% if category or q %}<h1 class="catalog-title h4 mb-0">{% if category %}{{ category.name }}{% else %}Results for &ldquo;{{ q }}&rdquo;{% endif %}</h1>{% else %}<h4 class="catalog-title mb-0">All Security Products</h4>{% endif %}
                 {% if category %}<p class="catalog-subtitle mb-0 mt-1">{{ category.name }} collection</p>{% endif %}
             </div>
             <div class="d-flex align-items-center gap-2">

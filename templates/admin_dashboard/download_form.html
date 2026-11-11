@@ -1,0 +1,51 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">{{ page_title }}</h1>
+            <p class="admin-subtitle">Upload a file, or link to the manufacturer's download page.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_dashboard:downloads_overview' %}" class="btn btn-outline-light btn-sm mt-3 mt-md-0"><i class="bi bi-arrow-left me-1"></i> Back to Downloads</a>
+        </div>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger bg-dark text-light border-danger">{{ form.non_field_errors|striptags }}</div>{% endif %}
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="chart-container">
+                <div class="row g-3">
+                    <div class="col-12"><label class="form-label text-secondary" for="{{ form.title.id_for_label }}">Title *</label>{{ form.title }}{% if form.title.errors %}<div class="text-danger small">{{ form.title.errors|striptags }}</div>{% endif %}</div>
+                    <div class="col-md-6"><label class="form-label text-secondary" for="{{ form.kind.id_for_label }}">Type *</label>{{ form.kind }}</div>
+                    <div class="col-md-6"><label class="form-label text-secondary" for="{{ form.brand.id_for_label }}">Brand</label>{{ form.brand }}</div>
+                    <div class="col-12"><label class="form-label text-secondary" for="{{ form.description.id_for_label }}">Short description</label>{{ form.description }}</div>
+                </div>
+            </div>
+            <div class="chart-container mt-4">
+                <h5 class="mb-3">File or link</h5>
+                <label class="form-label text-secondary" for="{{ form.file.id_for_label }}">Upload a file</label>{{ form.file }}
+                <small class="text-secondary d-block">PDF, ZIP, Word, Excel, JPG or PNG, up to 25 MB.</small>
+                {% if form.file.errors %}<div class="text-danger small">{{ form.file.errors|striptags }}</div>{% endif %}
+                <div class="text-center text-secondary my-3">or</div>
+                <label class="form-label text-secondary" for="{{ form.external_url.id_for_label }}">Link to the manufacturer's page</label>{{ form.external_url }}
+                {% if form.external_url.errors %}<div class="text-danger small">{{ form.external_url.errors|striptags }}</div>{% endif %}
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="chart-container">
+                <div class="form-check form-switch d-flex align-items-center gap-3 mb-3">{{ form.is_published }}<label class="form-check-label text-light mb-0" for="{{ form.is_published.id_for_label }}">Published</label></div>
+                <label class="form-label text-secondary" for="{{ form.order.id_for_label }}">Display order</label>{{ form.order }}
+                {% if item %}<small class="text-secondary d-block mt-3">Downloaded {{ item.download_count }} time{{ item.download_count|pluralize }}.</small>{% endif %}
+            </div>
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-premium-cta"><i class="bi bi-save me-1"></i> Save Download</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
