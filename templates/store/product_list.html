@@ -34,8 +34,8 @@
 <section class="hero-3d" aria-labelledby="homeHeroTitle">
     <div class="hero-3d__backgrounds" aria-hidden="true">
         <img class="is-current" src="{% static 'img/home-hero-cctv.webp' %}" alt="" fetchpriority="high">
-        <img src="{% static 'img/home-hero-biometrics.webp' %}" alt="" decoding="async">
-        <img src="{% static 'img/home-hero-laptops.webp' %}" alt="" decoding="async">
+        <img src="{% static 'img/home-hero-biometrics.webp' %}" alt="" decoding="async" fetchpriority="low">
+        <img src="{% static 'img/home-hero-laptops.webp' %}" alt="" decoding="async" fetchpriority="low">
     </div>
     <div class="hero-3d__inner">
         <div class="hero-3d__copy">
@@ -44,22 +44,42 @@
                 <span>Free installation consultation on CCTV orders above &#8377;10,000 &mdash; <a href="{% url 'services_page' %}">Book Now &rarr;</a></span>
                 <button type="button" class="hero-3d__notice-close" onclick="dismissAnnouncement()" aria-label="Dismiss announcement"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
             </div>
-            <p class="hero-3d__kicker">Eyetrack Solutions <span aria-hidden="true">&middot;</span> Enterprise Security Store</p>
-            <h1 class="hero-3d__title" id="homeHeroTitle">See everything.<br><em>Protect</em> what matters.</h1>
-            <p class="hero-3d__lede">Enterprise-grade CCTV, smart locks and biometric systems for homes and businesses &mdash; with expert installation from survey to setup.</p>
+            <h1 class="hero-3d__title" id="homeHeroTitle">Shop security and technology</h1>
+            <div class="hero-3d__story">
+                <div data-hero-story>
+                    <h2>See what matters.</h2>
+                    <p>CCTV cameras and smart locks for homes and businesses, with professional installation.</p>
+                </div>
+                <div data-hero-story hidden>
+                    <h2>Make access simpler.</h2>
+                    <p>Explore biometric devices for secure entry and easier attendance tracking.</p>
+                </div>
+                <div data-hero-story hidden>
+                    <h2>Ready for your workday.</h2>
+                    <p>Explore Dell Latitude and Lenovo ThinkPad laptops in the EyeTrack catalog.</p>
+                </div>
+            </div>
             <div class="hero-3d__actions">
                 <a href="#catalog" class="hero-3d__btn">Explore Products <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
                 <a href="{% url 'services_page' %}" class="hero-3d__btn hero-3d__btn--ghost"><i class="bi bi-tools" aria-hidden="true"></i> Installation plans</a>
             </div>
         </div>
     </div>
-    <div class="hero-3d__slides" role="group" aria-label="Hero slides" hidden>
-        <button type="button" aria-pressed="true"><span class="hero-3d__slide-num">01</span><span class="hero-3d__slide-name">CCTV &amp; Locks</span><span class="hero-3d__slide-bar"><i></i></span></button>
-        <button type="button" aria-pressed="false"><span class="hero-3d__slide-num">02</span><span class="hero-3d__slide-name">Biometrics</span><span class="hero-3d__slide-bar"><i></i></span></button>
-        <button type="button" aria-pressed="false"><span class="hero-3d__slide-num">03</span><span class="hero-3d__slide-name">Laptops</span><span class="hero-3d__slide-bar"><i></i></span></button>
+    <div class="hero-3d__navigation" hidden>
+        <div class="hero-3d__slides" role="group" aria-label="Hero slides">
+            <button type="button" aria-pressed="true">CCTV &amp; Locks</button>
+            <button type="button" aria-pressed="false">Biometrics</button>
+            <button type="button" aria-pressed="false">Laptops</button>
+        </div>
+        <div class="hero-3d__arrows" role="group" aria-label="Carousel controls">
+            <button type="button" data-hero-prev aria-label="Previous slide"><i class="bi bi-arrow-left" aria-hidden="true"></i></button>
+            <button type="button" data-hero-next aria-label="Next slide"><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+            <button type="button" data-hero-pause>Pause</button>
+        </div>
+        <span class="visually-hidden" data-hero-status role="status"></span>
     </div>
 </section>
-<script src="{% static 'js/hero.js' %}?v=12" defer></script>
+<script src="{% static 'js/hero.js' %}?v=13" defer></script>
 
 {# ==== TRUST STRIP ==== #}
 <section class="trust-strip mb-5 reveal">
@@ -245,7 +265,7 @@
                         <div class="product-image-wrap">
                             <a href="{% url 'product_detail' product.slug %}" class="d-block w-100 h-100">
                                 {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image"{% if is_landing or forloop.counter > 3 %} loading="lazy"{% endif %} decoding="async">
                                 {% else %}
                                 <div class="product-image placeholder-image d-flex align-items-center justify-content-center">
                                     <i class="bi bi-camera-video text-white-50" style="font-size: 3rem;"></i>
@@ -469,7 +489,7 @@
                 <a href="{% url 'product_detail' product.slug %}" class="featured-pick-row">
                     <div class="fp-thumb">
                         {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" decoding="async">
                         {% else %}
                         <i class="bi bi-camera-video"></i>
                         {% endif %}

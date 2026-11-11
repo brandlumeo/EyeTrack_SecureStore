@@ -49,9 +49,19 @@ urlpatterns = [
 from django.urls import re_path
 from django.views.static import serve
 
+from django.utils.cache import patch_cache_control
+
+
+def cached_media(request, path):
+    # Media files served by Django in production: let browsers keep them for a week.
+    response = serve(request, path, document_root=settings.MEDIA_ROOT)
+    patch_cache_control(response, public=True, max_age=7 * 24 * 3600)
+    return response
+
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 else:
     urlpatterns += [
-        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+        re_path(r'^media/(?P<path>.*)$', cached_media),
     ]
