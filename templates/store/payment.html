@@ -15,15 +15,18 @@
 
             <!-- Payment Gateway Area -->
             <div class="payment-gateway-container p-4 glass-card rounded-3 mb-4" id="payment-gateway-container" style="border: 1px solid var(--stroke-soft);">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-shield-lock text-success fs-4 me-2"></i>
-                    <h5 class="mb-0">Secure Gateway</h5>
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <h2 class="h5 mb-0">Secure payment</h2>
+                    <span class="d-inline-flex align-items-center gap-2 rounded-pill border px-3 py-2 small text-secondary">
+                        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                        Powered by <strong class="text-body">Razorpay</strong>
+                    </span>
                 </div>
-                <p class="text-secondary small mb-4">You will be redirected to Razorpay's secure portal to complete your transaction for Order {{ order.formatted_id }}.</p>
+                <p class="text-secondary small mb-4">Razorpay Checkout will open to complete payment for Order {{ order.formatted_id }}.</p>
                 
                 <div class="d-grid gap-3">
                     <button id="rzp-button1" class="btn btn-premium-cta btn-lg shadow-sm w-100 py-3">
-                        <i class="bi bi-credit-card me-2"></i>Pay &#8377; {{ order.total|floatformat:2 }}
+                        <i class="bi bi-lock me-2" aria-hidden="true"></i>Pay &#8377; {{ order.total|floatformat:2 }}
                     </button>
                     <div class="text-center">
                         <form action="{% url 'cancel_order' order.id %}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this order?');">

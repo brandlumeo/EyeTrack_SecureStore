@@ -764,8 +764,12 @@ def save_fcm_token(request):
         token = data.get('fcm_token')
         if token:
             profile = get_profile(request.user)
-            profile.fcm_token = token
-            profile.save(update_fields=['fcm_token'])
+            # A device token belongs to whoever is signed in on that browser now. Remove it from any
+            # other account, or a shared browser keeps receiving the previous account's order updates.
+            Profile.objects.filter(fcm_token=token).exclude(pk=profile.pk).update(fcm_token=None)
+            if profile.fcm_token != token:
+                profile.fcm_token = token
+                profile.save(update_fields=['fcm_token'])
             return JsonResponse({'status': 'success'})
         return JsonResponse({'status': 'error', 'message': 'Token missing'}, status=400)
     except Exception as e:

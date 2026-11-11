@@ -1,0 +1,39 @@
+{% extends 'store/tools/base_tools.html' %}
+
+{% block title %}CCTV Planning Tools | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Free CCTV planning tools: build your camera system in a minute, estimate hard disk storage, choose the right lens and compare camera types.{% endblock %}
+
+{% block tool_content %}
+<header class="tools-hero">
+    <p class="eyebrow mb-2">Free planning tools</p>
+    <h1 class="home-section-title mb-3">Plan your CCTV system before you buy</h1>
+    <p class="lead-copy">The same rules of thumb our installers use: how many cameras, which type, how much storage and which lens.</p>
+</header>
+
+<div class="tool-card-grid">
+    <a href="{% url 'system_builder' %}" class="protect-card">
+        <span class="protect-icon"><i class="bi bi-magic"></i></span>
+        <strong>System builder</strong>
+        <small>Answer six quick questions and get a camera plan, recorder, storage and the closest ready-made package.</small>
+        <span class="protect-link">Build my system <i class="bi bi-arrow-right"></i></span>
+    </a>
+    <a href="{% url 'storage_calculator' %}" class="protect-card">
+        <span class="protect-icon"><i class="bi bi-device-hdd"></i></span>
+        <strong>Storage &amp; HDD calculator</strong>
+        <small>How many terabytes you need for your cameras, resolution and recording days &mdash; plus bandwidth.</small>
+        <span class="protect-link">Calculate storage <i class="bi bi-arrow-right"></i></span>
+    </a>
+    <a href="{% url 'lens_calculator' %}" class="protect-card">
+        <span class="protect-icon"><i class="bi bi-bullseye"></i></span>
+        <strong>Lens &amp; field-of-view calculator</strong>
+        <small>Pick the lens that covers your area and see whether faces will be identifiable at that distance.</small>
+        <span class="protect-link">Choose a lens <i class="bi bi-arrow-right"></i></span>
+    </a>
+    <a href="{% url 'camera_guide' %}" class="protect-card">
+        <span class="protect-icon"><i class="bi bi-camera-video"></i></span>
+        <strong>Camera type guide</strong>
+        <small>Dome, bullet, turret, PTZ, fisheye, Wi-Fi and 4G/solar &mdash; where each one works best.</small>
+        <span class="protect-link">Compare camera types <i class="bi bi-arrow-right"></i></span>
+    </a>
+</div>
+{% endblock %}

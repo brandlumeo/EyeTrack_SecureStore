@@ -3,124 +3,267 @@
 {% block meta_robots %}noindex, nofollow{% endblock %}
 {% block content %}
 <style>
-/* ── Checkout mobile premium overrides ─────────────────────── */
-.checkout-page-hero {
-    background: linear-gradient(135deg, rgba(22, 30, 46, 0.98), rgba(13, 20, 34, 0.99));
-    border: 1px solid rgba(245, 158, 11, 0.18);
-    border-radius: 1.2rem;
-    padding: 1.4rem 1.5rem 1.25rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-    overflow: hidden;
+.checkout-studio {
+    --co-ink: #101f39;
+    --co-muted: #465974;
+    --co-line: #d8e2ee;
+    --co-wash: #f2f6fb;
+    --co-blue: #174783;
+    color: var(--co-ink);
+    max-width: 76rem;
+    margin-inline: auto;
+    padding-block: clamp(1rem, 3vw, 2.5rem) 3rem;
 }
-.checkout-page-hero::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #d97706, #f59e0b, #fbbf24);
-    border-radius: 1.2rem 1.2rem 0 0;
-}
-.checkout-page-eyebrow {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #f59e0b;
-    margin-bottom: 0.4rem;
-    display: flex;
+.checkout-studio .co-back {
+    display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: .5rem;
+    color: var(--co-blue);
+    font-weight: 700;
+    margin-bottom: 1.2rem;
 }
-.checkout-page-hero h1 {
-    font-size: clamp(1.45rem, 5vw, 2rem);
+.checkout-studio .co-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(14rem, .42fr);
+    align-items: end;
+    gap: 1.5rem;
+    margin-bottom: 1.75rem;
+}
+.checkout-studio .co-kicker {
+    color: var(--co-blue);
+    font-size: .78rem;
     font-weight: 800;
-    color: #fff;
-    margin-bottom: 0.4rem;
-    letter-spacing: -0.03em;
-}
-.checkout-page-hero p {
-    color: rgba(209, 213, 219, 0.8);
-    margin-bottom: 0;
-    font-size: 0.9rem;
-    line-height: 1.5;
-}
-.checkout-progress-row {
-    margin-top: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-}
-.checkout-progress-label {
-    font-size: 0.75rem;
-    color: rgba(245, 158, 11, 0.85);
-    font-weight: 600;
-    white-space: nowrap;
-}
-.checkout-form-label {
-    color: rgba(209, 213, 219, 0.9);
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
     text-transform: uppercase;
-    margin-bottom: 0.45rem;
-    display: block;
+    letter-spacing: .12em;
 }
-.checkout-section-title {
-    font-size: 1rem;
+.checkout-studio h1 {
+    color: var(--co-ink);
+    font-size: clamp(2.1rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -.055em;
+    line-height: 1.08;
+    margin: .35rem 0 .55rem;
+}
+.checkout-studio .co-hero p { color: var(--co-muted); margin: 0; }
+.checkout-studio .co-progress {
+    background: #fff;
+    border: 1px solid var(--co-line);
+    border-radius: .9rem;
+    padding: .8rem 1rem;
+    color: var(--co-muted);
+    font-size: .82rem;
     font-weight: 700;
-    color: #fff;
-    margin-bottom: 1.1rem;
+}
+.checkout-studio .co-progress-track {
+    height: .34rem;
+    background: #e1eaf5;
+    border-radius: 1rem;
+    overflow: hidden;
+    margin-top: .5rem;
+}
+.checkout-studio #checkoutProgressBar {
+    width: 0;
+    height: 100%;
+    background: var(--co-blue);
+}
+.checkout-studio .co-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .65rem;
+    margin-bottom: 1.25rem;
+}
+.checkout-studio .co-step {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: .5rem;
+    min-width: 0;
+    padding: .6rem .75rem;
+    border-bottom: 2px solid var(--co-line);
+    color: var(--co-muted);
+    font-size: .86rem;
+    font-weight: 700;
 }
-.checkout-section-title::before {
-    content: '';
-    width: 3px;
-    height: 1rem;
-    background: linear-gradient(180deg, #f59e0b, #d97706);
-    border-radius: 2px;
-    flex-shrink: 0;
+.checkout-studio .co-step span {
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    flex: 0 0 1.6rem;
+    border-radius: 50%;
+    background: #e7eef7;
 }
-.form-check-label {
-    color: rgba(209, 213, 219, 0.9) !important;
-    font-size: 0.93rem;
+.checkout-studio .co-step.active,
+.checkout-studio .co-step.done { color: var(--co-blue); border-color: var(--co-blue); }
+.checkout-studio .co-step.active span,
+.checkout-studio .co-step.done span { background: var(--co-blue); color: #fff; }
+.checkout-studio .co-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.42fr) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1rem, 2.5vw, 1.6rem);
+}
+@media (max-width: 991px) {
+    .checkout-studio .co-layout { grid-template-columns: minmax(0, 1fr); }
+}
+.checkout-studio .co-card {
+    min-width: 0;
+    background: #fff;
+    border: 1px solid var(--co-line);
+    border-radius: 1.2rem;
+    padding: clamp(1rem, 2.6vw, 1.8rem);
+    box-shadow: 0 14px 35px rgba(24, 52, 88, .07);
+}
+.checkout-studio .co-card-head {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: 1.4rem;
+}
+.checkout-studio .co-icon {
+    flex: 0 0 2.4rem;
+    height: 2.4rem;
+    display: grid;
+    place-items: center;
+    border-radius: .75rem;
+    background: #e8f1fd;
+    color: var(--co-blue);
+}
+.checkout-studio .co-card-head h2 {
+    margin: 0;
+    color: var(--co-ink);
+    font-weight: 800;
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    letter-spacing: -.025em;
+}
+.checkout-studio .checkout-form-label,
+.checkout-studio .install-field-label {
+    display: block;
+    margin-bottom: .4rem;
+    color: var(--co-ink);
+    font-size: .86rem;
+    font-weight: 700;
+}
+.checkout-studio .co-card .premium-input,
+.checkout-studio #couponCodeInput {
+    min-height: 3rem;
+    border-color: #bac9dc;
+    background-color: var(--co-wash);
+    color: var(--co-ink);
+    border-radius: .65rem;
+    color-scheme: light;
+}
+.checkout-studio .co-card .premium-input:disabled { opacity: 1; color: var(--co-muted); }
+.checkout-studio .co-card .premium-input:focus,
+.checkout-studio #couponCodeInput:focus {
+    border-color: var(--co-blue);
+    box-shadow: 0 0 0 .2rem #dce9fb;
+}
+.checkout-studio .co-card .premium-input.is-invalid { border-color: #b42335; }
+.checkout-studio .co-payment { margin-block: .35rem; }
+.checkout-studio .co-payment .form-check {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .65rem .8rem;
+    border: 1px solid var(--co-line);
+    border-radius: .65rem;
+    margin: 0;
+}
+.checkout-studio .co-payment .form-check:has(input:checked) {
+    border-color: var(--co-blue);
+    background: #edf4ff;
+}
+.checkout-studio .co-payment .form-check-input { float: none; margin: 0; }
+.checkout-studio .co-payment .form-check-label { color: var(--co-ink); font-weight: 650; }
+.checkout-studio .co-payment-grid { display: grid; gap: .55rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); }
+.checkout-studio .install-schedule-box { background: var(--co-wash); padding: 1rem; border-radius: .75rem; }
+.checkout-studio .install-schedule-title { color: var(--co-ink); font-weight: 750; }
+.checkout-studio .install-schedule-icon { color: var(--co-blue); margin-right: .35rem; }
+.checkout-studio .co-item {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .7rem;
+    padding: .65rem 0;
+    font-size: .9rem;
+}
+.checkout-studio .co-item-visual {
+    width: 3rem;
+    height: 3rem;
+    display: grid;
+    place-items: center;
+    border-radius: .55rem;
+    background: var(--co-wash);
+    color: var(--co-blue);
+}
+.checkout-studio .co-item-visual img { width: 100%; height: 100%; object-fit: contain; }
+.checkout-studio .co-item-name { font-weight: 750; overflow-wrap: anywhere; }
+.checkout-studio .co-item-meta { display: block; color: var(--co-muted); }
+.checkout-studio .co-item strong,
+.checkout-studio .co-total strong { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.checkout-studio .co-total {
+    background: #edf4ff;
+    border-radius: .75rem;
+    padding: .85rem 1rem;
+    color: var(--co-ink);
+}
+.checkout-studio .co-total strong { color: var(--co-blue); font-size: clamp(1.15rem, 3vw, 1.55rem); }
+.checkout-studio .co-total small { color: var(--co-muted); }
+.checkout-studio .co-note { color: var(--co-muted); text-align: center; font-size: .8rem; margin: .8rem 0 0; }
+.checkout-studio .co-trust { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin: 1rem 0 0; padding: .85rem; border: 1px solid var(--co-line); border-radius: .75rem; background: var(--co-wash); list-style: none; }
+.checkout-studio .co-trust li { display: flex; align-items: center; gap: .45rem; color: var(--co-ink); font-size: .78rem; font-weight: 600; }
+.checkout-studio .co-trust i { color: var(--co-blue); font-size: 1rem; }
+.checkout-studio .co-trust-pay { margin: .6rem 0 0; color: var(--co-muted); font-size: .76rem; text-align: center; }
+.checkout-studio #checkoutSubmitBtn {
+    min-height: 3.1rem;
+    border-radius: .7rem;
+    background: var(--co-blue);
+    border-color: var(--co-blue);
+    color: #fff;
+    font-weight: 750;
+}
+.checkout-studio #checkoutSubmitBtn:hover { background: #103663; }
+@media (min-width: 992px) {
+    .checkout-studio .co-layout > div:last-child { position: sticky; top: 7rem; }
+}
+@media (max-width: 575px) {
+    .checkout-studio .co-hero { grid-template-columns: 1fr; gap: .9rem; }
+    .checkout-studio .co-step { padding-inline: .15rem; font-size: .78rem; }
 }
 </style>
 
-<section class="mb-4">
-    <div class="checkout-page-hero">
-        <div class="checkout-page-eyebrow"><i class="bi bi-shield-lock-fill"></i> Secure Checkout</div>
-        <h1>Complete Your Order</h1>
-        <p>Review your order and provide delivery information for your professional setup.</p>
-        <div class="checkout-progress-row">
-            <div class="checkout-live-progress flex-grow-1" style="margin:0;">
-                <div class="checkout-live-progress-bar" id="checkoutProgressBar"></div>
-            </div>
-            <span class="checkout-progress-label" id="checkoutProgressText">0%</span>
+<div class="checkout-studio">
+    <a href="{% url 'cart' %}" class="co-back"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to cart</a>
+    <header class="co-hero">
+        <div>
+            <div class="co-kicker"><i class="bi bi-shield-lock me-1" aria-hidden="true"></i> Secure checkout</div>
+            <h1>Complete your order</h1>
+            <p>Enter your delivery details and review your order before payment.</p>
         </div>
+        <div class="co-progress">
+            <span id="checkoutProgressText">Profile completion: 0%</span>
+            <div class="co-progress-track" aria-hidden="true"><div id="checkoutProgressBar"></div></div>
+        </div>
+    </header>
+    <div class="co-steps" aria-label="Checkout stages">
+        <div class="co-step active" id="checkoutStepAddress"><span>1</span> Address</div>
+        <div class="co-step active" id="checkoutStepSummary"><span>2</span> Summary</div>
+        <div class="co-step" id="checkoutStepPayment"><span>3</span> Payment</div>
     </div>
-</section>
-
-<section class="mb-4">
-    <div class="checkout-steps">
-        <div class="checkout-step active" id="checkoutStepAddress"><span>1</span>Address</div>
-        <div class="checkout-step active" id="checkoutStepSummary"><span>2</span>Summary</div>
-        <div class="checkout-step" id="checkoutStepPayment"><span>3</span>Payment</div>
-    </div>
-</section>
 
 <form method="post" id="checkoutForm">
     {% csrf_token %}
-    <section class="row g-4">
-        <div class="col-lg-7">
-            <div class="glass-card p-4">
-                <h5 class="checkout-section-title">Billing &amp; Delivery Information</h5>
+    <section class="co-layout">
+        <div>
+            <div class="co-card">
+                <header class="co-card-head">
+                    <span class="co-icon"><i class="bi bi-truck" aria-hidden="true"></i></span>
+                    <h2>Billing &amp; delivery</h2>
+                </header>
                 <div class="row g-3">
                 {% if saved_addresses %}
                 <div class="col-12">
-                    <label class="checkout-form-label">Saved Address</label>
+                    <label class="checkout-form-label" for="checkoutSavedAddress">Saved Address</label>
                     <select name="saved_address" id="checkoutSavedAddress" class="form-select premium-input">
                         <option value="">Enter address manually</option>
                         {% for saved_address in saved_addresses %}
@@ -134,35 +277,38 @@
                             data-city="{{ saved_address.city|escape }}"
                             data-state="{{ saved_address.state|escape }}"
                             data-pincode="{{ saved_address.pincode|escape }}"
+                            data-summary="{{ saved_address.address|escape }}"
                             {% if saved_address.id == selected_address_id %}selected{% endif %}
                         >
                             {{ saved_address.label }} - {{ saved_address.city }}
                         </option>
                         {% endfor %}
                     </select>
-                    <small style="color:rgba(156,163,175,0.75); font-size:0.78rem;">Choose a saved address to auto-fill below.</small>
+                    <p class="mt-2 mb-1" id="checkoutSavedAddressSummary" {% if not selected_address_display %}hidden{% endif %}><i class="bi bi-geo-alt me-1" aria-hidden="true"></i><span>{{ selected_address_display }}</span></p>
+                    <small style="color:rgba(156,163,175,0.75); font-size:0.78rem;">We&rsquo;ll deliver to the selected address. Choose &ldquo;Enter address manually&rdquo; to use a different one.</small>
                 </div>
                 {% endif %}
                 <div class="col-md-6">
-                    <label class="checkout-form-label">Full Name</label>
-                    <input type="text" name="full_name" class="form-control premium-input checkout-field" value="{{ checkout_initial.full_name }}" required>
+                    <label class="checkout-form-label" for="checkoutFullName">Full Name</label>
+                    <input type="text" name="full_name" id="checkoutFullName" class="form-control premium-input checkout-field" value="{{ checkout_initial.full_name }}" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="checkout-form-label">Email Address</label>
-                    <input type="email" name="email" class="form-control premium-input checkout-field" value="{{ checkout_initial.email }}" required>
+                    <label class="checkout-form-label" for="checkoutEmail">Email Address</label>
+                    <input type="email" name="email" id="checkoutEmail" class="form-control premium-input checkout-field" value="{{ checkout_initial.email }}" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="checkout-form-label">Phone</label>
-                    <input type="text" name="phone" class="form-control premium-input checkout-field" value="{{ checkout_initial.phone }}" minlength="10" maxlength="15" pattern="[0-9+ ]+" required>
+                    <label class="checkout-form-label" for="checkoutPhone">Phone</label>
+                    <input type="text" name="phone" id="checkoutPhone" class="form-control premium-input checkout-field" value="{{ checkout_initial.phone }}" minlength="10" maxlength="15" pattern="[0-9+ ]+" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="checkout-form-label">Delivery Priority</label>
-                    <select class="form-select premium-input" disabled>
+                    <label class="checkout-form-label" for="checkoutDeliveryPriority">Delivery Priority</label>
+                    <select id="checkoutDeliveryPriority" class="form-select premium-input" disabled>
                         <option>Standard (5 days)</option>
                     </select>
                 </div>
-                <div class="col-12">
-                    <label class="checkout-form-label d-block">Payment Method</label>
+                <fieldset class="col-12 co-payment">
+                    <legend class="checkout-form-label">Payment method</legend>
+                    <div class="co-payment-grid">
                     <div class="form-check">
                         <input
                             class="form-check-input"
@@ -188,27 +334,29 @@
                             Cash On Delivery
                         </label>
                     </div>
-                </div>
-                <div class="col-12">
+                    </div>
+                </fieldset>
+                {# Disabled while a saved address is selected: the browser then neither requires nor submits these fields. #}
+                <fieldset class="col-12 border-0 p-0 m-0" id="manualAddressFields" {% if selected_address_display %}disabled hidden{% endif %}>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="checkout-form-label">House No. / Building / Apartment *</label>
+                            <label class="checkout-form-label" for="id_addr_house">House No. / Building / Apartment *</label>
                             <input type="text" name="addr_house" id="id_addr_house" class="form-control premium-input checkout-field" placeholder="e.g. Flat 101, Eyetrack Towers" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="checkout-form-label">Area / Street / Colony *</label>
+                            <label class="checkout-form-label" for="id_addr_street">Area / Street / Colony *</label>
                             <input type="text" name="addr_street" id="id_addr_street" class="form-control premium-input checkout-field" placeholder="e.g. MG Road, Near Central Park" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="checkout-form-label">Landmark (Optional)</label>
+                            <label class="checkout-form-label" for="id_addr_landmark">Landmark (Optional)</label>
                             <input type="text" name="addr_landmark" id="id_addr_landmark" class="form-control premium-input checkout-field" placeholder="e.g. Opposite Metro Station">
                         </div>
                         <div class="col-md-6">
-                            <label class="checkout-form-label">Town / City *</label>
+                            <label class="checkout-form-label" for="id_addr_city">Town / City *</label>
                             <input type="text" name="addr_city" id="id_addr_city" class="form-control premium-input checkout-field" placeholder="e.g. Kozhikode" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="checkout-form-label">State *</label>
+                            <label class="checkout-form-label" for="id_addr_state">State *</label>
                             <select name="addr_state" id="id_addr_state" class="form-select premium-input checkout-field" required>
                                 <option value="">Select State</option>
                                 <option value="Kerala">Kerala</option>
@@ -220,11 +368,13 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="checkout-form-label">Pincode *</label>
+                            <label class="checkout-form-label" for="id_addr_pincode">Pincode *</label>
                             <input type="text" name="addr_pincode" id="id_addr_pincode" class="form-control premium-input checkout-field" placeholder="6-digit Pincode" pattern="[0-9]{6}" maxlength="6" required>
-                            <div id="pincodeMessage" class="small mt-1" style="display: none; font-weight: 500;"></div>
                         </div>
                     </div>
+                </fieldset>
+                <div class="col-12 mt-1">
+                    <div id="pincodeMessage" class="small" style="display: none; font-weight: 500;"></div>
                 </div>
                 {% if has_installation %}
                 <div class="col-12 mt-4 install-schedule-box">
@@ -234,14 +384,14 @@
                     </h6>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label install-field-label">Preferred Date *</label>
-                            <input type="date" name="installation_date"
+                            <label class="form-label install-field-label" for="checkoutInstallDate">Preferred Date *</label>
+                            <input type="date" name="installation_date" id="checkoutInstallDate"
                                 class="form-control premium-input checkout-field install-date-input"
                                 required min="{{ min_install_date }}">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label install-field-label">Time Slot *</label>
-                            <select name="installation_time"
+                            <label class="form-label install-field-label" for="checkoutInstallTime">Time Slot *</label>
+                            <select name="installation_time" id="checkoutInstallTime"
                                 class="form-select premium-input checkout-field install-time-select" required>
                                 <option value="">Select Time Slot</option>
                                 <option value="Morning (9 AM - 1 PM)">Morning (9 AM - 1 PM)</option>
@@ -252,125 +402,39 @@
                     </div>
                 </div>
 
-                <style>
-                /* ── Installation Scheduling Section ─────────────────── */
-                .install-schedule-box {
-                    background: linear-gradient(135deg, rgba(245,158,11,0.07), rgba(251,146,60,0.04));
-                    border: 1px solid rgba(245,158,11,0.28);
-                    border-radius: 1rem;
-                    padding: 1.25rem 1.35rem 1.35rem;
-                    position: relative;
-                    overflow: hidden;
-                }
-                .install-schedule-box::before {
-                    content: '';
-                    position: absolute;
-                    top: 0; left: 0; right: 0;
-                    height: 2px;
-                    background: linear-gradient(90deg, #f59e0b, #fb923c, #f59e0b);
-                    border-radius: 1rem 1rem 0 0;
-                }
-
-                .install-schedule-title {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.6rem;
-                    color: #f59e0b;
-                    font-weight: 700;
-                    font-size: 0.95rem;
-                    margin: 0 0 1rem;
-                    text-transform: uppercase;
-                    letter-spacing: 0.06em;
-                }
-                .install-schedule-icon {
-                    width: 32px;
-                    height: 32px;
-                    border-radius: 8px;
-                    background: rgba(245,158,11,0.15);
-                    border: 1px solid rgba(245,158,11,0.3);
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #f59e0b;
-                    font-size: 0.9rem;
-                    flex-shrink: 0;
-                }
-
-                .install-field-label {
-                    color: rgba(255,255,255,0.7);
-                    font-size: 0.8rem;
-                    font-weight: 600;
-                    letter-spacing: 0.04em;
-                    text-transform: uppercase;
-                    margin-bottom: 0.45rem;
-                }
-
-                /* ── Date input ── */
-                .install-date-input {
-                    border-color: rgba(245,158,11,0.35) !important;
-                    background: rgba(245,158,11,0.06) !important;
-                    color: #fff !important;
-                    color-scheme: dark;
-                }
-                .install-date-input:focus {
-                    border-color: #f59e0b !important;
-                    box-shadow: 0 0 0 0.22rem rgba(245,158,11,0.2) !important;
-                    background: rgba(245,158,11,0.1) !important;
-                    outline: none;
-                }
-                /* Calendar icon tint on Chrome/Edge */
-                .install-date-input::-webkit-calendar-picker-indicator {
-                    filter: invert(70%) sepia(60%) saturate(600%) hue-rotate(5deg);
-                    cursor: pointer;
-                    opacity: 0.85;
-                    transition: opacity 0.2s;
-                }
-                .install-date-input::-webkit-calendar-picker-indicator:hover {
-                    opacity: 1;
-                }
-
-                /* ── Time slot select ── */
-                .install-time-select {
-                    border-color: rgba(245,158,11,0.35) !important;
-                    background: rgba(245,158,11,0.06) !important;
-                    color: #fff !important;
-                }
-                .install-time-select:focus {
-                    border-color: #f59e0b !important;
-                    box-shadow: 0 0 0 0.22rem rgba(245,158,11,0.2) !important;
-                    background: rgba(245,158,11,0.1) !important;
-                    outline: none;
-                }
-                .install-time-select option {
-                    background: #1a2233;
-                    color: #fff;
-                }
-                </style>
                 {% endif %}
                 </div>
             </div>
         </div>
 
-    <div class="col-lg-5">
-        <div class="glass-card p-4 sticky-summary">
-            <h5 class="mb-3">Order Snapshot</h5>
+    <div>
+        <aside class="co-card co-summary" aria-labelledby="orderSummaryTitle">
+            <header class="co-card-head">
+                <span class="co-icon"><i class="bi bi-bag-check" aria-hidden="true"></i></span>
+                <h2 id="orderSummaryTitle">Order summary</h2>
+            </header>
             <div class="d-grid gap-2 mb-3">
                 {% for item in products %}
-                <div class="compact-row">
-                    <span>
-                        {{ item.product.name }} x{{ item.quantity }}
-                        {% if item.has_install %}
-                        <br><small class="text-accent"><i class="bi bi-tools me-1"></i>+ Installation (&#8377;{{ item.install_cost|floatformat:2 }})</small>
-                        {% endif %}
+                <div class="co-item">
+                    <span class="co-item-visual" aria-hidden="true">
+                        {% if item.product.image %}<img src="{{ item.product.image.url }}" alt="" width="48" height="48">
+                        {% else %}<i class="bi bi-box-seam"></i>{% endif %}
                     </span>
-                    <strong>&#8377; {{ item.subtotal }}</strong>
+                    <div>
+                        <div class="co-item-name">{{ item.product.name }}</div>
+                        <small class="co-item-meta">Qty {{ item.quantity }}</small>
+                        {% if item.has_install %}
+                        <small class="co-item-meta"><i class="bi bi-tools me-1"></i>+ Installation (&#8377;{{ item.install_cost|floatformat:2 }})</small>
+                        {% endif %}
+                    </div>
+                    <strong>&#8377; {{ item.subtotal|floatformat:2 }}</strong>
                 </div>
                 {% endfor %}
             </div>
             <hr class="border-secondary border-opacity-25">
             <div class="summary-line mb-2">
                 <span class="text-secondary">Subtotal</span>
-                <strong class="text-white">&#8377; <span id="summarySubtotal">{{ total|floatformat:2 }}</span></strong>
+                <strong>&#8377; <span id="summarySubtotal">{{ total|floatformat:2 }}</span></strong>
             </div>
             
             {% if total_installation_charge > 0 %}
@@ -394,16 +458,16 @@
 
             <div class="summary-line mb-3">
                 <span class="text-secondary">Shipping</span>
-                <strong class="text-white" id="shippingChargeContainer">{% if shipping == 0 %}FREE{% else %}&#8377; <span id="shippingChargeValue">{{ shipping|floatformat:2 }}</span>{% endif %}</strong>
+                <strong id="shippingChargeContainer">{% if shipping == 0 %}FREE{% else %}&#8377; <span id="shippingChargeValue">{{ shipping|floatformat:2 }}</span>{% endif %}</strong>
             </div>
 
-            <div class="mt-3 pt-3 border-top border-secondary border-opacity-10">
+            <div class="co-total mt-3">
                 <div class="d-flex justify-content-between align-items-end mb-1">
-                    <span class="h6 mb-0 text-white fw-bold">Grand Total</span>
-                    <strong class="h4 mb-0 text-primary-glow">&#8377; <span id="grandTotalValue">{{ grand_total|floatformat:2 }}</span></strong>
+                    <span class="h6 mb-0 fw-bold">Grand Total</span>
+                    <strong class="mb-0">&#8377; <span id="grandTotalValue">{{ grand_total|floatformat:2 }}</span></strong>
                 </div>
                 <div class="text-end">
-                    <small class="text-accent" style="font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase;">Inclusive of all taxes (GST)</small>
+                    <small>Inclusive of all taxes (GST)</small>
                 </div>
             </div>
             
@@ -411,26 +475,29 @@
             <div class="coupon-section mt-4 pt-3 border-top border-secondary border-opacity-10">
                 <p class="small text-secondary mb-2 fw-bold" style="letter-spacing: 0.05em;">HAVE A PROMO CODE?</p>
                 <div class="input-group input-group-sm">
-                    <input type="text" id="couponCodeInput" class="form-control bg-dark border-secondary text-white text-uppercase" placeholder="ENTER CODE">
+                    <input type="text" id="couponCodeInput" class="form-control text-uppercase" aria-label="Promo code" placeholder="ENTER CODE">
                     <button class="btn btn-outline-primary" type="button" id="applyCouponBtn">Apply</button>
                 </div>
                 <div id="couponMessage" class="small mt-1" style="display: none;"></div>
             </div>
             {% endif %}
 
-            <div class="info-note mt-4 p-3 rounded-3" style="background: rgba(245,158,11,0.05); border: 1px solid rgba(245,158,11,0.15);">
-                <div class="d-flex gap-2">
-                    <i class="bi bi-info-circle text-accent"></i>
-                    <p class="small text-secondary mb-0">Secure transaction protected by industry standard encryption.</p>
-                </div>
-            </div>
             <div class="mt-4">
-                <button type="submit" class="btn btn-premium-cta w-100" id="checkoutSubmitBtn">Place Order and Continue to Payment</button>
+                <button type="submit" class="btn w-100" id="checkoutSubmitBtn">Place Order and Continue to Payment</button>
+                <p class="co-note"><i class="bi bi-lock me-1" aria-hidden="true"></i> Secure transaction protected by encryption.</p>
+                <ul class="co-trust" aria-label="Why buy from Eyetrack">
+                    <li><i class="bi bi-shield-check" aria-hidden="true"></i>Genuine brand warranty</li>
+                    <li><i class="bi bi-receipt" aria-hidden="true"></i>GST invoice included</li>
+                    <li><i class="bi bi-tools" aria-hidden="true"></i>Expert installation</li>
+                    <li><i class="bi bi-headset" aria-hidden="true"></i>Local after-sales support</li>
+                </ul>
+                <p class="co-trust-pay">Pay securely via Razorpay &middot; UPI, cards, net banking &amp; EMI on eligible cards</p>
             </div>
-        </div>
+        </aside>
     </div>
 </section>
 </form>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -613,26 +680,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (savedAddressSelect) {
-        savedAddressSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            if (selectedOption.value) {
-                const pincode = selectedOption.getAttribute('data-pincode');
-                if (pincodeInput) {
-                    pincodeInput.value = pincode;
-                    validatePincode(pincode);
-                }
+        const manualFields = document.getElementById('manualAddressFields');
+        const savedSummary = document.getElementById('checkoutSavedAddressSummary');
+
+        // A saved address replaces the manual fields; "Enter address manually" brings them back.
+        const applySavedAddress = function () {
+            const selectedOption = savedAddressSelect.options[savedAddressSelect.selectedIndex];
+            const useSaved = Boolean(selectedOption.value);
+            if (manualFields) {
+                manualFields.disabled = useSaved;
+                manualFields.hidden = useSaved;
+            }
+            if (savedSummary) {
+                savedSummary.hidden = !useSaved;
+                savedSummary.querySelector('span').textContent = useSaved ? selectedOption.getAttribute('data-summary') : '';
+            }
+            const pincode = useSaved ? selectedOption.getAttribute('data-pincode') : (pincodeInput ? pincodeInput.value : '');
+            if (pincode && pincode.length === 6) {
+                validatePincode(pincode);
             } else {
-                if (pincodeInput) pincodeInput.value = '';
                 pincodeMessage.style.display = 'none';
                 checkoutSubmitBtn.disabled = false;
             }
-        });
-        
-        // Initial check if a saved address is already selected on page load
-        if (savedAddressSelect.value) {
-            const initialPincode = savedAddressSelect.options[savedAddressSelect.selectedIndex].getAttribute('data-pincode');
-            if (initialPincode) validatePincode(initialPincode);
-        }
+        };
+
+        savedAddressSelect.addEventListener('change', applySavedAddress);
+        applySavedAddress();
     }
 
 });

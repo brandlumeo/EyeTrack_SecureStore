@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}{{ guide.title }} | Eyetrack Solutions{% endblock %}
+{% block meta_description %}{{ guide.summary }}{% endblock %}
+{% block meta_robots %}{% if is_preview %}noindex, nofollow{% else %}index, follow{% endif %}{% endblock %}
+{% block content %}
+{% include 'support/guides/_styles.html' %}
+{% if is_preview %}
+<div class="guide-preview"><i class="bi bi-eye-slash me-1"></i>Draft preview: only staff can see this until it's checked and published.
+    <a href="{% url 'admin_dashboard:guide_edit' guide.pk %}" class="ms-2">Edit guide</a></div>
+{% endif %}
+<a href="{% url 'guide_list' %}" class="home-section-link"><i class="bi bi-arrow-left me-1"></i>All guides</a>
+
+<header class="mt-3 mb-4">
+    <p class="eyebrow mb-2">{{ guide.brand }}{% if guide.app_name %} &middot; {{ guide.app_name }} app{% endif %}</p>
+    <h1 class="home-section-title mb-2">{{ guide.title }}</h1>
+    <p class="text-secondary mb-0">{{ guide.summary }}</p>
+</header>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        {% if guide.checklist %}
+        <section class="glass-card p-4 mb-4">
+            <h2 class="h5 mb-3">Before you start</h2>
+            <ul class="guide-check">{% for item in guide.checklist %}<li><i class="bi bi-check2-circle"></i><span>{{ item }}</span></li>{% endfor %}</ul>
+        </section>
+        {% endif %}
+
+        <section class="mb-4">
+            <h2 class="h5 mb-3">Steps</h2>
+            <ol class="guide-steps">{% for step in guide.step_list %}<li>{{ step }}</li>{% endfor %}</ol>
+        </section>
+
+        {% if guide.image %}<img src="{{ guide.image.url }}" alt="{{ guide.title }}" class="img-fluid rounded-3 mb-4" loading="lazy">{% endif %}
+
+        {% if guide.fixes %}
+        <section class="glass-card p-4">
+            <h2 class="h5 mb-2">If something doesn't work</h2>
+            {% for problem, fix in guide.fixes %}
+            <div class="guide-fix">{% if problem %}<strong>{{ problem }}</strong>{% endif %}<span>{{ fix }}</span></div>
+            {% endfor %}
+        </section>
+        {% endif %}
+    </div>
+
+    <aside class="col-lg-4">
+        {% if guide.android_url or guide.ios_url %}
+        <div class="glass-card p-4 mb-3">
+            <h2 class="h6 mb-3">Get the {{ guide.app_name|default:"app" }}</h2>
+            <div class="d-grid gap-2">
+                {% if guide.android_url %}<a href="{{ guide.android_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light"><i class="bi bi-google-play me-1"></i>Google Play</a>{% endif %}
+                {% if guide.ios_url %}<a href="{{ guide.ios_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light"><i class="bi bi-apple me-1"></i>App Store</a>{% endif %}
+            </div>
+        </div>
+        {% endif %}
+        <div class="glass-card p-4 mb-3">
+            <h2 class="h6 mb-2">Still stuck?</h2>
+            <p class="text-secondary small mb-3">Raise a service request and our team will help you connect.</p>
+            <a href="{% url 'ticket_create' %}" class="btn btn-premium-cta w-100 mb-2">Raise a service request</a>
+            <a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light w-100"><i class="bi bi-whatsapp me-1"></i>WhatsApp</a>
+        </div>
+        {% if others %}
+        <div class="glass-card p-4">
+            <h2 class="h6 mb-2">Other guides</h2>
+            {% for o in others %}<a href="{{ o.get_absolute_url }}" class="d-block py-1">{{ o.title }}</a>{% endfor %}
+        </div>
+        {% endif %}
+    </aside>
+</div>
+{% endblock %}

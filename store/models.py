@@ -505,3 +505,73 @@ class ReviewHelpful(models.Model):
 
     def __str__(self):
         return f"{'Helpful' if self.is_helpful else 'Not helpful'} on Review #{self.review.id}"
+
+
+class Project(models.Model):
+    """A completed installation shown in the public projects gallery."""
+
+    class SiteType(models.TextChoices):
+        HOME = "home", "Home / Villa"
+        APARTMENT = "apartment", "Apartment / Flat"
+        SHOP = "shop", "Shop / Retail"
+        OFFICE = "office", "Office"
+        FACTORY = "factory", "Factory / Warehouse"
+        SCHOOL = "school", "School / Institution"
+        HOSPITAL = "hospital", "Hospital / Clinic"
+        OTHER = "other", "Other"
+
+    title = models.CharField(max_length=150)
+    slug = models.SlugField(max_length=170, unique=True, blank=True)
+    site_type = models.CharField(max_length=20, choices=SiteType.choices, default=SiteType.HOME)
+    location = models.CharField(max_length=120, help_text="Area / city, e.g. Perambra, Kozhikode. Avoid exact addresses.")
+    completed_on = models.DateField(null=True, blank=True)
+    cover_image = models.ImageField(upload_to="projects/%Y/%m/", help_text="Main photo. Only publish photos the customer has agreed to.")
+    summary = models.CharField(max_length=300, help_text="One or two sentences shown on the gallery card.")
+    challenge = models.TextField(blank=True, help_text="What the customer needed or the problem to solve.")
+    solution = models.TextField(blank=True, help_text="What was installed and why.")
+    cameras_installed = models.PositiveIntegerField(null=True, blank=True)
+    system_details = models.TextField(blank=True, help_text="One item per line, e.g. 8 x 4MP turret cameras, 8-ch NVR, 4 TB HDD.")
+    products = models.ManyToManyField(Product, blank=True, related_name="projects", help_text="Catalogue products used (optional).")
+    testimonial = models.TextField(blank=True, help_text="Customer's own words, with their permission.")
+    testimonial_author = models.CharField(max_length=120, blank=True, help_text="e.g. Shop owner, Perambra")
+    is_published = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False, help_text="Show on the homepage.")
+    order = models.PositiveIntegerField(default=0, help_text="Lower numbers appear first.")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["order", "-completed_on", "-created_at"]
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.title)[:150] or "project"
+            slug, n = base, 2
+            while Project.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug, n = "%s-%d" % (base, n), n + 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse("project_detail", args=[self.slug])
+
+    @property
+    def system_lines(self):
+        return [line.strip(" -•") for line in self.system_details.splitlines() if line.strip(" -•")]
+
+
+class ProjectImage(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to="projects/%Y/%m/")
+    caption = models.CharField(max_length=150, blank=True)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return self.caption or "Photo of %s" % self.project

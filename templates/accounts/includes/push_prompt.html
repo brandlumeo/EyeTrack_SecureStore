@@ -1,0 +1,28 @@
+{# Opt-in card for order-update push notifications. Hidden by default; the Firebase script in base.html #}
+{# reveals it only where web push is supported and the customer hasn't allowed, blocked or snoozed it. #}
+{% if user.is_authenticated %}
+<div class="push-prompt" data-push-prompt hidden role="region" aria-label="Order update notifications">
+    <span class="push-prompt-icon" aria-hidden="true"><i class="bi bi-bell"></i></span>
+    <div class="push-prompt-text">
+        <strong>{{ push_title|default:"Get order updates on this device" }}</strong>
+        <span data-push-message>{{ push_message|default:"We'll let you know when your order ships, is out for delivery and arrives." }}</span>
+    </div>
+    <div class="push-prompt-actions">
+        <button type="button" class="btn btn-premium-cta btn-sm" data-push-enable>Turn on</button>
+        <button type="button" class="btn btn-link btn-sm push-prompt-dismiss" data-push-dismiss>Not now</button>
+    </div>
+</div>
+<style>
+    .push-prompt { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; padding: 0.9rem 1.1rem; margin: 0 0 1.25rem; text-align: left;
+        border-radius: 0.9rem; border: 1px solid rgba(245, 163, 0, 0.35); background: linear-gradient(135deg, rgba(245, 163, 0, 0.1), rgba(26, 35, 51, 0.35)); }
+    .push-prompt[hidden] { display: none; }
+    .push-prompt-icon { display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 50%;
+        background: rgba(245, 163, 0, 0.15); color: var(--accent, #f5a300); font-size: 1.15rem; }
+    .push-prompt-text { flex: 1 1 220px; min-width: 0; }
+    .push-prompt-text strong { display: block; color: var(--text, #f7f8fa); font-size: 0.95rem; }
+    .push-prompt-text span { color: var(--text-soft, #c4cdd7); font-size: 0.85rem; }
+    .push-prompt-actions { display: flex; align-items: center; gap: 0.25rem; }
+    .push-prompt-dismiss { color: var(--muted, #a5b2c1); text-decoration: none; }
+    .push-prompt-dismiss:hover { color: var(--text, #f7f8fa); }
+</style>
+{% endif %}

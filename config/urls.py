@@ -21,7 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
-from store.sitemaps import CategorySitemap, ProductSitemap, StaticViewSitemap
+from store.sitemaps import CategorySitemap, ProductSitemap, ProjectSitemap, StaticViewSitemap, ViewingGuideSitemap
 from support import views as support_views
 
 
@@ -29,6 +29,8 @@ sitemaps = {
     "static": StaticViewSitemap,
     "categories": CategorySitemap,
     "products": ProductSitemap,
+    "projects": ProjectSitemap,
+    "guides": ViewingGuideSitemap,
 }
 
 urlpatterns = [
@@ -36,6 +38,7 @@ urlpatterns = [
     path('admin-dashboard/', include('admin_dashboard.urls')),
     path('support/', include('support.urls')),
     path('faq/', support_views.faq_view, name='faq'),
+    path('get-quote/', support_views.quote_request, name='quote_request'),
     path('', include('store.urls')),
     path('accounts/', include('accounts.urls')),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),

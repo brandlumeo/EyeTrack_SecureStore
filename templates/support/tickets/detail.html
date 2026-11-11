@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}{{ ticket.reference }} | Service Request | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block content %}
+{% include 'support/tickets/_styles.html' %}
+<section class="account-layout page-section">
+    <div class="row g-4">
+        <div class="col-lg-4 col-xl-3">
+            {% include 'accounts/_account_sidebar.html' %}
+        </div>
+        <div class="col-lg-8 col-xl-9">
+            <div class="glass-card p-4 p-md-5">
+                <a href="{% url 'ticket_list' %}" class="text-decoration-none small" style="color: var(--text-soft);"><i class="bi bi-arrow-left me-1"></i>All requests</a>
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mt-2 mb-3">
+                    <div>
+                        <h1 class="h4 mb-1">{{ ticket.subject }}</h1>
+                        <small class="text-secondary">{{ ticket.reference }} &middot; raised {{ ticket.created_at|date:"d M Y, H:i" }}</small>
+                    </div>
+                    <span class="ticket-status" data-status="{{ ticket.status }}">{{ ticket.get_status_display }}</span>
+                </div>
+
+                <div class="ticket-facts">
+                    <div class="ticket-fact"><span>Problem</span><strong>{{ ticket.get_category_display }}</strong></div>
+                    {% if ticket.order %}<div class="ticket-fact"><span>Order</span><strong><a href="{% url 'order_tracking' ticket.order.pk %}">{{ ticket.order.formatted_id }}</a></strong></div>{% endif %}
+                    {% if ticket.assigned_technician %}<div class="ticket-fact"><span>Technician</span><strong>{{ ticket.assigned_technician.name }}</strong></div>{% endif %}
+                    {% if ticket.visit_date %}<div class="ticket-fact"><span>Visit date</span><strong>{{ ticket.visit_date|date:"D, d M Y" }}</strong></div>{% endif %}
+                </div>
+
+                {% if show_guides %}
+                <div class="alert d-flex gap-2 align-items-start mb-3" style="background: rgba(245,163,0,0.08); border: 1px solid rgba(245,163,0,0.3); color: var(--text-soft);">
+                    <i class="bi bi-phone" style="color: var(--accent);"></i>
+                    <span>While you wait: our <a href="{% url 'guide_list' %}">phone viewing guides</a> cover the most common app connection fixes.</span>
+                </div>
+                {% endif %}
+                <div class="ticket-thread mb-4">
+                    <article class="ticket-msg">
+                        <header><strong>You</strong><time>{{ ticket.created_at|date:"d M Y, H:i" }}</time></header>
+                        <p>{{ ticket.description }}</p>
+                        {% if intro_photos %}<div class="ticket-photos">{% for a in intro_photos %}<a href="{{ a.image.url }}" target="_blank" rel="noopener"><img src="{{ a.image.url }}" alt="Photo attached to {{ ticket.reference }}" loading="lazy"></a>{% endfor %}</div>{% endif %}
+                    </article>
+                    {% for m in ticket.messages.all %}
+                    <article class="ticket-msg {% if m.from_staff %}from-staff{% endif %}">
+                        <header><strong>{% if m.from_staff %}Eyetrack Support{% else %}You{% endif %}</strong><time>{{ m.created_at|date:"d M Y, H:i" }}</time></header>
+                        <p>{{ m.body }}</p>
+                        {% if m.attachments.all %}<div class="ticket-photos">{% for a in m.attachments.all %}<a href="{{ a.image.url }}" target="_blank" rel="noopener"><img src="{{ a.image.url }}" alt="Photo attached to {{ ticket.reference }}" loading="lazy"></a>{% endfor %}</div>{% endif %}
+                    </article>
+                    {% endfor %}
+                </div>
+
+                {% if ticket.status == 'closed' %}
+                <p class="text-secondary">This request is closed. <a href="{% url 'ticket_create' %}">Raise a new request</a> if you still need help.</p>
+                {% else %}
+                <form method="post" enctype="multipart/form-data" class="mb-3">
+                    {% csrf_token %}
+                    <label class="form-label" for="{{ form.body.id_for_label }}">Reply</label>
+                    {{ form.body }}
+                    {% if form.body.errors %}<div class="text-danger small mt-1">{{ form.body.errors|striptags }}</div>{% endif %}
+                    <input type="file" name="photos" accept="image/*" multiple class="form-control premium-input mt-2" aria-label="Attach photos">
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <button type="submit" class="btn btn-premium-cta"><i class="bi bi-send me-1"></i>Send reply</button>
+                    </div>
+                </form>
+                <form method="post" action="{% url 'ticket_close' ticket.pk %}" onsubmit="return confirm('Close this request? You can raise a new one any time.');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link p-0 text-secondary">Problem solved? Close this request</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

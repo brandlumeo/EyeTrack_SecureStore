@@ -172,15 +172,23 @@ def _send_fcm_notification(order_id, current_status):
         from orders.models import Order
         order = Order.objects.get(id=order_id)
         if order.user and hasattr(order.user, 'profile') and order.user.profile.fcm_token:
+            profile = order.user.profile
+            token = profile.fcm_token
             status_display = order.get_order_status_display()
             msg = messaging.Message(
                 notification=messaging.Notification(
                     title='Eyetrack Update',
                     body=f'Your order {order.formatted_id} is now {status_display}.'
                 ),
-                token=order.user.profile.fcm_token,
+                token=token,
             )
-            messaging.send(msg)
+            try:
+                messaging.send(msg)
+            except (messaging.UnregisteredError, messaging.SenderIdMismatchError):
+                # Google says this token will never work again (app/browser unregistered, or it belongs to
+                # another Firebase project). Forget it instead of retrying it on every order update.
+                type(profile).objects.filter(pk=profile.pk, fcm_token=token).update(fcm_token=None)
+                logger.info("Cleared stale FCM token for user %s after order %s update.", order.user_id, order_id)
     except Exception as e:
         logger.error(f"Failed to send FCM notification for order {order_id}: {str(e)}")
 

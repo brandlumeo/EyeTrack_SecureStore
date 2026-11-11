@@ -1,0 +1,132 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">Leads &amp; Quote Requests</h1>
+            <p class="admin-subtitle">Free site survey and quotation requests submitted from the storefront</p>
+        </div>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#f59e0b;"><i class="bi bi-person-lines-fill"></i></div>
+            <div>
+                <div class="stats-number" style="font-size:1.6rem;">{{ total_count }}</div>
+                <div class="stats-label">Total Leads</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#38bdf8;"><i class="bi bi-bell-fill"></i></div>
+            <div>
+                <div class="stats-number" style="font-size:1.6rem;">{{ new_count }}</div>
+                <div class="stats-label">New - Awaiting Call</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#22c55e;"><i class="bi bi-trophy-fill"></i></div>
+            <div>
+                <div class="stats-number" style="font-size:1.6rem;">{{ won_count }}</div>
+                <div class="stats-label">Won</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="chart-container">
+    <form method="get" class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h5 class="mb-0">All Leads</h5>
+        <div class="d-flex gap-2">
+            <select name="status" class="form-select form-select-sm" style="width:180px;" onchange="this.form.submit()">
+                <option value="">All statuses</option>
+                {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="search" class="form-control form-control-sm"
+                placeholder="Name, phone, area..." value="{{ search_query|default:'' }}" style="width:220px;">
+            <button class="btn btn-outline-light btn-sm" type="submit"><i class="bi bi-search"></i></button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-dark table-admin">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Requirement</th>
+                    <th>Location</th>
+                    <th>Received</th>
+                    <th>Status &amp; Notes</th>
+                    <th>Contact</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lead in leads %}
+                <tr>
+                    <td>
+                        <div style="font-weight:500;">{{ lead.name }}</div>
+                        <small class="text-secondary">{{ lead.phone }}{% if lead.email %}<br>{{ lead.email }}{% endif %}</small>
+                    </td>
+                    <td style="max-width:260px;white-space:normal;">
+                        <div>{{ lead.get_site_type_display }} &middot; {{ lead.get_camera_count_display }}</div>
+                        {% if lead.package %}<span class="badge" style="background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.3);">{{ lead.package }}</span>{% endif %}
+                        {% if lead.message %}<small class="text-secondary d-block mt-1">{{ lead.message|truncatechars:90 }}</small>{% endif %}
+                    </td>
+                    <td><small>{{ lead.location|default:"-" }}{% if lead.pincode %}<br>{{ lead.pincode }}{% endif %}</small></td>
+                    <td><small class="text-secondary">{{ lead.created_at|date:"d M Y, H:i" }}</small></td>
+                    <td style="min-width:220px;">
+                        <form method="post" action="{% url 'admin_dashboard:quote_request_update' lead.id %}" class="d-flex flex-column gap-1">
+                            {% csrf_token %}
+                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                {% for value, label in status_choices %}
+                                <option value="{{ value }}" {% if lead.status == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="text" name="admin_notes" class="form-control form-control-sm" value="{{ lead.admin_notes }}" placeholder="Add note, press Enter">
+                        </form>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="tel:{{ lead.phone }}" class="btn btn-outline-light btn-sm" title="Call"><i class="bi bi-telephone"></i></a>
+                            <a href="https://wa.me/{{ lead.whatsapp_number }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-sm" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-secondary py-5">
+                        <i class="bi bi-person-lines-fill display-6 d-block mb-2 opacity-25"></i>
+                        No leads yet. Requests from the "Get Free Site Survey" form will appear here.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query|urlencode }}&status={{ status_filter }}"><i class="bi bi-chevron-left"></i></a></li>
+            {% endif %}
+            <li class="page-item active"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query|urlencode }}&status={{ status_filter }}"><i class="bi bi-chevron-right"></i></a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

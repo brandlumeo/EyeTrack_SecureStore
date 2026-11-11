@@ -1,0 +1,158 @@
+{% extends 'store/tools/base_tools.html' %}
+
+{% block title %}CCTV System Builder | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Answer six quick questions and get a recommended CCTV camera plan, recorder, hard disk size and installed package for your home or business.{% endblock %}
+
+{% block tool_content %}
+<header class="tools-hero">
+    <p class="eyebrow mb-2">System builder</p>
+    <h1 class="home-section-title mb-3">Build your CCTV system in a minute</h1>
+    <p class="lead-copy">Tell us about your property and we&rsquo;ll suggest the cameras, recorder and storage &mdash; then you can get an installed price for exactly that plan.</p>
+</header>
+
+<div class="row g-4">
+    <div class="{% if plan %}col-lg-5{% else %}col-lg-8{% endif %}">
+        <form method="get" action="{% url 'system_builder' %}" class="tool-panel" data-builder id="builderForm">
+            <div class="builder-progress" data-builder-progress aria-hidden="true"></div>
+            {% if form.non_field_errors %}<div class="tool-error">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+
+            <fieldset class="builder-step" data-step>
+                <legend>What are you protecting?</legend>
+                <span class="tool-hint">This sets the camera style and recorder type.</span>
+                <div class="choice-grid">
+                    {% for value, label in form.fields.site_type.choices %}
+                    <label class="choice-card"><input type="radio" name="site_type" value="{{ value }}" {% if form.site_type.value|stringformat:"s" == value|stringformat:"s" %}checked{% endif %}><span>{{ label }}</span></label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+
+            <fieldset class="builder-step" data-step>
+                <legend>How many places need a camera?</legend>
+                <span class="tool-hint">Count entrances, gate, parking, sides of the building, cash counter, hallways&hellip;</span>
+                <div class="counter-row">
+                    <div>
+                        <label class="tool-legend" for="id_outdoor">Outdoor points</label>
+                        <div class="counter" data-counter>
+                            <button type="button" data-counter-step="-1" aria-label="Fewer outdoor cameras">&minus;</button>
+                            <input type="number" name="outdoor" id="id_outdoor" min="0" max="64" value="{{ form.outdoor.value|default_if_none:0 }}" class="form-control premium-input" inputmode="numeric">
+                            <button type="button" data-counter-step="1" aria-label="More outdoor cameras">+</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="tool-legend" for="id_indoor">Indoor points</label>
+                        <div class="counter" data-counter>
+                            <button type="button" data-counter-step="-1" aria-label="Fewer indoor cameras">&minus;</button>
+                            <input type="number" name="indoor" id="id_indoor" min="0" max="64" value="{{ form.indoor.value|default_if_none:0 }}" class="form-control premium-input" inputmode="numeric">
+                            <button type="button" data-counter-step="1" aria-label="More indoor cameras">+</button>
+                        </div>
+                    </div>
+                </div>
+                {% if form.outdoor.errors or form.indoor.errors %}<div class="tool-error mt-2">{{ form.outdoor.errors|striptags }} {{ form.indoor.errors|striptags }}</div>{% endif %}
+            </fieldset>
+
+            <fieldset class="builder-step" data-step>
+                <legend>Night vision</legend>
+                <span class="tool-hint">Full-colour night cameras show clothing and vehicle colours after dark.</span>
+                <div class="choice-grid choice-grid--wide">
+                    {% for value, label in form.fields.night.choices %}
+                    <label class="choice-card"><input type="radio" name="night" value="{{ value }}" {% if form.night.value|stringformat:"s" == value %}checked{% endif %}><span>{{ label }}</span></label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+
+            <fieldset class="builder-step" data-step>
+                <legend>Do you need audio?</legend>
+                <span class="tool-hint">Hear (and with some models, talk through) the camera.</span>
+                <div class="choice-grid">
+                    {% for value, label in form.fields.audio.choices %}
+                    <label class="choice-card"><input type="radio" name="audio" value="{{ value }}" {% if form.audio.value|stringformat:"s" == value %}checked{% endif %}><span>{{ label }}</span></label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+
+            <fieldset class="builder-step" data-step>
+                <legend>How long should recordings be kept?</legend>
+                <span class="tool-hint">Older footage is overwritten automatically. 30 days is common for shops and offices.</span>
+                <div class="choice-grid">
+                    {% for value, label in form.fields.days.choices %}
+                    <label class="choice-card"><input type="radio" name="days" value="{{ value }}" {% if form.days.value|stringformat:"s" == value|stringformat:"s" %}checked{% endif %}><span>{{ label }}</span></label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+
+            <fieldset class="builder-step" data-step>
+                <legend>Can we run cables?</legend>
+                <span class="tool-hint">Wired cameras are the most reliable; Wi-Fi suits finished interiors where cabling is hard.</span>
+                <div class="choice-grid choice-grid--wide">
+                    {% for value, label in form.fields.cabling.choices %}
+                    <label class="choice-card"><input type="radio" name="cabling" value="{{ value }}" {% if form.cabling.value|stringformat:"s" == value %}checked{% endif %}><span>{{ label }}</span></label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+
+            <div class="builder-nav">
+                <button type="button" class="btn btn-outline-light" data-step-prev hidden><i class="bi bi-arrow-left me-1"></i>Back</button>
+                <button type="button" class="btn btn-premium-cta ms-auto" data-step-next hidden>Next<i class="bi bi-arrow-right ms-1"></i></button>
+                <button type="submit" class="btn btn-premium-cta ms-auto" data-step-submit><i class="bi bi-magic me-2"></i>{% if plan %}Update my plan{% else %}Show my plan{% endif %}</button>
+            </div>
+        </form>
+    </div>
+
+    {% if plan %}
+    <div class="col-lg-7" id="plan">
+        <section class="tool-panel" aria-labelledby="planTitle">
+            <p class="eyebrow mb-2">Your recommended system</p>
+            <h2 id="planTitle" class="home-section-title mb-3" style="font-size:1.5rem;">{{ plan.total }} camera{{ plan.total|pluralize }} &middot; {{ plan.package }}</h2>
+
+            <div class="tool-stats">
+                <div class="tool-stat"><strong>{{ plan.recorder_channels }}-ch</strong><span>Recorder size</span></div>
+                <div class="tool-stat"><strong>{{ plan.storage.hdd.drives }} &times; {{ plan.storage.hdd.size_tb }} TB</strong><span>Hard disk ({{ plan.storage.total_tb }} TB for {{ plan.storage.days }} days)</span></div>
+                <div class="tool-stat"><strong>{{ plan.storage.bandwidth_mbps }} Mbps</strong><span>Total recording bitrate</span></div>
+            </div>
+
+            <h3 class="tool-legend">Cameras</h3>
+            {% for cam in plan.cameras %}
+            <div class="plan-camera">
+                <span class="plan-count">{{ cam.count }}</span>
+                <div>
+                    <strong>{{ cam.where }} &middot; {{ cam.type_name }} camera, {{ cam.resolution }}</strong>
+                    <small>{{ cam.notes|capfirst }}</small>
+                </div>
+            </div>
+            {% endfor %}
+
+            <h3 class="tool-legend mt-3">System</h3>
+            <p class="text-secondary mb-3">{{ plan.technology }}.</p>
+
+            {% if plan.tips %}
+            <h3 class="tool-legend">Good to know</h3>
+            <ul class="plan-tips mb-3">
+                {% for tip in plan.tips %}<li><i class="bi bi-lightbulb"></i><span>{{ tip }}</span></li>{% endfor %}
+            </ul>
+            {% endif %}
+
+            <div class="d-flex flex-wrap gap-2 mt-3">
+                <a href="{{ quote_url }}" class="btn btn-premium-cta"><i class="bi bi-calendar-check me-2"></i>Get installed price for this plan</a>
+                <a href="https://wa.me/{{ BUSINESS_WHATSAPP }}?text={{ 'Hi Eyetrack, I built this plan on your website: '|add:plan.summary|urlencode }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light"><i class="bi bi-whatsapp me-2"></i>Send plan on WhatsApp</a>
+            </div>
+            <p class="tool-note">Estimates for planning. Storage assumes H.265 continuous recording; our survey confirms angles, lighting and the final spec.</p>
+        </section>
+
+        {% if products %}
+        <section class="tool-panel mt-3" aria-labelledby="productsTitle">
+            <h2 id="productsTitle">Cameras from our catalogue</h2>
+            <div class="plan-products">
+                {% for p in products %}
+                <a href="{% url 'product_detail' p.slug %}" class="plan-product">
+                    {% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy">{% endif %}
+                    <span>{{ p.name|truncatechars:48 }}</span>
+                    <span class="price">&#8377;{{ p.price }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

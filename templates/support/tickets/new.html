@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}New Service Request | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block content %}
+<section class="account-layout page-section">
+    <div class="row g-4">
+        <div class="col-lg-4 col-xl-3">
+            {% include 'accounts/_account_sidebar.html' %}
+        </div>
+        <div class="col-lg-8 col-xl-9">
+            <div class="glass-card p-4 p-md-5">
+                <a href="{% url 'ticket_list' %}" class="text-decoration-none small" style="color: var(--text-soft);"><i class="bi bi-arrow-left me-1"></i>All requests</a>
+                <h1 class="h3 mt-2 mb-1">Raise a service request</h1>
+                <p class="text-secondary mb-4">Tell us what's wrong. Photos of the screen, error message or device help us fix it faster.</p>
+                {% if has_guides %}
+                <div class="alert d-flex gap-2 align-items-start mb-4" style="background: rgba(245,163,0,0.08); border: 1px solid rgba(245,163,0,0.3); color: var(--text-soft);">
+                    <i class="bi bi-phone" style="color: var(--accent);"></i>
+                    <span>Can't see your cameras on your phone? <a href="{% url 'guide_list' %}">Try our step-by-step setup guides</a> first: most connection problems are fixed in a few minutes.</span>
+                </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors|striptags }}</div>{% endif %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.category.id_for_label }}">What's the problem?</label>
+                            {{ form.category }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.order.id_for_label }}">{{ form.order.label }}</label>
+                            {{ form.order }}
+                            {% if form.order.errors %}<div class="text-danger small mt-1">{{ form.order.errors|striptags }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="{{ form.subject.id_for_label }}">Short summary *</label>
+                            {{ form.subject }}
+                            {% if form.subject.errors %}<div class="text-danger small mt-1">{{ form.subject.errors|striptags }}</div>{% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="{{ form.description.id_for_label }}">Details *</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}<div class="text-danger small mt-1">{{ form.description.errors|striptags }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.contact_phone.id_for_label }}">{{ form.contact_phone.label }} *</label>
+                            {{ form.contact_phone }}
+                            {% if form.contact_phone.errors %}<div class="text-danger small mt-1">{{ form.contact_phone.errors|striptags }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="{{ form.site_location.id_for_label }}">{{ form.site_location.label }}</label>
+                            {{ form.site_location }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="id_photos">Photos (optional)</label>
+                            <input type="file" name="photos" id="id_photos" accept="image/*" multiple class="form-control premium-input">
+                            <small class="text-secondary">Up to 5 photos, 8 MB each.</small>
+                        </div>
+                        <div class="col-12 d-flex flex-wrap gap-2 mt-2">
+                            <button type="submit" class="btn btn-premium-cta"><i class="bi bi-send me-1"></i>Submit request</button>
+                            <a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light"><i class="bi bi-whatsapp me-1"></i>Urgent? WhatsApp us</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

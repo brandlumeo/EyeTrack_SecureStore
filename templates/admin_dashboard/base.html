@@ -818,11 +818,30 @@
                         <span>Review Media</span>
                     </a>
 
+                    <!-- Sales -->
+                    <div class="nav-group-label">Sales</div>
+                    <a href="{% url 'admin_dashboard:quote_requests' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'quote_requests' %}active{% endif %}">
+                        <i class="bi bi-person-lines-fill"></i>
+                        <span>Leads &amp; Quotes</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:tickets_overview' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'tickets_overview' or request.resolver_match.url_name == 'ticket_manage' %}active{% endif %}">
+                        <i class="bi bi-life-preserver"></i>
+                        <span>Service Requests</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:projects_overview' %}" class="admin-nav-link {% if 'project_' in request.resolver_match.url_name or request.resolver_match.url_name == 'projects_overview' %}active{% endif %}">
+                        <i class="bi bi-images"></i>
+                        <span>Projects Gallery</span>
+                    </a>
+
                     <!-- Configuration -->
                     <div class="nav-group-label">Configuration</div>
                     <a href="{% url 'admin_dashboard:serviceable_areas' %}" class="admin-nav-link {% if request.resolver_match.url_name == 'serviceable_areas' or request.resolver_match.url_name == 'serviceable_area_add' or request.resolver_match.url_name == 'serviceable_area_edit' %}active{% endif %}">
                         <i class="bi bi-geo-alt"></i>
                         <span>Service Areas</span>
+                    </a>
+                    <a href="{% url 'admin_dashboard:guides_overview' %}" class="admin-nav-link {% if 'guide' in request.resolver_match.url_name %}active{% endif %}">
+                        <i class="bi bi-phone"></i>
+                        <span>Remote Viewing Guides</span>
                     </a>
                     <a href="{% url 'admin_dashboard:faqs_overview' %}" class="admin-nav-link {% if 'faq' in request.resolver_match.url_name %}active{% endif %}">
                         <i class="bi bi-question-circle"></i>

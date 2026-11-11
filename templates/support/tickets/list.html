@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Service Requests | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block content %}
+{% include 'support/tickets/_styles.html' %}
+<section class="account-layout page-section">
+    <div class="row g-4">
+        <div class="col-lg-4 col-xl-3">
+            {% include 'accounts/_account_sidebar.html' %}
+        </div>
+        <div class="col-lg-8 col-xl-9">
+            <div class="glass-card p-4 p-md-5">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                    <h1 class="h3 mb-0">Service Requests</h1>
+                    <a href="{% url 'ticket_create' %}" class="btn btn-premium-cta"><i class="bi bi-plus-lg me-1"></i>New request</a>
+                </div>
+                <p class="text-secondary mb-4">Camera offline, recording problem or app not connecting? Raise a request and our support team will reply here.</p>
+
+                {% if tickets %}
+                <div class="d-grid gap-2">
+                    {% for t in tickets %}
+                    <a href="{% url 'ticket_detail' t.pk %}" class="ticket-row">
+                        <div>
+                            <strong>{{ t.subject }}</strong>
+                            <small class="d-block">{{ t.reference }} &middot; {{ t.get_category_display }}{% if t.order %} &middot; {{ t.order.formatted_id }}{% endif %} &middot; updated {{ t.updated_at|date:"d M Y, H:i" }}</small>
+                        </div>
+                        <span class="ticket-status" data-status="{{ t.status }}">{{ t.get_status_display }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-life-preserver display-6 d-block mb-2 opacity-50"></i>
+                    <p class="text-secondary mb-3">You haven't raised any service requests yet.</p>
+                    <a href="{% url 'ticket_create' %}" class="btn btn-premium-cta">Raise a service request</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
