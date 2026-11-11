@@ -30,71 +30,66 @@
 {% endif %}
 
 {% if not category and not q %}
-{# ==== HERO SECTION ==== #}
+{# ==== HERO SECTION: full-width banner carousel with a wavy edge ==== #}
 <section class="hero-3d" aria-labelledby="homeHeroTitle">
-    <div class="hero-3d__ambient" aria-hidden="true">
-        <span class="hero-3d__orb hero-3d__orb--a"></span>
-        <span class="hero-3d__orb hero-3d__orb--b"></span>
-        <span class="hero-3d__grid"></span>
-    </div>
-    <div class="hero-3d__visual" aria-hidden="true">
-        <div class="hero-3d__deck">
-            <div class="hero-3d__backgrounds">
-                <img class="is-current" src="{% static 'img/home-hero-cctv.webp' %}" alt="" fetchpriority="high">
-                <img src="{% static 'img/home-hero-biometrics.webp' %}" alt="" decoding="async" fetchpriority="low">
-                <img src="{% static 'img/home-hero-laptops.webp' %}" alt="" decoding="async" fetchpriority="low">
-            </div>
-            <span class="hero-3d__scan"></span>
-            <span class="hero-3d__corner hero-3d__corner--tl"></span><span class="hero-3d__corner hero-3d__corner--tr"></span>
-            <span class="hero-3d__corner hero-3d__corner--bl"></span><span class="hero-3d__corner hero-3d__corner--br"></span>
-            <span class="hero-3d__hud"><i class="hero-3d__rec"></i><b data-hero-cam>CAM 01</b><span data-hero-label>CCTV &amp; Locks</span></span>
-            <span class="hero-3d__chip hero-3d__chip--a"><i class="bi bi-tools"></i> Professional installation</span>
-            <span class="hero-3d__chip hero-3d__chip--b"><i class="bi bi-headset"></i> Expert support</span>
+    <h1 class="visually-hidden" id="homeHeroTitle">Shop security and technology</h1>
+
+    <div class="hero-3d__strip" id="announcementBar" role="status">
+        <div class="hero-3d__strip-track">
+            {% for i in "123456" %}
+            <span class="hero-3d__strip-item"{% if not forloop.first %} aria-hidden="true"{% endif %}><i class="bi bi-megaphone-fill" aria-hidden="true"></i> Free installation consultation on CCTV orders above &#8377;10,000 <a href="{% url 'services_page' %}"{% if not forloop.first %} tabindex="-1"{% endif %}>Book Now &rarr;</a></span>
+            <span class="hero-3d__strip-sep" aria-hidden="true"></span>
+            {% endfor %}
         </div>
+        <button type="button" class="hero-3d__strip-close" onclick="dismissAnnouncement()" aria-label="Dismiss announcement"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
     </div>
-    <div class="hero-3d__inner">
-        <div class="hero-3d__copy">
-            <div class="hero-3d__notice" id="announcementBar" role="status">
-                <i class="bi bi-megaphone-fill" aria-hidden="true"></i>
-                <span>Free installation consultation on CCTV orders above &#8377;10,000 &mdash; <a href="{% url 'services_page' %}">Book Now &rarr;</a></span>
-                <button type="button" class="hero-3d__notice-close" onclick="dismissAnnouncement()" aria-label="Dismiss announcement"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
-            </div>
-            <h1 class="hero-3d__title" id="homeHeroTitle">Shop security and technology</h1>
-            <div class="hero-3d__story">
-                <div data-hero-story>
+
+    <div class="hero-3d__stage">
+        <div class="hero-3d__track">
+            <article class="hero-3d__slide" data-hero-story aria-roledescription="slide" aria-label="1 of 3">
+                <img src="{% static 'img/home-hero-cctv.webp' %}" alt="" fetchpriority="high">
+                <div class="hero-3d__caption">
+                    <p class="hero-3d__eyebrow">CCTV &amp; Smart Locks</p>
                     <h2>See what matters.</h2>
                     <p>CCTV cameras and smart locks for homes and businesses, with professional installation.</p>
+                    <a href="{% url 'products_by_category' 'cctv-installation' %}" class="hero-3d__btn">Shop CCTV <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
                 </div>
-                <div data-hero-story hidden>
+            </article>
+            <article class="hero-3d__slide" data-hero-story aria-roledescription="slide" aria-label="2 of 3">
+                <img src="{% static 'img/home-hero-biometrics.webp' %}" alt="" loading="lazy" decoding="async">
+                <div class="hero-3d__caption">
+                    <p class="hero-3d__eyebrow">Biometric Devices</p>
                     <h2>Make access simpler.</h2>
                     <p>Explore biometric devices for secure entry and easier attendance tracking.</p>
+                    <a href="{% url 'products_by_category' 'biometric-devices' %}" class="hero-3d__btn">Shop Biometrics <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
                 </div>
-                <div data-hero-story hidden>
+            </article>
+            <article class="hero-3d__slide" data-hero-story aria-roledescription="slide" aria-label="3 of 3">
+                <img src="{% static 'img/home-hero-laptops.webp' %}" alt="" loading="lazy" decoding="async">
+                <div class="hero-3d__caption">
+                    <p class="hero-3d__eyebrow">Laptops</p>
                     <h2>Ready for your workday.</h2>
                     <p>Explore Dell Latitude and Lenovo ThinkPad laptops in the EyeTrack catalog.</p>
+                    <a href="{% url 'products_by_category' 'laptops' %}" class="hero-3d__btn">Shop Laptops <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
                 </div>
-            </div>
-            <div class="hero-3d__actions">
-                <a href="#catalog" class="hero-3d__btn">Explore Products <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-                <a href="{% url 'services_page' %}" class="hero-3d__btn hero-3d__btn--ghost"><i class="bi bi-tools" aria-hidden="true"></i> Installation plans</a>
-            </div>
+            </article>
         </div>
+        <button type="button" class="hero-3d__arrow hero-3d__arrow--prev" data-hero-prev aria-label="Previous slide" hidden><i class="bi bi-arrow-left" aria-hidden="true"></i></button>
+        <button type="button" class="hero-3d__arrow hero-3d__arrow--next" data-hero-next aria-label="Next slide" hidden><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
     </div>
+    <svg class="hero-3d__wave" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true"><path class="hero-3d__wave-accent" d="M0 26 C 160 4 280 4 420 26 S 700 50 860 26 S 1140 4 1300 26 S 1400 40 1440 30 L1440 64 L0 64 Z"/><path class="hero-3d__wave-front" d="M0 34 C 120 12 240 12 360 34 S 600 58 720 34 S 960 12 1080 34 S 1320 58 1440 34 L1440 64 L0 64 Z"/></svg>
+
     <div class="hero-3d__navigation" hidden>
-        <div class="hero-3d__slides" role="group" aria-label="Hero slides">
-            <button type="button" aria-pressed="true"><span class="hero-3d__tab-num" aria-hidden="true">01</span>CCTV &amp; Locks<span class="hero-3d__tab-bar" aria-hidden="true"><i></i></span></button>
-            <button type="button" aria-pressed="false"><span class="hero-3d__tab-num" aria-hidden="true">02</span>Biometrics<span class="hero-3d__tab-bar" aria-hidden="true"><i></i></span></button>
-            <button type="button" aria-pressed="false"><span class="hero-3d__tab-num" aria-hidden="true">03</span>Laptops<span class="hero-3d__tab-bar" aria-hidden="true"><i></i></span></button>
+        <div class="hero-3d__slides" role="group" aria-label="Choose slide">
+            <button type="button" aria-pressed="true"><span class="visually-hidden">CCTV &amp; Smart Locks</span><i></i></button>
+            <button type="button" aria-pressed="false"><span class="visually-hidden">Biometric Devices</span><i></i></button>
+            <button type="button" aria-pressed="false"><span class="visually-hidden">Laptops</span><i></i></button>
         </div>
-        <div class="hero-3d__arrows" role="group" aria-label="Carousel controls">
-            <button type="button" data-hero-prev aria-label="Previous slide"><i class="bi bi-arrow-left" aria-hidden="true"></i></button>
-            <button type="button" data-hero-next aria-label="Next slide"><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
-            <button type="button" data-hero-pause>Pause</button>
-        </div>
+        <button type="button" class="hero-3d__pause" data-hero-pause aria-label="Pause slideshow"><i class="bi bi-pause-fill" aria-hidden="true"></i></button>
         <span class="visually-hidden" data-hero-status role="status"></span>
     </div>
 </section>
-<script src="{% static 'js/hero.js' %}?v=14" defer></script>
+<script src="{% static 'js/hero.js' %}?v=15" defer></script>
 
 {# ==== TRUST STRIP ==== #}
 <section class="trust-strip mb-5 reveal">
