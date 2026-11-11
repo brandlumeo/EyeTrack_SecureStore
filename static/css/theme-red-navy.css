@@ -1171,3 +1171,25 @@ body .cat-nav-pill:not(:has(.cat-nav-count))::after { content: "Soon"; font-size
 @media (max-width: 992px) {
     body .cat-nav-track { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 104px; overflow-x: auto; justify-content: start; }
 }
+
+/* Login and registration use the same simple form card. */
+.main-shell .auth-simple .auth-simple-card {
+    background: #fff !important;
+    border: 1px solid #dce4ef;
+    border-radius: 12px;
+    box-shadow: none;
+    animation: none;
+}
+.auth-simple .auth-simple-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: .8rem;
+}
+.auth-simple-divider::before,
+.auth-simple-divider::after {
+    content: "";
+    flex: 1;
+    border-top: 1px solid #dce4ef;
+}
