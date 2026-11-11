@@ -7,29 +7,13 @@
 {% endblock %}
 
 {% block content %}
-<section class="auth-wrap row justify-content-center">
+<section class="auth-wrap auth-simple row justify-content-center">
     <div class="col-lg-5">
-        <div class="glass-card p-4 p-md-5">
-            <h1 class="h4 mb-3">Welcome Back</h1>
-            <p class="text-secondary small mb-4">Access your orders, checkout faster, and manage your security stack.</p>
+        <div class="glass-card auth-simple-card p-4">
+            <h1 class="h4 mb-4">Login</h1>
             <form method="post" class="d-grid gap-3">
                 {% csrf_token %}
 
-                {# Google Identity Services button — no popups, no COOP issues #}
-                {# Google sign-in: styled button with real GSI button overlaid on top #}
-                <div style="position: relative; display: inline-block; width: 100%;">
-                    <button type="button" class="btn btn-outline-light w-100" id="firebase-google-login">
-                        <i class="bi bi-google me-2 text-danger"></i>Continue with Google
-                    </button>
-                    <div id="gsi-btn-overlay" style="position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;overflow:hidden;cursor:pointer;"></div>
-                </div>
-                <div id="firebase-auth-status" class="small text-center"></div>
-
-                <div class="d-flex align-items-center my-1">
-                    <hr class="flex-grow-1 bg-secondary border-0" style="height: 1px;">
-                    <span class="mx-2 text-secondary small">OR</span>
-                    <hr class="flex-grow-1 bg-secondary border-0" style="height: 1px;">
-                </div>
                 {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
                 {% if form.non_field_errors %}
                     <div class="alert alert-danger py-2 mb-0">
@@ -40,7 +24,7 @@
                 {% endif %}
                 {% for field in form %}
                 <div>
-                    <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
                     {{ field }}
                     {% if field.help_text %}
                         <div class="text-secondary small mt-1">{{ field.help_text }}</div>
@@ -51,6 +35,14 @@
                 </div>
                 {% endfor %}
                 <button type="submit" class="btn btn-premium-cta">Login</button>
+                <p class="auth-simple-divider">or</p>
+                <div style="position: relative; display: inline-block; width: 100%;">
+                    <button type="button" class="btn btn-outline-light w-100" id="firebase-google-login">
+                        <i class="bi bi-google me-2 text-danger"></i>Continue with Google
+                    </button>
+                    <div id="gsi-btn-overlay" style="position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;overflow:hidden;cursor:pointer;"></div>
+                </div>
+                <div id="firebase-auth-status" class="small text-center"></div>
             </form>
             <p class="small mt-3 mb-1"><a href="{% url 'password_reset' %}">Forgot password?</a></p>
             <p class="small mt-1 mb-1"><a href="{% url 'resend_verification_email' %}">Need a new verification link?</a></p>
@@ -121,8 +113,6 @@
             });
         }
 
-        // Auto One Tap prompt (shows top-right if not suppressed)
-        google.accounts.id.prompt();
     });
 </script>
 {% endblock %}

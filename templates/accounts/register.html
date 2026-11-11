@@ -7,11 +7,10 @@
 {% endblock %}
 
 {% block content %}
-<section class="auth-wrap row justify-content-center">
+<section class="auth-wrap auth-simple row justify-content-center">
     <div class="col-lg-5">
-        <div class="glass-card p-4 p-md-5">
-            <h1 class="h4 mb-3">Create Account</h1>
-            <p class="text-secondary small mb-4">Create your account with your name, email, phone number, and secure password.</p>
+        <div class="glass-card auth-simple-card p-4">
+            <h1 class="h4 mb-4">Create an account</h1>
             {% if inactive_email %}
                 <div class="alert alert-warning py-2">
                     This email is already registered but not verified.
@@ -21,21 +20,6 @@
             <form method="post" class="d-grid gap-3">
                 {% csrf_token %}
 
-                {# Google sign-in: our styled button with the real GSI button overlaid on top #}
-                {# The GSI button uses FedCM (browser-native) — no popup, no COOP issues    #}
-                <div style="position: relative; display: inline-block; width: 100%;">
-                    <button type="button" class="btn btn-outline-light w-100" id="firebase-google-login">
-                        <i class="bi bi-google me-2 text-danger"></i>Sign up with Google
-                    </button>
-                    <div id="gsi-btn-overlay" style="position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;overflow:hidden;cursor:pointer;"></div>
-                </div>
-                <div id="firebase-auth-status-register" class="small text-center"></div>
-
-                <div class="d-flex align-items-center my-1">
-                    <hr class="flex-grow-1 bg-secondary border-0" style="height: 1px;">
-                    <span class="mx-2 text-secondary small">OR</span>
-                    <hr class="flex-grow-1 bg-secondary border-0" style="height: 1px;">
-                </div>
                 {% if form.non_field_errors %}
                     <div class="alert alert-danger py-2 mb-0">
                         {% for error in form.non_field_errors %}
@@ -44,8 +28,8 @@
                     </div>
                 {% endif %}
                 {% for field in form %}
-                <div class="position-relative mb-3">
-                    <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+                <div class="position-relative">
+                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
                     {{ field }}
                     {% if field.help_text %}
                         <div class="text-secondary small mt-1">{{ field.help_text|safe }}</div>
@@ -56,6 +40,14 @@
                 </div>
                 {% endfor %}
                 <button type="submit" class="btn btn-premium-cta" id="submit-btn">Create Account</button>
+                <p class="auth-simple-divider">or</p>
+                <div style="position: relative; display: inline-block; width: 100%;">
+                    <button type="button" class="btn btn-outline-light w-100" id="firebase-google-login">
+                        <i class="bi bi-google me-2 text-danger"></i>Sign up with Google
+                    </button>
+                    <div id="gsi-btn-overlay" style="position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;overflow:hidden;cursor:pointer;"></div>
+                </div>
+                <div id="firebase-auth-status-register" class="small text-center"></div>
             </form>
             <p class="small mt-3 mb-0">Already have an account? <a href="{% url 'login' %}">Login</a></p>
         </div>
@@ -124,8 +116,6 @@
             });
         }
 
-        // Auto One Tap prompt (shows top-right if not suppressed)
-        google.accounts.id.prompt();
     });
 </script>
 {% endblock %}
