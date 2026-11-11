@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.files.storage import FileSystemStorage
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.utils.text import slugify
@@ -163,14 +164,42 @@ class TicketMessage(models.Model):
         return "Message on %s" % self.ticket.reference
 
 
+class PrivateMediaStorage(FileSystemStorage):
+    """Files kept outside MEDIA_ROOT, so no public /media/ URL can reach them.
+
+    Served only through permission-checked views; asking for .url raises instead of leaking a public link.
+    """
+
+    @property
+    def base_location(self):
+        return getattr(settings, "PRIVATE_MEDIA_ROOT", os.path.join(settings.BASE_DIR, "private_media"))
+
+    @property
+    def location(self):
+        return os.path.abspath(self.base_location)
+
+    @property
+    def base_url(self):
+        return None
+
+
+def private_storage():
+    return PrivateMediaStorage()
+
+
 class TicketAttachment(models.Model):
     ticket = models.ForeignKey(ServiceTicket, on_delete=models.CASCADE, related_name="attachments")
     message = models.ForeignKey(TicketMessage, on_delete=models.CASCADE, null=True, blank=True, related_name="attachments")
-    image = models.ImageField(upload_to="service_tickets/%Y/%m/")
+    # Customers' photos can show their home, recorder screens or address: private storage, see ticket_photo.
+    image = models.ImageField(upload_to="service_tickets/%Y/%m/", storage=private_storage)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["uploaded_at", "id"]
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse("ticket_photo", args=[self.pk])
 
 
 class ViewingGuide(models.Model):

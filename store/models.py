@@ -474,6 +474,17 @@ class ServiceableArea(models.Model):
         return f"{self.pincode} - Delivery: {self.delivery_available}"
 
 
+class PincodeLookup(models.Model):
+    """District and state for a pincode, looked up once from India Post (see store/serviceability.py)."""
+    pincode = models.CharField(max_length=6, unique=True)
+    district = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    looked_up_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.pincode} - {self.district}, {self.state}"
+
+
 class StockNotification(models.Model):
     """Captures emails of users who want to be notified when an out-of-stock product is back."""
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='stock_notifications')
