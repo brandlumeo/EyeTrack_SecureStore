@@ -29,6 +29,11 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 {% static 'img/logo-3d.webp' as hero_logo %}
 {% static 'img/logo-wire.webp' as hero_wire %}
 <section class="hero-3d" aria-labelledby="homeHeroTitle" style="--hero-logo: url('{{ hero_logo }}')">
+    <div class="hero-3d__backgrounds" aria-hidden="true">
+        <img class="is-current" src="{% static 'img/home-hero-cctv.png' %}" alt="" fetchpriority="high">
+        <img src="{% static 'img/home-hero-biometrics.png' %}" alt="" decoding="async">
+        <img src="{% static 'img/home-hero-laptops.png' %}" alt="" decoding="async">
+    </div>
     <script>document.currentScript.parentElement.classList.add('hero-3d--pending')</script>
     <div class="hero-3d__sky" aria-hidden="true"><span class="hero-3d__stars"></span></div>
     <div class="hero-3d__inner">
@@ -79,8 +84,13 @@ professional installation support from Eyetrack Solutions.{% endblock %}
             </div>
         </div>
     </div>
+    <div class="hero-3d__slides" role="group" aria-label="Hero backgrounds" hidden>
+        <button type="button" aria-pressed="true">CCTV</button>
+        <button type="button" aria-pressed="false">Biometrics</button>
+        <button type="button" aria-pressed="false">Laptops</button>
+    </div>
 </section>
-<script src="{% static 'js/hero.js' %}?v=9" defer></script>
+<script src="{% static 'js/hero.js' %}?v=10" defer></script>
 
 {# ==== TRUST STRIP ==== #}
 <section class="trust-strip mb-5 reveal">
