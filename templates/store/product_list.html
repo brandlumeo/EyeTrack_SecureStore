@@ -32,10 +32,25 @@
 {% if not category and not q %}
 {# ==== HERO SECTION ==== #}
 <section class="hero-3d" aria-labelledby="homeHeroTitle">
-    <div class="hero-3d__backgrounds" aria-hidden="true">
-        <img class="is-current" src="{% static 'img/home-hero-cctv.webp' %}" alt="" fetchpriority="high">
-        <img src="{% static 'img/home-hero-biometrics.webp' %}" alt="" decoding="async" fetchpriority="low">
-        <img src="{% static 'img/home-hero-laptops.webp' %}" alt="" decoding="async" fetchpriority="low">
+    <div class="hero-3d__ambient" aria-hidden="true">
+        <span class="hero-3d__orb hero-3d__orb--a"></span>
+        <span class="hero-3d__orb hero-3d__orb--b"></span>
+        <span class="hero-3d__grid"></span>
+    </div>
+    <div class="hero-3d__visual" aria-hidden="true">
+        <div class="hero-3d__deck">
+            <div class="hero-3d__backgrounds">
+                <img class="is-current" src="{% static 'img/home-hero-cctv.webp' %}" alt="" fetchpriority="high">
+                <img src="{% static 'img/home-hero-biometrics.webp' %}" alt="" decoding="async" fetchpriority="low">
+                <img src="{% static 'img/home-hero-laptops.webp' %}" alt="" decoding="async" fetchpriority="low">
+            </div>
+            <span class="hero-3d__scan"></span>
+            <span class="hero-3d__corner hero-3d__corner--tl"></span><span class="hero-3d__corner hero-3d__corner--tr"></span>
+            <span class="hero-3d__corner hero-3d__corner--bl"></span><span class="hero-3d__corner hero-3d__corner--br"></span>
+            <span class="hero-3d__hud"><i class="hero-3d__rec"></i><b data-hero-cam>CAM 01</b><span data-hero-label>CCTV &amp; Locks</span></span>
+            <span class="hero-3d__chip hero-3d__chip--a"><i class="bi bi-tools"></i> Professional installation</span>
+            <span class="hero-3d__chip hero-3d__chip--b"><i class="bi bi-headset"></i> Expert support</span>
+        </div>
     </div>
     <div class="hero-3d__inner">
         <div class="hero-3d__copy">
@@ -67,9 +82,9 @@
     </div>
     <div class="hero-3d__navigation" hidden>
         <div class="hero-3d__slides" role="group" aria-label="Hero slides">
-            <button type="button" aria-pressed="true">CCTV &amp; Locks</button>
-            <button type="button" aria-pressed="false">Biometrics</button>
-            <button type="button" aria-pressed="false">Laptops</button>
+            <button type="button" aria-pressed="true"><span class="hero-3d__tab-num" aria-hidden="true">01</span>CCTV &amp; Locks<span class="hero-3d__tab-bar" aria-hidden="true"><i></i></span></button>
+            <button type="button" aria-pressed="false"><span class="hero-3d__tab-num" aria-hidden="true">02</span>Biometrics<span class="hero-3d__tab-bar" aria-hidden="true"><i></i></span></button>
+            <button type="button" aria-pressed="false"><span class="hero-3d__tab-num" aria-hidden="true">03</span>Laptops<span class="hero-3d__tab-bar" aria-hidden="true"><i></i></span></button>
         </div>
         <div class="hero-3d__arrows" role="group" aria-label="Carousel controls">
             <button type="button" data-hero-prev aria-label="Previous slide"><i class="bi bi-arrow-left" aria-hidden="true"></i></button>
@@ -79,7 +94,7 @@
         <span class="visually-hidden" data-hero-status role="status"></span>
     </div>
 </section>
-<script src="{% static 'js/hero.js' %}?v=13" defer></script>
+<script src="{% static 'js/hero.js' %}?v=14" defer></script>
 
 {# ==== TRUST STRIP ==== #}
 <section class="trust-strip mb-5 reveal">
