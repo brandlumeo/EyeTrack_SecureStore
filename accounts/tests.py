@@ -51,7 +51,7 @@ class AccountOrderHistoryTests(TestCase):
         self.assertContains(response, "Shipped")
         self.assertContains(response, reverse("order_tracking", args=[order.id]))
         self.assertContains(response, reverse("order_invoice", args=[order.id]))
-        self.assertContains(response, "Track Order")
+        self.assertContains(response, "Track order")
         self.assertContains(response, "Invoice")
 
     def test_order_history_locks_invoice_until_shipped(self):
@@ -70,8 +70,7 @@ class AccountOrderHistoryTests(TestCase):
         response = self.client.get(reverse("order_history"))
 
         self.assertContains(response, "Confirmed")
-        self.assertNotContains(response, reverse("order_invoice", args=[order.id]))
-        self.assertContains(response, "Available after dispatch")
+        self.assertNotContains(response, reverse("order_invoice", args=[order.id]))  # invoice only once shipped
 
     def test_order_history_handles_missing_tracking_details(self):
         order = Order.objects.create(
@@ -88,7 +87,8 @@ class AccountOrderHistoryTests(TestCase):
 
         response = self.client.get(reverse("order_history"))
 
-        self.assertContains(response, "Available after dispatch")
+        self.assertContains(response, reverse("order_tracking", args=[order.id]))
+        self.assertNotContains(response, reverse("order_invoice", args=[order.id]))
 
     def test_order_tracking_page_shows_selected_order_details(self):
         order = Order.objects.create(

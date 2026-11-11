@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {# ==== META TAGS & SEO ==== #}
 {% block title %}Premium Security Store | Eyetrack Solutions{% endblock %}
@@ -13,61 +14,47 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 
 {% block content %}
 
-{# ==== ANNOUNCEMENT BAR ==== #}
+{# ==== ANNOUNCEMENT BAR (category/search pages; the homepage shows it inside the hero) ==== #}
+{% if category or q %}
 <div class="announcement-bar" id="announcementBar" role="alert">
     <span><i class="bi bi-megaphone-fill me-2"></i>Free installation consultation on CCTV orders above &#8377;10,000 &mdash; <a href="{% url 'services_page' %}">Book Now &rarr;</a></span>
     <button class="announcement-close" onclick="dismissAnnouncement()" aria-label="Dismiss">
         <i class="bi bi-x-lg"></i>
     </button>
 </div>
+{% endif %}
 
 {% if not category and not q %}
 {# ==== HERO SECTION ==== #}
-<section class="hero-premium hero-live mb-4 reveal">
-    <div class="hero-live-bg" aria-hidden="true">
-        <span class="orb orb-a"></span>
-        <span class="orb orb-b"></span>
-        <span class="orb orb-c"></span>
-        <span class="beam"></span>
+<section class="hero-3d" aria-labelledby="homeHeroTitle">
+    <div class="hero-3d__backgrounds" aria-hidden="true">
+        <img class="is-current" src="{% static 'img/home-hero-cctv.png' %}" alt="" fetchpriority="high">
+        <img src="{% static 'img/home-hero-biometrics.png' %}" alt="" decoding="async">
+        <img src="{% static 'img/home-hero-laptops.png' %}" alt="" decoding="async">
     </div>
-    <div class="row align-items-center g-4">
-        <div class="col-lg-7">
-            <p class="eyebrow mb-2">Secure Living. Smarter Monitoring.</p>
-            <h1 class="display-title mb-3">Ultra-premium security eCommerce experience for homes and businesses.</h1>
-            <p class="lead-copy mb-4">Browse enterprise-grade surveillance, smart locks, and biometric solutions. Compare by use case and checkout with a safe placeholder payment flow.</p>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="#catalog" class="btn btn-premium-cta px-4">Explore Products</a>
-                <a href="{% url 'services_page' %}" class="btn btn-outline-light px-4">Installation Plans</a>
+    <div class="hero-3d__inner">
+        <div class="hero-3d__copy">
+            <div class="hero-3d__notice" id="announcementBar" role="status">
+                <i class="bi bi-megaphone-fill" aria-hidden="true"></i>
+                <span>Free installation consultation on CCTV orders above &#8377;10,000 &mdash; <a href="{% url 'services_page' %}">Book Now &rarr;</a></span>
+                <button type="button" class="hero-3d__notice-close" onclick="dismissAnnouncement()" aria-label="Dismiss announcement"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
             </div>
-            <div class="feature-list">
-                <div class="feature-item"><i class="bi bi-check-circle-fill"></i><span>Verified Brands</span></div>
-                <div class="feature-item"><i class="bi bi-building-check"></i><span>Business-ready</span></div>
-                <div class="feature-item"><i class="bi bi-shield-check"></i><span>Secure Checkout</span></div>
-            </div>
-        </div>
-        <div class="col-lg-5">
-            <div class="premium-stats-grid">
-                {# Display dynamic product count from context #}
-                <div class="premium-stat-card">
-                    <h3>{{ result_count }}</h3>
-                    <p>Products Matched</p>
-                </div>
-                <div class="premium-stat-card">
-                    <h3>24/7</h3>
-                    <p>Remote Monitoring</p>
-                </div>
-                <div class="premium-stat-card">
-                    <h3>4K</h3>
-                    <p>Ultra HD Ready</p>
-                </div>
-                <div class="premium-stat-card">
-                    <h3>99.9%</h3>
-                    <p>Uptime Target</p>
-                </div>
+            <p class="hero-3d__kicker">Eyetrack Solutions <span aria-hidden="true">&middot;</span> Enterprise Security Store</p>
+            <h1 class="hero-3d__title" id="homeHeroTitle">See everything.<br><em>Protect</em> what matters.</h1>
+            <p class="hero-3d__lede">Enterprise-grade CCTV, smart locks and biometric systems for homes and businesses &mdash; with expert installation from survey to setup.</p>
+            <div class="hero-3d__actions">
+                <a href="#catalog" class="hero-3d__btn">Explore Products <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                <a href="{% url 'services_page' %}" class="hero-3d__btn hero-3d__btn--ghost"><i class="bi bi-tools" aria-hidden="true"></i> Installation plans</a>
             </div>
         </div>
+    </div>
+    <div class="hero-3d__slides" role="group" aria-label="Hero slides" hidden>
+        <button type="button" aria-pressed="true"><span class="hero-3d__slide-num">01</span><span class="hero-3d__slide-name">CCTV &amp; Locks</span><span class="hero-3d__slide-bar"><i></i></span></button>
+        <button type="button" aria-pressed="false"><span class="hero-3d__slide-num">02</span><span class="hero-3d__slide-name">Biometrics</span><span class="hero-3d__slide-bar"><i></i></span></button>
+        <button type="button" aria-pressed="false"><span class="hero-3d__slide-num">03</span><span class="hero-3d__slide-name">Laptops</span><span class="hero-3d__slide-bar"><i></i></span></button>
     </div>
 </section>
+<script src="{% static 'js/hero.js' %}?v=12" defer></script>
 
 {# ==== TRUST STRIP ==== #}
 <section class="trust-strip mb-5 reveal">
@@ -394,10 +381,10 @@ professional installation support from Eyetrack Solutions.{% endblock %}
                     {% for num in paginator.page_range %}
                     {% if num == page_obj.number %}
                     <li class="page-item active">
-                        <span class="page-link">{{ num }}</span>
+                        <span class="page-link" aria-current="page">{{ num }}</span>
                     </li>
-                    {% elif num == 1 or num == paginator.num_pages or num >= page_obj.number|add:"-2" and num <=
-                        page_obj.number|add:"2" %} <li class="page-item">
+                    {% elif num == 1 or num == paginator.num_pages or num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                    <li class="page-item">
                         <a class="page-link premium-input"
                             href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ num }}">{{ num }}</a>
                         </li>
@@ -579,14 +566,14 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 
     /* ── build modal HTML ─────────────────────────────────────── */
     function buildInstallModalHTML(data) {
-        const { name, price, image, cartCount, productId, installAvailable, installCharge, servicesUrl, updateInstallUrl } = data;
+        const { price, image, cartCount, productId, installCharge, servicesUrl, updateInstallUrl } = data;
 
         const imageHTML = image
-            ? `<img src="${image}" alt="${name}" class="install-modal-img">`
+            ? `<img src="${image}" alt="" class="install-modal-img">`
             : `<div class="install-modal-img-fallback"><i class="bi bi-camera-video"></i></div>`;
 
         /* Right-panel buttons depend on whether install is configured */
-        const hasRealCharge = installAvailable && parseFloat(installCharge) > 0;
+        const hasRealCharge = parseFloat(installCharge) > 0;
 
         const priceRow = hasRealCharge
             ? `<div class="install-upsell-price">+ ${fmt(installCharge)} <span>/ unit</span></div>`
@@ -609,7 +596,7 @@ professional installation support from Eyetrack Solutions.{% endblock %}
             <div class="install-modal-left">
                 <div class="install-confirm-badge"><i class="bi bi-check-lg me-1"></i>Added to cart!</div>
                 <div class="install-modal-thumb">${imageHTML}</div>
-                <h5 class="install-product-name">${name}</h5>
+                <h5 class="install-product-name"></h5>
                 <p class="install-product-price">${fmt(price)}</p>
                 <div class="install-cart-pill">
                     <i class="bi bi-cart3 me-1"></i>
@@ -671,19 +658,30 @@ professional installation support from Eyetrack Solutions.{% endblock %}
             /* Update all cart-count badges */
             document.querySelectorAll('[data-cart-count]').forEach(el => el.textContent = json.cart_count);
 
+            const item = json.item;
+            if (!item.installation_available) {
+                const result = await Swal.fire({
+                    title: 'Added to cart',
+                    text: item.name,
+                    icon: 'success',
+                    confirmButtonText: 'View cart',
+                    showCancelButton: true,
+                    cancelButtonText: 'Continue shopping'
+                });
+                if (result.isConfirmed) window.location.assign(json.cart_url);
+                return;
+            }
+
             const productId = form.dataset.productId;
-            const installAvailable = form.dataset.installationAvailable === 'true';
             const installCharge = parseFloat(form.dataset.installationCharge || '0');
             const updateInstallUrl = form.dataset.updateInstallUrl;
 
             /* Step 2: Show installation prompt modal */
             const html = buildInstallModalHTML({
-                name: form.dataset.productName,
                 price: form.dataset.productPrice,
                 image: form.dataset.productImage,
                 cartCount: json.cart_count,
                 productId: productId,
-                installAvailable: installAvailable,
                 installCharge: installCharge,
                 servicesUrl: form.dataset.servicesUrl,
                 updateInstallUrl: updateInstallUrl,
@@ -706,6 +704,10 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 
                 /* Attach Yes/No click handlers once modal is open */
                 didOpen: (popup) => {
+                    popup.querySelector('.install-product-name').textContent = item.name;
+                    const image = popup.querySelector('.install-modal-img');
+                    if (image) image.alt = item.name;
+
                     const yesBtn   = popup.querySelector('#installYesBtn');
                     const noBtn    = popup.querySelector('#installNoBtn');
                     const panel    = popup.querySelector('#installPanelContent');
@@ -2385,6 +2387,30 @@ professional installation support from Eyetrack Solutions.{% endblock %}
         padding-right: 0.85rem;
     }
 }
+/* Catalogue photo fitting */
+#catalog .product-card .product-image-wrap {
+    height: auto !important; /* Override the legacy fixed mobile image height. */
+    aspect-ratio: 3 / 2;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    background: #fff !important; /* Match the white backgrounds in product photography. */
+    box-shadow: inset 0 0 0 1px rgba(20, 45, 79, 0.08);
+}
+
+#catalog .product-card img.product-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: contain;
+    object-position: center;
+    filter: none;
+}
+
+#catalog .product-card:hover img.product-image {
+    transform: none !important; /* Keep the complete photo visible on hover. */
+    filter: none;
+}
+/* End catalogue photo fitting */
 </style>
 
 <script>

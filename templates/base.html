@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
     <script>document.documentElement.classList.add('ui-booting');</script>
     <title>{% block title %}Eyetrack Solutions{% endblock %}</title>
     <meta name="description"
@@ -33,20 +34,20 @@
         content="{% block twitter_description %}{% block twitter_description_fallback %}Premium CCTV products, installation support, and secure commerce experience.{% endblock %}{% endblock %}">
     {% block twitter_image_meta %}{% endblock %}
     <meta name="author" content="Eyetrack Solutions">
-    <meta name="theme-color" content="#08111f">
+    <meta name="theme-color" content="#12366a">
     <link rel="alternate" hreflang="en-in" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
     <link rel="alternate" hreflang="x-default" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="{% static 'css/site.css' %}?v=61" as="style">
+    <link rel="preload" href="{% static 'css/site.css' %}?v=62" as="style">
     <link rel="preload" href="{% static 'img/company-logo.png' %}" as="image">
     <link
-        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap"
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="{% static 'css/site.css' %}?v=61" rel="stylesheet">
+    <link href="{% static 'css/site.css' %}?v=62" rel="stylesheet">
     <link href="{% static 'css/home-sections.css' %}?v=1" rel="stylesheet">
     <script type="application/ld+json">
     {
@@ -86,13 +87,13 @@
             border-radius: 1.5rem !important;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
             color: #f8fafc !important;
-            font-family: 'Inter', sans-serif !important;
+            font-family: var(--font-body) !important;
         }
 
         .swal-glass-title {
             color: #fff !important;
             font-weight: 700 !important;
-            font-family: 'Outfit', sans-serif !important;
+            font-family: var(--font-heading) !important;
             font-size: 1.75rem !important;
         }
 
@@ -209,7 +210,7 @@
                 font-weight: 500;
                 outline: none !important;
                 min-width: 0;
-                font-family: 'Manrope', sans-serif;
+                font-family: var(--font-body);
             }
 
             .mob-search-field::placeholder {
@@ -237,7 +238,7 @@
                 white-space: nowrap;
                 cursor: pointer;
                 flex-shrink: 0;
-                font-family: 'Manrope', sans-serif;
+                font-family: var(--font-body);
             }
 
             .mob-search-body {
@@ -506,7 +507,7 @@
                 font-size: 1rem;
                 font-weight: 700;
                 color: #fff;
-                font-family: 'Sora', sans-serif;
+                font-family: var(--font-heading);
                 letter-spacing: -0.02em;
             }
 
@@ -670,6 +671,10 @@
     </style>
 
     {% block extra_head %}{% endblock %}
+    <link href="{% static 'css/theme-red-navy.css' %}?v=8" rel="stylesheet">
+    <link href="{% static 'css/hero.css' %}?v=14" rel="stylesheet">
+    {% block page_css %}{% endblock %}
+    {% include 'includes/mobile_layout.html' %}
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
@@ -743,55 +748,21 @@
                                 class="nav-link premium-link dropdown-toggle {% if current == 'product_list' or current == 'products_by_category' or current == 'product_detail' %}active{% endif %}"
                                 href="{% url 'product_list' %}" id="categoryDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shop-dropdown-panel"
-                                aria-labelledby="categoryDropdown">
-                                <li class="shop-dropdown-grid">
-                                    <div class="shop-dropdown-intro">
-                                        <p class="shop-dropdown-kicker mb-2">Security commerce</p>
-                                        <h6 class="shop-dropdown-title mb-2">Choose the right surveillance stack.</h6>
-                                        <p class="shop-dropdown-copy mb-3">Browse cameras, system bundles, and
-                                            site-ready solutions curated for homes, offices, and industrial setups.</p>
-                                        <a class="shop-dropdown-featured" href="{% url 'product_list' %}">
-                                            <span class="shop-dropdown-featured-icon"><i
-                                                    class="bi bi-grid-1x2-fill"></i></span>
-                                            <span>
-                                                <strong>Browse all products</strong>
-                                                <small>See the full catalog</small>
-                                            </span>
-                                        </a>
-                                    </div>
-                                    <div class="shop-dropdown-links">
-                                        <div class="shop-dropdown-section-label">Service Lines</div>
-                                        <div class="shop-dropdown-link-grid">
-                                            {% for cat in categories %}
-                                            <a class="shop-dropdown-link"
-                                                href="{% url 'products_by_category' cat.slug %}">
-                                                <span class="shop-dropdown-link-icon"><i
-                                                        class="bi {{ cat.icon }}"></i></span>
-                                                <span>
-                                                    <strong>{{ cat.name }}</strong>
-                                                    <small>Explore solutions</small>
-                                                </span>
-                                            </a>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                    <div class="shop-dropdown-links shop-dropdown-aside">
-                                        <div class="shop-dropdown-section-label">Packages &amp; Services</div>
-                                        <a class="shop-dropdown-aside-link" href="{% url 'product_list' %}#packages"><i class="bi bi-box-seam"></i>Ready-made CCTV kits</a>
-                                        <a class="shop-dropdown-aside-link" href="{% url 'services_page' %}"><i class="bi bi-tools"></i>Installation plans</a>
-                                        <a class="shop-dropdown-aside-link" href="{% url 'solutions_page' %}"><i class="bi bi-grid-1x2"></i>Solutions by industry</a>
-                                        <a class="shop-dropdown-aside-link" href="{% url 'home_security' %}"><i class="bi bi-house-heart"></i>Home security</a>
-                                        <a class="shop-dropdown-aside-link" href="{% url 'compare_page' %}"><i class="bi bi-layout-split"></i>Compare products</a>
-                                        <a class="shop-dropdown-aside-link" href="{% url 'system_builder' %}"><i class="bi bi-magic"></i>Build your system</a>
-                                        <a class="shop-dropdown-aside-link" href="{% url 'project_list' %}"><i class="bi bi-images"></i>Our projects</a>
-                                        <a class="shop-dropdown-aside-link" href="{% url 'tools_hub' %}"><i class="bi bi-calculator"></i>Storage &amp; lens calculators</a>
-                                        <a class="shop-dropdown-survey" href="{% url 'quote_request' %}">
-                                            <strong><i class="bi bi-calendar-check me-1"></i>Free site survey</strong>
-                                            <small>An expert plans your cameras &amp; gives an installed price.</small>
-                                        </a>
-                                    </div>
-                                </li>
+                            <ul class="dropdown-menu dropdown-menu-end shop-simple-menu" aria-labelledby="categoryDropdown">
+                                <li><a class="dropdown-item" href="{% url 'product_list' %}">All products</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                {% for cat in categories %}
+                                <li><a class="dropdown-item" href="{% url 'products_by_category' cat.slug %}">{{ cat.name }}</a></li>
+                                {% endfor %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header">Packages &amp; Services</h6></li>
+                                <li><a class="dropdown-item" href="{% url 'product_list' %}#packages"><i class="bi bi-box-seam"></i>Ready-made CCTV kits</a></li>
+                                <li><a class="dropdown-item" href="{% url 'services_page' %}"><i class="bi bi-tools"></i>Installation plans</a></li>
+                                <li><a class="dropdown-item" href="{% url 'home_security' %}"><i class="bi bi-house-heart"></i>Home security</a></li>
+                                <li><a class="dropdown-item" href="{% url 'system_builder' %}"><i class="bi bi-magic"></i>Build your system</a></li>
+                                <li><a class="dropdown-item" href="{% url 'tools_hub' %}"><i class="bi bi-calculator"></i>Storage &amp; lens calculators</a></li>
+                                <li><a class="dropdown-item" href="{% url 'project_list' %}"><i class="bi bi-images"></i>Our projects</a></li>
+                                <li><a class="dropdown-item shop-simple-survey" href="{% url 'quote_request' %}"><i class="bi bi-calendar-check"></i>Free site survey</a></li>
                             </ul>
                         </li>
                         <li class="nav-item"><a
@@ -1002,137 +973,34 @@
         </div>
     </main>
 
-    {% block pre_footer %}
-    {% if request.resolver_match.url_name != 'support_page' %}
-    <section class="pre-footer-contact">
-        <div class="container">
-            <div class="pre-footer-contact-card">
-                <div>
-                    <p class="eyebrow mb-2">Need Assistance?</p>
-                    <h2 class="h3 mb-2">Contact our team directly before checkout.</h2>
-                    <p class="text-secondary mb-0">Get expert guidance on camera selection, installation planning, and
-                        warranty support.</p>
-                </div>
-                <div class="pre-footer-actions">
-                    <a href="{% url 'quote_request' %}" class="btn btn-premium-cta"><i class="bi bi-calendar-check me-2"></i>Free Site Survey</a>
-                    <a href="tel:{{ BUSINESS_PHONE }}" class="btn btn-outline-light"><i class="bi bi-telephone me-2"></i>Call Us</a>
-                    <a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light"><i class="bi bi-whatsapp me-2"></i>WhatsApp</a>
-                </div>
-            </div>
-        </div>
-    </section>
-    {% endif %}
-    {% endblock %}
+    {% block pre_footer %}{% endblock %}
 
     {% block footer %}
-    <footer class="footer-shell mt-5">
-        <div class="container py-5">
-            <div class="footer-top-band">
-                <div class="footer-brand-block">
-                    <p class="footer-kicker mb-2">Eyetrack Solutions</p>
-                    <h5 class="footer-title mb-2">Built for secure commerce and dependable surveillance operations.</h5>
-                    <p class="footer-copy mb-0">Premium CCTV hardware, installation planning, and post-deployment
-                        support aligned into one streamlined customer experience.</p>
-                </div>
-                <div class="footer-signal-grid">
-                    <div class="footer-signal-card">
-                        <span class="footer-signal-icon"><i class="bi bi-shield-lock"></i></span>
-                        <div>
-                            <strong>Secure Checkout</strong>
-                            <small>Trusted purchase flow</small>
-                        </div>
-                    </div>
-                    <div class="footer-signal-card">
-                        <span class="footer-signal-icon"><i class="bi bi-headset"></i></span>
-                        <div>
-                            <strong>Support Coverage</strong>
-                            <small>Fast assistance when needed</small>
-                        </div>
-                    </div>
-                    <div class="footer-signal-card">
-                        <span class="footer-signal-icon"><i class="bi bi-tools"></i></span>
-                        <div>
-                            <strong>Installation Ready</strong>
-                            <small>Planning to deployment</small>
-                        </div>
-                    </div>
-                </div>
+    <footer class="footer-shell premium-footer mt-5" aria-label="Site footer">
+        <div class="container">
+            <div class="pf-invitation">
+                <div><p class="pf-eyebrow">YOUR SECURITY. OUR COMMITMENT.</p><h2>A safer space<br>starts <span>here.</span></h2></div>
+                <div class="pf-invitation-action"><p>Expert advice. Thoughtful installation.<br>Support that stays with you.</p><a href="{% url 'support_page' %}" class="btn btn-premium-cta">Let’s talk security <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div>
             </div>
-            <div class="row g-4 footer-main-grid">
-                <div class="col-lg-4">
-                    <div class="footer- contact-card">
-                        <p class="footer-column-label mb-2">Direct Contact</p>
-                        <a href="mailto:info@etsgrp.in"
-                            class="footer-contact-primary">info@etsgrp.in</a>
-                        <a href="tel:+917994357565" class="footer-contact-secondary">+91 7994357565</a>
-                        <p class="footer-contact-meta mb-3">Payyoli-Perambra Rd, Kozhikode, Kerala 673522</p>
-                        <p class="footer-contact-meta mb-3">Mon-Sat, 9:00 AM - 6:00 PM</p>
-
-                        <div class="footer-social-links mt-2 d-flex gap-3">
-                            <a href="https://www.instagram.com/eyetrack_solutions_pvt.ltd/" target="_blank"
-                                rel="noopener noreferrer" class="social-icon-link" aria-label="Instagram">
-                                <i class="bi bi-instagram"></i>
-                            </a>
-                            <a href="https://www.facebook.com/profile.php?id=61573098895103" target="_blank"
-                                rel="noopener noreferrer" class="social-icon-link" aria-label="Facebook">
-                                <i class="bi bi-facebook"></i>
-                            </a>
-                            <a href="https://www.linkedin.com/company/109270992/admin/dashboard/" target="_blank"
-                                rel="noopener noreferrer" class="social-icon-link" aria-label="LinkedIn">
-                                <i class="bi bi-linkedin"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-2">
-                    <p class="footer-column-label mb-3">Explore</p>
-                    <a href="{% url 'product_list' %}" class="footer-link d-block mb-2">Store</a>
-                    <a href="{% url 'services_page' %}" class="footer-link d-block mb-2">Installations</a>
-                    <a href="{% url 'about_page' %}" class="footer-link d-block mb-2">About</a>
-                    <a href="{% url 'faq_page' %}" class="footer-link d-block mb-2">FAQ</a>
-                    <a href="{% url 'tools_hub' %}" class="footer-link d-block mb-2">Planning tools</a>
-                    <a href="{% url 'project_list' %}" class="footer-link d-block">Our projects</a>
-                </div>
-                <div class="col-6 col-lg-2">
-                    <p class="footer-column-label mb-3">Customer Tools</p>
-                    <a href="{% url 'wishlist_page' %}" class="footer-link d-block mb-2">Wishlist</a>
-                    <a href="{% url 'compare_page' %}" class="footer-link d-block mb-2">Compare</a>
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'order_history' %}" class="footer-link d-block mb-2">My Orders</a>
-                    {% else %}
-                    <a href="{% url 'login' %}" class="footer-link d-block mb-2">Login or Register</a>
-                    {% endif %}
-                    <a href="{% url 'support_page' %}" class="footer-link d-block">Support Center</a>
-                </div>
-                <div class="col-lg-4">
-                    <p class="footer-column-label mb-3">Policies</p>
-                    <div class="footer-policy-grid">
-                        <a href="{% url 'privacy_policy_page' %}" class="footer-policy-tile">
-                            <strong>Privacy Policy</strong>
-                            <small>Data handling and account protection</small>
-                        </a>
-                        <a href="{% url 'terms_page' %}" class="footer-policy-tile">
-                            <strong>Terms of Service</strong>
-                            <small>Platform and purchasing terms</small>
-                        </a>
-                        <a href="{% url 'refund_policy_page' %}" class="footer-policy-tile">
-                            <strong>Return Policy</strong>
-                            <small>Eligibility and return guidance</small>
-                        </a>
-                        <a href="{% url 'shipping_policy_page' %}" class="footer-policy-tile">
-                            <strong>Shipping Policy</strong>
-                            <small>Dispatch, delivery, and timelines</small>
-                        </a>
-                    </div>
-                </div>
+            <div class="pf-main">
+                <div class="pf-brand"><a href="{% url 'product_list' %}" class="pf-brand-link" aria-label="Eyetrack Solutions home"><img src="{% static 'img/company-logo.png' %}" width="48" height="48" alt=""><span>EYETRACK<small>SOLUTIONS</small></span></a><p>Connected security.<br>Considered from every angle.</p><div class="pf-socials"><a href="https://www.instagram.com/eyetrack_solutions_pvt.ltd/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a><a href="https://www.facebook.com/profile.php?id=61573098895103" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a><a href="https://www.linkedin.com/company/109270992/admin/dashboard/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="bi bi-linkedin" aria-hidden="true"></i></a></div></div>
+                <nav class="pf-column" aria-label="Explore"><h3>Explore</h3><a href="{% url 'product_list' %}">Shop all products</a><a href="{% url 'services_page' %}">Installation services</a><a href="{% url 'about_page' %}">Our story</a><a href="{% url 'faq_page' %}">Frequently asked questions</a><a href="{% url 'project_list' %}">Our projects</a><a href="{% url 'tools_hub' %}">Planning tools</a></nav>
+                <nav class="pf-column" aria-label="Customer care"><h3>Here to help</h3><a href="{% url 'quote_request' %}">Book a free site survey</a><a href="{% url 'support_page' %}">Support center</a>{% if user.is_authenticated %}<a href="{% url 'order_history' %}">Track your orders</a><a href="{% url 'account_dashboard' %}">Your account</a>{% else %}<a href="{% url 'login' %}">Sign in to your account</a><a href="{% url 'register' %}">Create an account</a>{% endif %}<a href="{% url 'wishlist_page' %}">Your wishlist</a><a href="{% url 'compare_page' %}">Compare products</a></nav>
+                <div class="pf-column pf-contact"><h3>Let’s connect</h3><a class="pf-contact-email" href="mailto:info@etsgrp.in">info@etsgrp.in <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="tel:+917994357565">+91 7994357565</a><address>Payyoli-Perambra Rd<br>Kozhikode, Kerala 673522</address><p class="pf-hours"><span></span> Mon–Sat, 9:00 AM – 6:00 PM</p></div>
             </div>
+            <div class="pf-assurance" aria-label="Our services"><span><i class="bi bi-shield-lock" aria-hidden="true"></i> Secure checkout</span><span><i class="bi bi-tools" aria-hidden="true"></i> Professional installation</span><span><i class="bi bi-headset" aria-hidden="true"></i> Dedicated support</span></div>
+            <div class="pf-bottom"><small>© {% now "Y" %} Eyetrack Solutions. All rights reserved.</small><nav aria-label="Legal policies"><a href="{% url 'privacy_policy_page' %}">Privacy</a><a href="{% url 'terms_page' %}">Terms</a><a href="{% url 'refund_policy_page' %}">Returns</a><a href="{% url 'shipping_policy_page' %}">Shipping</a></nav></div>
         </div>
-        <div class="footer-bottom">
-            <div class="container d-flex justify-content-between align-items-center py-3 flex-wrap gap-2">
-                <small class="text-secondary">© 2026 Eyetrack Solutions. All rights reserved.</small>
-                <small class="text-secondary">Engineered for secure commerce and scalable surveillance.</small>
+    <div class="container mobile-footer-tools d-lg-none">
+        <details>
+            <summary class="btn btn-outline-secondary"><i class="bi bi-headset me-1" aria-hidden="true"></i> Help</summary>
+            <div class="mobile-help-options">
+                <a href="https://wa.me/917994357565" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp me-1" aria-hidden="true"></i> WhatsApp</a>
+                <button type="button" class="btn btn-link p-0" onclick="document.getElementById('chatbot-bubble').click()"><i class="bi bi-chat-dots me-1" aria-hidden="true"></i> Open chat</button>
             </div>
-        </div>
+        </details>
+        <a class="btn btn-outline-secondary" href="#"><i class="bi bi-arrow-up me-1" aria-hidden="true"></i> Back to top</a>
+    </div>
     </footer>
     {% endblock %}
 
@@ -1420,7 +1288,7 @@
         cartCount: { { cart_count |default: "0" } }
         };
     </script>
-    <script src="{% static 'js/site.js' %}?v=106" defer></script>
+    <script src="{% static 'js/site.js' %}?v=109" defer></script>
 
 
     <!-- SweetAlert2 JS -->
@@ -1594,7 +1462,7 @@
         <div class="offcanvas-header p-3 d-flex justify-content-between align-items-center"
             style="background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05) !important;">
             <h5 class="offcanvas-title d-flex align-items-center gap-2 mb-0" id="notificationDrawerLabel"
-                style="font-family:'Outfit',sans-serif;font-weight:700;">
+                style="font-family:var(--font-heading);font-weight:700;">
                 <div
                     style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(245,158,11,0.05));border:1px solid rgba(245,158,11,0.3);display:flex;align-items:center;justify-content:center;color:#f59e0b;">
                     <i class="bi bi-bell-fill"></i>

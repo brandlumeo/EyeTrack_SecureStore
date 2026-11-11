@@ -1,83 +1,39 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Compare Products | Eyetrack Solutions{% endblock %}
 {% block meta_robots %}noindex, follow{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/compare.css' %}?v=3">{% endblock %}
 {% block content %}
-<div class="mobile-actionbar-space">
-    <section class="hero-premium mb-4">
-        <div class="row g-4 align-items-center">
-            <div class="col-lg-8">
-                <p class="eyebrow mb-2">Decision Workspace</p>
-                <h1 class="display-title mb-3">Compare Products Side by Side</h1>
-                <p class="lead-copy mb-0">Review key specs, stock, and pricing before adding the right camera to cart.
-                </p>
-            </div>
-            <div class="col-lg-4">
-                <div class="premium-stats-grid">
-                    <div class="premium-stat-card">
-                        <h3 id="comparePageCount">0</h3>
-                        <p>Compared Items</p>
-                    </div>
-                    <div class="premium-stat-card">
-                        <h3>4</h3>
-                        <p>Max Slots</p>
-                    </div>
-                    <div class="premium-stat-card">
-                        <h3>Live</h3>
-                        <p>Product Data</p>
-                    </div>
-                    <div class="premium-stat-card">
-                        <h3>Quick</h3>
-                        <p>Checkout Ready</p>
-                    </div>
-                </div>
-            </div>
+<div class="cmp-page mobile-actionbar-space">
+    <div class="cmp-head compare-toolbar">
+        <h1 id="compare-title">Product Compare</h1>
+        <div class="cmp-tools">
+            <span class="cmp-count" aria-live="polite"><strong id="comparePageCount">0</strong> of 4 selected</span>
+            <button type="button" class="btn cmp-tool" id="compareShareBtn" data-compare-share><i class="bi bi-share" aria-hidden="true"></i> Share</button>
+            <button type="button" class="btn cmp-tool" id="compareExportBtn" data-compare-export><i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> PDF</button>
+            <button type="button" class="btn cmp-tool cmp-tool-danger" id="comparePageClearBtn" data-compare-clear><i class="bi bi-trash3" aria-hidden="true"></i> Clear</button>
         </div>
-    </section>
+    </div>
 
-    <section class="compare-section glass-card p-4 mb-4">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 compare-toolbar">
-            <h3 class="h4 mb-0 d-inline-flex align-items-center gap-2"><i class="bi bi-columns-gap"></i>Comparison
-                Matrix</h3>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="{% url 'product_list' %}"
-                    class="btn btn-outline-light btn-sm d-inline-flex align-items-center gap-2"><i
-                        class="bi bi-arrow-left"></i>Back to Shop</a>
-                <button type="button" class="btn btn-outline-light btn-sm d-inline-flex align-items-center gap-2"
-                    id="compareShareBtn" data-compare-share><i class="bi bi-share"></i>Share</button>
-                <button type="button" class="btn btn-outline-light btn-sm d-inline-flex align-items-center gap-2"
-                    id="compareExportBtn" data-compare-export><i class="bi bi-file-earmark-pdf"></i>Export PDF</button>
-                <button type="button" class="btn btn-outline-light btn-sm d-inline-flex align-items-center gap-2"
-                    id="comparePageClearBtn" data-compare-clear><i class="bi bi-trash3"></i>Clear</button>
-            </div>
-        </div>
-
-        <div class="alert alert-info mb-4" id="compareCategoryNote" style="display: none;">
-            <i class="bi bi-info-circle me-2"></i>
-            <strong>Category-Specific Comparison:</strong> Showing specifications appropriate for the selected product category.
-            CCTV Cameras display camera specs, Video Door Phones display VDP specs.
-        </div>
-
+    <section class="cmp-panel" aria-labelledby="compare-title">
+        <p class="cmp-note" id="compareCategoryNote" style="display: none;"></p>
         <div class="compare-grid-shell compare-print-shell" id="comparePageTable">
             <div id="comparePageBody" class="compare-grid-body"></div>
         </div>
-        <div id="comparePageEmpty" class="text-center py-5 d-none">
-            <div class="compare-empty-icon mb-3"><i class="bi bi-diagram-3"></i></div>
-            <h5 class="mb-2">No items selected for comparison</h5>
-            <p class="text-secondary mb-4">Add products from the store to start comparing.</p>
-            <a href="{% url 'product_list' %}" class="btn btn-premium-cta">Browse Products</a>
+        <div id="comparePageEmpty" class="cmp-empty d-none">
+            <div class="cmp-empty-icon"><i class="bi bi-layout-three-columns" aria-hidden="true"></i></div>
+            <h2>Nothing to compare yet</h2>
+            <p>Tap the compare icon on any product to add it here.</p>
+            <a href="{% url 'product_list' %}" class="btn btn-premium-cta">Browse products <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
         </div>
     </section>
+
     <div class="mobile-page-actionbar d-md-none">
-        <span class="mobile-page-meta"><i class="bi bi-diagram-3 me-1"></i><span id="comparePageCountMobile">0</span>
-            items</span>
-        <a href="{% url 'product_list' %}" class="btn btn-outline-light btn-sm mobile-page-btn"><i
-                class="bi bi-arrow-left me-1"></i>Back</a>
-        <button type="button" class="btn btn-outline-light btn-sm mobile-page-btn" data-compare-share><i
-                class="bi bi-share me-1"></i>Share</button>
-        <button type="button" class="btn btn-outline-light btn-sm mobile-page-btn" data-compare-export><i
-                class="bi bi-file-earmark-pdf me-1"></i>PDF</button>
-        <button type="button" class="btn btn-outline-light btn-sm mobile-page-btn" data-compare-clear><i
-                class="bi bi-trash3 me-1"></i>Clear</button>
+        <span class="mobile-page-meta"><i class="bi bi-layout-three-columns me-1"></i><span id="comparePageCountMobile">0</span> items</span>
+        <a href="{% url 'product_list' %}" class="btn btn-outline-light btn-sm mobile-page-btn"><i class="bi bi-arrow-left me-1"></i>Back</a>
+        <button type="button" class="btn btn-outline-light btn-sm mobile-page-btn" data-compare-share><i class="bi bi-share me-1"></i>Share</button>
+        <button type="button" class="btn btn-outline-light btn-sm mobile-page-btn" data-compare-export><i class="bi bi-file-earmark-pdf me-1"></i>PDF</button>
+        <button type="button" class="btn btn-outline-light btn-sm mobile-page-btn" data-compare-clear><i class="bi bi-trash3 me-1"></i>Clear</button>
     </div>
 </div>
 {% endblock %}

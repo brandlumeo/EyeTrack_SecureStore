@@ -1096,6 +1096,33 @@
         const numberFromSpec = (item, key) => toNumber(getSpec(item, key));
         const dataCell = (content, className = '') => `<div class="compare-data-cell${className ? ` ${className}` : ''}">${content}</div>`;
 
+        const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (ch) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+        }[ch]));
+        // One description line per row: use the admin's line breaks, or split a paragraph into sentences.
+        const descriptionLines = (text) => {
+            const value = String(text || '').trim();
+            if (!value) return [];
+            let lines = value.split(/\r?\n+/).map((line) => line.replace(/^[\s•\-–*]+/, '').trim()).filter(Boolean);
+            if (lines.length === 1) {
+                lines = value.split(/(?<=[.!?])\s+(?=[A-Z0-9])/).map((line) => line.trim()).filter(Boolean);
+            }
+            return lines.slice(0, 12);
+        };
+        const descriptionRows = (items) => {
+            const perItem = items.map((item) => descriptionLines(item.description));
+            const count = Math.max(1, ...perItem.map((lines) => lines.length));
+            return Array.from({ length: count }, (_, index) => ({
+                label: index === 0 ? 'Description' : '',
+                value: perItem.map((lines) => {
+                    const line = lines[index];
+                    const content = line ? escapeHtml(line) : (index === 0 ? '-' : '');
+                    return `<td class="compare-data-cell">${content}</td>`;
+                }).join(''),
+                className: index === 0 ? 'compare-desc-row' : 'compare-desc-row compare-desc-more',
+            }));
+        };
+
         const getStockBadgeClass = (stock) => {
             if (stock === 0) return 'compare-stock-badge out-of-stock';
             if (stock < 5) return 'compare-stock-badge low-stock';
@@ -1169,15 +1196,15 @@
                 return `
                     <td class="compare-data-cell">
                         <div class="compare-product-header">
-                            ${image}
+                            <button type="button" class="compare-remove-product compare-remove-page-btn" data-id="${item.id}" aria-label="Remove ${item.name || 'product'} from compare">Remove <i class="bi bi-x-lg" aria-hidden="true"></i></button>
+                            <div class="compare-product-media">
+                                ${image}
+                                <div class="compare-product-badges">${bestPriceBadge}${bestStockBadge}</div>
+                            </div>
                             <h6 class="compare-product-name">${item.name || '-'}</h6>
                             <p class="compare-product-price">${item.price ? `₹${item.price}` : '-'}</p>
-                            <div class="d-flex gap-2 flex-wrap justify-content-center mb-2">
-                                ${bestPriceBadge}${bestStockBadge}
-                            </div>
                             <div class="compare-product-actions">
-                                <a class="btn btn-sm compare-view-product d-inline-flex align-items-center justify-content-center gap-1" href="${item.url || item.product_url || '#'}"><i class="bi bi-eye"></i>View</a>
-                                <button class="btn btn-sm compare-remove-product d-inline-flex align-items-center justify-content-center gap-1 compare-remove-page-btn" data-id="${item.id}"><i class="bi bi-trash3"></i>Remove</button>
+                                <a class="btn compare-view-product" href="${item.url || item.product_url || '#'}">View Details</a>
                             </div>
                         </div>
                     </td>
@@ -1186,8 +1213,6 @@
 
             // Determine category and create appropriate spec rows
             const category = categories.values().next().value;
-            console.log('Compare category:', category);
-            console.log('First product specs:', liveItems[0]?.specs);
 
             let specRows = [];
 
@@ -1352,26 +1377,34 @@
 
             const rows = [
                 {
-                    label: 'Product',
+                    label: '',
                     value: productCells,
-                    className: ''
+                    className: 'compare-products-row'
                 },
                 {
                     label: 'Category',
-                    value: liveItems.map((item) => `<td class="compare-data-cell">${item.category || '-'}</td>`).join(''),
+                    value: liveItems.map((item) => `<td class="compare-data-cell">${item.category ? `<span class="compare-pill">${item.category}</span>` : '-'}</td>`).join(''),
                     className: ''
                 },
                 ...specRows,
-                {
-                    label: 'Description',
-                    value: liveItems.map((item) => `<td class="compare-data-cell">${(item.description || '-').toString().slice(0, 140)}</td>`).join(''),
-                    className: ''
-                },
+                ...descriptionRows(liveItems),
             ];
 
+            const specIcons = {
+                'Category': 'folder2', 'Camera Type': 'camera-video', 'Resolution': 'badge-hd', 'Camera Resolution': 'badge-hd',
+                'Night Vision Range': 'moon-stars', 'Night Vision': 'moon-stars', 'Field of View': 'arrows-angle-expand',
+                'Lens': 'record-circle', 'Frame Rate': 'speedometer2', 'Weatherproof': 'cloud-drizzle',
+                'Connectivity': 'wifi', 'Connectivity Type': 'wifi', 'Power Source': 'plug', 'Storage Support': 'device-hdd',
+                'Audio Support': 'mic', 'Audio Communication': 'mic', 'AI Detection': 'cpu', 'Warranty': 'shield-check',
+                'Screen Size': 'display', 'Unlock Method': 'unlock', 'Mobile App Support': 'phone',
+                'Installation Type': 'tools', 'Description': 'card-text',
+            };
+            const labelHtml = (label) => (label
+                ? `<i class="bi bi-${specIcons[label] || 'dot'}" aria-hidden="true"></i><span>${label}</span>`
+                : '');
             tbody.innerHTML = rows.map((row) => `
                 <div class="compare-grid-row ${row.className}" style="grid-template-columns: ${compareGridTemplate};">
-                    <div class="compare-attribute-name">${row.label}</div>
+                    <div class="compare-attribute-name">${labelHtml(row.label)}</div>
                     ${row.value}
                 </div>
             `).join('')
@@ -1384,13 +1417,7 @@
             const categoryNoteEl = document.getElementById('compareCategoryNote');
             if (category && liveItems.length > 0) {
                 categoryNoteEl.style.display = 'block';
-                categoryNoteEl.innerHTML = `
-                    <i class="bi bi-info-circle me-2"></i>
-                    <strong>Category-Specific Comparison:</strong> Showing ${category} specifications.
-                    ${category === 'CCTV Cameras' ? 'Camera specs include resolution, lens, connectivity, etc.' :
-                        category === 'Video Door Phones' ? 'VDP specs include screen size, unlock methods, app support, etc.' :
-                            'Product specifications based on category.'}
-                `;
+                categoryNoteEl.innerHTML = `<i class="bi bi-info-circle me-1"></i> Showing specifications for <strong>${category}</strong>. Highlighted cells mark the best value.`;
             } else {
                 categoryNoteEl.style.display = 'none';
             }

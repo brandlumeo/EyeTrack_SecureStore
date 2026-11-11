@@ -1,41 +1,158 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}About Us | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Learn about Eyetrack Solutions and our mission to deliver premium CCTV products, reliable installation, and long-term surveillance support.{% endblock %}
+{% block extra_head %}
+<link href="{% static 'css/about.css' %}?v=1" rel="stylesheet">
+{% endblock %}
 {% block content %}
-<div class="page-section">
-    <section class="hero-premium">
-        <div class="row g-4 align-items-center">
-            <div class="col-lg-8">
-                <p class="eyebrow mb-2">About Eyetrack Solutions</p>
-                <h1 class="display-title mb-3">Specialists in secure surveillance commerce.</h1>
-                <p class="lead-copy mb-0">Eyetrack Solutions delivers CCTV cameras, intelligent monitoring systems, and professional setup services for homes, offices, and industrial sites.</p>
+<div class="au">
+    {# ==== HERO ==== #}
+    <section class="au-hero" aria-labelledby="auTitle">
+        <div class="au-hero__inner">
+            <div class="au-hero__copy">
+                <p class="au-kicker">About Eyetrack Solutions</p>
+                <h1 class="au-hero__title" id="auTitle">Specialists in <span>secure</span> surveillance.</h1>
+                <p class="au-hero__lede">Eyetrack Solutions delivers CCTV cameras, intelligent monitoring systems, and professional setup services for homes, offices, and industrial sites.</p>
+                <div class="au-actions">
+                    <a href="{% url 'product_list' %}#catalog" class="au-btn au-btn--primary">Explore Products <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                    <a href="#au-contact" class="au-btn au-btn--ghost">Talk to our team</a>
+                </div>
             </div>
-            <div class="col-lg-4">
-                <div class="premium-stats-grid">
-                    <div class="premium-stat-card"><h3>500+</h3><p>Deployments</p></div>
-                    <div class="premium-stat-card"><h3>24/7</h3><p>Support Access</p></div>
-                    <div class="premium-stat-card"><h3>98%</h3><p>Client Satisfaction</p></div>
-                    <div class="premium-stat-card"><h3>AMC</h3><p>Maintenance Plans</p></div>
+            <div class="au-hero__visual" aria-hidden="true">
+                <div class="au-emblem">
+                    <span class="au-emblem__ring au-emblem__ring--a"></span>
+                    <span class="au-emblem__ring au-emblem__ring--b"></span>
+                    <span class="au-emblem__glow"></span>
+                    <img src="{% static 'img/logo-3d.webp' %}" alt="" width="482" height="601" class="au-emblem__logo">
                 </div>
             </div>
         </div>
+        <div class="au-stats-wrap">
+            <dl class="au-stats">
+                <div><dt>500+</dt><dd>Deployments</dd></div>
+                <div><dt>24/7</dt><dd>Support access</dd></div>
+                <div><dt>98%</dt><dd>Client satisfaction</dd></div>
+                <div><dt>AMC</dt><dd>Maintenance plans</dd></div>
+            </dl>
+        </div>
+    </section>
+
+    {# ==== VALUES ==== #}
+    <section class="au-section" aria-labelledby="auValuesTitle">
+        <header class="au-head">
+            <p class="au-kicker au-kicker--dark">What we stand for</p>
+            <h2 class="au-head__title" id="auValuesTitle">Surveillance that is accessible, dependable and supported.</h2>
+        </header>
+        <div class="au-values">
+            <article class="au-value">
+                <span class="au-value__icon"><i class="bi bi-bullseye" aria-hidden="true"></i></span>
+                <h3>Mission</h3>
+                <p>Make enterprise surveillance accessible and reliable.</p>
+            </article>
+            <article class="au-value">
+                <span class="au-value__icon"><i class="bi bi-buildings" aria-hidden="true"></i></span>
+                <h3>Coverage</h3>
+                <p>Residential, retail, commercial and warehouse deployments.</p>
+            </article>
+            <article class="au-value">
+                <span class="au-value__icon"><i class="bi bi-shield-check" aria-hidden="true"></i></span>
+                <h3>Support</h3>
+                <p>Warranty-backed products and a responsive service team.</p>
+            </article>
+        </div>
+    </section>
+
+    {# ==== WHAT WE DO ==== #}
+    {% if categories %}
+    <section class="au-section" aria-labelledby="auRangeTitle">
+        <header class="au-head au-head--split">
+            <div>
+                <p class="au-kicker au-kicker--dark">What we do</p>
+                <h2 class="au-head__title" id="auRangeTitle">One partner for your complete security setup.</h2>
+            </div>
+            <a href="{% url 'product_list' %}#catalog" class="au-link">Browse all products <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </header>
+        <div class="au-range">
+            {% for cat in categories %}
+            <a href="{% url 'products_by_category' cat.slug %}" class="au-range__item">
+                <span class="au-range__icon"><i class="bi {{ cat.icon|default:'bi-shield-check' }}" aria-hidden="true"></i></span>
+                <span class="au-range__name">{{ cat.name }}</span>
+                <i class="bi bi-arrow-up-right au-range__go" aria-hidden="true"></i>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {# ==== HOW WE WORK ==== #}
+    <section class="au-section" aria-labelledby="auProcessTitle">
+        <header class="au-head">
+            <p class="au-kicker au-kicker--dark">How we work</p>
+            <h2 class="au-head__title" id="auProcessTitle">From first survey to long-term care.</h2>
+        </header>
+        <ol class="au-steps">
+            <li class="au-step">
+                <span class="au-step__n">01</span>
+                <i class="bi bi-clipboard-check" aria-hidden="true"></i>
+                <h3>Site survey</h3>
+                <p>We understand your premises and what needs to be protected.</p>
+            </li>
+            <li class="au-step">
+                <span class="au-step__n">02</span>
+                <i class="bi bi-camera-video" aria-hidden="true"></i>
+                <h3>Right hardware</h3>
+                <p>Cameras, recorders, locks and access control matched to your site.</p>
+            </li>
+            <li class="au-step">
+                <span class="au-step__n">03</span>
+                <i class="bi bi-tools" aria-hidden="true"></i>
+                <h3>Professional installation</h3>
+                <p>On-site setup by our team, ready to monitor from day one.</p>
+            </li>
+            <li class="au-step">
+                <span class="au-step__n">04</span>
+                <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+                <h3>Support &amp; AMC</h3>
+                <p>24/7 support access and maintenance plans that keep systems running.</p>
+            </li>
+        </ol>
+    </section>
+
+    {# ==== CONTACT ==== #}
+    <section class="au-contact" id="au-contact" aria-labelledby="auContactTitle">
+        <div class="au-contact__copy">
+            <p class="au-kicker">Contact details</p>
+            <h2 class="au-contact__title" id="auContactTitle">Let&rsquo;s secure your space.</h2>
+            <p>Reach our team for product advice, installation planning or support.</p>
+            <a href="https://wa.me/917994357565" class="au-btn au-btn--primary" target="_blank" rel="noopener"><i class="bi bi-whatsapp" aria-hidden="true"></i> Chat on WhatsApp</a>
+        </div>
+        <ul class="au-contact__list">
+            <li>
+                <a href="tel:+917994357565">
+                    <i class="bi bi-telephone-fill" aria-hidden="true"></i>
+                    <span><small>Phone</small>+91 79943 57565</span>
+                </a>
+            </li>
+            <li>
+                <a href="mailto:info@etsgrp.in">
+                    <i class="bi bi-envelope-fill" aria-hidden="true"></i>
+                    <span><small>Email</small>info@etsgrp.in</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.google.com/maps/search/?api=1&amp;query=Payyoli-Perambra+Rd%2C+Kozhikode%2C+Kerala+673522" target="_blank" rel="noopener">
+                    <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                    <span><small>Location</small>Payyoli-Perambra Rd, Kozhikode, Kerala 673522</span>
+                </a>
+            </li>
+            <li>
+                <div>
+                    <i class="bi bi-clock-fill" aria-hidden="true"></i>
+                    <span><small>Hours</small>Mon&ndash;Sat, 9:00 AM &ndash; 6:00 PM</span>
+                </div>
+            </li>
+        </ul>
     </section>
 </div>
-
-<section class="glass-card p-4 p-md-5 page-section">
-    <div class="row g-3">
-        <div class="col-md-4"><div class="mini-info-card"><h6>Mission</h6><p>Make enterprise surveillance accessible and reliable.</p></div></div>
-        <div class="col-md-4"><div class="mini-info-card"><h6>Coverage</h6><p>Residential, retail, commercial, warehouse deployments.</p></div></div>
-        <div class="col-md-4"><div class="mini-info-card"><h6>Support</h6><p>Warranty-backed products and responsive service team.</p></div></div>
-    </div>
-</section>
-
-<section class="glass-card p-4 page-section">
-    <h2 class="h5 mb-3">Contact Details</h2>
-    <div class="row g-3">
-        <div class="col-md-4"><div class="mini-info-card"><h6>Phone</h6><p><a href="tel:+917994357565" class="text-decoration-none">+91 7994357565</a></p></div></div>
-        <div class="col-md-4"><div class="mini-info-card"><h6>Email</h6><p><a href="mailto:info@etsgrp.in" class="text-decoration-none">info@etsgrp.in</a></p></div></div>
-        <div class="col-md-4"><div class="mini-info-card"><h6>Location</h6><p>Payyoli-Perambra Rd, Kozhikode, Kerala 673522</p></div></div>
-    </div>
-</section>
 {% endblock %}

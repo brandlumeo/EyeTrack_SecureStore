@@ -1,0 +1,372 @@
+/* Homepage hero carousel — cinematic, premium. */
+.hero-3d {
+    --h3d-red: #ed0920;
+    --h3d-red-soft: #ff4d5e;
+    --h3d-navy: #050b18;
+    --h3d-text: #ffffff;
+    --h3d-muted: rgba(235, 240, 250, .78);
+    --h3d-line: rgba(255, 255, 255, .16);
+    --h3d-ease: cubic-bezier(.22, 1, .36, 1);
+    --h3d-interval: 6500ms;
+
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    /* full-bleed: break out of the page container */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    /* sit flush under the navbar: cancel the page container's top padding (.pt-4) */
+    margin-top: -1.5rem;
+    margin-bottom: 2rem;
+    min-height: clamp(580px, 84vh, 820px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--h3d-text);
+    background: var(--h3d-navy);
+}
+
+/* ---------- Background slides ---------- */
+.hero-3d__backgrounds,
+.hero-3d__backgrounds img,
+.hero-3d__backgrounds::before,
+.hero-3d__backgrounds::after {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+.hero-3d__backgrounds { z-index: -1; pointer-events: none; overflow: hidden; }
+.hero-3d__backgrounds img {
+    object-fit: cover;
+    object-position: 70% center;
+    opacity: 0;
+    transform: scale(1.12);
+    filter: saturate(.9) contrast(1.05);
+    transition: opacity 1.6s var(--h3d-ease), transform 1.6s var(--h3d-ease);
+}
+.hero-3d__backgrounds img.is-current {
+    opacity: 1;
+    transform: scale(1.02);
+    /* slow drift while the slide is on screen */
+    animation: h3d-drift 14s ease-out both;
+}
+/* deep navy wash from the left, so the copy always reads */
+.hero-3d__backgrounds::before {
+    content: "";
+    z-index: 1;
+    background:
+        linear-gradient(90deg, rgba(5, 11, 24, .96) 0%, rgba(5, 11, 24, .88) 30%, rgba(5, 11, 24, .45) 58%, rgba(5, 11, 24, .1) 85%),
+        linear-gradient(0deg, rgba(5, 11, 24, .85) 0%, transparent 32%);
+}
+/* soft vignette + faint red glow behind the headline */
+.hero-3d__backgrounds::after {
+    content: "";
+    z-index: 2;
+    background:
+        radial-gradient(ellipse 55% 60% at 18% 45%, rgba(237, 9, 32, .16), transparent 70%),
+        radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, .45) 100%);
+}
+
+/* ---------- Layout ---------- */
+.hero-3d__inner {
+    width: min(1180px, 100% - 32px);
+    margin-inline: auto;
+    padding-block: clamp(56px, 8vw, 104px) clamp(96px, 10vw, 128px);
+}
+.hero-3d__copy { max-width: 900px; }
+.hero-3d__copy > :not(.hero-3d__title) { max-width: 620px; }
+
+/* ---------- Copy ---------- */
+.hero-3d__copy > * { animation: h3d-rise 1.1s var(--h3d-ease) both; }
+.hero-3d__copy > :nth-child(2) { animation-delay: .12s; }
+.hero-3d__copy > :nth-child(3) { animation-delay: .24s; }
+.hero-3d__copy > :nth-child(4) { animation-delay: .36s; }
+.hero-3d__copy > :nth-child(5) { animation-delay: .48s; }
+
+/* announcement pill (glass) */
+.hero-3d__notice {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 100%;
+    margin: 0 0 34px;
+    padding: 6px 6px 6px 14px;
+    border: 1px solid var(--h3d-line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .06);
+    -webkit-backdrop-filter: blur(10px) saturate(1.4);
+            backdrop-filter: blur(10px) saturate(1.4);
+    font-size: .8rem;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, .85);
+}
+.hero-3d__notice > i { color: var(--h3d-red-soft); }
+.hero-3d__notice a {
+    color: #fff !important;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 77, 94, .7);
+    white-space: nowrap;
+    transition: border-color .2s ease;
+}
+.hero-3d__notice a:hover { border-color: #fff; }
+.hero-3d__notice-close {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .08);
+    color: rgba(255, 255, 255, .75);
+    font-size: .68rem;
+    cursor: pointer;
+    transition: background-color .2s ease, color .2s ease;
+}
+.hero-3d__notice-close:hover { background: rgba(255, 255, 255, .2); color: #fff; }
+.hero-3d__notice-close:focus-visible { outline: 2px solid #ffb3bd; outline-offset: 2px; }
+
+/* kicker with a fine red rule */
+.hero-3d__kicker {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0 0 22px;
+    font: 600 .74rem/1.4 var(--font-body, sans-serif);
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .92);
+}
+.hero-3d__kicker::before {
+    content: "";
+    flex: none;
+    width: 44px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--h3d-red), rgba(237, 9, 32, .2));
+}
+.hero-3d__kicker span { margin-inline: .2em; color: var(--h3d-red-soft); }
+
+body .main-shell .hero-3d .hero-3d__title {
+    margin: 0 0 26px;
+    font-weight: 700;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.04;
+    letter-spacing: -.035em;
+    color: var(--h3d-text) !important;
+    text-wrap: balance;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, .35);
+}
+body .main-shell .hero-3d .hero-3d__title em {
+    position: relative;
+    font-style: normal;
+    background: linear-gradient(100deg, #ff5a6a 0%, var(--h3d-red) 55%, #b80619 100%);
+    -webkit-background-clip: text;
+            background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+}
+/* hairline underline that draws in */
+body .main-shell .hero-3d .hero-3d__title em::after {
+    content: "";
+    position: absolute;
+    left: 2%;
+    right: 2%;
+    bottom: .04em;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--h3d-red), transparent);
+    transform-origin: left;
+    animation: h3d-underline 1.2s .9s var(--h3d-ease) both;
+}
+
+.hero-3d__lede {
+    max-width: 33rem;
+    margin: 0 0 38px;
+    font-size: clamp(1rem, 1.2vw, 1.14rem);
+    font-weight: 400;
+    line-height: 1.75;
+    color: var(--h3d-muted);
+}
+
+.hero-3d__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+
+.hero-3d__btn {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 54px;
+    padding: 0 30px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff2a3d 0%, var(--h3d-red) 45%, #b80619 100%);
+    box-shadow: 0 14px 36px -12px rgba(237, 9, 32, .8), inset 0 1px 0 rgba(255, 255, 255, .25);
+    color: #fff !important;
+    font-weight: 600;
+    font-size: .82rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform .35s var(--h3d-ease), box-shadow .35s var(--h3d-ease), background-color .3s ease, border-color .3s ease;
+}
+/* light sweep on hover */
+.hero-3d__btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, .28) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform .8s var(--h3d-ease);
+}
+.hero-3d__btn:hover::before { transform: translateX(120%); }
+.hero-3d__btn i { transition: transform .35s var(--h3d-ease); }
+.hero-3d__btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 44px -12px rgba(237, 9, 32, .9), inset 0 1px 0 rgba(255, 255, 255, .3);
+    color: #fff !important;
+}
+.hero-3d__btn:hover .bi-arrow-right { transform: translateX(4px); }
+
+.hero-3d__btn--ghost {
+    background: rgba(255, 255, 255, .06);
+    border-color: rgba(255, 255, 255, .28);
+    box-shadow: none;
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+}
+.hero-3d__btn--ghost i { color: var(--h3d-red-soft); }
+.hero-3d__btn--ghost:hover {
+    background: rgba(255, 255, 255, .14);
+    border-color: rgba(255, 255, 255, .6);
+    box-shadow: 0 14px 34px -14px rgba(0, 0, 0, .6);
+}
+
+.hero-3d__btn:focus-visible { outline: 2px solid #ffb3bd; outline-offset: 4px; }
+
+/* ---------- Slide indicators ---------- */
+.hero-3d__slides:not([hidden]) {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(22px, 3.5vw, 40px);
+    transform: translateX(-50%);
+    width: min(1180px, 100% - 32px);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 220px));
+    gap: 0 28px;
+    animation: h3d-rise-center 1.1s .6s var(--h3d-ease) both;
+}
+.hero-3d__slides button {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: 6px 12px;
+    min-height: 44px;
+    padding: 0 0 4px;
+    border: 0;
+    background: none;
+    color: rgba(255, 255, 255, .5);
+    text-align: left;
+    cursor: pointer;
+    transition: color .3s ease;
+}
+.hero-3d__slides button:hover,
+.hero-3d__slides button[aria-pressed="true"] { color: #fff; }
+.hero-3d__slide-num {
+    font: 600 .72rem/1 var(--font-body, sans-serif);
+    letter-spacing: .12em;
+    font-variant-numeric: tabular-nums;
+}
+.hero-3d__slides button[aria-pressed="true"] .hero-3d__slide-num { color: var(--h3d-red-soft); }
+.hero-3d__slide-name {
+    font-size: .78rem;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hero-3d__slide-bar {
+    grid-column: 1 / -1;
+    order: -1;
+    position: relative;
+    height: 2px;
+    margin-bottom: 10px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, .2);
+    overflow: hidden;
+}
+.hero-3d__slide-bar i {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--h3d-red), var(--h3d-red-soft));
+    transform: scaleX(0);
+    transform-origin: left;
+}
+.hero-3d__slides button[aria-pressed="true"] .hero-3d__slide-bar i { transform: scaleX(1); }
+.hero-3d.is-ticking .hero-3d__slides button[aria-pressed="true"] .hero-3d__slide-bar i {
+    animation: h3d-progress var(--h3d-interval) linear both;
+}
+.hero-3d.is-paused .hero-3d__slides button[aria-pressed="true"] .hero-3d__slide-bar i { animation-play-state: paused; }
+.hero-3d__slides button:focus-visible { outline: 2px solid #fff; outline-offset: 4px; border-radius: 4px; }
+
+/* ---------- Motion ---------- */
+@keyframes h3d-rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes h3d-rise-center {
+    from { opacity: 0; transform: translate(-50%, 16px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes h3d-drift {
+    from { transform: scale(1.1); }
+    to { transform: scale(1.02); }
+}
+@keyframes h3d-underline {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+@keyframes h3d-progress {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991.98px) {
+    .hero-3d { min-height: clamp(520px, 78vh, 720px); }
+    .hero-3d__backgrounds img { object-position: 62% center; }
+}
+@media (max-width: 767.98px) {
+    .hero-3d { min-height: 0; margin-bottom: 1.25rem; }
+    .hero-3d__backgrounds::before {
+        background:
+            linear-gradient(180deg, rgba(5, 11, 24, .82) 0%, rgba(5, 11, 24, .72) 50%, rgba(5, 11, 24, .95) 100%);
+    }
+    body .main-shell section.hero-3d .hero-3d__inner { padding-block: 2rem 5.5rem; }
+    .hero-3d__kicker { gap: 10px; letter-spacing: .18em; font-size: .68rem; }
+    .hero-3d__kicker { display: block; }
+    .hero-3d__kicker::before { display: inline-block; width: 26px; margin-right: 10px; vertical-align: middle; }
+    .hero-3d__slides:not([hidden]) { gap: 0 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); bottom: 18px; }
+    .hero-3d__slide-name { font-size: .66rem; letter-spacing: .04em; }
+    .hero-3d__slide-num { font-size: .64rem; }
+}
+@media (max-width: 575.98px) {
+    .hero-3d .hero-3d__actions { gap: .6rem; }
+    .hero-3d .hero-3d__btn { flex: 1 1 auto; }
+    .hero-3d__slides button { grid-template-columns: 1fr; }
+    .hero-3d__slide-num { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .hero-3d__backgrounds img,
+    .hero-3d__backgrounds img.is-current { transition: opacity .3s ease; animation: none; transform: none; }
+    .hero-3d__copy > *,
+    .hero-3d__slides:not([hidden]),
+    body .main-shell .hero-3d .hero-3d__title em::after { animation: none; }
+    .hero-3d__btn::before { display: none; }
+}

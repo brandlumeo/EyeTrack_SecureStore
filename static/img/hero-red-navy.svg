@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="680" viewBox="0 0 1500 680" fill="none">
+<defs>
+ <linearGradient id="paper" x1="600" y1="0" x2="1400" y2="680" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset=".6" stop-color="#f2f5fb"/><stop offset="1" stop-color="#fff"/></linearGradient>
+ <linearGradient id="red" x1="1300" y1="0" x2="1100" y2="680" gradientUnits="userSpaceOnUse"><stop stop-color="#ff0924"/><stop offset=".45" stop-color="#ff5467"/><stop offset=".7" stop-color="#ed001c"/><stop offset="1" stop-color="#ff1231"/></linearGradient>
+ <linearGradient id="navy" x1="1450" y1="230" x2="1100" y2="650" gradientUnits="userSpaceOnUse"><stop stop-color="#071841"/><stop offset=".5" stop-color="#12356d"/><stop offset="1" stop-color="#a4b9db"/></linearGradient>
+ <linearGradient id="fade"><stop offset="0" stop-color="#fff"/><stop offset=".48" stop-color="#fff" stop-opacity=".95"/><stop offset=".72" stop-color="#fff" stop-opacity="0"/></linearGradient>
+</defs>
+<rect width="1500" height="680" fill="url(#paper)"/>
+<path d="M690 -80C985 100 1330 15 1370 215C1435 449 1130 477 930 724" stroke="#e8edf7" stroke-width="145"/>
+<path d="M1050 -115C1400 10 1515 98 1494 292C1474 482 1115 540 1070 748" stroke="#ffd6dd" stroke-width="160"/>
+<path d="M1100 -100C1408 3 1530 130 1470 324C1422 475 1120 544 1100 730" stroke="url(#red)" stroke-width="105"/>
+<path d="M1133 -90C1435 13 1550 138 1490 330C1445 480 1148 550 1120 730" stroke="#ff7485" stroke-opacity=".55" stroke-width="19"/>
+<path d="M1452 -85C1605 143 1592 358 1380 488C1220 586 1015 612 1000 760" stroke="url(#navy)" stroke-width="94"/>
+<path d="M1474 -70C1600 142 1570 363 1366 485C1180 596 1018 629 1002 739" stroke="#fff" stroke-opacity=".9" stroke-width="3"/>
+<path d="M1010 -35C1335 60 1470 153 1435 313C1390 512 1000 545 880 725" stroke="#bacce8" stroke-width="1.5"/>
+<path d="M820 -80C1090 90 1400 40 1380 266C1360 449 1020 480 733 725" stroke="#cfdbef" stroke-width="1.5"/>
+<rect width="1500" height="680" fill="url(#fade)"/>
+</svg>

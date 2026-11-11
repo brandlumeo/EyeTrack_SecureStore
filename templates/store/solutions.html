@@ -46,12 +46,79 @@
     }
     .solutions-card a { color: var(--solutions-blue); font-weight: 700; }
     .solutions-page a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+    .solutions-hub { max-width: 82rem; margin-inline: auto; }
+    .solutions-hub .solutions-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
+        align-items: center;
+        gap: clamp(1.5rem, 4vw, 4rem);
+        background: radial-gradient(ellipse at top right, #214b79, transparent 70%), #0b182b;
+    }
+    .solutions-hub .solutions-hero h1 {
+        font-size: clamp(2rem, 4.5vw, 4.2rem);
+        line-height: 1.06;
+        letter-spacing: -.045em;
+        text-wrap: balance;
+    }
+    .solutions-hub .solutions-hero .eyebrow { color: #afcff4; }
+    .solutions-hub .solutions-hero .btn-light { background: #fff; color: #142b4b; }
+    .solutions-hub .solutions-hero .btn-outline-light { border-color: #9cbce2; color: #fff; }
+    .solutions-hub .solutions-hero .btn-outline-light:hover { background: #fff; color: #142b4b; }
+    .solutions-visual {
+        padding: clamp(.65rem, 2.4vw, 1.4rem);
+        border: 1px solid #7093bb66;
+        border-radius: 1rem;
+        background: #07192f80;
+    }
+    .solutions-visual svg { display: block; width: 100%; height: auto; }
+    .solutions-hub .solutions-section-heading { margin-bottom: 1.1rem; }
+    .solutions-hub .solutions-section-heading h2 { color: var(--solutions-ink); letter-spacing: -.035em; }
+    .solutions-hub .solutions-card { box-shadow: 0 .7rem 1.8rem #1839530d; }
+    .solutions-hub .solutions-card h3 { color: var(--solutions-ink); font-size: 1.35rem; font-weight: 750; }
+    .solutions-hub .solutions-card .solutions-action {
+        display: inline-flex;
+        align-items: center;
+        gap: .5rem;
+        border-bottom: 1px solid #adc5e0;
+        padding-block: .25rem;
+        text-decoration: none;
+    }
+    .solutions-hub .solutions-card .solutions-action .bi {
+        display: inline;
+        width: auto;
+        height: auto;
+        background: transparent;
+        font-size: 1rem;
+    }
+    .solutions-hub .solutions-card .solutions-action:hover { border-color: currentColor; }
+    .solutions-hub .solutions-cta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.25rem;
+        border: 1px solid var(--solutions-line);
+        border-radius: 1rem;
+        padding: clamp(1.3rem, 4vw, 2.5rem);
+        background: #e8f1fb;
+        color: var(--solutions-muted);
+    }
+    .solutions-hub .solutions-cta h2 { color: var(--solutions-ink); }
+    .solutions-hub .solutions-cta p { max-width: 62ch; margin-bottom: 0; }
+    .solutions-hub .solutions-cta .btn { background: #163767; color: #fff; }
+    .solutions-hub .solutions-cta .btn:hover { background: #0b182b; }
+    #security-use-cases { scroll-margin-top: 7rem; }
+    @media (max-width: 767px) {
+        .solutions-hub .solutions-hero { grid-template-columns: minmax(0, 1fr); }
+        .solutions-visual { max-width: 25rem; }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="solutions-page">
-    <section class="solutions-hero mb-4" aria-labelledby="solutions-title">
+<div class="solutions-page solutions-hub pb-4">
+    <section class="solutions-hero mb-5" aria-labelledby="solutions-title">
+        <div>
         <p class="eyebrow mb-3">EyeTrack Security Solutions</p>
         <h1 id="solutions-title" class="mb-3">Find the right security setup for your space.</h1>
         <p class="mb-4">Start with what you need to protect. Explore suitable equipment, then talk to our team about placement, coverage and installation.</p>
@@ -59,58 +126,92 @@
             <a href="#security-use-cases" class="btn btn-light px-4">Explore solutions</a>
             <a href="{% url 'services_page' %}" class="btn btn-outline-light px-4">Plan installation</a>
         </div>
+        </div>
+        <div class="solutions-visual" aria-hidden="true">
+            <svg viewBox="0 0 400 280" fill="none" focusable="false">
+                <defs>
+                    <pattern id="solutions-plan-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                        <path d="M20 0H0V20" stroke="#8bb9ef" stroke-opacity=".16"/>
+                    </pattern>
+                </defs>
+                <rect width="400" height="280" rx="10" fill="url(#solutions-plan-grid)"/>
+                <path d="M48 224V52H349V224H48ZM160 52V140M160 171V224M160 139H271M300 139H349M257 139V224"
+                      stroke="#9fbee4" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M78 75 141 95 96 145Z M321 75 250 98 304 145Z M280 203 309 158 333 201Z"
+                      fill="#64a8f2" fill-opacity=".28" stroke="#88bcff" stroke-dasharray="4 4"/>
+                <path d="M78 75H194V195H280M194 75H321" stroke="#88bcff" stroke-opacity=".6" stroke-dasharray="5 6"/>
+                <g fill="#0e2845" stroke="#b6d6ff" stroke-width="2">
+                    <circle cx="78" cy="75" r="8"/><circle cx="321" cy="75" r="8"/><circle cx="280" cy="203" r="8"/>
+                    <rect x="183" y="184" width="22" height="22" rx="5"/>
+                </g>
+                <circle cx="194" cy="195" r="3" fill="#b6d6ff"/>
+            </svg>
+        </div>
     </section>
 
-    <div id="security-use-cases" class="row g-3 mb-4">
+    <section id="security-use-cases" class="mb-4" aria-labelledby="solutions-spaces-title">
+        <header class="solutions-section-heading">
+            <p class="eyebrow mb-2">Explore solutions</p>
+            <h2 id="solutions-spaces-title" class="h2 mb-0">Choose the space you want to protect</h2>
+        </header>
+        <div class="row g-3">
         <div class="col-md-6 col-lg-4">
             <section class="solutions-card h-100">
                 <i class="bi bi-house-door mb-3" aria-hidden="true"></i>
-                <h2>Home security</h2>
+                <h3>Home security</h3>
                 <p>Start with the main entrance and the areas you want to see when you’re away.</p>
                 <ul class="ps-3 mb-4">
                     <li>Monitor entrances with CCTV.</li>
                     <li>See who’s at the door with a video door phone.</li>
                     <li>Manage entry with a compatible smart lock.</li>
                 </ul>
-                <div class="mt-auto d-flex flex-wrap gap-3">
-                    <a href="{% url 'home_security' %}">View home security plan <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-                    <a href="{% url 'products_by_category' 'homegate-automation' %}">Video door phones</a>
-                    <a href="{% url 'products_by_category' 'smart-locks' %}">Smart locks</a>
+                <div class="mt-auto">
+                    <a class="solutions-action" href="{% url 'home_security' %}">View home security plan <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                    <div class="d-flex flex-wrap gap-3 mt-2 small">
+                        <a href="{% url 'products_by_category' 'homegate-automation' %}">Video door phones</a>
+                        <a href="{% url 'products_by_category' 'smart-locks' %}">Smart locks</a>
+                    </div>
                 </div>
             </section>
         </div>
         <div class="col-md-6 col-lg-4">
             <section class="solutions-card h-100">
                 <i class="bi bi-shop mb-3" aria-hidden="true"></i>
-                <h2>Retail security</h2>
+                <h3>Retail security</h3>
                 <p>Map out entrances, checkout areas and stockrooms before choosing camera locations.</p>
                 <ul class="ps-3 mb-4">
                     <li>Check coverage across entrances and sales floors.</li>
                     <li>Plan recording storage around your needs.</li>
                     <li>Discuss cabling and mounting with an installer.</li>
                 </ul>
-                <a class="mt-auto" href="{% url 'products_by_category' 'cctv-installation' %}">Browse CCTV cameras</a>
+                <a class="solutions-action mt-auto" href="{% url 'products_by_category' 'cctv-installation' %}">Browse CCTV cameras <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
             </section>
         </div>
         <div class="col-md-6 col-lg-4">
             <section class="solutions-card h-100">
                 <i class="bi bi-building mb-3" aria-hidden="true"></i>
-                <h2>Office security</h2>
+                <h3>Office security</h3>
                 <p>Plan how staff and visitors enter, then decide where you need video coverage.</p>
                 <ul class="ps-3 mb-4">
                     <li>Identify doors that need controlled entry.</li>
                     <li>Explore biometric devices for staff access or attendance.</li>
                     <li>Plan CCTV coverage for shared areas.</li>
                 </ul>
-                <a class="mt-auto" href="{% url 'products_by_category' 'biometric-devices' %}">Browse biometric devices</a>
+                <a class="solutions-action mt-auto" href="{% url 'products_by_category' 'biometric-devices' %}">Browse biometric devices <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
             </section>
         </div>
-    </div>
+        </div>
+    </section>
 
-    <section class="solutions-card">
-        <h2>Need help planning coverage?</h2>
-        <p>Have your site type and PIN code ready when you contact us. We can help you check service availability and discuss what installation would involve.</p>
-        <a href="{% url 'support_page' %}">Contact EyeTrack support</a>
+    <section class="solutions-cta" aria-labelledby="solutions-cta-title">
+        <div>
+            <h2 id="solutions-cta-title" class="h4">Need help planning coverage?</h2>
+            <p>Have your site type and PIN code ready when you contact us. We can help you check service availability and discuss what installation would involve.</p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            <a class="btn px-4" href="{% url 'services_page' %}">Plan installation</a>
+            <a class="fw-semibold" href="{% url 'support_page' %}">Contact EyeTrack support</a>
+        </div>
     </section>
 </div>
 {% endblock %}

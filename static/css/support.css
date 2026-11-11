@@ -1,0 +1,72 @@
+/* ==== Support page hero (/support-page/) ====
+   Loaded only by templates/store/support.html; own sp-* class names. */
+
+.sp-hero {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-top: -1.5rem;               /* cancel the page container's .pt-4 */
+    margin-bottom: clamp(28px, 4vw, 40px);
+    background: #0b174f;
+    color: #fff;
+}
+.sp-hero__inner {
+    width: min(1180px, 100% - 32px);
+    margin-inline: auto;
+    padding-block: clamp(44px, 6vw, 72px);
+}
+
+.sp-kicker {
+    margin: 0 0 12px;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: #ff6b7a;
+}
+body .sp-hero .sp-hero__title {
+    margin: 0 0 14px;
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    color: #fff !important;
+}
+.sp-hero__lede {
+    max-width: 36rem;
+    margin: 0 0 28px;
+    font-size: clamp(1rem, 1.2vw, 1.1rem);
+    line-height: 1.6;
+    color: rgba(222, 230, 255, .82);
+}
+
+.sp-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.sp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 22px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color .2s ease, border-color .2s ease;
+}
+.sp-btn--primary { background: #ed0920; color: #fff !important; }
+.sp-btn--primary:hover { background: #c7081c; color: #fff !important; }
+.sp-btn--ghost { border: 1px solid rgba(255, 255, 255, .35); color: #fff !important; }
+.sp-btn--ghost:hover { border-color: #fff; background: rgba(255, 255, 255, .08); color: #fff !important; }
+.sp-btn:focus-visible { outline: 3px solid #ffb3bd; outline-offset: 3px; }
+
+.sp-hours {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 18px 0 0;
+    font-size: .9rem;
+    color: rgba(222, 230, 255, .75);
+}
+
+@media (max-width: 575.98px) {
+    .sp-actions .sp-btn { flex: 1 1 100%; }
+}

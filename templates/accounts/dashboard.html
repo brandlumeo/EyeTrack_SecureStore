@@ -1,38 +1,77 @@
 {% extends 'base.html' %}
 {% block title %}My Account | Eyetrack Solutions{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
+{% block extra_head %}
+{{ block.super }}
+<style>
+    .account-overview { --account-ink: #142b4b; --account-muted: #475b75; --account-line: #dce5ef; }
+    .account-overview .overview-layout { display: grid; grid-template-columns: minmax(0, 17rem) minmax(0, 1fr); grid-template-areas: "sidebar main"; gap: clamp(1rem, 3vw, 1.75rem); }
+    .account-overview .overview-main { grid-area: main; min-width: 0; }
+    .account-overview .overview-sidebar { grid-area: sidebar; min-width: 0; }
+    .account-overview .overview-hero {
+        display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;
+        margin-bottom: 1.25rem; padding: clamp(1.25rem, 3vw, 2.4rem);
+        background: radial-gradient(ellipse at right top, #254f80, transparent 75%), #0d1c31;
+        color: #fff; border-radius: 1.15rem;
+    }
+    .account-overview .overview-hero h1 { color: #fff; font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: -.045em; margin: 0 0 .4rem; }
+    .account-overview .overview-hero p { color: #dce9f7; margin: 0; }
+    .account-overview .overview-hero .btn { background: #fff; color: var(--account-ink); font-weight: 700; }
+    .account-overview .overview-card { padding: clamp(1rem, 2.4vw, 1.5rem); background: #fff; border: 1px solid var(--account-line); border-radius: 1rem; }
+    .account-overview .overview-card h2 { color: var(--account-ink); }
+    .account-overview .overview-card a { color: #204c85; font-weight: 650; }
+    .account-overview .overview-card .btn { color: #fff; background: #163767; }
+    .account-overview .overview-shortcuts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin-top: 1rem; }
+    .account-overview .overview-shortcut { display: flex; align-items: center; gap: .65rem; padding: .85rem; text-decoration: none; color: var(--account-ink); font-weight: 700; }
+    .account-overview .overview-shortcut:hover { border-color: #829ebf; background: #f2f7fc; }
+    .account-overview .overview-shortcut .bi:first-child { color: #204c85; font-size: 1.1rem; }
+    .account-overview .overview-shortcut .bi:last-child { margin-left: auto; }
+    .account-overview .overview-order { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .7rem; padding-block: .8rem; border-top: 1px solid var(--account-line); color: var(--account-ink); }
+    .account-overview .overview-status { display: inline-block; padding: .16rem .55rem; border-radius: 2rem; background: #edf3fa; color: #294a70; font-size: .78rem; font-weight: 700; }
+    .account-overview .overview-support { background: #edf4fb; }
+    .account-overview .account-sidebar { position: static; }
+    .account-overview .account-sidebar-meta { min-width: 0; }
+    .account-overview .account-sidebar-meta h5 { color: var(--account-ink) !important; overflow-wrap: anywhere; }
+    .account-overview .account-sidebar-meta p { color: var(--account-muted) !important; }
+    .account-overview a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+    @media (max-width: 991px) {
+        .account-overview .overview-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main" "sidebar"; }
+    }
+    @media (max-width: 575px) {
+        .account-overview .overview-shortcuts { grid-template-columns: minmax(0, 1fr); }
+    }
+</style>
+{% endblock %}
 {% block content %}
-<section class="account-layout page-section">
-    <div class="row g-4">
-        <div class="col-lg-4 col-xl-3">
-            {% include 'accounts/_account_sidebar.html' %}
-        </div>
-        <div class="col-lg-8 col-xl-9">
+<section class="account-layout account-overview page-section" aria-labelledby="account-overview-title">
+    <div class="overview-layout">
+        <div class="overview-main">
+            <header class="overview-hero">
+                <div>
+                    <h1 id="account-overview-title">My account</h1>
+                    <p>Track your orders and manage your delivery details.</p>
+                </div>
+                <a href="{% url 'order_history' %}" class="btn"><i class="bi bi-bag-check me-2" aria-hidden="true"></i>My orders</a>
+            </header>
             {% include 'accounts/includes/push_prompt.html' %}
-            <div class="account-section-grid">
-                <a href="{% url 'order_history' %}" class="glass-card p-4 account-panel-link"><div class="account-panel-icon"><i class="bi bi-bag-check"></i></div><h3>My Orders</h3><p>Review your latest purchases and order statuses.</p></a>
-                <a href="{% url 'wishlist_page' %}" class="glass-card p-4 account-panel-link"><div class="account-panel-icon"><i class="bi bi-heart"></i></div><h3>Wishlist</h3><p>Open your saved products and move them to cart faster.</p></a>
-                <a href="{% url 'address_list' %}" class="glass-card p-4 account-panel-link"><div class="account-panel-icon"><i class="bi bi-geo-alt"></i></div><h3>Saved Addresses</h3><p>Manage multiple delivery addresses and defaults.</p></a>
-                <a href="{% url 'profile' %}" class="glass-card p-4 account-panel-link"><div class="account-panel-icon"><i class="bi bi-person-gear"></i></div><h3>Account Settings</h3><p>Update your name, phone number, email, and profile image.</p></a>
-            </div>
-            <div class="row g-4 mt-1">
-                <div class="col-xl-6">
-                    <div class="glass-card p-4 h-100">
+            <div class="row g-3">
+                <div class="col-xl-7">
+                    <div class="overview-card h-100">
                         <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
-                            <h3 class="h5 mb-0">Recent Orders</h3>
+                            <h2 class="h5 mb-0">Recent orders</h2>
                             <a href="{% url 'order_history' %}" class="small text-decoration-none">View all</a>
                         </div>
                         {% if recent_orders %}
-                            <div class="d-grid gap-3">
+                            <div>
                                 {% for order in recent_orders %}
-                                    <div class="account-inline-card">
+                                    <div class="overview-order">
                                         <div>
                                             <strong>{{ order.formatted_id }}</strong>
                                             <div class="small text-secondary">{{ order.created_at|date:"M d, Y" }}</div>
+                                            <span class="overview-status mt-1">{{ order.get_order_status_display }}</span>
                                         </div>
                                         <div class="text-end">
                                             <div class="fw-semibold">&#8377; {{ order.total|floatformat:2 }}</div>
-                                            <div class="small text-secondary">{{ order.get_order_status_display }}</div>
                                             <div class="d-flex flex-column align-items-end gap-1">
                                                 <a href="{% url 'order_tracking' order.id %}" class="small text-decoration-none">Track order</a>
                                                 {% if order.order_status == 'shipped' or order.order_status == 'delivered' %}
@@ -50,10 +89,10 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="col-xl-6">
-                    <div class="glass-card p-4 h-100">
+                <div class="col-xl-5">
+                    <div class="overview-card h-100">
                         <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
-                            <h3 class="h5 mb-0">Default Address</h3>
+                            <h2 class="h5 mb-0">Default address</h2>
                             <a href="{% url 'address_list' %}" class="small text-decoration-none">Manage</a>
                         </div>
                         {% if default_address %}
@@ -72,11 +111,16 @@
                     </div>
                 </div>
             </div>
-            <div class="glass-card p-4 p-md-5 mt-4 account-support-card">
+            <nav class="overview-shortcuts" aria-label="Account shortcuts">
+                <a href="{% url 'wishlist_page' %}" class="overview-card overview-shortcut"><i class="bi bi-heart" aria-hidden="true"></i> Wishlist <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                <a href="{% url 'address_list' %}" class="overview-card overview-shortcut"><i class="bi bi-geo-alt" aria-hidden="true"></i> Saved addresses <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                <a href="{% url 'profile' %}" class="overview-card overview-shortcut"><i class="bi bi-person-gear" aria-hidden="true"></i> Account settings <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            </nav>
+            <div class="overview-card overview-support mt-4">
                 <div class="row g-3 align-items-center">
                     <div class="col-lg-8">
                         <p class="eyebrow mb-2">Need Assistance?</p>
-                        <h3 class="h4 mb-2">Get help with orders, shipping, or installation planning.</h3>
+                        <h2 class="h5 mb-2">Get help with orders, shipping, or installation planning.</h2>
                         <p class="text-secondary mb-0">Connect with Eyetrack support for post-purchase help, address issues, and professional installation guidance.</p>
                     </div>
                     <div class="col-lg-4 d-grid gap-2">
@@ -86,6 +130,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="overview-sidebar">
+            {% include 'accounts/_account_sidebar.html' %}
         </div>
     </div>
 </section>

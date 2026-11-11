@@ -57,7 +57,8 @@ def categories(request):
         "Video Door Phones",
         "Smart Locks",
         "Access Control",
-        "Alarm Systems"
+        "Alarm Systems",
+        "Laptops",
     ]
     
     # Only fetch the categories that match our explicit service lines
