@@ -40,22 +40,21 @@ professional installation support from Eyetrack Solutions.{% endblock %}
                 <button type="button" class="hero-3d__notice-close" onclick="dismissAnnouncement()" aria-label="Dismiss announcement"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
             </div>
             <p class="hero-3d__kicker">Eyetrack Solutions <span aria-hidden="true">&middot;</span> Enterprise Security Store</p>
-            <h1 class="hero-3d__title" id="homeHeroTitle">See everything.<br><span>Protect</span> what matters.</h1>
+            <h1 class="hero-3d__title" id="homeHeroTitle">See everything.<br><em>Protect</em> what matters.</h1>
             <p class="hero-3d__lede">Enterprise-grade CCTV, smart locks and biometric systems for homes and businesses &mdash; with expert installation from survey to setup.</p>
             <div class="hero-3d__actions">
-                <a href="#catalog" class="hero-3d__btn"><i class="bi bi-shield-check" aria-hidden="true"></i> Explore Products</a>
-                <a href="{% url 'services_page' %}" class="hero-3d__link">Installation plans <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                <a href="#catalog" class="hero-3d__btn">Explore Products <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                <a href="{% url 'services_page' %}" class="hero-3d__btn hero-3d__btn--ghost"><i class="bi bi-tools" aria-hidden="true"></i> Installation plans</a>
             </div>
         </div>
-
     </div>
-    <div class="hero-3d__slides" role="group" aria-label="Hero backgrounds" hidden>
-        <button type="button" aria-pressed="true">CCTV</button>
-        <button type="button" aria-pressed="false">Biometrics</button>
-        <button type="button" aria-pressed="false">Laptops</button>
+    <div class="hero-3d__slides" role="group" aria-label="Hero slides" hidden>
+        <button type="button" aria-pressed="true"><span class="hero-3d__slide-num">01</span><span class="hero-3d__slide-name">CCTV &amp; Locks</span><span class="hero-3d__slide-bar"><i></i></span></button>
+        <button type="button" aria-pressed="false"><span class="hero-3d__slide-num">02</span><span class="hero-3d__slide-name">Biometrics</span><span class="hero-3d__slide-bar"><i></i></span></button>
+        <button type="button" aria-pressed="false"><span class="hero-3d__slide-num">03</span><span class="hero-3d__slide-name">Laptops</span><span class="hero-3d__slide-bar"><i></i></span></button>
     </div>
 </section>
-<script src="{% static 'js/hero.js' %}?v=11" defer></script>
+<script src="{% static 'js/hero.js' %}?v=12" defer></script>
 
 {# ==== TRUST STRIP ==== #}
 <section class="trust-strip mb-5 reveal">
