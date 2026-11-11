@@ -83,3 +83,15 @@ class ViewingGuideSitemap(Sitemap):
 
     def lastmod(self, obj):
         return obj.updated_at
+
+
+class AreaSitemap(Sitemap):
+    priority = 0.7
+    changefreq = "monthly"
+
+    def items(self):
+        from .areas import AREAS
+        return ["area_list"] + list(AREAS)
+
+    def location(self, item):
+        return reverse("area_list") if item == "area_list" else reverse("area_detail", args=[item])
