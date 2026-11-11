@@ -70,21 +70,24 @@ def notify_admin_on_order_update(sender, instance, created, **kwargs):
     else:
         original_status = getattr(instance, "_original_order_status", None)
         current_status = instance.order_status
+        # orders.stock.release: an abandoned online payment, cancelled without emails or pushes.
+        quiet = getattr(instance, "_quiet_cancel", False)
 
         # Status genuinely changed?
         if original_status is not None and original_status != current_status:
             # Admin cancellation notification
             if (original_status != Order.OrderStatus.CANCELLED and
                     current_status == Order.OrderStatus.CANCELLED):
-                transaction.on_commit(
-                    lambda: send_email_async(send_admin_order_notification_email, instance.id, event_type="cancelled")
-                )
+                if not quiet:
+                    transaction.on_commit(
+                        lambda: send_email_async(send_admin_order_notification_email, instance.id, event_type="cancelled")
+                    )
                 
                 # Restock items automatically on cancellation
                 _restock_order_items(instance)
 
             # Customer-facing status update email for tracked transitions
-            if current_status in STATUS_EMAIL_TRANSITIONS:
+            if current_status in STATUS_EMAIL_TRANSITIONS and not quiet:
                 # Capture values in closure to avoid stale instance references
                 order_id = instance.id
                 new_status = current_status
