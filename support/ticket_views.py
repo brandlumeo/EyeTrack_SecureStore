@@ -1,6 +1,7 @@
 """Customer side of service requests (after-sales support tickets)."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -8,7 +9,7 @@ from django.views.decorators.http import require_POST
 from accounts.views import build_account_context
 
 from .forms import ServiceTicketForm, TicketReplyForm
-from .models import ServiceTicket, ViewingGuide
+from .models import ServiceTicket, TicketAttachment, ViewingGuide
 from .tickets import notify_staff, save_photos, validate_photos
 
 
@@ -100,3 +101,18 @@ def ticket_close(request, pk):
         notify_staff(ticket, "Request closed by customer", "%s was closed by the customer" % ticket.reference, request)
         messages.success(request, "Request %s closed. Thank you!" % ticket.reference)
     return redirect("ticket_detail", pk=ticket.pk)
+
+
+@login_required(login_url="login")
+def ticket_photo(request, pk):
+    """A photo attached to a service request, for the customer who raised it and for staff only."""
+    attachment = get_object_or_404(TicketAttachment.objects.select_related("ticket"), pk=pk)
+    if not (request.user.is_staff or attachment.ticket.user_id == request.user.id):
+        raise Http404("Photo not found")
+    try:
+        handle = attachment.image.open("rb")
+    except (FileNotFoundError, OSError):
+        raise Http404("Photo missing")
+    response = FileResponse(handle)
+    response["Content-Disposition"] = "inline"
+    return response

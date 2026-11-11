@@ -22,13 +22,13 @@
                 <article class="ticket-msg">
                     <header><strong>{{ ticket.user.get_full_name|default:ticket.user.username }} (customer)</strong><time>{{ ticket.created_at|date:"d M Y, H:i" }}</time></header>
                     <p>{{ ticket.description }}</p>
-                    {% if intro_photos %}<div class="ticket-photos">{% for a in intro_photos %}<a href="{{ a.image.url }}" target="_blank" rel="noopener"><img src="{{ a.image.url }}" alt="" loading="lazy"></a>{% endfor %}</div>{% endif %}
+                    {% if intro_photos %}<div class="ticket-photos">{% for a in intro_photos %}<a href="{{ a.get_absolute_url }}" target="_blank" rel="noopener"><img src="{{ a.get_absolute_url }}" alt="" loading="lazy"></a>{% endfor %}</div>{% endif %}
                 </article>
                 {% for m in ticket.messages.all %}
                 <article class="ticket-msg {% if m.from_staff %}from-staff{% endif %}">
                     <header><strong>{% if m.from_staff %}{{ m.author.get_full_name|default:m.author.username|default:"Staff" }} (staff){% else %}{{ ticket.user.get_full_name|default:ticket.user.username }} (customer){% endif %}</strong><time>{{ m.created_at|date:"d M Y, H:i" }}</time></header>
                     <p>{{ m.body }}</p>
-                    {% if m.attachments.all %}<div class="ticket-photos">{% for a in m.attachments.all %}<a href="{{ a.image.url }}" target="_blank" rel="noopener"><img src="{{ a.image.url }}" alt="" loading="lazy"></a>{% endfor %}</div>{% endif %}
+                    {% if m.attachments.all %}<div class="ticket-photos">{% for a in m.attachments.all %}<a href="{{ a.get_absolute_url }}" target="_blank" rel="noopener"><img src="{{ a.get_absolute_url }}" alt="" loading="lazy"></a>{% endfor %}</div>{% endif %}
                 </article>
                 {% endfor %}
             </div>

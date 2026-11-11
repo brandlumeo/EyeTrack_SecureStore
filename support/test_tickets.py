@@ -27,7 +27,7 @@ def png(name="photo.png"):
     return SimpleUploadedFile(name, buf.getvalue(), content_type="image/png")
 
 
-@override_settings(MEDIA_ROOT=MEDIA, ADMINS=[("Admin", "admin@example.com")])
+@override_settings(MEDIA_ROOT=MEDIA, PRIVATE_MEDIA_ROOT=MEDIA, ADMINS=[("Admin", "admin@example.com")])
 @patch("support.tickets._send_async")
 class ServiceTicketTests(TestCase):
     def setUp(self):
@@ -175,4 +175,4 @@ class ServiceTicketTests(TestCase):
         self.assertContains(self.client.get(reverse("order_tracking", args=[self.order.pk])),
                             reverse("ticket_create") + "?order=%d" % self.order.pk)
         self.assertContains(self.client.get(reverse("account_dashboard")), reverse("ticket_list"))
-        self.assertContains(self.client.get(reverse("support_page")), reverse("ticket_create"))
+        self.assertContains(self.client.get(reverse("support_page")), reverse("ticket_list"))  # "My Service Requests" row

@@ -3,7 +3,7 @@
 {% block title %}Support Center | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Contact Eyetrack Solutions support for CCTV setup help, warranty guidance, troubleshooting, and rapid assistance.{% endblock %}
 {% block extra_head %}
-<link href="{% static 'css/support.css' %}?v=2" rel="stylesheet">
+<link href="{% static 'css/support.css' %}?v=3" rel="stylesheet">
 {% endblock %}
 {% block content %}
 <div class="support-page">
@@ -12,13 +12,6 @@
         <p class="sp-kicker">Support Center</p>
         <h1 class="sp-hero__title" id="spTitle">How can we help?</h1>
         <p class="sp-hero__lede">Questions about setup, orders, warranty or monitoring? Our support team is here to help.</p>
-        <div class="sp-actions">
-            <a href="tel:+917994357565" class="sp-btn sp-btn--primary"><i class="bi bi-telephone-fill" aria-hidden="true"></i> Call +91 79943 57565</a>
-            <a href="https://wa.me/917994357565" class="sp-btn sp-btn--ghost" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp" aria-hidden="true"></i> WhatsApp</a>
-            <a href="mailto:info@etsgrp.in" class="sp-btn sp-btn--ghost"><i class="bi bi-envelope" aria-hidden="true"></i> Email us</a>
-            <a href="{% url 'ticket_create' %}" class="sp-btn sp-btn--ghost"><i class="bi bi-life-preserver" aria-hidden="true"></i> Raise a service request</a>
-        </div>
-        <p class="sp-hours"><i class="bi bi-clock" aria-hidden="true"></i> Mon&ndash;Sat, 9:00 AM &ndash; 6:00 PM</p>
     </div>
 </section>
 
