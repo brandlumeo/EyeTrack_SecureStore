@@ -108,6 +108,7 @@ professional installation support from Eyetrack Solutions.{% endblock %}
         <div class="trust-item"><i class="bi bi-patch-check-fill"></i><span>Certified Brands</span></div>
     </div>
 </section>
+{% if is_landing %}{% include 'store/includes/home_protect.html' %}{% endif %}
 {% endif %}
 
 {# ==== PREMIUM CATEGORY NAV BAR ==== #}
@@ -416,10 +417,10 @@ professional installation support from Eyetrack Solutions.{% endblock %}
                     {% for num in paginator.page_range %}
                     {% if num == page_obj.number %}
                     <li class="page-item active">
-                        <span class="page-link">{{ num }}</span>
+                        <span class="page-link" aria-current="page">{{ num }}</span>
                     </li>
-                    {% elif num == 1 or num == paginator.num_pages or num >= page_obj.number|add:"-2" and num <=
-                        page_obj.number|add:"2" %} <li class="page-item">
+                    {% elif num == 1 or num == paginator.num_pages or num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                    <li class="page-item">
                         <a class="page-link premium-input"
                             href="?{% if query_string %}{{ query_string }}&{% endif %}page={{ num }}">{{ num }}</a>
                         </li>
@@ -449,6 +450,8 @@ professional installation support from Eyetrack Solutions.{% endblock %}
     </div>
 </section>
 
+
+{% if is_landing %}{% include 'store/includes/home_sections.html' %}{% endif %}
 
 {# ==== MOBILE FILTER DOCK ==== #}
 <div class="mobile-filter-dock d-lg-none">
@@ -599,14 +602,14 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 
     /* ── build modal HTML ─────────────────────────────────────── */
     function buildInstallModalHTML(data) {
-        const { name, price, image, cartCount, productId, installAvailable, installCharge, servicesUrl, updateInstallUrl } = data;
+        const { price, image, cartCount, productId, installCharge, servicesUrl, updateInstallUrl } = data;
 
         const imageHTML = image
-            ? `<img src="${image}" alt="${name}" class="install-modal-img">`
+            ? `<img src="${image}" alt="" class="install-modal-img">`
             : `<div class="install-modal-img-fallback"><i class="bi bi-camera-video"></i></div>`;
 
         /* Right-panel buttons depend on whether install is configured */
-        const hasRealCharge = installAvailable && parseFloat(installCharge) > 0;
+        const hasRealCharge = parseFloat(installCharge) > 0;
 
         const priceRow = hasRealCharge
             ? `<div class="install-upsell-price">+ ${fmt(installCharge)} <span>/ unit</span></div>`
@@ -629,7 +632,7 @@ professional installation support from Eyetrack Solutions.{% endblock %}
             <div class="install-modal-left">
                 <div class="install-confirm-badge"><i class="bi bi-check-lg me-1"></i>Added to cart!</div>
                 <div class="install-modal-thumb">${imageHTML}</div>
-                <h5 class="install-product-name">${name}</h5>
+                <h5 class="install-product-name"></h5>
                 <p class="install-product-price">${fmt(price)}</p>
                 <div class="install-cart-pill">
                     <i class="bi bi-cart3 me-1"></i>
@@ -691,19 +694,30 @@ professional installation support from Eyetrack Solutions.{% endblock %}
             /* Update all cart-count badges */
             document.querySelectorAll('[data-cart-count]').forEach(el => el.textContent = json.cart_count);
 
+            const item = json.item;
+            if (!item.installation_available) {
+                const result = await Swal.fire({
+                    title: 'Added to cart',
+                    text: item.name,
+                    icon: 'success',
+                    confirmButtonText: 'View cart',
+                    showCancelButton: true,
+                    cancelButtonText: 'Continue shopping'
+                });
+                if (result.isConfirmed) window.location.assign(json.cart_url);
+                return;
+            }
+
             const productId = form.dataset.productId;
-            const installAvailable = form.dataset.installationAvailable === 'true';
             const installCharge = parseFloat(form.dataset.installationCharge || '0');
             const updateInstallUrl = form.dataset.updateInstallUrl;
 
             /* Step 2: Show installation prompt modal */
             const html = buildInstallModalHTML({
-                name: form.dataset.productName,
                 price: form.dataset.productPrice,
                 image: form.dataset.productImage,
                 cartCount: json.cart_count,
                 productId: productId,
-                installAvailable: installAvailable,
                 installCharge: installCharge,
                 servicesUrl: form.dataset.servicesUrl,
                 updateInstallUrl: updateInstallUrl,
@@ -726,6 +740,10 @@ professional installation support from Eyetrack Solutions.{% endblock %}
 
                 /* Attach Yes/No click handlers once modal is open */
                 didOpen: (popup) => {
+                    popup.querySelector('.install-product-name').textContent = item.name;
+                    const image = popup.querySelector('.install-modal-img');
+                    if (image) image.alt = item.name;
+
                     const yesBtn   = popup.querySelector('#installYesBtn');
                     const noBtn    = popup.querySelector('#installNoBtn');
                     const panel    = popup.querySelector('#installPanelContent');

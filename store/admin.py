@@ -3,6 +3,7 @@ from .models import (
     Category, Product, CameraSpecification, BiometricSpecification,
     SmartLockSpecification, NetworkDeviceSpecification, Coupon, Review,
     ReviewMedia, ProductGallery, ServiceableArea, StockNotification, ReviewHelpful,
+    Project, ProjectImage,
 )
 from .specs import (
     SPEC_TYPE_BIOMETRIC,
@@ -183,3 +184,19 @@ class ReviewHelpfulAdmin(admin.ModelAdmin):
     list_display = ('review', 'session_key', 'is_helpful', 'created_at')
     list_filter = ('is_helpful', 'created_at')
     readonly_fields = ('created_at',)
+
+
+class ProjectImageInline(admin.TabularInline):
+    model = ProjectImage
+    extra = 1
+
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = ('title', 'site_type', 'location', 'is_published', 'is_featured', 'order', 'completed_on')
+    list_filter = ('is_published', 'is_featured', 'site_type')
+    list_editable = ('is_published', 'is_featured', 'order')
+    search_fields = ('title', 'location', 'summary')
+    prepopulated_fields = {'slug': ('title',)}
+    filter_horizontal = ('products',)
+    inlines = [ProjectImageInline]

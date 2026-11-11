@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link href="{% static 'css/tools.css' %}?v=1" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+{% with current=request.resolver_match.url_name %}
+<nav class="tools-crumbs" aria-label="CCTV planning tools">
+    <a href="{% url 'tools_hub' %}" class="{% if current == 'tools_hub' %}active{% endif %}"><i class="bi bi-grid me-1"></i>All tools</a>
+    <a href="{% url 'system_builder' %}" class="{% if current == 'system_builder' %}active{% endif %}">System builder</a>
+    <a href="{% url 'storage_calculator' %}" class="{% if current == 'storage_calculator' %}active{% endif %}">Storage calculator</a>
+    <a href="{% url 'lens_calculator' %}" class="{% if current == 'lens_calculator' %}active{% endif %}">Lens calculator</a>
+    <a href="{% url 'camera_guide' %}" class="{% if current == 'camera_guide' %}active{% endif %}">Camera guide</a>
+</nav>
+{% endwith %}
+
+{% block tool_content %}{% endblock %}
+
+{% block tool_cta %}
+<aside class="tools-cta">
+    <div>
+        <strong>Want an expert to confirm it on site?</strong>
+        <p>Free site survey &mdash; we check angles, lighting and cable routes, then give a clear installed price.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'quote_request' %}" class="btn btn-premium-cta"><i class="bi bi-calendar-check me-2"></i>Book free site survey</a>
+        <a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light"><i class="bi bi-whatsapp me-2"></i>WhatsApp</a>
+    </div>
+</aside>
+{% endblock %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/tools.js' %}?v=1" defer></script>
+{% endblock %}

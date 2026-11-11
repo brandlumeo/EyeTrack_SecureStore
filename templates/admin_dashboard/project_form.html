@@ -1,0 +1,153 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">{{ page_title }}</h1>
+            <p class="admin-subtitle">{% if project %}Update the project details and photos{% else %}Add a completed installation to the website gallery{% endif %}</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            {% if project and project.is_published %}<a href="{{ project.get_absolute_url }}" target="_blank" rel="noopener" class="btn btn-outline-light btn-sm mt-3 mt-md-0 me-1"><i class="bi bi-box-arrow-up-right me-1"></i> View</a>{% endif %}
+            <a href="{% url 'admin_dashboard:projects_overview' %}" class="btn btn-outline-light btn-sm mt-3 mt-md-0"><i class="bi bi-arrow-left me-1"></i> Back to Projects</a>
+        </div>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" action="{% if project %}{% url 'admin_dashboard:project_edit' project.id %}{% else %}{% url 'admin_dashboard:project_add' %}{% endif %}">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger bg-dark text-light border-danger">{{ form.non_field_errors }}</div>{% endif %}
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="chart-container">
+                <h5 class="mb-3">Project details</h5>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label text-secondary" for="{{ form.title.id_for_label }}">Title <span class="text-danger">*</span></label>
+                        {{ form.title }}
+                        {% if form.title.errors %}<div class="text-danger small mt-1">{{ form.title.errors|striptags }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-secondary" for="{{ form.site_type.id_for_label }}">Property type</label>
+                        {{ form.site_type }}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-secondary" for="{{ form.location.id_for_label }}">Location <span class="text-danger">*</span></label>
+                        {{ form.location }}
+                        {% if form.location.errors %}<div class="text-danger small mt-1">{{ form.location.errors|striptags }}</div>{% endif %}
+                        <small class="text-secondary">Area / city only &mdash; never the exact address.</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-secondary" for="{{ form.completed_on.id_for_label }}">Completed on</label>
+                        {{ form.completed_on }}
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label text-secondary" for="{{ form.summary.id_for_label }}">Summary <span class="text-danger">*</span></label>
+                        {{ form.summary }}
+                        {% if form.summary.errors %}<div class="text-danger small mt-1">{{ form.summary.errors|striptags }}</div>{% endif %}
+                        <small class="text-secondary">{{ form.summary.help_text }}</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary" for="{{ form.challenge.id_for_label }}">The challenge</label>
+                        {{ form.challenge }}
+                        <small class="text-secondary">{{ form.challenge.help_text }}</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary" for="{{ form.solution.id_for_label }}">Our solution</label>
+                        {{ form.solution }}
+                        <small class="text-secondary">{{ form.solution.help_text }}</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-secondary" for="{{ form.cameras_installed.id_for_label }}">Cameras installed</label>
+                        {{ form.cameras_installed }}
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label text-secondary" for="{{ form.system_details.id_for_label }}">System details</label>
+                        {{ form.system_details }}
+                        <small class="text-secondary">{{ form.system_details.help_text }}</small>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label text-secondary" for="{{ form.products.id_for_label }}">Products used</label>
+                        {{ form.products }}
+                        <small class="text-secondary">Optional. Hold Ctrl (Cmd on Mac) to select several.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container mt-4">
+                <h5 class="mb-3">Customer testimonial <small class="text-secondary fw-normal">(optional)</small></h5>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label text-secondary" for="{{ form.testimonial.id_for_label }}">What the customer said</label>
+                        {{ form.testimonial }}
+                        <small class="text-secondary">Only the customer&rsquo;s own words, with their permission.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-secondary" for="{{ form.testimonial_author.id_for_label }}">Attribution</label>
+                        {{ form.testimonial_author }}
+                        <small class="text-secondary">{{ form.testimonial_author.help_text }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container mt-4">
+                <h5 class="mb-3">Gallery photos</h5>
+                {% if images %}
+                <div class="row g-3 mb-3">
+                    {% for img in images %}
+                    <div class="col-sm-6 col-md-4">
+                        <div class="p-2 rounded-3" style="border:1px solid var(--border-subtle, #2b3948);">
+                            <img src="{{ img.image.url }}" alt="" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;">
+                            <input type="text" name="caption_{{ img.id }}" value="{{ img.caption }}" maxlength="150" placeholder="Caption (optional)" class="form-control form-control-sm bg-transparent text-light border-secondary mt-2">
+                            <div class="d-flex align-items-center justify-content-between mt-2 gap-2">
+                                <input type="number" name="order_{{ img.id }}" value="{{ img.order }}" min="0" class="form-control form-control-sm bg-transparent text-light border-secondary" style="width:80px;" title="Order">
+                                <label class="small text-danger mb-0"><input type="checkbox" name="delete_image" value="{{ img.id }}" class="form-check-input me-1">Remove</label>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <label class="form-label text-secondary" for="id_gallery_images">Add photos</label>
+                <input type="file" name="gallery_images" id="id_gallery_images" accept="image/*" multiple class="form-control bg-transparent text-light border-secondary">
+                <small class="text-secondary">Select several at once. JPG/PNG/WebP, up to 8 MB each. Before / during / after shots work well.</small>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="chart-container">
+                <h5 class="mb-3">Cover photo <span class="text-danger">*</span></h5>
+                {% if project and project.cover_image %}<img src="{{ project.cover_image.url }}" alt="" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;" class="mb-2">{% endif %}
+                <input type="file" name="cover_image" id="{{ form.cover_image.id_for_label }}" accept="image/*" class="form-control bg-transparent text-light border-secondary">
+                {% if form.cover_image.errors %}<div class="text-danger small mt-1">{{ form.cover_image.errors|striptags }}</div>{% endif %}
+                <small class="text-secondary d-block mt-1">{% if project %}Choose a file only to replace the current cover.{% else %}{{ form.cover_image.help_text }}{% endif %}</small>
+            </div>
+
+            <div class="chart-container mt-4">
+                <h5 class="mb-3">Visibility</h5>
+                <div class="form-check form-switch d-flex align-items-center gap-3 mb-3">
+                    {{ form.is_published }}
+                    <label class="form-check-label text-light mb-0" for="{{ form.is_published.id_for_label }}">Published on the website</label>
+                </div>
+                <div class="form-check form-switch d-flex align-items-center gap-3">
+                    {{ form.is_featured }}
+                    <label class="form-check-label text-light mb-0" for="{{ form.is_featured.id_for_label }}">Feature on the homepage</label>
+                </div>
+                {% if form.is_featured.errors %}<div class="text-danger small mt-1">{{ form.is_featured.errors|striptags }}</div>{% endif %}
+                <hr class="border-secondary">
+                <label class="form-label text-secondary" for="{{ form.order.id_for_label }}">Display order</label>
+                {{ form.order }}
+                <small class="text-secondary">Lower numbers appear first.</small>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-premium-cta"><i class="bi bi-save me-1"></i> Save Project</button>
+                <button type="submit" name="save_continue" value="1" class="btn btn-outline-light">Save &amp; keep editing</button>
+                <a href="{% url 'admin_dashboard:projects_overview' %}" class="btn btn-outline-secondary text-light">Cancel</a>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

@@ -16,6 +16,7 @@
             <a href="tel:+917994357565" class="sp-btn sp-btn--primary"><i class="bi bi-telephone-fill" aria-hidden="true"></i> Call +91 79943 57565</a>
             <a href="https://wa.me/917994357565" class="sp-btn sp-btn--ghost" target="_blank" rel="noopener noreferrer"><i class="bi bi-whatsapp" aria-hidden="true"></i> WhatsApp</a>
             <a href="mailto:info@etsgrp.in" class="sp-btn sp-btn--ghost"><i class="bi bi-envelope" aria-hidden="true"></i> Email us</a>
+            <a href="{% url 'ticket_create' %}" class="sp-btn sp-btn--ghost"><i class="bi bi-life-preserver" aria-hidden="true"></i> Raise a service request</a>
         </div>
         <p class="sp-hours"><i class="bi bi-clock" aria-hidden="true"></i> Mon&ndash;Sat, 9:00 AM &ndash; 6:00 PM</p>
     </div>
@@ -89,6 +90,8 @@
             <h3 class="h4 mb-3">Self-Help Resources</h3>
             <a href="{% url 'faq_page' %}" class="compact-row mb-2"><span>Frequently Asked Questions</span><strong>Open</strong></a>
             <a href="{% url 'order_history' %}" class="compact-row mb-2"><span>Track Recent Orders</span><strong>View</strong></a>
+            <a href="{% url 'ticket_list' %}" class="compact-row mb-2"><span>My Service Requests</span><strong>Open</strong></a>
+            <a href="{% url 'guide_list' %}" class="compact-row mb-2"><span>View Cameras on Your Phone</span><strong>Guides</strong></a>
             <a href="{% url 'product_list' %}" class="compact-row mb-2"><span>Browse Replacement Devices</span><strong>Shop</strong></a>
             <a href="{% url 'services_page' %}" class="compact-row"><span>Installation Plans</span><strong>Explore</strong></a>
             <div class="info-note mt-3">

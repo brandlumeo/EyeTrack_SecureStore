@@ -21,7 +21,7 @@ import razorpay
 
 from orders.emails import send_order_invoice_email, send_order_placed_email, send_email_async, send_admin_order_notification_email
 from orders.models import Order, OrderItem, Payment, Shipment
-from .models import Category, Product, CameraSpecification, Wishlist, Review, ReviewMedia, Coupon, ServiceableArea, StockNotification, ReviewHelpful
+from .models import Category, Product, CameraSpecification, Wishlist, Review, ReviewMedia, Coupon, ServiceableArea, StockNotification, ReviewHelpful, Project
 from .forms import ReviewForm
 from .specs import (
     SPEC_TYPE_BIOMETRIC,
@@ -98,6 +98,12 @@ def _build_saved_address_option(user, saved_address):
         "full_name": saved_address.full_name,
         "email": user.email or "",
         "phone": saved_address.phone_number,
+        "phone_number": saved_address.phone_number,
+        "house_street": saved_address.house_street,
+        "landmark": saved_address.landmark,
+        "city": saved_address.city,
+        "state": saved_address.state,
+        "pincode": saved_address.pincode,
         "address": _format_saved_address(saved_address),
         "is_default": saved_address.is_default,
     }
@@ -546,6 +552,30 @@ def product_list(request, category_slug=None):
         "new_cutoff": new_cutoff,
         "popular_product_ids": popular_product_ids,
     }
+
+    # Homepage-only sections (testimonials, installation gallery, FAQ, quote form)
+    is_landing = not category and not query and page_obj.number == 1
+    context["is_landing"] = is_landing
+    if is_landing:
+        from orders.models import InstallationPhoto
+        from support.forms import QuoteRequestForm
+        from support.models import FAQ
+
+        context["testimonials"] = (
+            Review.objects.filter(status=True, rating__gte=4)
+            .exclude(review="")
+            .select_related("user", "product")
+            .order_by("-created_at")[:6]
+        )
+        context["installation_photos"] = (
+            InstallationPhoto.objects.filter(label=InstallationPhoto.PhotoLabel.AFTER)
+            .select_related("booking")
+            .order_by("-uploaded_at")[:8]
+        )
+        context["home_faqs"] = FAQ.objects.filter(is_active=True).order_by("order", "created_at")[:6]
+        context["featured_projects"] = Project.objects.filter(is_published=True, is_featured=True).order_by("order", "-completed_on")[:4]
+        context["quote_form"] = QuoteRequestForm()
+
     return render(request, "store/product_list.html", context)
 
 
@@ -1140,6 +1170,7 @@ def checkout(request):
         default_address = saved_address_qs.filter(is_default=True).first() or saved_address_qs.first()
         selected_address_id = request.POST.get("saved_address", "").strip()
         selected_address = saved_address_qs.filter(pk=selected_address_id).first() if selected_address_id else None
+        chosen_saved_address = selected_address if request.method == "POST" else None
         if selected_address is None:
             selected_address = default_address
             if request.method != "POST" and selected_address:
@@ -1148,6 +1179,7 @@ def checkout(request):
         saved_address_qs = []
         selected_address = None
         selected_address_id = None
+        chosen_saved_address = None
 
     # Determine if any product in the cart requires shipping
     requires_shipping = any(not item['product'].is_free_shipping for item in products)
@@ -1222,20 +1254,29 @@ def checkout(request):
             addr_state = request.POST.get("addr_state", "").strip()
             addr_pincode = request.POST.get("addr_pincode", "").strip()
 
-            if not all([addr_house, addr_street, addr_city, addr_state, addr_pincode]):
+            # A chosen saved address satisfies the delivery address when the manual fields are left empty.
+            use_saved_address = chosen_saved_address is not None and not any(
+                [addr_house, addr_street, addr_landmark, addr_city, addr_state, addr_pincode]
+            )
+            if use_saved_address:
+                addr_pincode = chosen_saved_address.pincode.strip()
+            elif not all([addr_house, addr_street, addr_city, addr_state, addr_pincode]):
                 messages.error(request, "Please fill in all required address fields including pincode.")
                 return redirect("checkout")
+
+            # Validate Serviceability
+            from store.models import ServiceableArea
+            area = ServiceableArea.objects.filter(pincode=addr_pincode).first()
+            if not area or not area.delivery_available:
+                messages.error(request, f"Sorry, delivery is currently not available to pincode {addr_pincode}.")
+                return redirect("checkout")
+            if has_installation and not area.installation_available:
+                messages.error(request, f"Sorry, professional installation is not supported in pincode {addr_pincode}. Please remove installation from your cart or change the delivery address.")
+                return redirect("checkout")
+
+            if use_saved_address:
+                address = _format_saved_address(chosen_saved_address)
             else:
-                # Validate Serviceability
-                from store.models import ServiceableArea
-                area = ServiceableArea.objects.filter(pincode=addr_pincode).first()
-                if not area or not area.delivery_available:
-                    messages.error(request, f"Sorry, delivery is currently not available to pincode {addr_pincode}.")
-                    return redirect("checkout")
-                if has_installation and not area.installation_available:
-                    messages.error(request, f"Sorry, professional installation is not supported in pincode {addr_pincode}. Please remove installation from your cart or change the delivery address.")
-                    return redirect("checkout")
-                
                 address_parts = [addr_house, addr_street]
                 if addr_landmark:
                     address_parts.append(f"Landmark: {addr_landmark}")
@@ -1402,6 +1443,7 @@ def checkout(request):
         "grand_total": grand_total,
         "saved_addresses": [_build_saved_address_option(request.user, address) for address in saved_address_qs],
         "selected_address_id": selected_address_id,
+        "selected_address_display": _format_saved_address(selected_address) if selected_address_id and selected_address else "",
         "checkout_initial": checkout_initial,
         "min_install_date": (timezone.now() + timedelta(days=5)).strftime("%Y-%m-%d"),
     }
@@ -1743,6 +1785,10 @@ def vote_review_helpful(request, review_id):
 
     helpful_count = ReviewHelpful.objects.filter(review=review, is_helpful=True).count()
     return JsonResponse({'ok': True, 'action': action, 'helpful_count': helpful_count})
+
+
+def solutions_page(request):
+    return render(request, "store/solutions.html")
 
 
 def about_page(request):

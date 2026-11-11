@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Our CCTV Installation Projects | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Completed CCTV and security installations by Eyetrack Solutions for homes, shops, offices, schools and factories across Kozhikode and Kerala.{% endblock %}
+{% block meta_robots %}{% if active_type or page_obj.number > 1 %}noindex, follow{% else %}index, follow{% endif %}{% endblock %}
+
+{% block extra_head %}
+<link href="{% static 'css/projects.css' %}?v=1" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<header class="home-section-head">
+    <div>
+        <p class="eyebrow mb-2">Our work</p>
+        <h1 class="home-section-title">Installation projects</h1>
+    </div>
+    <p class="home-section-lead">Real systems we&rsquo;ve planned and installed &mdash; cameras, recorders and access control, set up and handed over with mobile viewing.</p>
+</header>
+
+{% if filters|length > 1 %}
+<nav class="project-filters" aria-label="Filter by property type">
+    <a href="{% url 'project_list' %}" class="{% if not active_type %}active{% endif %}">All</a>
+    {% for value, label in filters %}
+    <a href="{% url 'project_list' %}?type={{ value }}" class="{% if active_type == value %}active{% endif %}">{{ label }}</a>
+    {% endfor %}
+</nav>
+{% endif %}
+
+{% if projects %}
+<div class="project-grid">
+    {% for p in projects %}
+    <a href="{{ p.get_absolute_url }}" class="project-card">
+        <div class="project-card-media">
+            <img src="{{ p.cover_image.url }}" alt="{{ p.title }}" loading="lazy" decoding="async">
+            <span class="project-badge">{{ p.get_site_type_display }}</span>
+        </div>
+        <div class="project-card-body">
+            <strong>{{ p.title }}</strong>
+            <small>{{ p.summary }}</small>
+            <div class="project-meta">
+                <span><i class="bi bi-geo-alt"></i>{{ p.location }}</span>
+                {% if p.cameras_installed %}<span><i class="bi bi-camera-video"></i>{{ p.cameras_installed }} camera{{ p.cameras_installed|pluralize }}</span>{% endif %}
+                {% if p.completed_on %}<span><i class="bi bi-calendar-check"></i>{{ p.completed_on|date:"M Y" }}</span>{% endif %}
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="mt-4" aria-label="Projects pages">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if active_type %}&amp;type={{ active_type }}{% endif %}">Previous</a></li>{% endif %}
+        <li class="page-item active"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if active_type %}&amp;type={{ active_type }}{% endif %}">Next</a></li>{% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% else %}
+<div class="project-empty">
+    <i class="bi bi-images display-6 d-block mb-2 opacity-50"></i>
+    <p class="mb-3">Our project gallery is being updated &mdash; check back soon.</p>
+    <a href="{% url 'quote_request' %}" class="btn btn-premium-cta">Book a free site survey</a>
+</div>
+{% endif %}
+
+<aside class="project-cta">
+    <div>
+        <strong>Planning something similar?</strong>
+        <span>Get a camera plan in a minute, or have an expert survey your site for free.</span>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'system_builder' %}" class="btn btn-outline-light"><i class="bi bi-magic me-2"></i>Build your system</a>
+        <a href="{% url 'quote_request' %}" class="btn btn-premium-cta"><i class="bi bi-calendar-check me-2"></i>Free site survey</a>
+    </div>
+</aside>
+{% endblock %}

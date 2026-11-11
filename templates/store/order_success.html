@@ -41,6 +41,8 @@
                 </div>
             {% endif %}
 
+            {% include 'accounts/includes/push_prompt.html' with push_title="Want to know when it ships?" %}
+
             <div class="d-flex flex-wrap justify-content-center gap-2">
                 <a href="{% url 'product_list' %}" class="btn btn-premium-cta">Continue Shopping</a>
                 <a href="{% url 'order_history' %}" class="btn btn-outline-light">View Order History</a>

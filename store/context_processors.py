@@ -57,7 +57,8 @@ def categories(request):
         "Video Door Phones",
         "Smart Locks",
         "Access Control",
-        "Alarm Systems"
+        "Alarm Systems",
+        "Laptops",
     ]
     
     # Only fetch the categories that match our explicit service lines
@@ -87,4 +88,13 @@ def firebase_config(request):
             "vapidKey": settings.FIREBASE_VAPID_KEY,
         },
         "GOOGLE_CLIENT_ID": settings.GOOGLE_CLIENT_ID,
+    }
+
+
+def business_contact(request):
+    """Expose the business phone / WhatsApp numbers used by contact CTAs."""
+    from django.conf import settings
+    return {
+        "BUSINESS_PHONE": settings.BUSINESS_PHONE,
+        "BUSINESS_WHATSAPP": settings.BUSINESS_WHATSAPP,
     }

@@ -2,10 +2,10 @@ from django import forms
 from store.models import (
     Coupon, Category, Product, CameraSpecification,
     BiometricSpecification, SmartLockSpecification, NetworkDeviceSpecification,
-    ServiceableArea,
+    ServiceableArea, Project,
 )
 from orders.models import DeliveryAgent, DeliveryAssignment, Technician
-from support.models import FAQCategory, FAQ
+from support.models import FAQCategory, FAQ, ViewingGuide
 
 
 # ─── Existing forms (unchanged) ───────────────────────────────────────────────
@@ -358,3 +358,87 @@ class UserForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+INPUT = 'form-control bg-transparent text-light border-secondary'
+MAX_PROJECT_IMAGE_MB = 8
+
+
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = [
+            'title', 'site_type', 'location', 'completed_on', 'cover_image', 'summary', 'challenge', 'solution',
+            'cameras_installed', 'system_details', 'products', 'testimonial', 'testimonial_author',
+            'is_published', 'is_featured', 'order',
+        ]
+        widgets = {
+            'title': forms.TextInput(attrs={'class': INPUT, 'placeholder': 'e.g. 8-camera system for a textile shop'}),
+            'site_type': forms.Select(attrs={'class': 'form-select bg-dark text-light border-secondary'}),
+            'location': forms.TextInput(attrs={'class': INPUT, 'placeholder': 'Perambra, Kozhikode'}),
+            'completed_on': forms.DateInput(attrs={'class': INPUT, 'type': 'date'}, format='%Y-%m-%d'),
+            'cover_image': forms.ClearableFileInput(attrs={'class': INPUT, 'accept': 'image/*'}),
+            'summary': forms.TextInput(attrs={'class': INPUT}),
+            'challenge': forms.Textarea(attrs={'class': INPUT, 'rows': 3}),
+            'solution': forms.Textarea(attrs={'class': INPUT, 'rows': 3}),
+            'cameras_installed': forms.NumberInput(attrs={'class': INPUT, 'min': 1}),
+            'system_details': forms.Textarea(attrs={'class': INPUT, 'rows': 4, 'placeholder': '8 x 4MP turret cameras\n8-channel NVR\n4 TB surveillance HDD'}),
+            'products': forms.SelectMultiple(attrs={'class': 'form-select bg-dark text-light border-secondary', 'size': 6}),
+            'testimonial': forms.Textarea(attrs={'class': INPUT, 'rows': 3}),
+            'testimonial_author': forms.TextInput(attrs={'class': INPUT}),
+            'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_featured': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'order': forms.NumberInput(attrs={'class': INPUT, 'min': 0}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['products'].queryset = Product.objects.filter(is_available=True).order_by('name')
+
+    def clean_cover_image(self):
+        image = self.cleaned_data.get('cover_image')
+        if image and getattr(image, 'size', 0) > MAX_PROJECT_IMAGE_MB * 1024 * 1024:
+            raise forms.ValidationError(f'Image is larger than {MAX_PROJECT_IMAGE_MB} MB; please resize it.')
+        return image
+
+    def clean(self):
+        cleaned = super().clean()
+        if cleaned.get('is_featured') and not cleaned.get('is_published'):
+            self.add_error('is_featured', 'Only published projects can be featured on the homepage.')
+        return cleaned
+
+
+def validate_gallery_uploads(files):
+    """Validate extra gallery photos (an <input multiple>); returns (valid_files, errors)."""
+    field = forms.ImageField()
+    valid, errors = [], []
+    for f in files:
+        if f.size > MAX_PROJECT_IMAGE_MB * 1024 * 1024:
+            errors.append(f'{f.name}: larger than {MAX_PROJECT_IMAGE_MB} MB.')
+            continue
+        try:
+            valid.append(field.clean(f))
+        except forms.ValidationError:
+            errors.append(f'{f.name}: not a valid image.')
+    return valid, errors
+
+
+class ViewingGuideForm(forms.ModelForm):
+    class Meta:
+        model = ViewingGuide
+        fields = ['title', 'brand', 'app_name', 'summary', 'before_you_start', 'steps', 'troubleshooting',
+                  'android_url', 'ios_url', 'image', 'is_published', 'order']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': INPUT}),
+            'brand': forms.TextInput(attrs={'class': INPUT, 'placeholder': 'Hikvision, Dahua, CP Plus or General'}),
+            'app_name': forms.TextInput(attrs={'class': INPUT, 'placeholder': 'Hik-Connect, DMSS, gCMOB...'}),
+            'summary': forms.TextInput(attrs={'class': INPUT}),
+            'before_you_start': forms.Textarea(attrs={'class': INPUT, 'rows': 4}),
+            'steps': forms.Textarea(attrs={'class': INPUT, 'rows': 8}),
+            'troubleshooting': forms.Textarea(attrs={'class': INPUT, 'rows': 5}),
+            'android_url': forms.URLInput(attrs={'class': INPUT, 'placeholder': 'https://play.google.com/store/apps/details?id=...'}),
+            'ios_url': forms.URLInput(attrs={'class': INPUT, 'placeholder': 'https://apps.apple.com/...'}),
+            'image': forms.ClearableFileInput(attrs={'class': INPUT, 'accept': 'image/*'}),
+            'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'order': forms.NumberInput(attrs={'class': INPUT, 'min': 0}),
+        }

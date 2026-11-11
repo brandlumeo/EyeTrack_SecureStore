@@ -1,0 +1,93 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block admin_content %}
+{% include 'support/tickets/_styles.html' %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">{{ ticket.subject }}</h1>
+            <p class="admin-subtitle">{{ ticket.reference }} &middot; raised {{ ticket.created_at|date:"d M Y, H:i" }} &middot; <span class="ticket-status" data-status="{{ ticket.status }}">{{ ticket.get_status_display }}</span>{% if ticket.priority == 'urgent' %} <span class="badge bg-danger">URGENT</span>{% endif %}</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_dashboard:tickets_overview' %}" class="btn btn-outline-light btn-sm mt-3 mt-md-0"><i class="bi bi-arrow-left me-1"></i> All requests</a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="chart-container">
+            <h5 class="mb-3">Conversation</h5>
+            <div class="ticket-thread mb-4">
+                <article class="ticket-msg">
+                    <header><strong>{{ ticket.user.get_full_name|default:ticket.user.username }} (customer)</strong><time>{{ ticket.created_at|date:"d M Y, H:i" }}</time></header>
+                    <p>{{ ticket.description }}</p>
+                    {% if intro_photos %}<div class="ticket-photos">{% for a in intro_photos %}<a href="{{ a.image.url }}" target="_blank" rel="noopener"><img src="{{ a.image.url }}" alt="" loading="lazy"></a>{% endfor %}</div>{% endif %}
+                </article>
+                {% for m in ticket.messages.all %}
+                <article class="ticket-msg {% if m.from_staff %}from-staff{% endif %}">
+                    <header><strong>{% if m.from_staff %}{{ m.author.get_full_name|default:m.author.username|default:"Staff" }} (staff){% else %}{{ ticket.user.get_full_name|default:ticket.user.username }} (customer){% endif %}</strong><time>{{ m.created_at|date:"d M Y, H:i" }}</time></header>
+                    <p>{{ m.body }}</p>
+                    {% if m.attachments.all %}<div class="ticket-photos">{% for a in m.attachments.all %}<a href="{{ a.image.url }}" target="_blank" rel="noopener"><img src="{{ a.image.url }}" alt="" loading="lazy"></a>{% endfor %}</div>{% endif %}
+                </article>
+                {% endfor %}
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label class="form-label text-secondary" for="id_body">Reply to the customer (optional)</label>
+                <textarea name="body" id="id_body" rows="4" maxlength="5000" class="form-control bg-transparent text-light border-secondary" placeholder="The customer sees this in their account and gets a notification + email."></textarea>
+                <input type="file" name="photos" accept="image/*" multiple class="form-control bg-transparent text-light border-secondary mt-2" aria-label="Attach photos">
+
+                <div class="row g-3 mt-1">
+                    <div class="col-md-3">
+                        <label class="form-label text-secondary" for="id_status">Status</label>
+                        <select name="status" id="id_status" class="form-select bg-dark text-light border-secondary">
+                            {% for value, label in status_choices %}<option value="{{ value }}" {% if ticket.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-secondary" for="id_priority">Priority</label>
+                        <select name="priority" id="id_priority" class="form-select bg-dark text-light border-secondary">
+                            {% for value, label in priority_choices %}<option value="{{ value }}" {% if ticket.priority == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-secondary" for="id_tech">Technician</label>
+                        <select name="assigned_technician" id="id_tech" class="form-select bg-dark text-light border-secondary">
+                            <option value="">Not assigned</option>
+                            {% for tech in technicians %}<option value="{{ tech.pk }}" {% if ticket.assigned_technician_id == tech.pk %}selected{% endif %}>{{ tech.name }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-secondary" for="id_visit">Visit date</label>
+                        <input type="date" name="visit_date" id="id_visit" value="{{ ticket.visit_date|date:'Y-m-d' }}" class="form-control bg-transparent text-light border-secondary">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="submit" class="btn btn-premium-cta"><i class="bi bi-save me-1"></i> Save &amp; notify customer</button>
+                </div>
+                <small class="text-secondary d-block text-end mt-1">The customer is notified when you write a reply or change the status.</small>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="chart-container">
+            <h5 class="mb-3">Customer</h5>
+            <p class="mb-1 fw-semibold">{{ ticket.user.get_full_name|default:ticket.user.username }}</p>
+            <p class="mb-1"><a href="tel:{{ ticket.contact_phone }}" class="text-light"><i class="bi bi-telephone me-1"></i>{{ ticket.contact_phone }}</a></p>
+            {% if ticket.user.email %}<p class="mb-1"><a href="mailto:{{ ticket.user.email }}" class="text-light"><i class="bi bi-envelope me-1"></i>{{ ticket.user.email }}</a></p>{% endif %}
+            {% if ticket.site_location %}<p class="mb-1 text-secondary"><i class="bi bi-geo-alt me-1"></i>{{ ticket.site_location }}</p>{% endif %}
+            <p class="mb-0 text-secondary"><i class="bi bi-tag me-1"></i>{{ ticket.get_category_display }}</p>
+        </div>
+        <div class="chart-container mt-4">
+            <h5 class="mb-3">Orders</h5>
+            {% if ticket.order %}<p class="mb-2">Linked: <a href="{% url 'admin_dashboard:order_detail' ticket.order.pk %}" class="text-warning">{{ ticket.order.formatted_id }}</a> ({{ ticket.order.get_order_status_display }})</p>{% endif %}
+            {% for o in customer_orders %}
+            <div class="d-flex justify-content-between small py-1"><a href="{% url 'admin_dashboard:order_detail' o.pk %}" class="text-light">{{ o.formatted_id }}</a><span class="text-secondary">{{ o.created_at|date:"d M Y" }} &middot; {{ o.get_order_status_display }}</span></div>
+            {% empty %}<p class="text-secondary small mb-0">No orders on this account.</p>{% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

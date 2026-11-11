@@ -1,0 +1,23 @@
+<style>
+    .guide-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+    .guide-filters a { padding: 0.3rem 0.8rem; border-radius: 999px; border: 1px solid rgba(249, 250, 251, 0.12); color: var(--text-soft, #c4cdd7); text-decoration: none; font-size: 0.85rem; }
+    .guide-filters a.active, .guide-filters a:hover { border-color: var(--accent, #f5a300); color: var(--accent, #f5a300); }
+    .guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .guide-card { display: flex; flex-direction: column; gap: 0.4rem; padding: 1.2rem; border-radius: 1rem; text-decoration: none; color: var(--text, #f7f8fa);
+        border: 1px solid rgba(249, 250, 251, 0.1); background: linear-gradient(180deg, rgba(249, 250, 251, 0.06), rgba(26, 35, 51, 0.3)); }
+    .guide-card:hover { border-color: rgba(245, 163, 0, 0.45); color: var(--text, #f7f8fa); }
+    .guide-card small { color: var(--text-soft, #c4cdd7); line-height: 1.5; }
+    .guide-brand { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent, #f5a300); }
+    .guide-steps { counter-reset: step; list-style: none; padding: 0; margin: 0; display: grid; gap: 0.75rem; }
+    .guide-steps li { counter-increment: step; position: relative; padding: 0.85rem 1rem 0.85rem 3.25rem; border-radius: 0.75rem;
+        background: rgba(249, 250, 251, 0.04); border: 1px solid rgba(249, 250, 251, 0.08); color: var(--text-soft, #c4cdd7); }
+    .guide-steps li::before { content: counter(step); position: absolute; left: 0.9rem; top: 0.8rem; width: 1.6rem; height: 1.6rem; border-radius: 50%;
+        display: grid; place-items: center; font-weight: 800; font-size: 0.85rem; background: rgba(245, 163, 0, 0.15); color: var(--accent, #f5a300); }
+    .guide-check { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.45rem; }
+    .guide-check li { display: flex; gap: 0.5rem; color: var(--text-soft, #c4cdd7); }
+    .guide-check i { color: #75d5a5; }
+    .guide-fix { padding: 0.75rem 0; border-bottom: 1px solid rgba(249, 250, 251, 0.08); }
+    .guide-fix strong { display: block; color: var(--text, #f7f8fa); }
+    .guide-fix span { color: var(--text-soft, #c4cdd7); }
+    .guide-preview { margin-bottom: 1rem; padding: 0.7rem 1rem; border-radius: 0.75rem; border: 1px solid rgba(245, 163, 0, 0.45); background: rgba(245, 163, 0, 0.1); }
+</style>

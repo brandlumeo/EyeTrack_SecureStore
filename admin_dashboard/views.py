@@ -5,7 +5,7 @@ Provides comprehensive admin interface with analytics and management features
 from django import forms
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
-from django.db.models import Count, Sum, Avg, Q
+from django.db.models import Count, Sum, Avg, Max, Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
@@ -15,10 +15,11 @@ import csv
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST
+from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
 import decimal
 
-from orders.models import Order, OrderItem, Payment, Shipment, DeliveryAgent, DeliveryAssignment, InstallationBooking, InstallationPhoto, Invoice, ReturnRequest
+from orders.models import Order, OrderItem, Payment, Shipment, DeliveryAgent, DeliveryAssignment, InstallationBooking, InstallationPhoto, Invoice, ReturnRequest, Technician
 from orders.utils import render_to_pdf
 from store.models import Product, Category, Coupon, Review, ServiceableArea, ReviewMedia
 from accounts.models import Profile, Address, Notification
@@ -35,6 +36,7 @@ from admin_dashboard.forms import (
     BiometricSpecForm, SmartLockSpecForm, NetworkSpecForm, VideoDoorPhoneSpecForm,
     DeliveryAgentForm, AssignAgentForm,
     ServiceableAreaForm, FAQCategoryForm, FAQForm,
+    ProjectForm, validate_gallery_uploads, ViewingGuideForm,
 )
 
 
@@ -407,11 +409,13 @@ def dashboard(request):
     abandoned_carts_count = 0
     abandoned_revenue_potential = Decimal('0.00')
     
-    # Get all non-expired sessions
-    sessions = Session.objects.filter(expire_date__gte=timezone.now())
-    for s in sessions:
+    # Get all non-expired sessions. Only the payload is loaded: reading expire_date as well meant one
+    # malformed date (e.g. '9294-10-00', left by the old MyISAM tables) crashed the whole dashboard.
+    session_payloads = Session.objects.filter(expire_date__gte=timezone.now()).values_list('session_data', flat=True)
+    session_store = SessionStore()
+    for payload in session_payloads:
         try:
-            data = s.get_decoded()
+            data = session_store.decode(payload)
             if 'cart' in data and data['cart']:
                 cart = data['cart']
                 has_items = False
@@ -1562,6 +1566,313 @@ def serviceable_area_delete(request, area_id):
 
 
 # ─── FAQs ─────────────────────────────────────────────────────────────────────
+
+@login_required
+@user_passes_test(is_admin)
+def quote_requests_overview(request):
+    """Site survey / quotation leads captured from the storefront."""
+    from support.models import QuoteRequest
+    search = request.GET.get('search', '').strip()
+    status = request.GET.get('status', '').strip()
+    qs = QuoteRequest.objects.all()
+    if search:
+        qs = qs.filter(Q(name__icontains=search) | Q(phone__icontains=search) | Q(location__icontains=search) | Q(pincode__icontains=search))
+    if status:
+        qs = qs.filter(status=status)
+
+    paginator = Paginator(qs, 25)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    counts = dict(QuoteRequest.objects.values_list('status').annotate(n=Count('id')))
+
+    context = {
+        'page_title': 'Leads & Quote Requests',
+        'leads': page_obj,
+        'page_obj': page_obj,
+        'search_query': search,
+        'status_filter': status,
+        'status_choices': QuoteRequest.Status.choices,
+        'total_count': sum(counts.values()),
+        'new_count': counts.get(QuoteRequest.Status.NEW, 0),
+        'won_count': counts.get(QuoteRequest.Status.WON, 0),
+    }
+    return render(request, 'admin_dashboard/quote_requests.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def quote_request_update(request, lead_id):
+    from support.models import QuoteRequest
+    lead = get_object_or_404(QuoteRequest, id=lead_id)
+    new_status = request.POST.get('status')
+    if new_status in QuoteRequest.Status.values:
+        lead.status = new_status
+    lead.admin_notes = request.POST.get('admin_notes', lead.admin_notes).strip()
+    lead.save(update_fields=['status', 'admin_notes', 'updated_at'])
+    messages.success(request, f'Lead "{lead.name}" updated.')
+    return redirect(request.META.get('HTTP_REFERER') or 'admin_dashboard:quote_requests')
+
+
+@login_required
+@user_passes_test(is_admin)
+def tickets_overview(request):
+    """After-sales service requests raised by customers."""
+    from support.models import ServiceTicket
+    search = request.GET.get('search', '').strip()
+    status = request.GET.get('status', 'active')
+    priority = request.GET.get('priority', '')
+    qs = ServiceTicket.objects.select_related('user', 'order', 'assigned_technician')
+    if status == 'active':
+        qs = qs.filter(status__in=ServiceTicket.OPEN_STATUSES)
+    elif status in ServiceTicket.Status.values:
+        qs = qs.filter(status=status)
+    if priority in ServiceTicket.Priority.values:
+        qs = qs.filter(priority=priority)
+    if search:
+        query = Q(subject__icontains=search) | Q(user__email__icontains=search) | Q(user__first_name__icontains=search) | Q(contact_phone__icontains=search)
+        if search.upper().startswith('SR-') and search[3:].isdigit():
+            query |= Q(pk=int(search[3:]))
+        qs = qs.filter(query)
+    qs = qs.order_by('-priority', '-updated_at')  # 'urgent' sorts before 'normal'
+    page_obj = Paginator(qs, 25).get_page(request.GET.get('page'))
+    counts = dict(ServiceTicket.objects.values_list('status').annotate(n=Count('id')))
+    return render(request, 'admin_dashboard/tickets_overview.html', {
+        'page_title': 'Service Requests',
+        'tickets': page_obj,
+        'page_obj': page_obj,
+        'search_query': search,
+        'status_filter': status,
+        'priority_filter': priority,
+        'status_choices': ServiceTicket.Status.choices,
+        'priority_choices': ServiceTicket.Priority.choices,
+        'active_count': sum(counts.get(s, 0) for s in ServiceTicket.OPEN_STATUSES),
+        'waiting_count': counts.get(ServiceTicket.Status.OPEN, 0),
+        'urgent_count': ServiceTicket.objects.filter(priority=ServiceTicket.Priority.URGENT, status__in=ServiceTicket.OPEN_STATUSES).count(),
+    })
+
+
+@login_required
+@user_passes_test(is_admin)
+def ticket_manage(request, ticket_id):
+    """Conversation, reply and status/assignment updates for one service request."""
+    from support.models import ServiceTicket
+    from support.tickets import notify_customer, save_photos, validate_photos
+    ticket = get_object_or_404(
+        ServiceTicket.objects.select_related('user', 'order', 'assigned_technician').prefetch_related('messages__author', 'attachments'),
+        pk=ticket_id,
+    )
+    if request.method == 'POST':
+        body = request.POST.get('body', '').strip()[:5000]
+        old_status = ticket.status
+        new_status = request.POST.get('status', ticket.status)
+        if new_status in ServiceTicket.Status.values:
+            ticket.status = new_status
+        if request.POST.get('priority') in ServiceTicket.Priority.values:
+            ticket.priority = request.POST['priority']
+        tech_id = request.POST.get('assigned_technician', '')
+        ticket.assigned_technician = Technician.objects.filter(pk=tech_id, is_active=True).first() if tech_id.isdigit() else None
+        visit = request.POST.get('visit_date', '').strip()
+        try:
+            ticket.visit_date = date.fromisoformat(visit) if visit else None
+        except ValueError:
+            messages.warning(request, 'Visit date was not understood and was left unchanged.')
+        if ticket.status == ServiceTicket.Status.CLOSED and old_status != ServiceTicket.Status.CLOSED:
+            ticket.closed_at = timezone.now()
+        elif ticket.status != ServiceTicket.Status.CLOSED:
+            ticket.closed_at = None
+        ticket.save()
+
+        photos, photo_errors = validate_photos(request.FILES.getlist('photos'))
+        if body or photos:
+            message = ticket.messages.create(author=request.user, from_staff=True, body=body or '(photo attached)')
+            save_photos(ticket, photos, message=message)
+        for error in photo_errors:
+            messages.warning(request, 'Photo skipped: %s' % error)
+
+        status_changed = ticket.status != old_status
+        if body or status_changed:
+            parts = []
+            if body:
+                parts.append('Our support team replied: "%s"' % (body[:160] + ('...' if len(body) > 160 else '')))
+            if status_changed:
+                parts.append('Status: %s.' % ticket.get_status_display())
+            if ticket.status == ServiceTicket.Status.VISIT_SCHEDULED and ticket.visit_date:
+                parts.append('Visit date: %s.' % ticket.visit_date.strftime('%a, %d %b %Y'))
+            notify_customer(ticket, 'Update on your service request', ' '.join(parts), request)
+        messages.success(request, '%s updated.' % ticket.reference)
+        return redirect('admin_dashboard:ticket_manage', ticket_id=ticket.pk)
+
+    return render(request, 'admin_dashboard/ticket_manage.html', {
+        'page_title': ticket.reference,
+        'ticket': ticket,
+        'intro_photos': [a for a in ticket.attachments.all() if a.message_id is None],
+        'status_choices': ServiceTicket.Status.choices,
+        'priority_choices': ServiceTicket.Priority.choices,
+        'technicians': Technician.objects.filter(is_active=True).order_by('name'),
+        'customer_orders': ticket.user.orders.order_by('-created_at')[:5],
+    })
+
+
+@login_required
+@user_passes_test(is_admin)
+def guides_overview(request):
+    """Remote-viewing guides shown at /support/guides/."""
+    from support.models import ViewingGuide
+    guides = ViewingGuide.objects.order_by('order', 'brand', 'title')
+    return render(request, 'admin_dashboard/guides_overview.html', {
+        'page_title': 'Remote Viewing Guides',
+        'guides': guides,
+        'published_count': sum(1 for g in guides if g.is_published),
+    })
+
+
+@login_required
+@user_passes_test(is_admin)
+def guide_edit(request, guide_id=None):
+    from support.models import ViewingGuide
+    guide = get_object_or_404(ViewingGuide, pk=guide_id) if guide_id else None
+    form = ViewingGuideForm(request.POST or None, request.FILES or None, instance=guide)
+    if request.method == 'POST':
+        if form.is_valid():
+            guide = form.save()
+            messages.success(request, 'Guide "%s" saved%s.' % (guide.title, '' if guide.is_published else ' as a draft'))
+            if 'save_preview' in request.POST:
+                return redirect(guide.get_absolute_url())
+            return redirect('admin_dashboard:guides_overview')
+        messages.error(request, 'Please correct the errors below.')
+    return render(request, 'admin_dashboard/guide_form.html', {
+        'page_title': 'Edit Guide' if guide else 'Add Guide', 'form': form, 'guide': guide})
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def guide_toggle_publish(request, guide_id):
+    from support.models import ViewingGuide
+    guide = get_object_or_404(ViewingGuide, pk=guide_id)
+    guide.is_published = not guide.is_published
+    guide.save(update_fields=['is_published', 'updated_at'])
+    messages.success(request, '"%s" is now %s.' % (guide.title, 'published' if guide.is_published else 'hidden'))
+    return redirect('admin_dashboard:guides_overview')
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def guide_delete(request, guide_id):
+    from support.models import ViewingGuide
+    guide = get_object_or_404(ViewingGuide, pk=guide_id)
+    if guide.image:
+        guide.image.delete(save=False)
+    title = guide.title
+    guide.delete()
+    messages.success(request, 'Guide "%s" deleted.' % title)
+    return redirect('admin_dashboard:guides_overview')
+
+
+@login_required
+@user_passes_test(is_admin)
+def projects_overview(request):
+    """Completed installations shown in the public projects gallery."""
+    from store.models import Project
+    search = request.GET.get('search', '').strip()
+    # Explicit order: Meta.ordering is not applied to queries with aggregates (photo_count).
+    qs = Project.objects.annotate(photo_count=Count('images')).order_by('order', '-completed_on', '-created_at')
+    if search:
+        qs = qs.filter(Q(title__icontains=search) | Q(location__icontains=search))
+    paginator = Paginator(qs, 25)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    context = {
+        'page_title': 'Projects Gallery',
+        'projects': page_obj,
+        'page_obj': page_obj,
+        'search_query': search,
+        'total_count': Project.objects.count(),
+        'published_count': Project.objects.filter(is_published=True).count(),
+        'featured_count': Project.objects.filter(is_featured=True, is_published=True).count(),
+    }
+    return render(request, 'admin_dashboard/projects_overview.html', context)
+
+
+def _save_project_gallery(request, project):
+    """Apply caption/order edits, removals and new uploads for a project's gallery photos."""
+    remove_ids = {int(i) for i in request.POST.getlist('delete_image') if i.isdigit()}
+    for image in project.images.all():
+        if image.id in remove_ids:
+            image.image.delete(save=False)
+            image.delete()
+            continue
+        image.caption = request.POST.get(f'caption_{image.id}', image.caption).strip()[:150]
+        order = request.POST.get(f'order_{image.id}', '')
+        image.order = int(order) if order.isdigit() else image.order
+        image.save(update_fields=['caption', 'order'])
+
+    files, errors = validate_gallery_uploads(request.FILES.getlist('gallery_images'))
+    next_order = (project.images.aggregate(m=Max('order'))['m'] or 0) + 1
+    for offset, upload in enumerate(files):
+        project.images.create(image=upload, order=next_order + offset)
+    return len(files), errors
+
+
+@login_required
+@user_passes_test(is_admin)
+def project_edit(request, project_id=None):
+    """Add or edit a project, including its gallery photos."""
+    from store.models import Project
+    project = get_object_or_404(Project, id=project_id) if project_id else None
+
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, request.FILES, instance=project)
+        if form.is_valid():
+            project = form.save()
+            added, errors = _save_project_gallery(request, project)
+            for error in errors:
+                messages.warning(request, f'Photo skipped - {error}')
+            note = f' {added} photo{"s" if added != 1 else ""} added.' if added else ''
+            messages.success(request, f'Project "{project.title}" saved.{note}')
+            if 'save_continue' in request.POST:
+                return redirect('admin_dashboard:project_edit', project_id=project.id)
+            return redirect('admin_dashboard:projects_overview')
+        messages.error(request, 'Please correct the errors below.')
+    else:
+        form = ProjectForm(instance=project)
+
+    return render(request, 'admin_dashboard/project_form.html', {
+        'page_title': 'Edit Project' if project else 'Add Project',
+        'form': form,
+        'project': project,
+        'images': project.images.all() if project else [],
+    })
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def project_delete(request, project_id):
+    from store.models import Project
+    project = get_object_or_404(Project, id=project_id)
+    title = project.title
+    for image in project.images.all():
+        image.image.delete(save=False)
+    project.cover_image.delete(save=False)
+    project.delete()
+    messages.success(request, f'Project "{title}" deleted.')
+    return redirect('admin_dashboard:projects_overview')
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def project_toggle_publish(request, project_id):
+    from store.models import Project
+    project = get_object_or_404(Project, id=project_id)
+    project.is_published = not project.is_published
+    if not project.is_published:
+        project.is_featured = False
+    project.save(update_fields=['is_published', 'is_featured', 'updated_at'])
+    messages.success(request, f'"{project.title}" is now {"published" if project.is_published else "hidden"}.')
+    return redirect(request.META.get('HTTP_REFERER') or 'admin_dashboard:projects_overview')
+
 
 @login_required
 @user_passes_test(is_admin)

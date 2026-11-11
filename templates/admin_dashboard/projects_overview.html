@@ -1,0 +1,112 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">Projects Gallery</h1>
+            <p class="admin-subtitle">Completed installations shown on the website at <a href="{% url 'project_list' %}" target="_blank" rel="noopener" class="text-warning">/projects/</a></p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_dashboard:project_add' %}" class="btn btn-premium-cta btn-sm mt-3 mt-md-0">
+                <i class="bi bi-plus-lg me-1"></i> Add Project
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#f59e0b;"><i class="bi bi-images"></i></div>
+            <div><div class="stats-number" style="font-size:1.6rem;">{{ total_count }}</div><div class="stats-label">Total Projects</div></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#22c55e;"><i class="bi bi-eye-fill"></i></div>
+            <div><div class="stats-number" style="font-size:1.6rem;">{{ published_count }}</div><div class="stats-label">Published</div></div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card d-flex align-items-center gap-3 py-3">
+            <div style="font-size:2rem;color:#38bdf8;"><i class="bi bi-star-fill"></i></div>
+            <div><div class="stats-number" style="font-size:1.6rem;">{{ featured_count }}</div><div class="stats-label">Featured on Homepage</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="chart-container">
+    <form method="get" class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h5 class="mb-0">All Projects</h5>
+        <div class="d-flex gap-2">
+            <input type="text" name="search" class="form-control form-control-sm" placeholder="Title or location..." value="{{ search_query|default:'' }}" style="width:220px;">
+            <button class="btn btn-outline-light btn-sm" type="submit"><i class="bi bi-search"></i></button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-dark table-admin">
+            <thead>
+                <tr><th>Project</th><th>Type &amp; Location</th><th>Photos</th><th>Status</th><th>Order</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for p in projects %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <img src="{{ p.cover_image.url }}" alt="" style="width:64px;height:48px;object-fit:cover;border-radius:6px;">
+                            <div style="max-width:280px;white-space:normal;">
+                                <div style="font-weight:500;">{{ p.title }}</div>
+                                <small class="text-secondary">{{ p.summary|truncatechars:70 }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td><small>{{ p.get_site_type_display }}<br><span class="text-secondary">{{ p.location }}</span></small></td>
+                    <td><span class="text-secondary">{{ p.photo_count|add:1 }}</span></td>
+                    <td>
+                        {% if p.is_published %}<span class="badge-status status-confirmed">Published</span>{% else %}<span class="badge-status status-cancelled">Draft</span>{% endif %}
+                        {% if p.is_featured %}<span class="badge mt-1 d-inline-block" style="background:rgba(56,189,248,0.15);color:#7dd3fc;border:1px solid rgba(56,189,248,0.3);"><i class="bi bi-star-fill me-1"></i>Homepage</span>{% endif %}
+                    </td>
+                    <td><span class="text-secondary">{{ p.order }}</span></td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'admin_dashboard:project_edit' p.id %}" class="btn btn-outline-light btn-sm" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <form method="POST" action="{% url 'admin_dashboard:project_toggle_publish' p.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-light btn-sm" title="{% if p.is_published %}Hide from website{% else %}Publish{% endif %}">
+                                    <i class="bi {% if p.is_published %}bi-eye-slash{% else %}bi-eye{% endif %}"></i>
+                                </button>
+                            </form>
+                            {% if p.is_published %}<a href="{{ p.get_absolute_url }}" target="_blank" rel="noopener" class="btn btn-outline-light btn-sm" title="View on website"><i class="bi bi-box-arrow-up-right"></i></a>{% endif %}
+                            <form method="POST" action="{% url 'admin_dashboard:project_delete' p.id %}" style="display:inline;" onsubmit="return confirm('Delete this project and all its photos? This cannot be undone.');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-soft-danger btn-sm" title="Delete"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-secondary py-5">
+                        <i class="bi bi-images display-6 d-block mb-2 opacity-25"></i>
+                        No projects yet. <a href="{% url 'admin_dashboard:project_add' %}" class="text-warning">Add your first installation</a> &mdash; it stays as a draft until you publish it.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search_query|urlencode }}"><i class="bi bi-chevron-left"></i></a></li>{% endif %}
+            <li class="page-item active"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search_query|urlencode }}"><i class="bi bi-chevron-right"></i></a></li>{% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

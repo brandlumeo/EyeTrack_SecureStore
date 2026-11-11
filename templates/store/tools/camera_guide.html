@@ -1,0 +1,104 @@
+{% extends 'store/tools/base_tools.html' %}
+
+{% block title %}CCTV Camera Types Explained | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Dome, bullet, turret, PTZ, fisheye, Wi-Fi, 4G/solar and video door phones compared: where each CCTV camera type works best and what to watch out for.{% endblock %}
+
+{% block tool_content %}
+<header class="tools-hero">
+    <p class="eyebrow mb-2">Camera guide</p>
+    <h1 class="home-section-title mb-3">Which type of CCTV camera do you need?</h1>
+    <p class="lead-copy">Most systems mix two or three types. Here&rsquo;s where each one earns its place.</p>
+</header>
+
+<div class="guide-grid">
+    <article class="tool-panel guide-card">
+        <h2><i class="bi bi-circle-half"></i>Dome</h2>
+        <dl>
+            <dt>Best for</dt><dd>Indoor rooms, shops, offices, lobbies and covered sit-outs.</dd>
+            <dt>Strengths</dt><dd>Discreet and vandal-resistant; people can&rsquo;t easily tell where it&rsquo;s pointing.</dd>
+            <dt>Watch out for</dt><dd>The dome cover can reflect infrared at night if it&rsquo;s dirty or under eaves.</dd>
+        </dl>
+        <a href="{% url 'product_list' %}?q=dome" class="home-section-link">Shop dome cameras <i class="bi bi-arrow-right"></i></a>
+    </article>
+
+    <article class="tool-panel guide-card">
+        <h2><i class="bi bi-camera-reels"></i>Bullet</h2>
+        <dl>
+            <dt>Best for</dt><dd>Gates, boundary walls, parking and long driveways.</dd>
+            <dt>Strengths</dt><dd>Long infrared range and a visible deterrent; easy to aim at distant areas.</dd>
+            <dt>Watch out for</dt><dd>More exposed to tampering &mdash; mount high, out of reach.</dd>
+        </dl>
+        <a href="{% url 'product_list' %}?q=bullet" class="home-section-link">Shop bullet cameras <i class="bi bi-arrow-right"></i></a>
+    </article>
+
+    <article class="tool-panel guide-card">
+        <h2><i class="bi bi-record-circle"></i>Turret (eyeball)</h2>
+        <dl>
+            <dt>Best for</dt><dd>Entrances, sit-outs and house exteriors &mdash; a good all-rounder.</dd>
+            <dt>Strengths</dt><dd>No dome glare at night; easy to re-angle; compact.</dd>
+            <dt>Watch out for</dt><dd>Shorter range than a bullet of the same class.</dd>
+        </dl>
+        <a href="{% url 'product_list' %}?q=turret" class="home-section-link">Shop turret cameras <i class="bi bi-arrow-right"></i></a>
+    </article>
+
+    <article class="tool-panel guide-card">
+        <h2><i class="bi bi-arrows-move"></i>PTZ (pan-tilt-zoom)</h2>
+        <dl>
+            <dt>Best for</dt><dd>Factory yards, campuses, large car parks and warehouses.</dd>
+            <dt>Strengths</dt><dd>One camera patrols a wide area and zooms in on incidents.</dd>
+            <dt>Watch out for</dt><dd>It only records where it&rsquo;s pointing &mdash; pair it with fixed cameras.</dd>
+        </dl>
+        <a href="{% url 'product_list' %}?q=ptz" class="home-section-link">Shop PTZ cameras <i class="bi bi-arrow-right"></i></a>
+    </article>
+
+    <article class="tool-panel guide-card">
+        <h2><i class="bi bi-circle"></i>Fisheye (360&deg;)</h2>
+        <dl>
+            <dt>Best for</dt><dd>Open-plan shops, halls and ceilings where one camera should see the whole room.</dd>
+            <dt>Strengths</dt><dd>Replaces several fixed cameras indoors; no blind corners.</dd>
+            <dt>Watch out for</dt><dd>Less detail at the edges &mdash; not ideal for identifying faces at doors.</dd>
+        </dl>
+        <a href="{% url 'product_list' %}?q=fisheye" class="home-section-link">Shop fisheye cameras <i class="bi bi-arrow-right"></i></a>
+    </article>
+
+    <article class="tool-panel guide-card">
+        <h2><i class="bi bi-wifi"></i>Wi-Fi / wireless</h2>
+        <dl>
+            <dt>Best for</dt><dd>Finished homes and rented spaces where running cables is difficult.</dd>
+            <dt>Strengths</dt><dd>Quick to install; most record to an SD card and the cloud as well.</dd>
+            <dt>Watch out for</dt><dd>Still need power at each point; signal through thick walls can drop.</dd>
+        </dl>
+        <a href="{% url 'product_list' %}?q=wifi" class="home-section-link">Shop Wi-Fi cameras <i class="bi bi-arrow-right"></i></a>
+    </article>
+
+    <article class="tool-panel guide-card">
+        <h2><i class="bi bi-sun"></i>4G &amp; solar</h2>
+        <dl>
+            <dt>Best for</dt><dd>Farms, construction sites and plots with no power or internet.</dd>
+            <dt>Strengths</dt><dd>Fully independent: solar panel, battery and a SIM card for live view.</dd>
+            <dt>Watch out for</dt><dd>Needs good mobile coverage and a data plan; monsoon months reduce solar charging.</dd>
+        </dl>
+        <a href="{% url 'product_list' %}?q=4G" class="home-section-link">Shop 4G / solar cameras <i class="bi bi-arrow-right"></i></a>
+    </article>
+
+    <article class="tool-panel guide-card">
+        <h2><i class="bi bi-door-closed"></i>Video door phone</h2>
+        <dl>
+            <dt>Best for</dt><dd>Main doors and gates: see and talk to visitors before opening.</dd>
+            <dt>Strengths</dt><dd>Indoor monitor, two-way talk and, with some models, gate release and mobile calls.</dd>
+            <dt>Watch out for</dt><dd>Not a substitute for recording cameras around the property.</dd>
+        </dl>
+        <a href="{% url 'products_by_category' 'homegate-automation' %}" class="home-section-link">Shop video door phones <i class="bi bi-arrow-right"></i></a>
+    </article>
+</div>
+
+<div class="tool-panel mt-4">
+    <h2>Rules of thumb</h2>
+    <ul class="plan-tips">
+        <li><i class="bi bi-check2-circle"></i><span><strong>Mix wide and narrow:</strong> wide lenses (2.8 mm) show the scene, narrower lenses (6&ndash;12 mm) at doors and gates catch faces and number plates.</span></li>
+        <li><i class="bi bi-check2-circle"></i><span><strong>Mount at 2.5&ndash;3 m:</strong> high enough to resist tampering, low enough to see faces, not just the tops of heads.</span></li>
+        <li><i class="bi bi-check2-circle"></i><span><strong>Avoid pointing at the sun or bright lights:</strong> backlight turns visitors into silhouettes; WDR cameras help.</span></li>
+        <li><i class="bi bi-check2-circle"></i><span><strong>Plan storage up front:</strong> use the <a href="{% url 'storage_calculator' %}">storage calculator</a> so footage isn&rsquo;t overwritten before you need it.</span></li>
+    </ul>
+</div>
+{% endblock %}

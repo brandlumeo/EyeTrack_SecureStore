@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }} | Eyetrack Solutions Projects{% endblock %}
+{% block meta_description %}{{ project.summary }}{% endblock %}
+{% block meta_robots %}{% if is_preview %}noindex, nofollow{% else %}index, follow{% endif %}{% endblock %}
+{% block og_title %}{{ project.title }}{% endblock %}
+{% block og_description %}{{ project.summary }}{% endblock %}
+{% block social_image_meta %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ project.cover_image.url }}">{% endblock %}
+
+{% block extra_head %}
+<link href="{% static 'css/projects.css' %}?v=1" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+{% if is_preview %}
+<div class="project-preview-banner"><i class="bi bi-eye-slash me-2"></i>Draft preview &mdash; only staff can see this page until it&rsquo;s published.
+    <a href="{% url 'admin_dashboard:project_edit' project.id %}" class="ms-2">Edit project</a></div>
+{% endif %}
+
+<nav class="mb-3" aria-label="Breadcrumb"><a href="{% url 'project_list' %}" class="home-section-link"><i class="bi bi-arrow-left me-1"></i>All projects</a></nav>
+
+<header class="mb-3">
+    <p class="eyebrow mb-2">{{ project.get_site_type_display }} &middot; {{ project.location }}</p>
+    <h1 class="home-section-title">{{ project.title }}</h1>
+</header>
+
+<div class="project-hero"><img src="{{ project.cover_image.url }}" alt="{{ project.title }}"></div>
+
+<div class="project-facts">
+    <div class="project-fact"><span>Property</span><strong>{{ project.get_site_type_display }}</strong></div>
+    <div class="project-fact"><span>Location</span><strong>{{ project.location }}</strong></div>
+    {% if project.cameras_installed %}<div class="project-fact"><span>Cameras</span><strong>{{ project.cameras_installed }}</strong></div>{% endif %}
+    {% if project.completed_on %}<div class="project-fact"><span>Completed</span><strong>{{ project.completed_on|date:"F Y" }}</strong></div>{% endif %}
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8 project-body">
+        <p class="lead-copy">{{ project.summary }}</p>
+        {% if project.challenge %}<h2>The challenge</h2><p>{{ project.challenge }}</p>{% endif %}
+        {% if project.solution %}<h2>Our solution</h2><p>{{ project.solution }}</p>{% endif %}
+
+        {% if project.images.all %}
+        <h2>Photos</h2>
+        <div class="project-gallery">
+            {% for img in project.images.all %}
+            <figure>
+                <a href="{{ img.image.url }}" target="_blank" rel="noopener"><img src="{{ img.image.url }}" alt="{{ img.caption|default:project.title }}" loading="lazy" decoding="async"></a>
+                {% if img.caption %}<figcaption>{{ img.caption }}</figcaption>{% endif %}
+            </figure>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if project.testimonial %}
+        <figure class="project-quote">
+            <blockquote>&ldquo;{{ project.testimonial }}&rdquo;</blockquote>
+            {% if project.testimonial_author %}<figcaption>&mdash; {{ project.testimonial_author }}</figcaption>{% endif %}
+        </figure>
+        {% endif %}
+    </div>
+
+    <aside class="col-lg-4">
+        {% if project.system_lines %}
+        <div class="quote-card mb-3">
+            <h2 class="h6 fw-bold mb-3" style="color:var(--text);">What we installed</h2>
+            <ul class="project-system">
+                {% for line in project.system_lines %}<li><i class="bi bi-check2"></i><span>{{ line }}</span></li>{% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if products %}
+        <div class="quote-card mb-3">
+            <h2 class="h6 fw-bold mb-3" style="color:var(--text);">Products used</h2>
+            {% for p in products %}
+            <a href="{% url 'product_detail' p.slug %}" class="d-flex justify-content-between gap-2 py-2 text-decoration-none" style="color:var(--text-soft);border-bottom:1px solid var(--stroke-soft);">
+                <span>{{ p.name|truncatechars:40 }}</span><span style="color:var(--accent);">&#8377;{{ p.price }}</span>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="quote-card">
+            <h2 class="h6 fw-bold mb-2" style="color:var(--text);">Want a system like this?</h2>
+            <p class="text-secondary small mb-3">We&rsquo;ll survey your {{ project.get_site_type_display|lower }} for free and give an installed price.</p>
+            <a href="{% url 'quote_request' %}?site_type={{ project.site_type }}&amp;message={{ 'Similar to project: '|add:project.title|urlencode }}" class="btn btn-premium-cta w-100 mb-2"><i class="bi bi-calendar-check me-2"></i>Free site survey</a>
+            <a href="{% url 'system_builder' %}?site_type={{ project.site_type }}" class="btn btn-outline-light w-100"><i class="bi bi-magic me-2"></i>Build your system</a>
+        </div>
+    </aside>
+</div>
+
+{% if related %}
+<section class="mt-5">
+    <h2 class="home-section-title mb-3" style="font-size:1.3rem;">More {{ project.get_site_type_display|lower }} projects</h2>
+    <div class="project-grid">
+        {% for p in related %}
+        <a href="{{ p.get_absolute_url }}" class="project-card">
+            <div class="project-card-media"><img src="{{ p.cover_image.url }}" alt="{{ p.title }}" loading="lazy"></div>
+            <div class="project-card-body"><strong>{{ p.title }}</strong><small>{{ p.location }}</small></div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

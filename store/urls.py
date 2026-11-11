@@ -1,10 +1,22 @@
 from django.urls import path
-from . import views
+from django.views.generic import TemplateView
+from . import project_views, tools_views, views
 
 urlpatterns = [
      path('', views.product_list, name='product_list'),
      path('about/', views.about_page, name='about_page'),
+     path('solutions/', views.solutions_page, name='solutions_page'),
+     path('solutions/home-security/', TemplateView.as_view(template_name='store/home_security.html'), name='home_security'),
      path('services/', views.services_page, name='services_page'),
+     path('projects/', project_views.project_list, name='project_list'),
+     path('projects/<slug:slug>/', project_views.project_detail, name='project_detail'),
+     path('tools/', tools_views.tools_hub, name='tools_hub'),
+     path('tools/system-builder/', tools_views.system_builder, name='system_builder'),
+     path('tools/storage-calculator/', tools_views.storage_calculator, name='storage_calculator'),
+     path('tools/lens-calculator/', tools_views.lens_calculator, name='lens_calculator'),
+     path('tools/camera-guide/', tools_views.camera_guide, name='camera_guide'),
+     path('api/tools/storage/', tools_views.storage_api, name='storage_api'),
+     path('api/tools/lens/', tools_views.lens_api, name='lens_api'),
      path('wishlist/', views.wishlist_page, name='wishlist_page'),
      path('wishlist/toggle/<int:product_id>/', views.toggle_wishlist, name='toggle_wishlist'),
      path('compare/', views.compare_page, name='compare_page'),

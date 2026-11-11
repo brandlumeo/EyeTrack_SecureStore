@@ -1,0 +1,143 @@
+<style>
+    @media screen and (max-width: 991.98px) {
+        .mobile-bottom-dock {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            align-items: stretch;
+        }
+        .mobile-bottom-dock .dock-item {
+            min-width: 0;
+            min-height: 44px;
+            justify-content: center;
+            gap: .22rem;
+            padding: .25rem .1rem;
+            line-height: 1.15;
+            text-align: center;
+        }
+        .mobile-bottom-dock .dock-item i { font-size: 1.18rem; }
+        .mobile-bottom-dock .dock-quote-orb {
+            width: 1.85rem;
+            height: 1.85rem;
+            margin-top: 0;
+            border-radius: .55rem;
+            box-shadow: none;
+        }
+        .mobile-bottom-dock .dock-quote-orb i { font-size: 1rem !important; }
+        body .floating-buttons {
+            display: none !important;
+        }
+        .mobile-footer-tools {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: .75rem;
+            padding-block: 1rem;
+        }
+        .mobile-footer-tools .btn { min-height: 44px; }
+        .mobile-footer-tools summary::-webkit-details-marker { display: none; }
+        .mobile-help-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem 1rem;
+            padding-top: .5rem;
+        }
+        .mobile-help-options :is(a, button) {
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+        }
+        .mob-shop-overlay .mob-shop-panel {
+            bottom: 0 !important;
+            max-height: 85vh;
+            max-height: 85dvh;
+        }
+        .mob-shop-overlay .mob-shop-body {
+            min-height: 0;
+            padding-bottom: calc(1.2rem + env(safe-area-inset-bottom, 0px));
+        }
+    }
+    @media screen and (max-width: 767.98px) {
+        body .main-shell .hero-3d .hero-3d__inner {
+            padding-block: 1.25rem 1rem;
+            gap: .4rem;
+        }
+        .hero-3d .hero-3d__notice {
+            margin-bottom: 1rem;
+            font-size: .8rem;
+        }
+        .hero-3d .hero-3d__kicker {
+            margin-bottom: .65rem;
+            letter-spacing: .09em;
+        }
+        body .main-shell .hero-3d .hero-3d__title {
+            font-size: clamp(1.85rem, 7.7vw, 2.9rem);
+            line-height: 1.05;
+            margin-bottom: .65rem;
+            text-wrap: balance;
+        }
+        .hero-3d .hero-3d__lede {
+            margin-bottom: .9rem;
+            font-size: clamp(.9rem, 3.6vw, 1rem);
+            line-height: 1.48;
+        }
+        .hero-3d .hero-3d__actions { gap: .45rem .85rem; }
+        .hero-3d .hero-3d__btn {
+            min-height: 44px;
+            width: auto;
+            padding: .6rem .95rem;
+            font-size: .74rem;
+            letter-spacing: .06em;
+        }
+        .hero-3d .hero-3d__link {
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+            font-size: .85rem;
+        }
+        .hero-3d .hero-3d__visual { margin-top: 0; }
+        .hero-3d .hero-3d__stage { width: min(220px, 66%); }
+
+        /* Let the product layout shrink below its controls' intrinsic widths. */
+        .product-detail-page .pd-hero {
+            grid-template-columns: minmax(0, 1fr);
+        }
+        .product-detail-page :is(.pd-gallery, .pd-info, .pd-buy-row, .pd-actions > *) {
+            min-width: 0;
+        }
+        .product-detail-page .pd-stage img {
+            max-width: 100%;
+        }
+        .product-detail-page .pd-buy-row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .product-detail-page .pd-buy-row .pd-btn--cart {
+            flex: 1 1 9rem;
+        }
+        .product-detail-page :is(.pd-btn, .pd-action) {
+            min-height: 44px;
+            white-space: normal;
+        }
+        .product-detail-page .pd-thumbs {
+            max-width: 100%;
+            overscroll-behavior-inline: contain;
+        }
+
+        .main-shell .auth-wrap {
+            margin-inline: 0;
+        }
+        .main-shell :is(.invoice-ledger-card, .invoice-table-wrap) {
+            min-width: 0;
+            max-width: 100%;
+        }
+    }
+    @media screen and (max-width: 359.98px) {
+        .product-detail-page .pd-actions {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .main-shell .auth-wrap > [class*="col-"] {
+            padding-inline: 0;
+        }
+    }
+</style>
