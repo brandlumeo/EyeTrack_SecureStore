@@ -149,7 +149,8 @@ class StoreFlowTests(TestCase):
         order = Order.objects.get()
         self.assertEqual(order.address, "12 Rose Villa\nMG Road\nKozhikode, Kerala - 673001")
 
-    def test_checkout_rejects_unserviceable_pincode(self):
+    def test_checkout_rejects_pincode_where_staff_turned_delivery_off(self):
+        ServiceableArea.objects.create(pincode="110001", delivery_available=False)
         self.client.login(username="buyer", password="StrongPass123!")
         session = self.client.session
         session["cart"] = {str(self.product.id): 1}

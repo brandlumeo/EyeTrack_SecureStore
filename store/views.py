@@ -23,6 +23,7 @@ import razorpay
 
 from orders.emails import send_order_invoice_email, send_order_placed_email, send_email_async, send_admin_order_notification_email
 from orders.models import Order, OrderItem, Payment, Shipment
+from . import serviceability
 from .models import Category, Product, CameraSpecification, Wishlist, Review, ReviewMedia, Coupon, ServiceableArea, StockNotification, ReviewHelpful, Project
 from .forms import ReviewForm
 from .specs import (
@@ -637,32 +638,33 @@ def check_serviceability(request):
     # Store in session for persistence
     request.session['user_pincode'] = pincode
     
-    area = ServiceableArea.objects.filter(pincode=pincode).first()
-    
-    if not area:
+    result = serviceability.check(pincode)
+
+    if not result.valid or not result.delivery_available:
         return JsonResponse({
             'ok': False,
             'is_serviceable': False,
-            'message': 'Service currently unavailable for this location.',
+            'message': 'We do not deliver to this location yet.' if result.valid else 'Please enter a valid 6-digit pincode.',
             'contact_support': True
         })
-    
-    if not area.delivery_available:
-        return JsonResponse({
-            'ok': False,
-            'is_serviceable': False,
-            'message': 'We do not deliver to this location yet.',
-            'contact_support': True
-        })
-    
+
+    place = f" ({result.district})" if result.district else ""
+    if result.installation_available:
+        install_note = " Professional installation is available."
+    elif result.installation_unverified:
+        install_note = " We couldn't confirm installation for this pincode right now."
+    else:
+        install_note = (f" Delivery only: installation is available in "
+                        f"{serviceability.installation_districts_label()} districts.")
     return JsonResponse({
         'ok': True,
         'is_serviceable': True,
-        'delivery_available': area.delivery_available,
-        'installation_available': area.installation_available,
-        'estimated_days': area.estimated_delivery_days,
-        'delivery_charge': float(area.delivery_charge),
-        'message': f'Great! We deliver to {pincode} in {area.estimated_delivery_days} days.'
+        'delivery_available': True,
+        'installation_available': result.installation_available,
+        'estimated_days': result.estimated_days,
+        'delivery_charge': float(result.delivery_charge),
+        'district': result.district,
+        'message': f'Great! We deliver to {pincode}{place} in {result.estimated_days} days.{install_note}'
     })
 
 
@@ -1049,17 +1051,8 @@ def cart_view(request):
     
     shipping = Decimal("0.00")
     if requires_shipping:
-        # Default logic: fallback to 0 (FREE) or 0 if over 5000
-        shipping = Decimal("0.00") if total >= Decimal("5000.00") else Decimal("0.00")
-        
-        # Check if we have a pincode in session to refine the charge
-        pincode = request.session.get('user_pincode')
-        if pincode:
-            from store.models import ServiceableArea
-            area = ServiceableArea.objects.filter(pincode=pincode).first()
-            if area:
-                shipping = Decimal("0.00") if total >= Decimal("5000.00") else area.delivery_charge
-    
+        shipping = serviceability.delivery_charge(request.session.get('user_pincode'), total)
+
     # Calculate Coupon Discount
     coupon_id = request.session.get("coupon_id")
     discount_amount = Decimal("0.00")
@@ -1236,23 +1229,9 @@ def checkout(request):
     
     shipping = Decimal("0.00")
     if requires_shipping:
-        # Base shipping logic: default to 0 (FREE) or 0 if over 5000
-        shipping = Decimal("0.00") if subtotal_total >= Decimal("5000.00") else Decimal("0.00")
-        
-        # If we have a selected address with a pincode, use that pincode's specific charge
-        if selected_address and hasattr(selected_address, 'pincode'):
-            from store.models import ServiceableArea
-            area = ServiceableArea.objects.filter(pincode=selected_address.pincode).first()
-            if area:
-                shipping = Decimal("0.00") if subtotal_total >= Decimal("5000.00") else area.delivery_charge
-        
-        # If it's a POST request with a manual pincode entry
-        manual_pincode = request.POST.get("addr_pincode", "").strip()
-        if manual_pincode:
-            from store.models import ServiceableArea
-            area = ServiceableArea.objects.filter(pincode=manual_pincode).first()
-            if area:
-                shipping = Decimal("0.00") if subtotal_total >= Decimal("5000.00") else area.delivery_charge
+        # A typed-in pincode (POST) wins over the selected saved address.
+        ship_pincode = request.POST.get("addr_pincode", "").strip() or getattr(selected_address, "pincode", "")
+        shipping = serviceability.delivery_charge(ship_pincode, subtotal_total)
 
     tax = Decimal("0.00")
     grand_total = (subtotal_total - discount_amount) + shipping + tax + total_installation_charge
@@ -1314,14 +1293,19 @@ def checkout(request):
                 messages.error(request, "Please fill in all required address fields including pincode.")
                 return redirect("checkout")
 
-            # Validate Serviceability
-            from store.models import ServiceableArea
-            area = ServiceableArea.objects.filter(pincode=addr_pincode).first()
-            if not area or not area.delivery_available:
+            # Validate serviceability: delivery anywhere in India, installation in our districts.
+            service = serviceability.check(addr_pincode)
+            if not service.valid:
+                messages.error(request, f"{addr_pincode} doesn't look like a valid pincode. Please check it.")
+                return redirect("checkout")
+            if not service.delivery_available:
                 messages.error(request, f"Sorry, delivery is currently not available to pincode {addr_pincode}.")
                 return redirect("checkout")
-            if has_installation and not area.installation_available:
-                messages.error(request, f"Sorry, professional installation is not supported in pincode {addr_pincode}. Please remove installation from your cart or change the delivery address.")
+            if has_installation and not service.installation_available:
+                if service.installation_unverified:
+                    messages.error(request, f"We couldn't confirm installation for pincode {addr_pincode} just now. Please try again in a minute, or message us on WhatsApp.")
+                else:
+                    messages.error(request, f"Professional installation is available in {serviceability.installation_districts_label()} districts. Please remove installation from your cart or change the delivery address.")
                 return redirect("checkout")
 
             if use_saved_address:
@@ -1370,10 +1354,8 @@ def checkout(request):
                 
                 locked_shipping = Decimal("0.00")
                 if requires_shipping_locked:
-                    locked_shipping = Decimal("0.00") if recalculated_subtotal >= Decimal("5000.00") else Decimal("299.00")
-                    # Use the actual area charge validated above
-                    if area:
-                         locked_shipping = Decimal("0.00") if recalculated_subtotal >= Decimal("5000.00") else area.delivery_charge
+                    # Same rule as the price shown at checkout (free above FREE_SHIPPING_FROM, else the pincode's charge).
+                    locked_shipping = serviceability.delivery_charge(addr_pincode, recalculated_subtotal)
                 
                 locked_tax = Decimal("0.00")
                 locked_grand_total = (recalculated_subtotal - discount_amount) + locked_shipping + locked_tax + recalculated_installation
