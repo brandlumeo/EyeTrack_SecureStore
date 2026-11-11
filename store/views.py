@@ -11,7 +11,9 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
+from django.utils.text import Truncator
 from django.views.decorators.http import require_POST, require_GET
 from django.views.decorators.csrf import csrf_exempt
 
@@ -429,6 +431,44 @@ def _build_product_specs(product):
     return specs_list
 
 
+def _catalog_seo(request, category, query, page_obj, is_filtered):
+    """Title, description, robots, canonical and breadcrumbs for the homepage, category and search listings."""
+    page = page_obj.number
+    page_suffix = f" (Page {page})" if page > 1 else ""
+    is_empty = False
+    if category:
+        stats = Product.objects.filter(is_available=True, category=category).aggregate(n=Count("id"), low=Min("price"))
+        title = f"{category.name} in Kozhikode, Kerala{page_suffix} | Eyetrack Solutions"
+        if stats["n"]:
+            description = (f"Buy {category.name} from Eyetrack Solutions: {stats['n']} product{'s' if stats['n'] != 1 else ''} "
+                           f"from \u20b9{stats['low']:,.0f}, with professional installation and support across Kozhikode and Kerala.")
+        else:
+            is_empty = True
+            description = (f"{category.name} from Eyetrack Solutions, with professional installation and support across "
+                           f"Kozhikode and Kerala. Contact us for current models and prices.")
+    elif query:
+        title = f"Search results for \u201c{query}\u201d | Eyetrack Solutions"
+        description = f"Products matching \u201c{query}\u201d at Eyetrack Solutions."
+    else:
+        title = f"CCTV Cameras & Installation in Kozhikode{page_suffix} | Eyetrack Solutions"
+        description = ("CCTV cameras, smart locks, video door phones and biometric systems with professional "
+                       "installation across Kozhikode and Kerala. Book a free site survey.")
+
+    base = request.build_absolute_uri(request.path)
+    canonical = base if page == 1 else f"{base}?page={page}"
+    breadcrumbs = [("Home", request.build_absolute_uri("/"))]
+    if category:
+        breadcrumbs.append((category.name, base))
+    return {
+        "seo_title": title,
+        "seo_description": description,
+        # Search results, filtered or sorted views and empty categories are thin pages; keep them out of the index.
+        "seo_robots": "noindex, follow" if is_filtered or is_empty else "index, follow, max-image-preview:large",
+        "seo_canonical": canonical,
+        "seo_breadcrumbs": breadcrumbs if category else [],
+    }
+
+
 def product_list(request, category_slug=None):
     category = None
     filter_categories = Category.objects.annotate(product_count=Count("products")).order_by("name")
@@ -552,6 +592,10 @@ def product_list(request, category_slug=None):
         "new_cutoff": new_cutoff,
         "popular_product_ids": popular_product_ids,
     }
+
+    context.update(_catalog_seo(request, category, query, page_obj,
+                                is_filtered=bool(query or in_stock == "1" or min_price or max_price
+                                                 or resolution or has_ai == "1" or sort != "featured")))
 
     # Homepage-only sections (testimonials, installation gallery, FAQ, quote form)
     is_landing = not category and not query and page_obj.number == 1
@@ -758,8 +802,14 @@ def product_detail(request, slug):
             order__order_status=Order.OrderStatus.DELIVERED
         ).exists()
 
+    summary = " ".join(strip_tags(product.description or "").split())
+    seo_description = f"{product.name}: \u20b9{product.price:,.0f} at Eyetrack Solutions, Kozhikode."
+    if summary:
+        seo_description += " " + Truncator(summary).chars(149 - len(seo_description), truncate="\u2026")
+
     context = {
         "product": product,
+        "seo_description": seo_description,
         "related_products": related_products,
         "specs": specs,
         "product_specs": product_specs,

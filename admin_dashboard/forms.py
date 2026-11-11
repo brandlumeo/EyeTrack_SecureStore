@@ -5,7 +5,7 @@ from store.models import (
     ServiceableArea, Project,
 )
 from orders.models import DeliveryAgent, DeliveryAssignment, Technician
-from support.models import FAQCategory, FAQ, ViewingGuide
+from support.models import FAQCategory, FAQ, Download, ViewingGuide
 
 
 # ─── Existing forms (unchanged) ───────────────────────────────────────────────
@@ -442,3 +442,28 @@ class ViewingGuideForm(forms.ModelForm):
             'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'order': forms.NumberInput(attrs={'class': INPUT, 'min': 0}),
         }
+
+
+MAX_DOWNLOAD_MB = 25
+
+
+class DownloadForm(forms.ModelForm):
+    class Meta:
+        model = Download
+        fields = ['title', 'kind', 'brand', 'description', 'file', 'external_url', 'is_published', 'order']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': INPUT, 'placeholder': 'e.g. DS-7608NI NVR user manual'}),
+            'kind': forms.Select(attrs={'class': INPUT}),
+            'brand': forms.TextInput(attrs={'class': INPUT, 'placeholder': 'Hikvision, Dahua, CP Plus...'}),
+            'description': forms.TextInput(attrs={'class': INPUT}),
+            'file': forms.ClearableFileInput(attrs={'class': INPUT, 'accept': '.pdf,.zip,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png'}),
+            'external_url': forms.URLInput(attrs={'class': INPUT, 'placeholder': 'https://...'}),
+            'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'order': forms.NumberInput(attrs={'class': INPUT, 'min': 0}),
+        }
+
+    def clean_file(self):
+        f = self.cleaned_data.get('file')
+        if f and getattr(f, 'size', 0) > MAX_DOWNLOAD_MB * 1024 * 1024:
+            raise forms.ValidationError(f"File is larger than {MAX_DOWNLOAD_MB} MB. Link to the manufacturer's page instead.")
+        return f

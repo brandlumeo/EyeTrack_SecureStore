@@ -12,6 +12,9 @@ Disallow: /cart/
 Disallow: /checkout/
 Disallow: /payment/
 Disallow: /order-success/
+Disallow: /admin-dashboard/
+Disallow: /support/requests/
+Disallow: /api/
 
 Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml
 

@@ -36,7 +36,7 @@ from admin_dashboard.forms import (
     BiometricSpecForm, SmartLockSpecForm, NetworkSpecForm, VideoDoorPhoneSpecForm,
     DeliveryAgentForm, AssignAgentForm,
     ServiceableAreaForm, FAQCategoryForm, FAQForm,
-    ProjectForm, validate_gallery_uploads, ViewingGuideForm,
+    ProjectForm, validate_gallery_uploads, ViewingGuideForm, DownloadForm,
 )
 
 
@@ -1768,6 +1768,65 @@ def guide_delete(request, guide_id):
     guide.delete()
     messages.success(request, 'Guide "%s" deleted.' % title)
     return redirect('admin_dashboard:guides_overview')
+
+
+@login_required
+@user_passes_test(is_admin)
+def downloads_overview(request):
+    """Files and links listed in the download centre at /support/downloads/."""
+    from support.models import Download
+    downloads = Download.objects.order_by('order', 'kind', 'title')
+    return render(request, 'admin_dashboard/downloads_overview.html', {
+        'page_title': 'Download Centre',
+        'downloads': downloads,
+        'published_count': sum(1 for d in downloads if d.is_published),
+    })
+
+
+@login_required
+@user_passes_test(is_admin)
+def download_edit(request, download_id=None):
+    from support.models import Download
+    item = get_object_or_404(Download, pk=download_id) if download_id else None
+    old_file = item.file.name if item and item.file else ''
+    form = DownloadForm(request.POST or None, request.FILES or None, instance=item)
+    if request.method == 'POST':
+        if form.is_valid():
+            item = form.save()
+            # Remove the previous upload when it was replaced, cleared, or swapped for a link.
+            if old_file and old_file != (item.file.name if item.file else ''):
+                item.file.storage.delete(old_file)
+            messages.success(request, '"%s" saved.' % item.title)
+            return redirect('admin_dashboard:downloads_overview')
+        messages.error(request, 'Please correct the errors below.')
+    return render(request, 'admin_dashboard/download_form.html', {
+        'page_title': 'Edit Download' if item else 'Add Download', 'form': form, 'item': item})
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def download_toggle_publish(request, download_id):
+    from support.models import Download
+    item = get_object_or_404(Download, pk=download_id)
+    item.is_published = not item.is_published
+    item.save(update_fields=['is_published', 'updated_at'])
+    messages.success(request, '"%s" is now %s.' % (item.title, 'published' if item.is_published else 'hidden'))
+    return redirect('admin_dashboard:downloads_overview')
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def download_delete(request, download_id):
+    from support.models import Download
+    item = get_object_or_404(Download, pk=download_id)
+    if item.file:
+        item.file.delete(save=False)
+    title = item.title
+    item.delete()
+    messages.success(request, '"%s" deleted.' % title)
+    return redirect('admin_dashboard:downloads_overview')
 
 
 @login_required
