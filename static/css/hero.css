@@ -1,14 +1,8 @@
-/* ==== Homepage hero: full-bleed dark stage with animated 3D logo ====
-   Loaded after theme-red-navy.css. Uses its own hero-3d__* classes so the
-   older hero-premium / reference-hero overrides do not apply here. */
-
+/* Homepage hero carousel. */
 .hero-3d {
-    --h3d-navy: #0b174f;
     --h3d-red: #ed0920;
-    --h3d-red-hover: #c7081c;
-    --h3d-orange: #ed0920;
     --h3d-text: #ffffff;
-    --h3d-muted: rgba(222, 230, 255, .76);
+    --h3d-muted: rgba(255, 255, 255, .85);
 
     position: relative;
     isolation: isolate;
@@ -23,29 +17,7 @@
     display: flex;
     align-items: center;
     color: var(--h3d-text);
-    background:
-        radial-gradient(55% 75% at 76% 48%, rgba(18, 54, 106, .65) 0%, rgba(11, 23, 79, 0) 70%),
-        linear-gradient(100deg, #01020a 0%, #030824 30%, #0b174f 62%, #12366a 100%);
-}
-
-/* ---------- Sky / particles ---------- */
-.hero-3d__sky {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background: radial-gradient(40% 50% at 78% 50%, rgba(237, 9, 32, .16), transparent 70%);
-}
-.hero-3d__stars { position: absolute; inset: 0; }
-.hero-3d__stars i {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 6px 1px rgba(159, 194, 255, .8);
-    opacity: 0;
-    animation: h3d-twinkle 5s ease-in-out infinite;
+    background: #171717;
 }
 
 /* ---------- Layout ---------- */
@@ -53,10 +25,6 @@
     width: min(1180px, 100% - 32px);
     margin-inline: auto;
     padding-block: clamp(48px, 7vw, 88px);
-    display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-    align-items: center;
-    gap: clamp(24px, 4vw, 64px);
 }
 
 /* ---------- Copy ---------- */
@@ -192,376 +160,15 @@
 .hero-3d__link:focus-visible { outline: 3px solid #ffb3bd; outline-offset: 4px; }
 
 
-/* ---------- Visual: 3D logo stage ---------- */
-.hero-3d__visual {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+@keyframes h3d-rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-
-.hero-3d__stage {
-    position: relative;
-    width: min(460px, 100%);
-    aspect-ratio: 1;
-    perspective: 1100px;
-}
-
-.hero-3d__glow {
-    position: absolute;
-    inset: 16%;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(237, 9, 32, .5) 0%, rgba(18, 54, 106, .2) 40%, rgba(11, 23, 79, 0) 72%);
-    filter: blur(28px);
-    opacity: 0;
-    animation: h3d-fade 1.2s ease 1s forwards, h3d-pulse 5s ease-in-out 2.2s infinite;
-}
-
-.hero-3d__scene {
-    position: absolute;
-    inset: 0;
-    transform-style: preserve-3d;
-    transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
-    transition: transform .7s cubic-bezier(.22, 1, .36, 1);
-}
-
-/* light-trail orbits (each a circle tilted into 3D) */
-.hero-3d__orbit {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-}
-.hero-3d__orbit--a { transform: rotateZ(-8deg) rotateX(76deg); filter: drop-shadow(0 0 6px rgba(255, 60, 70, .9)); }
-.hero-3d__orbit--b { transform: rotateZ(38deg) rotateX(70deg) scale(.9); filter: drop-shadow(0 0 6px rgba(18, 54, 106, .9)); }
-.hero-3d__orbit--c { transform: rotateZ(-48deg) rotateX(68deg) scale(.82); filter: drop-shadow(0 0 6px rgba(237, 9, 32, .6)); }
-
-.hero-3d__ring {
-    fill: none;
-    stroke-width: 2.4;
-    stroke-linecap: round;
-    stroke-dasharray: 1131;
-    stroke-dashoffset: 1131;
-    animation: h3d-draw 2s cubic-bezier(.6, 0, .2, 1) forwards, h3d-dim 1.2s ease 2.2s forwards;
-}
-.hero-3d__orbit--b .hero-3d__ring { animation-delay: .25s, 2.4s; }
-.hero-3d__orbit--c .hero-3d__ring { animation-delay: .5s, 2.6s; }
-
-.hero-3d__comet {
-    fill: none;
-    stroke: #fff;
-    stroke-width: 4;
-    stroke-linecap: round;
-    stroke-dasharray: 46 1085;
-    opacity: 0;
-    animation: h3d-fade .6s ease 2s forwards, h3d-orbit 6s linear 2s infinite;
-}
-.hero-3d__orbit--b .hero-3d__comet { animation-duration: .6s, 7.5s; animation-direction: normal, reverse; }
-.hero-3d__orbit--c .hero-3d__comet { animation-duration: .6s, 9s; }
-
-/* the logo itself */
-.hero-3d__logo {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 58%;
-    transform-style: preserve-3d;
-    transform: translate(-50%, -50%);
-    animation:
-        h3d-enter 1.5s cubic-bezier(.2, .8, .2, 1) .9s both,
-        h3d-turn 12s ease-in-out 2.4s infinite;
-}
-.hero-3d__face {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: auto;
-    transform: translateZ(0);
-    animation: h3d-focus 1.5s ease .9s both;
-}
-.hero-3d__depth {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: auto;
-    transform: translateZ(var(--z));
-    filter: brightness(.32) saturate(1.3);
-}
-.hero-3d__shine {
-    position: absolute;
-    inset: 0;
-    transform: translateZ(1px);
-    pointer-events: none;
-    background: linear-gradient(105deg, rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, .55) 50%, rgba(255, 255, 255, 0) 62%) no-repeat;
-    background-size: 260% 100%;
-    background-position: 160% 0;
-    -webkit-mask: var(--hero-logo) center / 100% 100% no-repeat;
-            mask: var(--hero-logo) center / 100% 100% no-repeat;
-    animation: h3d-shine 5s ease-in-out 2.8s infinite;
-}
-
-.hero-3d__tagline {
-    margin: 6px 0 0;
-    font-family: var(--font-heading, sans-serif);
-    font-weight: 500;
-    font-size: clamp(1.1rem, 1.7vw, 1.55rem);
-    letter-spacing: .04em;
-    color: #fff;
-    text-shadow: 0 0 24px rgba(120, 160, 255, .45);
-    opacity: 0;
-    animation: h3d-rise 1s cubic-bezier(.22, 1, .36, 1) 2.5s forwards;
-}
-
-/* ---------- Keyframes ---------- */
-@keyframes h3d-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-@keyframes h3d-fade { to { opacity: 1; } }
-@keyframes h3d-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
-@keyframes h3d-draw { to { stroke-dashoffset: 0; } }
-@keyframes h3d-dim { to { opacity: .5; } }
-@keyframes h3d-orbit { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -1131; } }
-@keyframes h3d-enter {
-    from { opacity: 0; transform: translate(-50%, -50%) rotateY(-110deg) scale(.55); }
-    to   { opacity: 1; transform: translate(-50%, -50%) rotateY(0deg) scale(1); }
-}
-@keyframes h3d-turn {
-    0%, 100% { transform: translate(-50%, -50%) translateY(0) rotateY(0deg); }
-    25%      { transform: translate(-50%, -50%) translateY(-12px) rotateY(26deg); }
-    75%      { transform: translate(-50%, -50%) translateY(8px) rotateY(-26deg); }
-}
-@keyframes h3d-focus { from { filter: blur(14px) brightness(1.8); } to { filter: none; } }
-@keyframes h3d-shine { 0% { background-position: 160% 0; } 45%, 100% { background-position: -60% 0; } }
-@keyframes h3d-twinkle { 0%, 100% { opacity: 0; } 50% { opacity: .9; } }
-
-@media (prefers-reduced-motion: reduce) {
-    .hero-3d *, .hero-3d *::before, .hero-3d *::after { animation: none !important; transition: none !important; }
-    .hero-3d__logo { transform: translate(-50%, -50%) rotateY(-16deg); }
-    .hero-3d__ring { stroke-dashoffset: 0; opacity: .5; }
-    .hero-3d__glow, .hero-3d__tagline { opacity: 1; }
-}
-
-/* ---------- Responsive ---------- */
-@media (max-width: 991.98px) {
-    .hero-3d { min-height: 0; }
-    .hero-3d__inner { grid-template-columns: 1fr; gap: 8px; padding-block: 48px 40px; }
-    .hero-3d__stage { width: min(340px, 82%); }
-}
-
+.hero-3d__copy { max-width: 580px; }
 @media (max-width: 575.98px) {
-    .hero-3d { margin-bottom: 1.25rem; }
-    .hero-3d__inner { padding-block: 36px 28px; }
-    .hero-3d__kicker { font-size: .66rem; letter-spacing: .16em; margin-bottom: 16px; }
-    .hero-3d__lede { margin-bottom: 24px; }
-    .hero-3d__actions { gap: 16px; }
+    .hero-3d { min-height: 0; margin-bottom: 1.25rem; }
+    .hero-3d__inner { padding-block: 36px 24px; }
     .hero-3d__btn { width: 100%; justify-content: center; }
-    .hero-3d__stage { width: min(280px, 86%); }
-}
-
-/* Soft contact shadow under the model. */
-.hero-3d__stage::after {
-    content: ""; position: absolute; inset: auto 18% 3%; height: 8%;
-    background: radial-gradient(ellipse, rgba(0,0,0,.5), transparent 70%);
-    pointer-events: none;
-}
-/* Animations rest while the hero is scrolled out of view (set by hero.js). */
-.hero-3d[data-offscreen="true"] * { animation-play-state: paused !important; }
-@media (max-width: 991.98px) {
-    .hero-3d__visual { margin-top: 20px; }
-}
-@media (prefers-reduced-motion: reduce) {
-    .hero-3d__scene { transform: none !important; }
-}
-
-/* =====================================================================
-   Logo "model build" — a render-pipeline reveal, driven by hero.js adding
-   .hero-3d--build once the artwork has loaded. Timeline (seconds):
-   0.0 viewport + grid floor   0.35 wireframe draws   1.45 depth extrudes
-   2.35 scan renders materials 3.5 final pose/bloom   4.2 idle turn
-   Without JS (or with reduced motion) the finished logo shows directly.
-   ===================================================================== */
-
-/* build-only layers are hidden unless the build runs */
-.hero-3d__wire,
-.hero-3d__scan,
-.hero-3d__floor,
-.hero-3d__hud { opacity: 0; pointer-events: none; }
-
-.hero-3d__wire {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: auto;
-    transform: translateZ(1.5px);
-    /* the wireframe asset is crisp white lines; the red halo is added here */
-    filter: drop-shadow(0 0 1.5px rgba(255, 110, 125, .95)) drop-shadow(0 0 6px rgba(237, 9, 32, .7));
-}
-.hero-3d__scan {
-    position: absolute;
-    left: -10%;
-    right: -10%;
-    top: 100%;
-    height: 2px;
-    transform: translateZ(3px);
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff 30%, #fff 70%, rgba(255, 255, 255, 0));
-    box-shadow: 0 0 14px 3px rgba(237, 9, 32, .85), 0 0 40px 8px rgba(237, 9, 32, .35);
-    border-radius: 2px;
-}
-
-/* perspective grid floor under the model */
-.hero-3d__floor {
-    position: absolute;
-    left: -6%;
-    right: -6%;
-    bottom: 2%;
-    height: 46%;
-    transform: perspective(600px) rotateX(72deg);
-    transform-origin: 50% 100%;
-    background:
-        linear-gradient(rgba(255, 255, 255, .22) 1px, transparent 1px) 0 0 / 100% 26px,
-        linear-gradient(90deg, rgba(255, 255, 255, .22) 1px, transparent 1px) 50% 0 / 26px 100%;
-    -webkit-mask-image: radial-gradient(60% 70% at 50% 60%, #000 30%, transparent 75%);
-            mask-image: radial-gradient(60% 70% at 50% 60%, #000 30%, transparent 75%);
-}
-
-/* viewport HUD: corner brackets, status line, progress */
-.hero-3d__hud {
-    position: absolute;
-    inset: 2%;
-    font: 600 .62rem/1 ui-monospace, SFMono-Regular, Consolas, monospace;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, .62);
-}
-.hero-3d__corner { position: absolute; width: 22px; height: 22px; border: 0 solid rgba(255, 255, 255, .45); }
-.hero-3d__corner--tl { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
-.hero-3d__corner--tr { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
-.hero-3d__corner--bl { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
-.hero-3d__corner--br { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
-.hero-3d__hud-bar {
-    position: absolute;
-    left: 30px;
-    right: 30px;
-    bottom: 14px;
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    white-space: nowrap;
-}
-.hero-3d__hud-step { color: #ff6b7a; }
-.hero-3d__hud-pct { color: #fff; min-width: 4ch; text-align: right; }
-.hero-3d__hud-progress {
-    position: absolute;
-    left: 30px;
-    right: 30px;
-    bottom: 6px;
-    height: 1.5px;
-    background: rgba(255, 255, 255, .14);
-    overflow: hidden;
-}
-.hero-3d__hud-progress i {
-    display: block;
-    height: 100%;
-    width: var(--p, 0%);
-    background: linear-gradient(90deg, var(--h3d-red), #fff);
-    box-shadow: 0 0 8px rgba(237, 9, 32, .9);
-}
-
-/* hold the stage back until the build is ready, so the default intro
-   never flashes first (added inline, removed by hero.js) */
-.hero-3d--pending .hero-3d__scene,
-.hero-3d--pending .hero-3d__glow,
-.hero-3d--pending .hero-3d__tagline { visibility: hidden; }
-
-/* ---------- build sequence ---------- */
-.hero-3d--build .hero-3d__floor { animation: h3d-floor-in .7s ease .05s both, h3d-out 1s ease 3.8s forwards; }
-.hero-3d--build .hero-3d__hud   { animation: h3d-hud-in .6s ease .1s both, h3d-out .9s ease 4.7s forwards; }
-
-/* NOTE: build rules use their own keyframe names (…-b). Elements that were
-   already animating before the build class arrived only restart — and so
-   time from the build start, not from page load — when the name changes. */
-
-/* model pose: three-quarter "inspection" view, then turns to face front */
-.hero-3d--build .hero-3d__logo {
-    animation:
-        h3d-pose 4.2s cubic-bezier(.65, 0, .35, 1) both,
-        h3d-turn-b 12s ease-in-out 4.2s infinite;
-}
-
-/* 1. wireframe draws left→right, then is consumed bottom→top by the render pass */
-.hero-3d--build .hero-3d__wire { animation: h3d-wire 3.15s linear .35s both; }
-
-/* 2. depth layers extrude backwards one after another, glowing as they form */
-.hero-3d--build .hero-3d__depth {
-    animation: h3d-extrude .75s cubic-bezier(.2, .8, .2, 1) calc(1.45s + var(--i) * .08s) both;
-}
-
-/* 3. materials render upward behind the scan line */
-.hero-3d--build .hero-3d__face { animation: h3d-render 1.15s cubic-bezier(.45, 0, .2, 1) 2.35s both; }
-.hero-3d--build .hero-3d__scan { animation: h3d-scan 1.15s cubic-bezier(.45, 0, .2, 1) 2.35s both; }
-
-/* 4. final render: bloom, shine, orbits, tagline */
-.hero-3d--build .hero-3d__glow { animation: h3d-bloom 1.4s ease 3.3s both, h3d-pulse-b 5s ease-in-out 4.7s infinite; }
-.hero-3d--build .hero-3d__shine { animation: h3d-shine-b 5s ease-in-out 3.7s infinite; }
-.hero-3d--build .hero-3d__ring { animation: h3d-draw-b 2s cubic-bezier(.6, 0, .2, 1) 3.1s forwards, h3d-dim-b 1.2s ease 5.3s forwards; }
-.hero-3d--build .hero-3d__orbit--b .hero-3d__ring { animation-delay: 3.3s, 5.5s; }
-.hero-3d--build .hero-3d__orbit--c .hero-3d__ring { animation-delay: 3.5s, 5.7s; }
-.hero-3d--build .hero-3d__comet { animation: h3d-fade-b .6s ease 5s forwards, h3d-orbit-b 6s linear 5s infinite; }
-.hero-3d--build .hero-3d__orbit--b .hero-3d__comet { animation-duration: .6s, 7.5s; animation-direction: normal, reverse; }
-.hero-3d--build .hero-3d__orbit--c .hero-3d__comet { animation-duration: .6s, 9s; }
-.hero-3d--build .hero-3d__tagline { opacity: 0; animation: h3d-rise-b 1s cubic-bezier(.22, 1, .36, 1) 4s forwards; }
-
-/* build-mode copies of the shared keyframes (see NOTE above) */
-@keyframes h3d-turn-b {
-    0%, 100% { transform: translate(-50%, -50%) translateY(0) rotateY(0deg); }
-    25%      { transform: translate(-50%, -50%) translateY(-12px) rotateY(26deg); }
-    75%      { transform: translate(-50%, -50%) translateY(8px) rotateY(-26deg); }
-}
-@keyframes h3d-pulse-b { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
-@keyframes h3d-shine-b { 0% { background-position: 160% 0; } 45%, 100% { background-position: -60% 0; } }
-@keyframes h3d-draw-b { from { stroke-dashoffset: 1131; } to { stroke-dashoffset: 0; } }
-@keyframes h3d-dim-b { to { opacity: .5; } }
-@keyframes h3d-fade-b { from { opacity: 0; } to { opacity: 1; } }
-@keyframes h3d-orbit-b { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -1131; } }
-@keyframes h3d-rise-b { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-
-@keyframes h3d-pose {
-    0%   { transform: translate(-50%, -50%) rotateX(14deg) rotateY(-40deg) scale(.9); }
-    62%  { transform: translate(-50%, -50%) rotateX(10deg) rotateY(-30deg) scale(.94); }
-    100% { transform: translate(-50%, -50%) rotateX(0deg) rotateY(0deg) scale(1); }
-}
-@keyframes h3d-wire {
-    0%    { opacity: 0; clip-path: inset(0 100% 0 0); }
-    4%    { opacity: 1; }
-    35%   { clip-path: inset(0 0 0 0); }
-    63.5% { opacity: 1; clip-path: inset(0 0 0 0); }
-    100%  { opacity: .6; clip-path: inset(0 0 100% 0); }
-}
-@keyframes h3d-extrude {
-    from { opacity: 0; transform: translateZ(0); filter: brightness(1.6) saturate(1.3); }
-    to   { opacity: 1; transform: translateZ(var(--z)); filter: brightness(.32) saturate(1.3); }
-}
-@keyframes h3d-render { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
-@keyframes h3d-scan {
-    0%   { top: 100%; opacity: 0; }
-    8%   { opacity: 1; }
-    92%  { opacity: 1; }
-    100% { top: 0%; opacity: 0; }
-}
-@keyframes h3d-bloom {
-    0%   { opacity: 0; transform: scale(.6); }
-    45%  { opacity: 1; transform: scale(1.25); }
-    100% { opacity: 1; transform: scale(1); }
-}
-@keyframes h3d-floor-in { from { opacity: 0; } to { opacity: .55; } }
-@keyframes h3d-hud-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes h3d-out { to { opacity: 0; } }
-
-@media (max-width: 575.98px) {
-    .hero-3d__hud { font-size: .55rem; letter-spacing: .12em; }
-    .hero-3d__hud-bar, .hero-3d__hud-progress { left: 22px; right: 22px; }
-    .hero-3d__hud-bar > :first-child { display: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-    .hero-3d__wire, .hero-3d__scan, .hero-3d__floor, .hero-3d__hud { display: none; }
 }
 
 /* Homepage photo carousel sits behind the existing copy and logo. */
@@ -576,7 +183,7 @@
 .hero-3d__backgrounds { z-index: -1; pointer-events: none; }
 .hero-3d__backgrounds::after {
     content: "";
-    background: linear-gradient(90deg, rgba(3,8,36,.94), rgba(11,23,79,.58) 58%, rgba(11,23,79,.3));
+    background: linear-gradient(90deg, #000d, #0007 50%, transparent 85%);
 }
 .hero-3d__backgrounds img {
     object-fit: cover;
@@ -597,7 +204,7 @@
     padding: 6px 14px;
     border: 1px solid #ffffff70;
     border-radius: 999px;
-    background: #0b174f;
+    background: #222;
     color: #fff;
     font-size: .8rem;
 }
@@ -605,8 +212,9 @@
 .hero-3d__slides button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .hero-3d:has(.hero-3d__slides:not([hidden])) .hero-3d__inner { margin-bottom: 70px; }
 @media (max-width: 767.98px) {
-    .hero-3d__backgrounds::after { background: linear-gradient(180deg, #030824e8, #0b174f72); }
+    .hero-3d__backgrounds::after { background: linear-gradient(180deg, #000b, #0004); }
 }
 @media (prefers-reduced-motion: reduce) {
     .hero-3d__backgrounds img { transition: none; }
+    .hero-3d__copy > * { animation: none; }
 }
