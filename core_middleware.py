@@ -1,4 +1,10 @@
+from django.conf import settings
 from django.utils.cache import add_never_cache_headers
+
+
+def is_media_request(request):
+    return request.path.startswith(settings.MEDIA_URL)
+
 
 class DisableClientCacheMiddleware:
     def __init__(self, get_response):
@@ -6,7 +12,9 @@ class DisableClientCacheMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
-        add_never_cache_headers(response)
+        # Uploaded images never change under the same name; let browsers cache them (see config.urls).
+        if not is_media_request(request):
+            add_never_cache_headers(response)
         return response
 
 
@@ -16,6 +24,9 @@ class CartCleanupMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        if is_media_request(request):
+            return self.get_response(request)
+
         # Clean cart data if it exists and is invalid
         cart = request.session.get('cart', {})
         
@@ -33,9 +44,8 @@ class CartCleanupMiddleware:
                 if len(cleaned_cart) != len(cart):
                     request.session['cart'] = cleaned_cart
                     request.session.modified = True
-        else:
-            # Ensure cart is always initialized as empty dict
-            request.session['cart'] = {}
-        
+        # No else: writing an empty cart into every new session saved a session row (and set a cookie)
+        # for each anonymous page view and bot hit. Cart code reads it with .get('cart', {}).
+
         response = self.get_response(request)
         return response

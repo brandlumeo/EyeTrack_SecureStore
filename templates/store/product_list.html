@@ -34,8 +34,8 @@
 <section class="hero-3d" aria-labelledby="homeHeroTitle">
     <div class="hero-3d__backgrounds" aria-hidden="true">
         <img class="is-current" src="{% static 'img/home-hero-cctv.webp' %}" alt="" fetchpriority="high">
-        <img src="{% static 'img/home-hero-biometrics.webp' %}" alt="" decoding="async">
-        <img src="{% static 'img/home-hero-laptops.webp' %}" alt="" decoding="async">
+        <img src="{% static 'img/home-hero-biometrics.webp' %}" alt="" decoding="async" fetchpriority="low">
+        <img src="{% static 'img/home-hero-laptops.webp' %}" alt="" decoding="async" fetchpriority="low">
     </div>
     <div class="hero-3d__inner">
         <div class="hero-3d__copy">
@@ -265,7 +265,7 @@
                         <div class="product-image-wrap">
                             <a href="{% url 'product_detail' product.slug %}" class="d-block w-100 h-100">
                                 {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image"{% if is_landing or forloop.counter > 3 %} loading="lazy"{% endif %} decoding="async">
                                 {% else %}
                                 <div class="product-image placeholder-image d-flex align-items-center justify-content-center">
                                     <i class="bi bi-camera-video text-white-50" style="font-size: 3rem;"></i>
@@ -489,7 +489,7 @@
                 <a href="{% url 'product_detail' product.slug %}" class="featured-pick-row">
                     <div class="fp-thumb">
                         {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" decoding="async">
                         {% else %}
                         <i class="bi bi-camera-video"></i>
                         {% endif %}
