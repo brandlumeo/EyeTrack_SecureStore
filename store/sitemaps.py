@@ -23,6 +23,7 @@ class StaticViewSitemap(Sitemap):
             "lens_calculator",
             "camera_guide",
             "guide_list",
+            "download_list",
             "support_page",
             "faq_page",
             "privacy_policy_page",

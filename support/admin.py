@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import FAQCategory, FAQ, QuoteRequest, ServiceTicket, TicketAttachment, TicketMessage, ViewingGuide
+from .models import FAQCategory, FAQ, QuoteRequest, ServiceTicket, TicketAttachment, TicketMessage, ViewingGuide, Download
 
 @admin.register(FAQCategory)
 class FAQCategoryAdmin(admin.ModelAdmin):
@@ -49,3 +49,11 @@ class ViewingGuideAdmin(admin.ModelAdmin):
     list_filter = ("is_published", "brand")
     list_editable = ("is_published", "order")
     prepopulated_fields = {"slug": ("title",)}
+
+
+@admin.register(Download)
+class DownloadAdmin(admin.ModelAdmin):
+    list_display = ("title", "kind", "brand", "is_published", "download_count", "order", "updated_at")
+    list_filter = ("is_published", "kind", "brand")
+    list_editable = ("is_published", "order")
+    search_fields = ("title", "brand", "description")

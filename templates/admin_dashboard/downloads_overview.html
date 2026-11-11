@@ -1,0 +1,53 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">Download Centre</h1>
+            <p class="admin-subtitle">Manuals, datasheets, brochures and software at <a href="{% url 'download_list' %}" target="_blank" rel="noopener" class="text-warning">/support/downloads/</a> &middot; {{ published_count }} published</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_dashboard:download_add' %}" class="btn btn-premium-cta btn-sm mt-3 mt-md-0"><i class="bi bi-plus-lg me-1"></i> Add Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="alert bg-dark text-light border-warning mb-4">
+    <i class="bi bi-info-circle text-warning me-1"></i>
+    Only upload documents you're allowed to share (your own brochures, or manuals the manufacturer publishes). For manufacturer software and firmware, link to the official download page instead of uploading a copy, so customers always get the current, genuine version.
+</div>
+
+<div class="chart-container">
+    <div class="table-responsive">
+        <table class="table table-dark table-admin">
+            <thead><tr><th>Download</th><th>Type / Brand</th><th>Source</th><th>Status</th><th>Downloads</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for d in downloads %}
+                <tr>
+                    <td style="max-width:320px;white-space:normal;"><div class="fw-semibold">{{ d.title }}</div>{% if d.description %}<small class="text-secondary">{{ d.description|truncatechars:80 }}</small>{% endif %}</td>
+                    <td><small>{{ d.get_kind_display }}{% if d.brand %}<br><span class="text-secondary">{{ d.brand }}</span>{% endif %}</small></td>
+                    <td><small class="text-secondary">{% if d.is_external %}Link{% else %}{{ d.extension }}{% if d.size_label %} &middot; {{ d.size_label }}{% endif %}{% endif %}</small></td>
+                    <td>{% if d.is_published %}<span class="badge-status status-confirmed">Published</span>{% else %}<span class="badge-status status-cancelled">Hidden</span>{% endif %}</td>
+                    <td><span class="text-secondary">{{ d.download_count }}</span></td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'admin_dashboard:download_edit' d.pk %}" class="btn btn-outline-light btn-sm" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <a href="{{ d.get_absolute_url }}" target="_blank" rel="noopener" class="btn btn-outline-light btn-sm" title="Open"><i class="bi bi-box-arrow-up-right"></i></a>
+                            <form method="POST" action="{% url 'admin_dashboard:download_toggle_publish' d.pk %}">{% csrf_token %}
+                                <button type="submit" class="btn btn-outline-light btn-sm" title="{% if d.is_published %}Hide{% else %}Publish{% endif %}"><i class="bi {% if d.is_published %}bi-eye-slash{% else %}bi-send-check{% endif %}"></i></button>
+                            </form>
+                            <form method="POST" action="{% url 'admin_dashboard:download_delete' d.pk %}" onsubmit="return confirm('Delete this download? An uploaded file is removed too.');">{% csrf_token %}
+                                <button type="submit" class="btn btn-soft-danger btn-sm" title="Delete"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-secondary py-5">No downloads yet. <a href="{% url 'admin_dashboard:download_add' %}" class="text-warning">Add the first one</a>.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

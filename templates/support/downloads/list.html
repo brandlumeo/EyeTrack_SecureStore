@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Download Centre: CCTV Manuals, Datasheets & Software | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Download user manuals, datasheets, brochures and software for the CCTV cameras, recorders and security devices we supply and install.{% endblock %}
+{% block meta_robots %}{% if is_filtered %}noindex, follow{% else %}index, follow{% endif %}{% endblock %}
+{% block content %}
+{% include 'support/guides/_styles.html' %}
+<style>
+    .dl-search { display: flex; gap: 0.5rem; max-width: 420px; margin-bottom: 1rem; }
+    .dl-list { display: grid; gap: 0.75rem; }
+    .dl-row { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 1rem; align-items: center; padding: 0.9rem 1rem; border-radius: 1rem;
+        border: 1px solid var(--stroke, rgba(249, 250, 251, 0.1)); background: var(--card, rgba(249, 250, 251, 0.04)); }
+    .dl-icon { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; font-size: 1.35rem;
+        background: rgba(245, 163, 0, 0.12); color: var(--accent, #f5a300); }
+    .dl-row strong { display: block; color: var(--text, #f7f8fa); }
+    .dl-row small { color: var(--text-soft, #c4cdd7); }
+    .dl-meta { display: flex; flex-wrap: wrap; gap: 0.35rem 0.75rem; margin-top: 0.2rem; font-size: 0.78rem; color: var(--muted, #9aa6b5); }
+    @media (max-width: 575.98px) {
+        .dl-row { grid-template-columns: 40px minmax(0, 1fr); }
+        .dl-icon { width: 40px; height: 40px; font-size: 1.1rem; }
+        .dl-row .btn { grid-column: 1 / -1; }
+    }
+</style>
+<header class="home-section-head">
+    <div>
+        <p class="eyebrow mb-2">Download centre</p>
+        <h1 class="home-section-title">Manuals, datasheets &amp; software</h1>
+    </div>
+    <p class="home-section-lead">Documents and tools for the cameras, recorders and security devices we supply and install.</p>
+</header>
+
+<form method="get" class="dl-search" role="search">
+    {% if active_kind %}<input type="hidden" name="type" value="{{ active_kind }}">{% endif %}
+    {% if active_brand %}<input type="hidden" name="brand" value="{{ active_brand }}">{% endif %}
+    <input type="search" name="q" value="{{ query }}" class="form-control premium-input" placeholder="Search by model or name" aria-label="Search downloads">
+    <button type="submit" class="btn btn-premium-cta" aria-label="Search"><i class="bi bi-search"></i></button>
+</form>
+
+{% if kinds|length > 1 %}
+<nav class="guide-filters" aria-label="Filter by type">
+    <a href="?{% if active_brand %}brand={{ active_brand|urlencode }}{% endif %}" class="{% if not active_kind %}active{% endif %}">All types</a>
+    {% for value, label in kinds %}<a href="?type={{ value }}{% if active_brand %}&amp;brand={{ active_brand|urlencode }}{% endif %}" class="{% if active_kind == value %}active{% endif %}">{{ label }}</a>{% endfor %}
+</nav>
+{% endif %}
+{% if brands|length > 1 %}
+<nav class="guide-filters" aria-label="Filter by brand">
+    <a href="?{% if active_kind %}type={{ active_kind }}{% endif %}" class="{% if not active_brand %}active{% endif %}">All brands</a>
+    {% for b in brands %}<a href="?brand={{ b|urlencode }}{% if active_kind %}&amp;type={{ active_kind }}{% endif %}" class="{% if active_brand == b %}active{% endif %}">{{ b }}</a>{% endfor %}
+</nav>
+{% endif %}
+
+{% if downloads %}
+<div class="dl-list">
+    {% for d in downloads %}
+    <div class="dl-row">
+        <span class="dl-icon" aria-hidden="true"><i class="bi {% if d.kind == 'app' %}bi-phone{% elif d.kind == 'software' %}bi-pc-display{% elif d.kind == 'brochure' %}bi-journal-richtext{% elif d.kind == 'datasheet' %}bi-file-earmark-spreadsheet{% else %}bi-file-earmark-text{% endif %}"></i></span>
+        <div>
+            <strong>{{ d.title }}</strong>
+            {% if d.description %}<small>{{ d.description }}</small>{% endif %}
+            <div class="dl-meta">
+                <span>{{ d.get_kind_display }}</span>
+                {% if d.brand %}<span>{{ d.brand }}</span>{% endif %}
+                {% if d.is_external %}<span>Manufacturer's site</span>{% else %}<span>{{ d.extension }}{% if d.size_label %} &middot; {{ d.size_label }}{% endif %}</span>{% endif %}
+            </div>
+        </div>
+        <a href="{{ d.get_absolute_url }}" class="btn btn-outline-light btn-sm" {% if d.is_external %}target="_blank" rel="noopener noreferrer"{% endif %}>
+            {% if d.is_external %}<i class="bi bi-box-arrow-up-right me-1"></i>Open{% else %}<i class="bi bi-download me-1"></i>Download{% endif %}
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% elif is_filtered %}
+<div class="glass-card p-4 text-center">
+    <p class="text-secondary mb-3">Nothing matches that search.</p>
+    <a href="{% url 'download_list' %}" class="btn btn-outline-light">Show all downloads</a>
+</div>
+{% else %}
+<div class="glass-card p-4 text-center">
+    <p class="text-secondary mb-3">Our download centre is being set up. Need a manual now? Ask us and we'll send it.</p>
+    <a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer" class="btn btn-premium-cta"><i class="bi bi-whatsapp me-1"></i>Ask on WhatsApp</a>
+</div>
+{% endif %}
+
+<div class="glass-card p-4 mt-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div><strong>Can't find what you need?</strong><br><span class="text-secondary">Tell us your camera or recorder model and we'll send the right manual or software.</span></div>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'guide_list' %}" class="btn btn-outline-light"><i class="bi bi-phone me-1"></i>Phone viewing guides</a>
+        <a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer" class="btn btn-premium-cta"><i class="bi bi-whatsapp me-1"></i>WhatsApp us</a>
+    </div>
+</div>
+{% endblock %}
