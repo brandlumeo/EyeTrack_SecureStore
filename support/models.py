@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
 
 class FAQCategory(models.Model):
     name = models.CharField(max_length=100)
@@ -166,3 +167,62 @@ class TicketAttachment(models.Model):
 
     class Meta:
         ordering = ["uploaded_at", "id"]
+
+
+class ViewingGuide(models.Model):
+    """Step-by-step "watch your cameras on your phone" guide, edited by staff in the admin dashboard."""
+
+    title = models.CharField(max_length=150)
+    slug = models.SlugField(max_length=170, unique=True, blank=True)
+    brand = models.CharField(max_length=60, help_text="e.g. Hikvision, Dahua, CP Plus, or General")
+    app_name = models.CharField(max_length=60, blank=True, help_text="e.g. Hik-Connect, DMSS, gCMOB")
+    summary = models.CharField(max_length=250, help_text="One sentence shown on the guide list.")
+    before_you_start = models.TextField(blank=True, help_text="Checklist, one item per line.")
+    steps = models.TextField(help_text="One step per line, in order.")
+    troubleshooting = models.TextField(blank=True, help_text="Problem and fix, one per line (e.g. 'Device offline: check the recorder's internet cable').")
+    android_url = models.URLField(blank=True, help_text="Google Play link for the app (copy it from the Play Store).")
+    ios_url = models.URLField(blank=True, help_text="App Store link for the app.")
+    image = models.ImageField(upload_to="guides/", blank=True, help_text="Optional screenshot or diagram.")
+    is_published = models.BooleanField(default=False, help_text="Only publish after checking the steps against the current app.")
+    order = models.PositiveIntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["order", "brand", "title"]
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.title)[:150] or "guide"
+            slug, n = base, 2
+            while ViewingGuide.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug, n = "%s-%d" % (base, n), n + 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse("guide_detail", args=[self.slug])
+
+    @staticmethod
+    def _lines(text):
+        return [line.strip(" -\u2022\t") for line in text.splitlines() if line.strip(" -\u2022\t")]
+
+    @property
+    def step_list(self):
+        return self._lines(self.steps)
+
+    @property
+    def checklist(self):
+        return self._lines(self.before_you_start)
+
+    @property
+    def fixes(self):
+        """Troubleshooting lines split into (problem, fix) at the first colon."""
+        out = []
+        for line in self._lines(self.troubleshooting):
+            problem, sep, fix = line.partition(":")
+            out.append((problem.strip(), fix.strip()) if sep else ("", line))
+        return out

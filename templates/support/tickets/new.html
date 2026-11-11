@@ -12,6 +12,12 @@
                 <a href="{% url 'ticket_list' %}" class="text-decoration-none small" style="color: var(--text-soft);"><i class="bi bi-arrow-left me-1"></i>All requests</a>
                 <h1 class="h3 mt-2 mb-1">Raise a service request</h1>
                 <p class="text-secondary mb-4">Tell us what's wrong. Photos of the screen, error message or device help us fix it faster.</p>
+                {% if has_guides %}
+                <div class="alert d-flex gap-2 align-items-start mb-4" style="background: rgba(245,163,0,0.08); border: 1px solid rgba(245,163,0,0.3); color: var(--text-soft);">
+                    <i class="bi bi-phone" style="color: var(--accent);"></i>
+                    <span>Can't see your cameras on your phone? <a href="{% url 'guide_list' %}">Try our step-by-step setup guides</a> first: most connection problems are fixed in a few minutes.</span>
+                </div>
+                {% endif %}
 
                 <form method="post" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}

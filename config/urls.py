@@ -21,7 +21,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
-from store.sitemaps import CategorySitemap, ProductSitemap, ProjectSitemap, StaticViewSitemap
+from store.sitemaps import CategorySitemap, ProductSitemap, ProjectSitemap, StaticViewSitemap, ViewingGuideSitemap
 from support import views as support_views
 
 
@@ -30,6 +30,7 @@ sitemaps = {
     "categories": CategorySitemap,
     "products": ProductSitemap,
     "projects": ProjectSitemap,
+    "guides": ViewingGuideSitemap,
 }
 
 urlpatterns = [

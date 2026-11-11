@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST
 from accounts.views import build_account_context
 
 from .forms import ServiceTicketForm, TicketReplyForm
-from .models import ServiceTicket
+from .models import ServiceTicket, ViewingGuide
 from .tickets import notify_staff, save_photos, validate_photos
 
 
@@ -48,7 +48,10 @@ def ticket_create(request):
         messages.success(request, "Request %s received. Our support team will get back to you here." % ticket.reference)
         return redirect("ticket_detail", pk=ticket.pk)
 
-    return _render(request, "support/tickets/new.html", {"form": form})
+    return _render(request, "support/tickets/new.html", {
+        "form": form,
+        "has_guides": ViewingGuide.objects.filter(is_published=True).exists(),
+    })
 
 
 @login_required(login_url="login")
@@ -81,6 +84,8 @@ def ticket_detail(request, pk):
         "ticket": ticket,
         "form": form,
         "intro_photos": [a for a in ticket.attachments.all() if a.message_id is None],
+        "show_guides": ticket.category == ServiceTicket.Category.MOBILE_VIEW
+                       and ViewingGuide.objects.filter(is_published=True).exists(),
     })
 
 

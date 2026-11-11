@@ -36,7 +36,7 @@ from admin_dashboard.forms import (
     BiometricSpecForm, SmartLockSpecForm, NetworkSpecForm, VideoDoorPhoneSpecForm,
     DeliveryAgentForm, AssignAgentForm,
     ServiceableAreaForm, FAQCategoryForm, FAQForm,
-    ProjectForm, validate_gallery_uploads,
+    ProjectForm, validate_gallery_uploads, ViewingGuideForm,
 )
 
 
@@ -1706,6 +1706,63 @@ def ticket_manage(request, ticket_id):
         'technicians': Technician.objects.filter(is_active=True).order_by('name'),
         'customer_orders': ticket.user.orders.order_by('-created_at')[:5],
     })
+
+
+@login_required
+@user_passes_test(is_admin)
+def guides_overview(request):
+    """Remote-viewing guides shown at /support/guides/."""
+    from support.models import ViewingGuide
+    guides = ViewingGuide.objects.order_by('order', 'brand', 'title')
+    return render(request, 'admin_dashboard/guides_overview.html', {
+        'page_title': 'Remote Viewing Guides',
+        'guides': guides,
+        'published_count': sum(1 for g in guides if g.is_published),
+    })
+
+
+@login_required
+@user_passes_test(is_admin)
+def guide_edit(request, guide_id=None):
+    from support.models import ViewingGuide
+    guide = get_object_or_404(ViewingGuide, pk=guide_id) if guide_id else None
+    form = ViewingGuideForm(request.POST or None, request.FILES or None, instance=guide)
+    if request.method == 'POST':
+        if form.is_valid():
+            guide = form.save()
+            messages.success(request, 'Guide "%s" saved%s.' % (guide.title, '' if guide.is_published else ' as a draft'))
+            if 'save_preview' in request.POST:
+                return redirect(guide.get_absolute_url())
+            return redirect('admin_dashboard:guides_overview')
+        messages.error(request, 'Please correct the errors below.')
+    return render(request, 'admin_dashboard/guide_form.html', {
+        'page_title': 'Edit Guide' if guide else 'Add Guide', 'form': form, 'guide': guide})
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def guide_toggle_publish(request, guide_id):
+    from support.models import ViewingGuide
+    guide = get_object_or_404(ViewingGuide, pk=guide_id)
+    guide.is_published = not guide.is_published
+    guide.save(update_fields=['is_published', 'updated_at'])
+    messages.success(request, '"%s" is now %s.' % (guide.title, 'published' if guide.is_published else 'hidden'))
+    return redirect('admin_dashboard:guides_overview')
+
+
+@login_required
+@user_passes_test(is_admin)
+@require_POST
+def guide_delete(request, guide_id):
+    from support.models import ViewingGuide
+    guide = get_object_or_404(ViewingGuide, pk=guide_id)
+    if guide.image:
+        guide.image.delete(save=False)
+    title = guide.title
+    guide.delete()
+    messages.success(request, 'Guide "%s" deleted.' % title)
+    return redirect('admin_dashboard:guides_overview')
 
 
 @login_required

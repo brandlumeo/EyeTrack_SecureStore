@@ -5,7 +5,7 @@ from store.models import (
     ServiceableArea, Project,
 )
 from orders.models import DeliveryAgent, DeliveryAssignment, Technician
-from support.models import FAQCategory, FAQ
+from support.models import FAQCategory, FAQ, ViewingGuide
 
 
 # ─── Existing forms (unchanged) ───────────────────────────────────────────────
@@ -421,3 +421,24 @@ def validate_gallery_uploads(files):
         except forms.ValidationError:
             errors.append(f'{f.name}: not a valid image.')
     return valid, errors
+
+
+class ViewingGuideForm(forms.ModelForm):
+    class Meta:
+        model = ViewingGuide
+        fields = ['title', 'brand', 'app_name', 'summary', 'before_you_start', 'steps', 'troubleshooting',
+                  'android_url', 'ios_url', 'image', 'is_published', 'order']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': INPUT}),
+            'brand': forms.TextInput(attrs={'class': INPUT, 'placeholder': 'Hikvision, Dahua, CP Plus or General'}),
+            'app_name': forms.TextInput(attrs={'class': INPUT, 'placeholder': 'Hik-Connect, DMSS, gCMOB...'}),
+            'summary': forms.TextInput(attrs={'class': INPUT}),
+            'before_you_start': forms.Textarea(attrs={'class': INPUT, 'rows': 4}),
+            'steps': forms.Textarea(attrs={'class': INPUT, 'rows': 8}),
+            'troubleshooting': forms.Textarea(attrs={'class': INPUT, 'rows': 5}),
+            'android_url': forms.URLInput(attrs={'class': INPUT, 'placeholder': 'https://play.google.com/store/apps/details?id=...'}),
+            'ios_url': forms.URLInput(attrs={'class': INPUT, 'placeholder': 'https://apps.apple.com/...'}),
+            'image': forms.ClearableFileInput(attrs={'class': INPUT, 'accept': 'image/*'}),
+            'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'order': forms.NumberInput(attrs={'class': INPUT, 'min': 0}),
+        }

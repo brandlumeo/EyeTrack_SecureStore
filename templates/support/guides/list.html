@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}View Your CCTV on Your Phone | Setup Guides | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Step-by-step guides to watch your Hikvision, Dahua or CP Plus CCTV cameras live on your phone, with fixes for common problems.{% endblock %}
+{% block meta_robots %}{% if active_brand %}noindex, follow{% else %}index, follow{% endif %}{% endblock %}
+{% block content %}
+{% include 'support/guides/_styles.html' %}
+<header class="home-section-head">
+    <div>
+        <p class="eyebrow mb-2">Remote viewing guides</p>
+        <h1 class="home-section-title">Watch your cameras on your phone</h1>
+    </div>
+    <p class="home-section-lead">Pick your recorder's brand. Each guide shows how to connect the app and what to do if the cameras show offline.</p>
+</header>
+
+{% if brands %}
+<nav class="guide-filters" aria-label="Filter guides by brand">
+    <a href="{% url 'guide_list' %}" class="{% if not active_brand %}active{% endif %}">All brands</a>
+    {% for b in brands %}<a href="{% url 'guide_list' %}?brand={{ b|urlencode }}" class="{% if active_brand == b %}active{% endif %}">{{ b }}</a>{% endfor %}
+</nav>
+{% endif %}
+
+{% if guides %}
+<div class="guide-grid">
+    {% for g in guides %}
+    <a href="{{ g.get_absolute_url }}" class="guide-card">
+        <span class="guide-brand">{{ g.brand }}{% if g.app_name %} &middot; {{ g.app_name }}{% endif %}</span>
+        <strong>{{ g.title }}</strong>
+        <small>{{ g.summary }}</small>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="glass-card p-4 text-center">
+    <p class="text-secondary mb-3">Our setup guides are being prepared. In the meantime, we're happy to help directly.</p>
+    <a href="{% url 'ticket_create' %}" class="btn btn-premium-cta">Raise a service request</a>
+</div>
+{% endif %}
+
+<div class="glass-card p-4 mt-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div><strong>Still can't see your cameras?</strong><br><span class="text-secondary">Raise a service request and our team will help you set it up.</span></div>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'ticket_create' %}" class="btn btn-premium-cta">Raise a service request</a>
+        <a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light"><i class="bi bi-whatsapp me-1"></i>WhatsApp</a>
+    </div>
+</div>
+{% endblock %}

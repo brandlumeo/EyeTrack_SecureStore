@@ -26,6 +26,12 @@
                     {% if ticket.visit_date %}<div class="ticket-fact"><span>Visit date</span><strong>{{ ticket.visit_date|date:"D, d M Y" }}</strong></div>{% endif %}
                 </div>
 
+                {% if show_guides %}
+                <div class="alert d-flex gap-2 align-items-start mb-3" style="background: rgba(245,163,0,0.08); border: 1px solid rgba(245,163,0,0.3); color: var(--text-soft);">
+                    <i class="bi bi-phone" style="color: var(--accent);"></i>
+                    <span>While you wait: our <a href="{% url 'guide_list' %}">phone viewing guides</a> cover the most common app connection fixes.</span>
+                </div>
+                {% endif %}
                 <div class="ticket-thread mb-4">
                     <article class="ticket-msg">
                         <header><strong>You</strong><time>{{ ticket.created_at|date:"d M Y, H:i" }}</time></header>

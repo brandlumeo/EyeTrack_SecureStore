@@ -22,6 +22,7 @@ class StaticViewSitemap(Sitemap):
             "storage_calculator",
             "lens_calculator",
             "camera_guide",
+            "guide_list",
             "support_page",
             "faq_page",
             "privacy_policy_page",
@@ -66,6 +67,18 @@ class ProjectSitemap(Sitemap):
     def items(self):
         from .models import Project
         return Project.objects.filter(is_published=True).order_by("order", "id")
+
+    def lastmod(self, obj):
+        return obj.updated_at
+
+
+class ViewingGuideSitemap(Sitemap):
+    priority = 0.5
+    changefreq = "monthly"
+
+    def items(self):
+        from support.models import ViewingGuide
+        return ViewingGuide.objects.filter(is_published=True).order_by("order", "id")
 
     def lastmod(self, obj):
         return obj.updated_at

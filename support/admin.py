@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import FAQCategory, FAQ, QuoteRequest, ServiceTicket, TicketAttachment, TicketMessage
+from .models import FAQCategory, FAQ, QuoteRequest, ServiceTicket, TicketAttachment, TicketMessage, ViewingGuide
 
 @admin.register(FAQCategory)
 class FAQCategoryAdmin(admin.ModelAdmin):
@@ -41,3 +41,11 @@ class ServiceTicketAdmin(admin.ModelAdmin):
     search_fields = ("subject", "description", "user__email", "user__first_name", "contact_phone")
     raw_id_fields = ("user", "order")
     inlines = [TicketMessageInline, TicketAttachmentInline]
+
+
+@admin.register(ViewingGuide)
+class ViewingGuideAdmin(admin.ModelAdmin):
+    list_display = ("title", "brand", "app_name", "is_published", "order", "updated_at")
+    list_filter = ("is_published", "brand")
+    list_editable = ("is_published", "order")
+    prepopulated_fields = {"slug": ("title",)}

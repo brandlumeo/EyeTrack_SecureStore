@@ -1,0 +1,53 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="admin-title">{{ page_title }}</h1>
+            <p class="admin-subtitle">Write each step and checklist item on its own line. Troubleshooting: "Problem: fix", one per line.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'admin_dashboard:guides_overview' %}" class="btn btn-outline-light btn-sm mt-3 mt-md-0"><i class="bi bi-arrow-left me-1"></i> Back to Guides</a>
+        </div>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger bg-dark text-light border-danger">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="chart-container">
+                <div class="row g-3">
+                    <div class="col-12"><label class="form-label text-secondary" for="{{ form.title.id_for_label }}">Title *</label>{{ form.title }}{% if form.title.errors %}<div class="text-danger small">{{ form.title.errors|striptags }}</div>{% endif %}</div>
+                    <div class="col-md-6"><label class="form-label text-secondary" for="{{ form.brand.id_for_label }}">Brand *</label>{{ form.brand }}{% if form.brand.errors %}<div class="text-danger small">{{ form.brand.errors|striptags }}</div>{% endif %}</div>
+                    <div class="col-md-6"><label class="form-label text-secondary" for="{{ form.app_name.id_for_label }}">App name</label>{{ form.app_name }}</div>
+                    <div class="col-12"><label class="form-label text-secondary" for="{{ form.summary.id_for_label }}">Summary *</label>{{ form.summary }}{% if form.summary.errors %}<div class="text-danger small">{{ form.summary.errors|striptags }}</div>{% endif %}</div>
+                    <div class="col-12"><label class="form-label text-secondary" for="{{ form.before_you_start.id_for_label }}">Before you start (checklist)</label>{{ form.before_you_start }}</div>
+                    <div class="col-12"><label class="form-label text-secondary" for="{{ form.steps.id_for_label }}">Steps *</label>{{ form.steps }}{% if form.steps.errors %}<div class="text-danger small">{{ form.steps.errors|striptags }}</div>{% endif %}</div>
+                    <div class="col-12"><label class="form-label text-secondary" for="{{ form.troubleshooting.id_for_label }}">Troubleshooting</label>{{ form.troubleshooting }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="chart-container">
+                <h5 class="mb-3">App links</h5>
+                <label class="form-label text-secondary" for="{{ form.android_url.id_for_label }}">Google Play</label>{{ form.android_url }}{% if form.android_url.errors %}<div class="text-danger small">{{ form.android_url.errors|striptags }}</div>{% endif %}
+                <label class="form-label text-secondary mt-2" for="{{ form.ios_url.id_for_label }}">App Store</label>{{ form.ios_url }}{% if form.ios_url.errors %}<div class="text-danger small">{{ form.ios_url.errors|striptags }}</div>{% endif %}
+                <hr class="border-secondary">
+                <label class="form-label text-secondary" for="{{ form.image.id_for_label }}">Screenshot / diagram</label>{{ form.image }}
+            </div>
+            <div class="chart-container mt-4">
+                <div class="form-check form-switch d-flex align-items-center gap-3 mb-2">{{ form.is_published }}<label class="form-check-label text-light mb-0" for="{{ form.is_published.id_for_label }}">Published</label></div>
+                <small class="text-secondary d-block mb-3">Only publish after checking the steps against the current app.</small>
+                <label class="form-label text-secondary" for="{{ form.order.id_for_label }}">Display order</label>{{ form.order }}
+            </div>
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-premium-cta"><i class="bi bi-save me-1"></i> Save Guide</button>
+                <button type="submit" name="save_preview" value="1" class="btn btn-outline-light"><i class="bi bi-eye me-1"></i> Save &amp; preview</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
