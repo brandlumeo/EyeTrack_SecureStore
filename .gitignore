@@ -10,6 +10,7 @@ db.sqlite3
 scratch/
 tmp/
 media/profiles/
+private_media/
 *.backup
 *_out.txt
 *_results.txt

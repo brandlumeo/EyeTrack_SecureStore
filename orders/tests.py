@@ -155,3 +155,55 @@ class OrderModelTests(TestCase):
         self.assertEqual(invoice.shipping_cost, Invoice._quantize("299.00"))
         self.assertEqual(invoice.total_amount, Decimal("889.00"))
         self.assertEqual(invoice.payment_status, Order.PaymentStatus.PAID)
+
+
+class FcmPushTokenCleanupTests(TestCase):
+    """Push sending with a stand-in for firebase_admin.messaging (not installed in every environment)."""
+
+    class UnregisteredError(Exception):
+        pass
+
+    class SenderIdMismatchError(Exception):
+        pass
+
+    def setUp(self):
+        from accounts.models import Profile
+        self.user = User.objects.create_user(username="pushuser", password="x")
+        self.profile = Profile.objects.create(user=self.user, fcm_token="device-token")
+        self.order = Order.objects.create(user=self.user, full_name="Push User", email="p@example.com", phone="9999999999",
+                                          address="Kozhikode", total=Decimal("100.00"))
+
+    def fake_messaging(self, send_side_effect=None):
+        from types import SimpleNamespace
+        from unittest.mock import Mock
+        return SimpleNamespace(
+            Message=Mock(), Notification=Mock(), send=Mock(side_effect=send_side_effect),
+            UnregisteredError=self.UnregisteredError, SenderIdMismatchError=self.SenderIdMismatchError,
+        )
+
+    def send(self, messaging):
+        from unittest.mock import patch
+        from orders import signals
+        with patch.object(signals, "messaging", messaging), patch.object(signals, "is_firebase_ready", return_value=True):
+            signals._send_fcm_notification(self.order.id, Order.OrderStatus.SHIPPED)
+
+    def test_successful_send_keeps_token(self):
+        messaging = self.fake_messaging()
+        self.send(messaging)
+        messaging.send.assert_called_once()
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.fcm_token, "device-token")
+
+    def test_unregistered_or_mismatched_token_is_cleared(self):
+        for error in (self.UnregisteredError, self.SenderIdMismatchError):
+            with self.subTest(error=error.__name__):
+                self.profile.fcm_token = "device-token"
+                self.profile.save(update_fields=["fcm_token"])
+                self.send(self.fake_messaging(send_side_effect=error("gone")))
+                self.profile.refresh_from_db()
+                self.assertIsNone(self.profile.fcm_token)
+
+    def test_temporary_failure_keeps_token(self):
+        self.send(self.fake_messaging(send_side_effect=RuntimeError("network down")))
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.fcm_token, "device-token")

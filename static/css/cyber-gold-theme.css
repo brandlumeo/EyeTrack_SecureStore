@@ -1,0 +1,330 @@
+/* Cyber-Gold Theme Overrides */
+
+:root {
+    --bg-1: #070b14;
+    --accent: #F59E0B;
+    --accent-glow: rgba(245, 158, 11, 0.5);
+    --accent-glow-soft: rgba(245, 158, 11, 0.15);
+}
+
+body {
+    background: #070b14;
+    color: #e2e8f0;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Hide old static background so our new animated one shines */
+.site-bg {
+    display: none !important;
+}
+
+/* Stunning Animated Background Overlay */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background-image: 
+        radial-gradient(circle at 50% -10%, rgba(245, 158, 11, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 110% 40%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at -10% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+    background-size: 200% 200%;
+    animation: ambientGlow 15s ease-in-out infinite alternate;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: 
+        linear-gradient(transparent 96%, rgba(245, 158, 11, 0.04) 97%),
+        linear-gradient(90deg, transparent 96%, rgba(245, 158, 11, 0.04) 97%);
+    background-size: 60px 60px;
+    animation: gridSlide 30s linear infinite;
+    mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+}
+
+@keyframes ambientGlow {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+
+@keyframes gridSlide {
+    0% { background-position: 0px 0px; }
+    100% { background-position: 60px 60px; }
+}
+
+/* Glowing Text */
+.text-gradient-gold {
+    background: linear-gradient(90deg, #FCD34D, #F59E0B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: #F59E0B; /* Fallback */
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+/* Pill CTA Buttons with Glow */
+.btn-premium-cta {
+    border-radius: 50px !important;
+    background: linear-gradient(90deg, #F59E0B, #D97706) !important;
+    color: #000 !important;
+    font-weight: 700 !important;
+    border: none !important;
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-premium-cta:hover {
+    box-shadow: 0 6px 25px rgba(245, 158, 11, 0.6), inset 0 2px 0 rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Card Gold Glow Border */
+.product-card, .premium-section-card, .wishlist-page-card {
+    background: rgba(11, 18, 32, 0.85) !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.1), inset 0 0 10px rgba(245, 158, 11, 0.05) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.product-card:hover {
+    border-color: rgba(245, 158, 11, 0.6) !important;
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.25), inset 0 0 15px rgba(245, 158, 11, 0.1) !important;
+}
+
+/* Category Pills (Square/Rounded Cyberpunk style) */
+.cat-nav-pill {
+    background: rgba(11, 18, 32, 0.8) !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.1) !important;
+    flex: 1; /* Match the layout to be more uniform like the image */
+    min-width: 120px;
+    justify-content: center;
+}
+
+.cat-nav-pill:hover, .cat-nav-pill.active {
+    border-color: rgba(245, 158, 11, 0.8) !important;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3) !important;
+    background: rgba(245, 158, 11, 0.1) !important;
+}
+
+.cat-nav-icon-ring {
+    border-color: rgba(245, 158, 11, 0.4) !important;
+    border-radius: 0.5rem !important;
+    width: 45px !important;
+    height: 45px !important;
+    background: transparent !important;
+}
+
+.cat-nav-pill .bi {
+    color: #F59E0B !important;
+}
+
+/* Hero Combined Stats Panel */
+.hero-cyber-panel {
+    background: rgba(11, 18, 32, 0.6);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.15), inset 0 0 20px rgba(245, 158, 11, 0.05);
+    backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+
+
+.hero-cyber-stat-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.hero-cyber-stat-row:not(:last-child) {
+    border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+    padding-bottom: 1.5rem;
+}
+
+.hero-cyber-stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 0.5rem;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #F59E0B;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+}
+
+.hero-cyber-stat-content h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #FCD34D;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    font-family: "Sora", sans-serif;
+    font-weight: 700;
+}
+
+.hero-cyber-stat-content p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #E2E8F0;
+    letter-spacing: 0.5px;
+}
+
+/* ---- GLOBAL CYBER-GOLD STYLES FOR ENTIRE SITE ---- */
+
+/* Cards */
+.card, .glass-card, .admin-content .stats-card, .chart-container, .admin-header, .login-card, .auth-card {
+    background: rgba(11, 18, 32, 0.85) !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.1), inset 0 0 10px rgba(245, 158, 11, 0.05) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 1rem !important;
+    transition: all 0.3s ease !important;
+    color: #f1f5f9;
+}
+
+.card:hover, .glass-card:hover, .admin-content .stats-card:hover {
+    border-color: rgba(245, 158, 11, 0.6) !important;
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.25), inset 0 0 15px rgba(245, 158, 11, 0.1) !important;
+}
+
+/* Secondary Buttons */
+.btn-outline-light, .btn-outline-primary, .btn-primary {
+    border-radius: 50px !important;
+    border: 1px solid rgba(245, 158, 11, 0.6) !important;
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #FCD34D !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.1) !important;
+}
+
+.btn-outline-light:hover, .btn-outline-primary:hover, .btn-primary:hover {
+    background: rgba(245, 158, 11, 0.2) !important;
+    border-color: rgba(245, 158, 11, 0.9) !important;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3) !important;
+    color: #FFF !important;
+    transform: translateY(-2px);
+}
+
+/* Form Inputs */
+.form-control, .form-select, .premium-input, input, select, textarea {
+    background: rgba(7, 11, 20, 0.7) !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+    color: #FCD34D !important;
+    border-radius: 0.5rem !important;
+}
+
+.form-control:focus, .form-select:focus, .premium-input:focus, input:focus, select:focus, textarea:focus {
+    border-color: rgba(245, 158, 11, 0.8) !important;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3) !important;
+    background: rgba(11, 18, 32, 0.9) !important;
+}
+
+/* Checkboxes and Radios */
+.form-check-input {
+    background-color: rgba(7, 11, 20, 0.7) !important;
+    border-color: rgba(245, 158, 11, 0.4) !important;
+}
+.form-check-input:checked {
+    background-color: #F59E0B !important;
+    border-color: #F59E0B !important;
+}
+
+/* Product Subimages / Thumbnails */
+.thumbnail-item {
+    background: #ffffff !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0.75rem !important;
+    padding: 0.25rem !important;
+}
+
+.thumbnail-item img {
+    object-fit: contain !important;
+}
+
+.thumbnail-item.active, .thumbnail-item:hover {
+    border-color: #F59E0B !important;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4) !important;
+}
+
+/* Navbar / Header */
+.header-shell, .navbar, .premium-nav {
+    background: rgba(7, 11, 20, 0.95) !important;
+    border-bottom: 1px solid rgba(245, 158, 11, 0.2) !important;
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.05) !important;
+}
+
+.nav-link.premium-link {
+    color: #e2e8f0 !important;
+}
+
+.nav-link.premium-link.active, .nav-link.premium-link:hover {
+    color: #F59E0B !important;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.4) !important;
+}
+
+/* Tables */
+table, .table, .table-admin {
+    color: #f1f5f9 !important;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+table th, .table th, .table-admin th {
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #FCD34D !important;
+    border-bottom: 1px solid rgba(245, 158, 11, 0.3) !important;
+}
+
+table td, .table td, .table-admin td {
+    background: rgba(11, 18, 32, 0.6) !important;
+    border-bottom: 1px solid rgba(245, 158, 11, 0.1) !important;
+}
+
+/* Sidebar styling for Admin */
+.admin-sidebar {
+    background: rgba(11, 18, 32, 0.85) !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+    box-shadow: inset 0 0 15px rgba(245, 158, 11, 0.1) !important;
+}
+
+.admin-nav-link.active {
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.2), transparent) !important;
+    border-color: rgba(245, 158, 11, 0.5) !important;
+    color: #FCD34D !important;
+    box-shadow: -3px 0 0 #F59E0B !important;
+}
+
+.admin-nav-link:hover {
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #FFF !important;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #FCD34D !important;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* Swals (Popups) */
+.swal-glass-popup {
+    background: rgba(11, 18, 32, 0.95) !important;
+    border: 1px solid rgba(245, 158, 11, 0.4) !important;
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.2) !important;
+}
+.swal-glass-title {
+    color: #FCD34D !important;
+}

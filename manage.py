@@ -3,6 +3,12 @@
 import os
 import sys
 
+try:  # Production runs on MySQL through PyMySQL; other environments don't need it.
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
+
 
 def main():
     """Run administrative tasks."""
