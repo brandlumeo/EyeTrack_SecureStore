@@ -19,10 +19,19 @@ from .models import Order
 logger = logging.getLogger(__name__)
 
 DEFAULT_HOLD_HOURS = 24
+DEFAULT_REMINDER_HOURS = 2
 
 
 def hold_hours():
     return getattr(settings, "UNPAID_ORDER_HOLD_HOURS", DEFAULT_HOLD_HOURS)
+
+
+def reminder_hours():
+    return getattr(settings, "UNPAID_ORDER_REMINDER_HOURS", DEFAULT_REMINDER_HOURS)
+
+
+def release_deadline(order):
+    return order.created_at + timedelta(hours=hold_hours())
 
 
 def _unpaid_online():
@@ -36,6 +45,18 @@ def _unpaid_online():
 def expired_unpaid_orders(older_than_hours=None):
     hours = hold_hours() if older_than_hours is None else older_than_hours
     return _unpaid_online().filter(created_at__lt=timezone.now() - timedelta(hours=hours)).order_by("created_at")
+
+
+def orders_due_reminder():
+    """Unpaid online orders from customer accounts, past the reminder time, not yet reminded,
+    and with at least an hour left before they are released (guest orders can't pay from an email link)."""
+    now = timezone.now()
+    return _unpaid_online().filter(
+        user__isnull=False,
+        payment_reminder_sent_at__isnull=True,
+        created_at__lte=now - timedelta(hours=reminder_hours()),
+        created_at__gt=now - timedelta(hours=hold_hours() - 1),
+    ).exclude(email="").order_by("created_at")
 
 
 def release(order):

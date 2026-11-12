@@ -1,0 +1,18 @@
+Hi {{ name }},
+
+Your order {{ order.formatted_id }} is waiting for payment.
+
+{% for item in items %}- {{ item.quantity }} x {{ item.product.name }}
+{% endfor %}
+Total: Rs. {{ order.total|floatformat:2 }}
+
+We're holding these items for you until {{ hold_until|date:"j M Y, g:i A" }}.
+Complete your payment here (you may be asked to sign in first):
+{{ pay_url }}
+
+Changed your mind? You don't need to do anything. The order will be cancelled
+automatically and nothing will be charged.
+
+Questions? Call or WhatsApp us on {{ support_phone }}.
+
+Eyetrack Solutions

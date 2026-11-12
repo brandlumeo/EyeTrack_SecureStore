@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<body style="margin:0;padding:0;background:#f3f5f8;font-family:Segoe UI,Arial,sans-serif;color:#182033;">
+  <div style="max-width:680px;margin:0 auto;padding:28px 18px;">
+    <div style="background:#0b1b37;border-radius:22px;padding:28px 30px;color:#ffffff;">
+      <div style="display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.12);font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Payment pending</div>
+      <h1 style="margin:18px 0 8px;font-size:28px;line-height:1.2;">Your order {{ order.formatted_id }} is waiting for payment</h1>
+      <p style="margin:0;font-size:15px;line-height:1.7;color:#d9e3f0;">We're holding your items until {{ hold_until|date:"j M Y, g:i A" }}.</p>
+    </div>
+
+    <div style="background:#ffffff;border:1px solid #d8dee8;border-radius:22px;padding:28px 30px;margin-top:18px;">
+      <p style="margin:0 0 14px;font-size:16px;line-height:1.7;">Hi {{ name }},</p>
+      <p style="margin:0 0 18px;font-size:15px;line-height:1.7;color:#3b475e;">You haven't completed payment for this order yet. Your items are still reserved for you:</p>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 18px;">
+        {% for item in items %}
+        <tr>
+          <td style="padding:10px 0;border-bottom:1px solid #e6ebf2;font-size:15px;">{{ item.quantity }} &times; {{ item.product.name }}</td>
+          <td style="padding:10px 0;border-bottom:1px solid #e6ebf2;font-size:15px;text-align:right;white-space:nowrap;">Rs. {{ item.get_total_price|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+          <td style="padding:12px 0 0;font-size:16px;font-weight:700;">Total</td>
+          <td style="padding:12px 0 0;font-size:16px;font-weight:700;text-align:right;white-space:nowrap;">Rs. {{ order.total|floatformat:2 }}</td>
+        </tr>
+      </table>
+
+      <div style="margin:24px 0 8px;">
+        <a href="{{ pay_url }}" style="display:inline-block;background:#ed0920;color:#ffffff;text-decoration:none;font-weight:700;padding:13px 22px;border-radius:999px;">Pay now</a>
+      </div>
+      <p style="margin:0 0 18px;font-size:13px;color:#6c7890;">You may be asked to sign in first.</p>
+
+      <p style="margin:0;font-size:14px;line-height:1.7;color:#3b475e;">Changed your mind? You don't need to do anything. The order will be cancelled automatically and nothing will be charged.</p>
+      <p style="margin:12px 0 0;font-size:14px;line-height:1.7;color:#3b475e;">Questions? Call or WhatsApp us on {{ support_phone }}.</p>
+    </div>
+  </div>
+</body>
+</html>
