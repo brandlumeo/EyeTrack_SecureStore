@@ -1198,3 +1198,9 @@ body .cat-nav-pill:not(:has(.cat-nav-count))::after { content: "Soon"; font-size
 @media (min-width: 1200px) {
     #siteNav .premium-search-form { min-width: 220px; }
 }
+
+/* Header search suggestions: wide enough to read product names; names wrap to two lines. */
+#siteNav .search-dropdown-results { width: max(100%, 420px) !important; max-height: min(460px, 70vh); }
+#siteNav .search-result-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; line-height: 1.3; }
+#siteNav .search-result-all { display: flex; align-items: center; justify-content: center; gap: .4rem; margin-top: .25rem; padding: .7rem; border-top: 1px solid var(--stroke); color: var(--navy-deep) !important; font-size: .85rem; font-weight: 650; }
+#siteNav .search-result-all:hover { background: var(--surface-2); color: var(--red) !important; }

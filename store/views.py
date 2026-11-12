@@ -1,4 +1,5 @@
 from datetime import timedelta
+from urllib.parse import urlencode
 from decimal import Decimal
 
 from django.conf import settings
@@ -38,16 +39,34 @@ from .specs import (
     get_product_spec_type,
 )
 
+def _search_products(products, query):
+    """Rank catalogue matches the same way in suggestions and full results:
+    exact name/category, then names/categories starting with the query, then anywhere in the name, then description."""
+    exact = Q(name__iexact=query) | Q(category__name__iexact=query)
+    prefix = Q(name__istartswith=query) | Q(category__name__istartswith=query)
+    title = Q(name__icontains=query) | Q(category__name__icontains=query)
+    matches = prefix
+    if len(query) >= 3:
+        matches = title | Q(description__icontains=query)
+    return products.filter(matches).annotate(
+        search_rank=Case(
+            When(exact, then=Value(0)),
+            When(prefix, then=Value(1)),
+            When(title, then=Value(2)),
+            default=Value(3),
+            output_field=IntegerField(),
+        )
+    )
+
+
 def live_search(request):
     """API endpoint for live ajax search"""
     query = request.GET.get('q', '').strip()
     if not query or len(query) < 2:
         return JsonResponse({'results': []})
-        
-    products = Product.objects.filter(
-        Q(name__icontains=query) | Q(category__name__icontains=query) | Q(description__icontains=query),
-        is_available=True
-    ).select_related('category')[:5]
+
+    matches = _search_products(Product.objects.filter(is_available=True).select_related("category"), query)
+    products = matches.order_by("search_rank", "-stock", "-created_at", "pk")[:5]
     
     results = []
     for p in products:
@@ -58,7 +77,8 @@ def live_search(request):
             'category': p.category.name,
             'image': p.image.url if p.image else ''
         })
-    return JsonResponse({'results': results})
+    return JsonResponse({'results': results, 'total': matches.count(),
+                         'all_url': reverse('product_list') + '?' + urlencode({'q': query})})
 
 
 def _cart_total_items(cart):
@@ -496,11 +516,7 @@ def product_list(request, category_slug=None):
     has_ai = request.GET.get("has_ai")
 
     if query:
-        products_qs = products_qs.filter(
-            Q(name__icontains=query)
-            | Q(description__icontains=query)
-            | Q(category__name__icontains=query)
-        )
+        products_qs = _search_products(products_qs, query)
 
     if in_stock == "1":
         products_qs = products_qs.filter(stock__gt=0)
@@ -537,7 +553,8 @@ def product_list(request, category_slug=None):
         products_qs = products_qs.order_by("-created_at")
     else:
         sort = "featured"
-        products_qs = products_qs.order_by("-stock", "-created_at")
+        # For a search, the best matches come first (see _search_products).
+        products_qs = products_qs.order_by(*(["search_rank"] if query else []), "-stock", "-created_at")
 
     # Annotate per-product review stats for card-level star display
     products_qs = products_qs.annotate(
