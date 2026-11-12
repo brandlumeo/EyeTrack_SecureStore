@@ -9,9 +9,12 @@
     --h3d-interval: 6000ms;
 
     position: relative;
-    /* full-bleed: break out of the page container */
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
+    /* full-bleed: break out of the page container. 100vw includes the scrollbar,
+       so subtract its width (--h3d-sbw, set by hero.js) to avoid clipping the right edge. */
+    --h3d-vw: calc(100vw - var(--h3d-sbw, 0px));
+    width: var(--h3d-vw);
+    max-width: none;
+    margin-left: calc(50% - var(--h3d-vw) / 2);
     /* sit flush under the navbar: cancel the container's top padding (.pt-4) */
     margin-top: -1.5rem;
     margin-bottom: clamp(1.25rem, 3vw, 2.5rem);
@@ -115,7 +118,7 @@
 .hero-3d__caption {
     position: absolute;
     z-index: 1;
-    left: max(32px, calc((100vw - 1180px) / 2));
+    left: max(32px, calc((var(--h3d-vw) - 1180px) / 2));
     top: 50%;
     width: min(500px, 46%);
     transform: translateY(-58%);
@@ -305,6 +308,34 @@
     .hero-3d__arrow { top: 16px; width: 44px; height: 44px; font-size: 1rem; transform: none; }
     .hero-3d__arrow:hover { transform: none; }
     .hero-3d__pause:not([hidden]) { width: 44px; height: 44px; }
+}
+@media (max-width: 380px) {
+    .hero-3d__caption h2 { font-size: 1.55rem !important; }
+    .hero-3d__caption p:not(.hero-3d__eyebrow) { font-size: .85rem; line-height: 1.5; }
+}
+/* phones turned sideways: short screen, so keep the banner within the viewport
+   and put the caption back on the left instead of stacking it at the bottom */
+@media (max-width: 991.98px) and (orientation: landscape) and (max-height: 540px) {
+    .hero-3d__stage { height: clamp(260px, calc(100svh - 90px), 420px); }
+    .hero-3d__slide img { object-position: 65% center; }
+    .hero-3d__slide::after {
+        background: linear-gradient(90deg, rgba(8, 14, 38, .9) 0%, rgba(8, 14, 38, .75) 40%, rgba(8, 14, 38, .2) 70%, rgba(8, 14, 38, 0) 85%);
+    }
+    .hero-3d__caption {
+        left: 72px;
+        right: auto;
+        top: 50%;
+        bottom: auto;
+        width: min(420px, 58%);
+        transform: translateY(-55%);
+    }
+    .hero-3d__eyebrow { margin-bottom: 8px; }
+    .hero-3d__caption h2 { margin-bottom: 6px; font-size: clamp(1.5rem, 4.4vw, 2.1rem) !important; }
+    .hero-3d__caption p:not(.hero-3d__eyebrow) { margin-bottom: 12px; font-size: .85rem; line-height: 1.45; }
+    .hero-3d__arrow { top: 50%; width: 40px; height: 40px; transform: translateY(-50%); }
+    .hero-3d__arrow:hover { transform: translateY(-50%); }
+    .hero-3d__arrow--prev { left: 14px; }
+    .hero-3d__arrow--next { right: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
     .hero-3d__track, .hero-3d__slide img { transition: none; }

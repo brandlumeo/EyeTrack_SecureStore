@@ -21,6 +21,11 @@
 
     hero.style.setProperty('--h3d-interval', `${INTERVAL}ms`);
 
+    // full-bleed width minus the scrollbar (100vw counts it on desktop)
+    const setScrollbar = () => hero.style.setProperty('--h3d-sbw', `${Math.max(0, window.innerWidth - document.documentElement.clientWidth)}px`);
+    setScrollbar();
+    window.addEventListener('resize', setScrollbar, { passive: true });
+
     const show = (index, announce = false) => {
         current = (index + total) % total;
         track.style.transform = `translateX(${-current * 100}%)`;
