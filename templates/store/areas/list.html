@@ -1,0 +1,46 @@
+{% extends 'store/solutions.html' %}
+{% block title %}Areas We Serve: CCTV Installation in Kozhikode, Kannur and Malappuram | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Eyetrack Solutions installs CCTV and security systems across Kozhikode, Kannur and Malappuram districts, and delivers products anywhere in India.{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<style>.solutions-hub .area-hero { grid-template-columns: minmax(0, 1fr); } .solutions-hub .area-hero p { max-width: 62ch; }</style>
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+  {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+  {"@type": "ListItem", "position": 2, "name": "Areas we serve"}]}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="solutions-page solutions-hub pb-4">
+    <section class="solutions-hero area-hero mb-5" aria-labelledby="areas-title">
+        <div>
+            <p class="eyebrow mb-3">Areas we serve</p>
+            <h1 id="areas-title" class="mb-3">CCTV installation in north Kerala</h1>
+            <p class="mb-0">We install CCTV and security systems across Kozhikode, Kannur and Malappuram districts. Products ship free anywhere in India, in about {{ delivery_days }} days.</p>
+        </div>
+    </section>
+
+    <div class="row g-3 mb-5">
+        {% for a in areas %}
+        <div class="col-md-4">
+            <section class="solutions-card h-100">
+                <i class="bi bi-geo-alt mb-3" aria-hidden="true"></i>
+                <h2>{{ a.name }}</h2>
+                <p>{{ a.towns|slice:":5"|join:", " }} and across the district.</p>
+                <a class="solutions-action mt-auto" href="{% url 'area_detail' a.slug %}">CCTV installation in {{ a.name }} <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            </section>
+        </div>
+        {% endfor %}
+    </div>
+
+    <section class="solutions-cta">
+        <div>
+            <h2 class="h3">Somewhere else in India?</h2>
+            <p>We deliver cameras, recorders and accessories anywhere in India; installation is available in the three districts above. Check your pincode on any product page.</p>
+        </div>
+        <a href="{% url 'product_list' %}" class="btn px-4">Shop products</a>
+    </section>
+</div>
+{% endblock %}

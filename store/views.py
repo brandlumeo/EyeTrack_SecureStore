@@ -23,6 +23,8 @@ import razorpay
 
 from orders.emails import send_order_invoice_email, send_order_placed_email, send_email_async, send_admin_order_notification_email
 from orders.models import Order, OrderItem, Payment, Shipment
+from orders.stock import retake_stock_if_cancelled
+
 from . import serviceability
 from .models import Category, Product, CameraSpecification, Wishlist, Review, ReviewMedia, Coupon, ServiceableArea, StockNotification, ReviewHelpful, Project
 from .forms import ReviewForm
@@ -1635,11 +1637,12 @@ def razorpay_callback(request):
             payment.paid_at = timezone.now()
             payment.transaction_id = razorpay_payment_id # Update with actual payment ID
             payment.save(update_fields=["status", "paid_at", "transaction_id"])
-            
+
+            retake_stock_if_cancelled(order)
             order.order_status = Order.OrderStatus.CONFIRMED
             order.payment_status = "Paid"
             order.save(update_fields=["order_status", "payment_status"])
-            
+
             # Send placement confirmation email now that payment is confirmed
             transaction.on_commit(lambda: send_order_placed_email(order.pk, base_url=base_url))
             
@@ -1729,6 +1732,7 @@ def razorpay_webhook(request):
                         payment.save(update_fields=["status", "paid_at", "transaction_id"])
                         
                         if order.payment_status != "Paid":
+                            retake_stock_if_cancelled(order)
                             order.order_status = Order.OrderStatus.CONFIRMED
                             order.payment_status = "Paid"
                             order.save(update_fields=["order_status", "payment_status"])

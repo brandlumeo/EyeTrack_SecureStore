@@ -1,6 +1,6 @@
 from django.urls import path
 from django.views.generic import TemplateView
-from . import project_views, tools_views, views
+from . import area_views, project_views, tools_views, views
 
 urlpatterns = [
      path('', views.product_list, name='product_list'),
@@ -8,6 +8,8 @@ urlpatterns = [
      path('solutions/', views.solutions_page, name='solutions_page'),
      path('solutions/home-security/', TemplateView.as_view(template_name='store/home_security.html'), name='home_security'),
      path('services/', views.services_page, name='services_page'),
+    path('cctv-installation/', area_views.area_list, name='area_list'),
+    path('cctv-installation/<slug:district>/', area_views.area_detail, name='area_detail'),
      path('projects/', project_views.project_list, name='project_list'),
      path('projects/<slug:slug>/', project_views.project_detail, name='project_detail'),
      path('tools/', tools_views.tools_hub, name='tools_hub'),

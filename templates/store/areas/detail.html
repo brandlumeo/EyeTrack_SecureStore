@@ -1,0 +1,144 @@
+{% extends 'store/solutions.html' %}
+{% block title %}CCTV Installation in {{ area.name }} | Eyetrack Solutions{% endblock %}
+{% block meta_description %}CCTV cameras, video door phones, smart locks and biometric systems installed across {{ area.name }} district, Kerala. Free site survey from Eyetrack Solutions.{% endblock %}
+{% block og_title %}CCTV Installation in {{ area.name }} | Eyetrack Solutions{% endblock %}
+{% block og_description %}Free site survey and professional CCTV installation across {{ area.name }} district, Kerala.{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<style>.solutions-hub .area-hero { grid-template-columns: minmax(0, 1fr); } .solutions-hub .area-hero p { max-width: 62ch; }
+    .solutions-page .breadcrumb-item a { color: var(--solutions-blue); font-weight: 600; text-decoration: none; }
+    .solutions-page .breadcrumb-item.active { color: var(--solutions-muted); }</style>
+<style>
+    .area-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .75rem; }
+    .area-fact { padding: 1rem 1.15rem; border: 1px solid var(--solutions-line); border-radius: .9rem; background: #fff; color: var(--solutions-muted); }
+    .area-fact strong { display: block; color: var(--solutions-ink); }
+    .area-towns { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0; list-style: none; }
+    .area-towns li { padding: .35rem .8rem; border: 1px solid var(--solutions-line); border-radius: 999px; background: #fff; color: var(--solutions-ink); font-size: .9rem; }
+    .area-steps { counter-reset: step; display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: .75rem; padding: 0; list-style: none; }
+    .area-steps li { counter-increment: step; position: relative; padding: 1rem 1rem 1rem 3.2rem; border: 1px solid var(--solutions-line); border-radius: .9rem; background: #fff; color: var(--solutions-muted); }
+    .area-steps li::before { content: counter(step); position: absolute; left: 1rem; top: 1rem; width: 1.6rem; height: 1.6rem; border-radius: 50%; display: grid; place-items: center; background: #edf3fa; color: var(--solutions-blue); font-weight: 800; font-size: .85rem; }
+    .area-steps strong { display: block; color: var(--solutions-ink); }
+    .area-project img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: .75rem; margin-bottom: .75rem; }
+</style>
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@graph": [
+  {"@type": "Service",
+   "name": "CCTV and security system installation in {{ area.name|escapejs }}",
+   "serviceType": "CCTV installation",
+   "provider": {"@id": "{{ request.scheme }}://{{ request.get_host }}/#business"},
+   "areaServed": {"@type": "AdministrativeArea", "name": "{{ area.name|escapejs }} district, Kerala"},
+   "url": "{{ request.scheme }}://{{ request.get_host }}{{ request.path }}"},
+  {"@type": "BreadcrumbList", "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+    {"@type": "ListItem", "position": 2, "name": "Areas we serve", "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'area_list' %}"},
+    {"@type": "ListItem", "position": 3, "name": "{{ area.name|escapejs }}"}]}
+]}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="solutions-page solutions-hub pb-4">
+    <nav aria-label="Breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{% url 'area_list' %}">Areas we serve</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ area.name }}</li>
+        </ol>
+    </nav>
+
+    <section class="solutions-hero area-hero mb-4" aria-labelledby="area-title">
+        <div>
+            <p class="eyebrow mb-3">{{ area.name }} district, Kerala</p>
+            <h1 id="area-title" class="mb-3">CCTV installation in {{ area.name }}</h1>
+            <p class="mb-4">{{ area.intro }}</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'quote_request' %}?location={{ area.name|urlencode }}" class="btn btn-light px-4">Book a free site survey</a>
+                <a href="tel:+917994357565" class="btn btn-outline-light px-4"><i class="bi bi-telephone me-1" aria-hidden="true"></i>Call +91 79943 57565</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="area-facts mb-5" aria-label="At a glance">
+        <div class="area-fact"><strong>Installation</strong>Across {{ area.name }} district</div>
+        <div class="area-fact"><strong>Site survey</strong>Free, before any work starts</div>
+        <div class="area-fact"><strong>Delivery</strong>Free, about {{ delivery_days }} days</div>
+        <div class="area-fact"><strong>After installation</strong>Phone viewing set up and support</div>
+    </section>
+
+    {% if categories %}
+    <section class="mb-5" aria-labelledby="area-install-title">
+        <header class="solutions-section-heading">
+            <p class="eyebrow mb-2">What we install</p>
+            <h2 id="area-install-title" class="h2 mb-0">Security systems for {{ area.name }} homes and businesses</h2>
+        </header>
+        <div class="row g-3">
+            {% for c in categories %}
+            <div class="col-sm-6 col-lg-4">
+                <section class="solutions-card h-100">
+                    <i class="bi {{ c.icon|default:'bi-grid' }} mb-3" aria-hidden="true"></i>
+                    <h3>{{ c.name }}</h3>
+                    <p>{{ c.product_count }} product{{ c.product_count|pluralize }} available, with installation in {{ area.name }}.</p>
+                    <a class="solutions-action mt-auto" href="{% url 'products_by_category' c.slug %}">See all {{ c.name }} <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                </section>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="mb-5" aria-labelledby="area-towns-title">
+        <header class="solutions-section-heading">
+            <p class="eyebrow mb-2">Where we work</p>
+            <h2 id="area-towns-title" class="h2 mb-0">Towns we cover in {{ area.name }}</h2>
+        </header>
+        <ul class="area-towns mb-2">{% for town in area.towns %}<li>{{ town }}</li>{% endfor %}</ul>
+        <p class="text-secondary small mb-0">Not on the list? We install anywhere in {{ area.name }} district: enter your pincode on any product page to check.</p>
+    </section>
+
+    <section class="mb-5" aria-labelledby="area-steps-title">
+        <header class="solutions-section-heading">
+            <p class="eyebrow mb-2">How it works</p>
+            <h2 id="area-steps-title" class="h2 mb-0">From survey to watching on your phone</h2>
+        </header>
+        <ol class="area-steps">
+            <li><strong>Free site survey</strong>We visit, look at entrances and blind spots, and listen to what you want to cover.</li>
+            <li><strong>Plan and quote</strong>Camera positions, recorder and storage, cabling, and a clear price.</li>
+            <li><strong>Installation</strong>Our technicians fit and test everything, and tidy up afterwards.</li>
+            <li><strong>Phone viewing and support</strong>We set up the app on your phone; our <a href="{% url 'guide_list' %}">guides</a> and <a href="{% url 'support_page' %}">support team</a> help afterwards.</li>
+        </ol>
+    </section>
+
+    {% if projects %}
+    <section class="mb-5" aria-labelledby="area-projects-title">
+        <header class="solutions-section-heading">
+            <p class="eyebrow mb-2">Recent work</p>
+            <h2 id="area-projects-title" class="h2 mb-0">Installations in {{ area.name }}</h2>
+        </header>
+        <div class="row g-3">
+            {% for p in projects %}
+            <div class="col-md-4">
+                <a href="{% url 'project_detail' p.slug %}" class="solutions-card area-project h-100 text-decoration-none">
+                    {% if p.cover_image %}<img src="{{ p.cover_image.url }}" alt="{{ p.title }}" loading="lazy" decoding="async">{% endif %}
+                    <h3 class="h5">{{ p.title }}</h3>
+                    <p class="mb-0">{{ p.location }}</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="solutions-cta mb-4">
+        <div>
+            <h2 class="h3">Planning CCTV for a property in {{ area.name }}?</h2>
+            <p>Tell us what you want to protect. We'll call to arrange a free site survey, with no obligation.</p>
+        </div>
+        <a href="{% url 'quote_request' %}?location={{ area.name|urlencode }}" class="btn px-4">Book a free site survey</a>
+    </section>
+
+    <p class="small text-secondary mb-0">
+        We also install in {% for a in other_areas %}<a href="{% url 'area_detail' a.slug %}">{{ a.name }}</a>{% if not forloop.last %} and {% endif %}{% endfor %} districts,
+        and deliver products anywhere in India.
+    </p>
+</div>
+{% endblock %}
