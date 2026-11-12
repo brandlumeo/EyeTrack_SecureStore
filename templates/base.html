@@ -7,6 +7,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
     <script>document.documentElement.classList.add('ui-booting');</script>
+    {# Simple preloader: logo + spinning ring, once per browser session, gone as soon as the page loads. #}
+    <script>
+        (function () {
+            try {
+                if (sessionStorage.getItem('et_pl')) return;
+                sessionStorage.setItem('et_pl', '1');
+            } catch (e) { return; }
+            document.documentElement.classList.add('pl-on');
+        })();
+    </script>
+    <style>
+        #et-preloader { display: none; }
+        html.pl-on #et-preloader {
+            position: fixed; inset: 0; z-index: 99999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+            background: #fff;
+            transition: opacity .3s ease, visibility .3s ease;
+        }
+        #et-preloader.is-done { opacity: 0; visibility: hidden; }
+        #et-preloader .pl-ring {
+            position: relative; width: 96px; height: 96px;
+            display: grid; place-items: center;
+        }
+        #et-preloader .pl-ring::before {
+            content: ""; position: absolute; inset: 0; border-radius: 50%;
+            border: 3px solid rgba(11, 23, 79, .12); border-top-color: #ed0920; border-right-color: #0b174f;
+            animation: et-pl-spin .9s linear infinite;
+        }
+        #et-preloader .pl-ring img { width: 44px; height: auto; }
+        #et-preloader .pl-brand {
+            margin: 0; color: #0b174f; font: 700 .78rem/1 system-ui, sans-serif; letter-spacing: .4em; text-indent: .4em;
+        }
+        @keyframes et-pl-spin { to { transform: rotate(360deg); } }
+        @media (prefers-reduced-motion: reduce) { #et-preloader .pl-ring::before { animation-duration: 2.4s; } }
+    </style>
     <title>{% block title %}Eyetrack Solutions{% endblock %}</title>
     <meta name="description"
         content="{% block meta_description %}Eyetrack Solutions - Premium CCTV cameras and professional installation services in Kozhikode, Kerala. Leading surveillance systems for homes and businesses.{% endblock %}">
@@ -721,6 +756,24 @@
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
+    <div id="et-preloader" aria-hidden="true">
+        <div class="pl-ring"><img src="{% static 'img/company-logo-sm.webp' %}" width="145" height="160" alt=""></div>
+        <p class="pl-brand">EYETRACK</p>
+    </div>
+    <script>
+        (function () {
+            var root = document.documentElement, el = document.getElementById('et-preloader');
+            if (!root.classList.contains('pl-on')) { el.remove(); return; }
+            var done = false;
+            function hide() {
+                if (done) return; done = true;
+                el.classList.add('is-done');
+                setTimeout(function () { root.classList.remove('pl-on'); el.remove(); }, 350);
+            }
+            if (document.readyState === 'complete') hide(); else window.addEventListener('load', hide);
+            setTimeout(hide, 3000);
+        })();
+    </script>
     <div class="site-bg"></div>
     <div class="scroll-progress" aria-hidden="true">
         <span id="scrollProgressBar"></span>
