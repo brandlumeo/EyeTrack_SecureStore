@@ -89,10 +89,11 @@
             "opens": "09:00",
             "closes": "18:00"
           }],
-          "areaServed": {
-            "@type": "AdministrativeArea",
-            "name": "Kozhikode District, Kerala"
-          },
+          "areaServed": [
+            {"@type": "AdministrativeArea", "name": "Kozhikode district, Kerala"},
+            {"@type": "AdministrativeArea", "name": "Kannur district, Kerala"},
+            {"@type": "AdministrativeArea", "name": "Malappuram district, Kerala"}
+          ],
           "sameAs": [
             "https://www.facebook.com/profile.php?id=61573098895103",
             "https://www.instagram.com/eyetrack_solutions_pvt.ltd/",
@@ -1020,7 +1021,7 @@
             </div>
             <div class="pf-main">
                 <div class="pf-brand"><a href="{% url 'product_list' %}" class="pf-brand-link" aria-label="Eyetrack Solutions home"><img src="{% static 'img/company-logo-sm.webp' %}" width="44" height="48" alt="" loading="lazy" decoding="async"><span>EYETRACK<small>SOLUTIONS</small></span></a><p>Connected security.<br>Considered from every angle.</p><div class="pf-socials"><a href="https://www.instagram.com/eyetrack_solutions_pvt.ltd/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a><a href="https://www.facebook.com/profile.php?id=61573098895103" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a><a href="https://www.linkedin.com/company/109270992/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="bi bi-linkedin" aria-hidden="true"></i></a></div></div>
-                <nav class="pf-column" aria-label="Explore"><h3>Explore</h3><a href="{% url 'product_list' %}">Shop all products</a><a href="{% url 'services_page' %}">Installation services</a><a href="{% url 'about_page' %}">Our story</a><a href="{% url 'faq_page' %}">Frequently asked questions</a><a href="{% url 'project_list' %}">Our projects</a><a href="{% url 'tools_hub' %}">Planning tools</a></nav>
+                <nav class="pf-column" aria-label="Explore"><h3>Explore</h3><a href="{% url 'product_list' %}">Shop all products</a><a href="{% url 'services_page' %}">Installation services</a><a href="{% url 'about_page' %}">Our story</a><a href="{% url 'faq_page' %}">Frequently asked questions</a><a href="{% url 'project_list' %}">Our projects</a><a href="{% url 'area_list' %}">Areas we serve</a><a href="{% url 'tools_hub' %}">Planning tools</a></nav>
                 <nav class="pf-column" aria-label="Customer care"><h3>Here to help</h3><a href="{% url 'quote_request' %}">Book a free site survey</a><a href="{% url 'support_page' %}">Support center</a>{% if user.is_authenticated %}<a href="{% url 'order_history' %}">Track your orders</a><a href="{% url 'account_dashboard' %}">Your account</a>{% else %}<a href="{% url 'login' %}">Sign in to your account</a><a href="{% url 'register' %}">Create an account</a>{% endif %}<a href="{% url 'wishlist_page' %}">Your wishlist</a><a href="{% url 'compare_page' %}">Compare products</a></nav>
                 <div class="pf-column pf-contact"><h3>Let’s connect</h3><a class="pf-contact-email" href="mailto:info@etsgrp.in">info@etsgrp.in <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="tel:+917994357565">+91 7994357565</a><address>Payyoli-Perambra Rd<br>Kozhikode, Kerala 673522</address><p class="pf-hours"><span></span> Mon–Sat, 9:00 AM – 6:00 PM</p></div>
             </div>
