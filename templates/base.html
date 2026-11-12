@@ -1359,25 +1359,33 @@
                             .then(res => res.json())
                             .then(data => {
                                 searchResults.innerHTML = '';
+                                // Product data goes into innerHTML: escape it so names with < or & render as text.
+                                const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
                                 if (data.results.length > 0) {
                                     data.results.forEach(item => {
                                         const imageHtml = item.image
-                                            ? `<img loading="lazy" decoding="async" src="${item.image}" alt="" class="search-result-thumb">`
+                                            ? `<img loading="lazy" decoding="async" src="${esc(item.image)}" alt="" class="search-result-thumb">`
                                             : `<span class="search-result-thumb-fallback"><i class="bi bi-camera-video"></i></span>`;
                                         const html = `
-                                            <a href="${item.url}" class="search-result-item text-decoration-none">
+                                            <a href="${esc(item.url)}" class="search-result-item text-decoration-none">
                                                 <span class="search-result-media">
                                                     ${imageHtml}
                                                 </span>
                                                 <span class="search-result-copy">
-                                                    <span class="search-result-title text-truncate">${item.name}</span>
-                                                    <span class="search-result-category text-truncate">${item.category}</span>
+                                                    <span class="search-result-title">${esc(item.name)}</span>
+                                                    <span class="search-result-category text-truncate">${esc(item.category)}</span>
                                                 </span>
-                                                <span class="search-result-price">&#8377;${item.price.split('.')[0]}</span>
+                                                <span class="search-result-price">&#8377;${esc(item.price.split('.')[0])}</span>
                                             </a>
                                         `;
                                         searchResults.insertAdjacentHTML('beforeend', html);
                                     });
+                                    if (data.all_url) {
+                                        searchResults.insertAdjacentHTML('beforeend', `
+                                            <a href="${esc(data.all_url)}" class="search-result-all text-decoration-none">
+                                                See all ${data.total > data.results.length ? esc(data.total) + ' ' : ''}results for &ldquo;${esc(query)}&rdquo; <i class="bi bi-arrow-right"></i>
+                                            </a>`);
+                                    }
                                 } else {
                                     searchResults.innerHTML = `
                                         <div class="search-dropdown-empty">
