@@ -73,19 +73,22 @@
 /* ---------- Banner stage ---------- */
 .hero-3d__stage {
     position: relative;
+    width: 100%;
     overflow: hidden;
     background: #0d1430;
     height: clamp(380px, 40vw, 600px);
 }
 .hero-3d__track {
+    position: absolute;
+    inset: 0;
     display: flex;
-    height: 100%;
     transition: transform .9s var(--h3d-ease);
     touch-action: pan-y;
 }
 .hero-3d__slide {
     position: relative;
     flex: 0 0 100%;
+    min-width: 0;
     height: 100%;
     overflow: hidden;
 }
@@ -282,25 +285,26 @@
     .hero-3d { margin-bottom: 1rem; }
     .hero-3d__strip { height: 34px; }
     .hero-3d__strip-item { font-size: .7rem; padding-inline: 18px; }
-    .hero-3d__stage { height: auto; aspect-ratio: 4 / 5; max-height: 560px; }
+    .hero-3d__stage { height: clamp(380px, 110vw, 560px); }
     .hero-3d__slide img { object-position: 60% top; }
     .hero-3d__slide::after {
         background: linear-gradient(180deg, rgba(8, 14, 38, 0) 30%, rgba(8, 14, 38, .78) 62%, rgba(8, 14, 38, .92) 100%);
     }
     .hero-3d__caption {
-        left: 20px;
-        right: 20px;
+        left: clamp(16px, 5vw, 32px);
+        right: clamp(16px, 5vw, 32px);
         top: auto;
         bottom: clamp(44px, 12vw, 64px);
         width: auto;
         transform: none;
     }
     .hero-3d__eyebrow { margin-bottom: 10px; font-size: .66rem; }
-    .hero-3d__caption h2 { margin-bottom: 8px; font-size: clamp(1.7rem, 8vw, 2.3rem) !important; }
+    .hero-3d__caption h2 { margin-bottom: 8px; font-size: clamp(1.7rem, 7vw, 2.3rem) !important; }
     .hero-3d__caption p:not(.hero-3d__eyebrow) { margin-bottom: 16px; font-size: .9rem; }
     .hero-3d .hero-3d__caption .hero-3d__btn { min-height: 44px; padding: 0 20px; font-size: .88rem; letter-spacing: 0; }
-    /* arrows sit near the top on phones so they don't cover the caption */
-    .hero-3d__arrow { top: 22%; width: 40px; height: 40px; font-size: 1rem; }
+    .hero-3d__arrow { top: 16px; width: 44px; height: 44px; font-size: 1rem; transform: none; }
+    .hero-3d__arrow:hover { transform: none; }
+    .hero-3d__pause:not([hidden]) { width: 44px; height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
     .hero-3d__track, .hero-3d__slide img { transition: none; }
