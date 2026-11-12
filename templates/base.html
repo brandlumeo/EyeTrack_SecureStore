@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
     <script>document.documentElement.classList.add('ui-booting');</script>
-    {# Preloader: shown once per browser session, skipped for reduced motion. Inline so it paints instantly. #}
+    {# Video preloader: shown once per browser session, skipped for reduced motion. Inline so it paints instantly. #}
     <script>
         (function () {
             try {
@@ -26,7 +26,7 @@
             overflow: hidden;
             transition: opacity .5s ease, visibility .5s ease;
         }
-        /* fill the space around the frame with a blurred copy of the frame itself (no added colour) */
+        /* fill the space around the frame with a blurred copy of the first frame (no added colour) */
         html.pl-on #et-preloader::before {
             content: ""; position: absolute; inset: -40px;
             background: url("{% static 'img/preloader-poster.webp' %}") center / cover no-repeat;
@@ -34,28 +34,18 @@
         }
         html.pl-on, html.pl-on body { overflow: hidden; }
         #et-preloader.is-done { opacity: 0; visibility: hidden; }
-        /* the whole 16:9 frame, as large as the screen allows, never cropped */
-        #et-preloader .pl-media {
-            position: relative;
-            width: min(100vw, 177.78vh); aspect-ratio: 16 / 9;
-            background: url("{% static 'img/preloader-poster.webp' %}") center / contain no-repeat;
+        /* the whole 16:9 video frame, as large as the screen allows, never cropped */
+        #et-preloader video {
+            position: relative; display: block;
+            width: min(100vw, 177.78vh); aspect-ratio: 16 / 9; object-fit: contain;
         }
-        #et-preloader .pl-media img { display: block; width: 100%; height: 100%; object-fit: contain; }
-        #et-preloader .pl-foot {
-            position: absolute; left: 0; right: 0; bottom: max(24px, 5vh);
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        #et-preloader .pl-skip {
+            position: absolute; right: max(16px, 3vw); bottom: max(16px, 4vh);
+            min-height: 40px; padding: 0 18px; border: 1px solid rgba(255,255,255,.45); border-radius: 999px;
+            background: rgba(0,0,0,.35); color: #fff; font: 600 .85rem/1 system-ui, sans-serif; letter-spacing: .04em;
+            cursor: pointer; backdrop-filter: blur(4px);
         }
-        #et-preloader .pl-brand {
-            margin: 0; color: #e8edf5; font: 700 .8rem/1 system-ui, sans-serif; letter-spacing: .42em; text-indent: .42em;
-            text-shadow: 0 1px 8px rgba(0,0,0,.6);
-        }
-        #et-preloader .pl-bar { width: min(180px, 50vw); height: 3px; border-radius: 3px; background: rgba(255,255,255,.18); overflow: hidden; }
-        #et-preloader .pl-bar span {
-            display: block; height: 100%; width: 100%; background: linear-gradient(90deg, #ed0920, #ff5a6c);
-            transform: scaleX(0); transform-origin: left;
-        }
-        #et-preloader.is-playing .pl-bar span { animation: et-pl-bar 3.2s linear both; }
-        @keyframes et-pl-bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+        #et-preloader .pl-skip:hover { background: rgba(0,0,0,.6); border-color: #fff; }
     </style>
     <title>{% block title %}Eyetrack Solutions{% endblock %}</title>
     <meta name="description"
@@ -772,35 +762,34 @@
 
 <body class="{% block body_class %}{% endblock %}">
     <div id="et-preloader" aria-hidden="true">
-        <div class="pl-media"><img src="{% static 'img/preloader.webp' %}" width="960" height="540" alt="" fetchpriority="high"></div>
-        <div class="pl-foot">
-            <p class="pl-brand">EYETRACK</p>
-            <div class="pl-bar"><span></span></div>
-        </div>
+        <video muted playsinline preload="auto" width="1280" height="720"
+            poster="{% static 'img/preloader-poster.webp' %}">
+            <source src="{% static 'video/preloader.mp4' %}" type="video/mp4">
+        </video>
+        <button type="button" class="pl-skip" tabindex="-1">Skip</button>
     </div>
     <script>
         (function () {
             var root = document.documentElement, el = document.getElementById('et-preloader');
             if (!root.classList.contains('pl-on')) { el.remove(); return; }
-            // the animation plays once over 3.2s; fade out only after it has finished and the page has loaded
-            var DURATION = 3300, MAX = 9000, animDone = false, pageDone = false, done = false;
-            var img = el.querySelector('img');
+            // play the whole video once, then fade out (once the page has also loaded)
+            var video = el.querySelector('video'), MAX = 15000, videoDone = false, pageDone = false, done = false;
             function hide() {
                 if (done) return; done = true;
                 el.classList.add('is-done');
+                try { video.pause(); } catch (e) {}
                 setTimeout(function () { root.classList.remove('pl-on'); el.remove(); }, 550);
             }
-            function check() { if (animDone && pageDone) hide(); }
-            function play() {
-                el.classList.add('is-playing');
-                setTimeout(function () { animDone = true; check(); }, DURATION);
-            }
-            if (img.complete && img.naturalWidth) play();
-            else { img.addEventListener('load', play); img.addEventListener('error', function () { animDone = true; check(); }); }
+            function check() { if (videoDone && pageDone) hide(); }
+            function finish() { videoDone = true; check(); }
+            video.addEventListener('ended', finish);
+            video.addEventListener('error', finish, true);
+            var p = video.play();
+            if (p && p.catch) p.catch(finish);   // autoplay blocked (e.g. low-power mode): don't hold the page
             function onLoad() { pageDone = true; check(); }
             if (document.readyState === 'complete') onLoad(); else window.addEventListener('load', onLoad);
             setTimeout(hide, MAX);
-            el.addEventListener('click', hide);
+            el.querySelector('.pl-skip').addEventListener('click', hide);
         })();
     </script>
     <div class="site-bg"></div>
