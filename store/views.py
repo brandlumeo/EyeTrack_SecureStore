@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Avg, Count, Max, Min, Q, Case, When, Value, IntegerField
@@ -1535,10 +1536,9 @@ def razorpay_checkout(request, order_id):
             # enumeration attacks (CVE-class: Insecure Direct Object Reference).
             pending_id = request.session.get("pending_guest_order_id")
             if pending_id != order_id:
-                from django.http import HttpResponseForbidden
-                return HttpResponseForbidden(
-                    "Access denied. This payment link is not valid for your session."
-                )
+                # e.g. a "Pay now" link from a reminder email: sign in, then come back here.
+                # (Same response whether or not the order exists, so it reveals nothing.)
+                return redirect_to_login(request.get_full_path(), login_url="login")
             order = get_object_or_404(Order, id=order_id, user=None)
         
         if order.payment_method == Order.PaymentMethod.COD:

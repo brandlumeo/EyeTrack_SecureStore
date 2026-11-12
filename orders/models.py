@@ -69,6 +69,7 @@ class Order(models.Model):
     tracking_number = models.CharField(max_length=100, blank=True, null=True)
     order_notes = models.TextField(blank=True, null=True)
     estimated_delivery_date = models.DateField(null=True, blank=True)
+    payment_reminder_sent_at = models.DateTimeField(null=True, blank=True, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

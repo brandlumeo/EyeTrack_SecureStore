@@ -251,6 +251,40 @@ def send_order_status_update_email(order_id, new_status, base_url=None):
         logger.exception("Failed to send status update email for order %s (status=%s)", order_id, new_status)
         return False
 
+def send_payment_reminder_email(order_id, base_url=None):
+    """Remind a customer that their online order is waiting for payment (orders.stock / remind_unpaid_orders)."""
+    from django.utils import timezone
+
+    from orders.stock import release_deadline
+
+    order = Order.objects.filter(pk=order_id).prefetch_related("items__product").first()
+    if not order or not order.email:
+        return False
+    base_url = base_url or getattr(settings, "SITE_URL", "https://eyetracktechnologies.com/")
+    context = {
+        "order": order,
+        "items": list(order.items.all()),
+        "name": order.full_name or "there",
+        "pay_url": urljoin(base_url, reverse("razorpay_checkout", args=[order.id]).lstrip("/")),
+        "hold_until": timezone.localtime(release_deadline(order)),
+        "support_phone": getattr(settings, "BUSINESS_PHONE", "+917994357565"),
+    }
+    subject = f"Your order {order.formatted_id} is waiting for payment | Eyetrack Solutions"
+    try:
+        message = EmailMultiAlternatives(
+            subject=subject,
+            body=render_to_string("orders/emails/payment_reminder_email.txt", context),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[order.email],
+        )
+        message.attach_alternative(render_to_string("orders/emails/payment_reminder_email.html", context), "text/html")
+        message.send()
+        return True
+    except Exception:
+        logger.exception("Failed to send payment reminder for order %s", order_id)
+        return False
+
+
 def send_email_async(func, *args, **kwargs):
     """
     Utility to run email sending functions in a separate thread.
