@@ -1193,3 +1193,8 @@ body .cat-nav-pill:not(:has(.cat-nav-count))::after { content: "Soon"; font-size
     flex: 1;
     border-top: 1px solid #dce4ef;
 }
+
+/* Header search: keep it usable when the menu is full (e.g. signed in). */
+@media (min-width: 1200px) {
+    #siteNav .premium-search-form { min-width: 220px; }
+}
