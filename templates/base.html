@@ -21,7 +21,7 @@
         #et-preloader { display: none; }
         html.pl-on #et-preloader {
             position: fixed; inset: 0; z-index: 99999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px;
             background:
                 radial-gradient(50% 45% at 50% 45%, rgba(42, 92, 168, .35), transparent 70%),
                 radial-gradient(40% 40% at 0% 100%, rgba(237, 9, 32, .14), transparent 70%),
@@ -30,16 +30,16 @@
         }
         #et-preloader.is-done { opacity: 0; visibility: hidden; }
         #et-preloader .pl-mark {
-            position: relative; width: 112px; height: 112px;
+            position: relative; width: 150px; height: 150px;
             display: grid; place-items: center;
-            border-radius: 28px;
+            border-radius: 38px;
             background: linear-gradient(160deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .03));
             border: 1px solid rgba(160, 196, 255, .22);
             box-shadow: 0 0 0 10px rgba(255, 255, 255, .025), 0 20px 50px -12px rgba(0, 0, 0, .6);
             overflow: hidden;
             animation: et-pl-breathe 2.4s ease-in-out infinite;
         }
-        #et-preloader .pl-mark img { position: relative; width: 52px; height: auto; filter: drop-shadow(0 4px 14px rgba(237, 9, 32, .35)); }
+        #et-preloader .pl-mark img { position: relative; width: 72px; height: auto; filter: drop-shadow(0 4px 14px rgba(237, 9, 32, .35)); }
         /* red scan line sweeping over the logo */
         #et-preloader .pl-mark::after {
             content: ""; position: absolute; left: 0; right: 0; top: -30%; height: 30%;
@@ -47,12 +47,12 @@
             animation: et-pl-scan 1.6s cubic-bezier(.5, 0, .5, 1) infinite;
         }
         #et-preloader .pl-brand {
-            margin: 0; color: #fff; font: 700 .82rem/1 'Poppins', system-ui, sans-serif; letter-spacing: .5em; text-indent: .5em;
+            margin: 0; color: #fff; font: 700 1.02rem/1 'Poppins', system-ui, sans-serif; letter-spacing: .5em; text-indent: .5em;
             animation: et-pl-fade .8s ease-out both .1s;
         }
         #et-preloader .pl-brand span { color: rgba(222, 232, 250, .55); font-weight: 500; }
         #et-preloader .pl-bar {
-            position: relative; width: 140px; height: 2px; border-radius: 2px; overflow: hidden;
+            position: relative; width: 190px; height: 3px; border-radius: 2px; overflow: hidden;
             background: rgba(255, 255, 255, .12);
         }
         #et-preloader .pl-bar::before {
@@ -64,6 +64,9 @@
         @keyframes et-pl-bar { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
         @keyframes et-pl-breathe { 0%, 100% { box-shadow: 0 0 0 10px rgba(255, 255, 255, .025), 0 20px 50px -12px rgba(0, 0, 0, .6); } 50% { box-shadow: 0 0 0 16px rgba(255, 255, 255, .04), 0 20px 50px -12px rgba(0, 0, 0, .6); } }
         @keyframes et-pl-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+        @media (max-width: 400px) {
+            #et-preloader .pl-brand { font-size: .88rem; letter-spacing: .4em; text-indent: .4em; }
+        }
         @media (prefers-reduced-motion: reduce) {
             #et-preloader .pl-mark, #et-preloader .pl-brand { animation: none; }
             #et-preloader .pl-mark::after, #et-preloader .pl-bar::before { animation-duration: 3s; }
