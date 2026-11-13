@@ -8,16 +8,17 @@
 
 {% block content %}
 <section class="auth-wrap auth-simple row justify-content-center">
-    <div class="col-lg-5">
-        <div class="glass-card auth-simple-card p-4">
-            <h1 class="h4 mb-4">Create an account</h1>
+    <div class="auth-simple-col is-wide">
+        <div class="auth-simple-card">
+            <h1 class="h4">Create an account</h1>
+            <p class="auth-simple-sub">It only takes a minute.</p>
             {% if inactive_email %}
                 <div class="alert alert-warning py-2">
                     This email is already registered but not verified.
                     <a href="{% url 'resend_verification_email' %}?email={{ inactive_email|urlencode }}" class="alert-link">Resend verification email</a>
                 </div>
             {% endif %}
-            <form method="post" class="d-grid gap-3">
+            <form method="post" class="d-grid gap-3 auth-two-col">
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
@@ -28,10 +29,12 @@
                     </div>
                 {% endif %}
                 {% for field in form %}
-                <div class="position-relative">
+                <div class="position-relative{% if field.name == 'first_name' or field.name == 'last_name' %} auth-half{% endif %}">
                     <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
                     {{ field }}
-                    {% if field.help_text %}
+                    {% if field.name == 'password1' %}
+                        <div class="text-secondary small mt-1">At least 8 characters. Avoid common or all-number passwords.</div>
+                    {% elif field.help_text and field.name != 'password2' %}
                         <div class="text-secondary small mt-1">{{ field.help_text|safe }}</div>
                     {% endif %}
                     {% if field.errors %}
@@ -49,7 +52,9 @@
                 </div>
                 <div id="firebase-auth-status-register" class="small text-center"></div>
             </form>
-            <p class="small mt-3 mb-0">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+            <div class="auth-simple-foot">
+                <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+            </div>
         </div>
     </div>
 </section>

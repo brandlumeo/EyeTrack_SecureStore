@@ -1172,20 +1172,81 @@ body .cat-nav-pill:not(:has(.cat-nav-count))::after { content: "Soon"; font-size
     body .cat-nav-track { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 104px; overflow-x: auto; justify-content: start; }
 }
 
-/* Login and registration use the same simple form card. */
+/* Login and registration: small, minimal card on the plain page background. */
+.main-shell .auth-simple {
+    min-height: 0;
+    padding: clamp(1.5rem, 5vw, 3.5rem) 0 clamp(2rem, 6vw, 4.5rem);
+}
+.main-shell .auth-simple::before { display: none; }
+.main-shell .auth-simple > .auth-simple-col { width: 100%; max-width: 372px; padding-inline: 16px; }
+.main-shell .auth-simple > .auth-simple-col.is-wide { max-width: 432px; }
 .main-shell .auth-simple .auth-simple-card {
+    padding: 28px 26px 24px !important;
     background: #fff !important;
-    border: 1px solid #dce4ef;
-    border-radius: 12px;
-    box-shadow: none;
+    border: 1px solid #e3e9f2 !important;
+    border-radius: 16px;
+    box-shadow: 0 12px 32px -16px rgba(11, 23, 79, .18) !important;
     animation: none;
+}
+.main-shell .auth-simple .auth-simple-card h1 {
+    margin: 0 0 4px !important;
+    font-size: 1.35rem !important;
+    font-weight: 650;
+    letter-spacing: -.025em;
+}
+.main-shell .auth-simple .auth-simple-sub { margin: 0 0 20px; font-size: .84rem; color: #6a7a94 !important; }
+.main-shell .auth-simple form.d-grid { gap: 12px !important; }
+.main-shell .auth-simple .form-label {
+    margin-bottom: 5px;
+    font-size: .8rem;
+    font-weight: 600;
+}
+.main-shell .auth-simple input:not([type="checkbox"]):not([type="radio"]) {
+    min-height: 42px !important;
+    padding: .5rem .8rem !important;
+    border-radius: 10px !important;
+    font-size: .9rem !important;
+    background: #f7f9fc !important;
+    border: 1px solid #dde5f0 !important;
+    box-shadow: none !important;
+}
+.main-shell .auth-simple input:not([type="checkbox"]):not([type="radio"]):focus {
+    background: #fff !important;
+    border-color: #0b174f !important;
+    box-shadow: 0 0 0 3px rgba(11, 23, 79, .08) !important;
+}
+.main-shell .auth-simple .btn {
+    min-height: 42px !important;
+    padding: .5rem 1rem !important;
+    border-radius: 10px !important;
+    font-size: .9rem !important;
+}
+.main-shell .auth-simple .btn-outline-light { background: #fff !important; border: 1px solid #dde5f0 !important; color: #0b174f !important; }
+.main-shell .auth-simple .btn-outline-light:hover { border-color: #0b174f !important; }
+.main-shell .auth-simple .auth-simple-card .small.text-secondary,
+.main-shell .auth-simple .auth-simple-card .small.text-secondary li { font-size: .72rem !important; line-height: 1.45; color: #7a889e !important; }
+.main-shell .auth-simple .auth-simple-card .small.text-secondary ul { margin: 4px 0 0; padding-left: 1rem; }
+.main-shell .auth-simple .auth-simple-foot {
+    margin: 18px 0 0; padding-top: 16px; border-top: 1px solid #edf1f7;
+    font-size: .8rem; text-align: center;
+}
+.main-shell .auth-simple .auth-simple-foot p { margin: 0 0 4px; font-size: .8rem; }
+.main-shell .auth-simple .auth-simple-forgot { display: block; margin-top: 6px; text-align: right; font-size: .76rem; }
+/* register: first & last name side by side */
+.main-shell .auth-simple form.auth-two-col { grid-template-columns: 1fr 1fr; }
+.main-shell .auth-simple form.auth-two-col > * { grid-column: 1 / -1; min-width: 0; }
+.main-shell .auth-simple form.auth-two-col > .auth-half { grid-column: auto; }
+@media (max-width: 380px) {
+    .main-shell .auth-simple form.auth-two-col > .auth-half { grid-column: 1 / -1; }
+    .main-shell .auth-simple .auth-simple-card { padding: 22px 18px 20px !important; }
 }
 .auth-simple .auth-simple-divider {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 0;
-    font-size: .8rem;
+    margin: 2px 0 !important;
+    font-size: .75rem;
+    color: #8a97ab !important;
 }
 .auth-simple-divider::before,
 .auth-simple-divider::after {

@@ -40,8 +40,8 @@ class RegistrationForm(PremiumFormMixin, UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["first_name"].widget.attrs.update({"placeholder": "Enter your name"})
-        self.fields["last_name"].widget.attrs.update({"placeholder": "Enter last name (optional)"})
+        self.fields["first_name"].widget.attrs.update({"placeholder": "Your name"})
+        self.fields["last_name"].widget.attrs.update({"placeholder": "Optional"})
         self.fields["email"].widget.attrs.update({"placeholder": "Enter your email"})
         self.fields["phone_number"].widget.attrs.update({"placeholder": "Enter your phone number"})
         self.fields["password1"].widget.attrs.update({"placeholder": "Create a password"})

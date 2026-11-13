@@ -8,9 +8,10 @@
 
 {% block content %}
 <section class="auth-wrap auth-simple row justify-content-center">
-    <div class="col-12" style="max-width: 380px;">
-        <div class="py-3">
-            <h1 class="h4 mb-3">Login</h1>
+    <div class="auth-simple-col">
+        <div class="auth-simple-card">
+            <h1 class="h4">Welcome back</h1>
+            <p class="auth-simple-sub">Log in to your EyeTrack account.</p>
             <form method="post" class="d-grid gap-2">
                 {% csrf_token %}
 
@@ -26,12 +27,10 @@
                 <div>
                     <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
                     {{ field }}
-                    {% if field.help_text %}
-                        <div class="text-secondary small mt-1">{{ field.help_text }}</div>
-                    {% endif %}
                     {% if field.errors %}
                         <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
                     {% endif %}
+                    {% if forloop.last %}<a class="auth-simple-forgot" href="{% url 'password_reset' %}">Forgot password?</a>{% endif %}
                 </div>
                 {% endfor %}
                 <button type="submit" class="btn btn-premium-cta">Login</button>
@@ -44,9 +43,10 @@
                 </div>
                 <div id="firebase-auth-status" class="small text-center"></div>
             </form>
-            <p class="small mt-3 mb-1"><a href="{% url 'password_reset' %}">Forgot password?</a></p>
-            <p class="small mt-1 mb-1"><a href="{% url 'resend_verification_email' %}">Need a new verification link?</a></p>
-            <p class="small mt-1 mb-0">New to EyeTrack? <a href="{% url 'register' %}">Register</a></p>
+            <div class="auth-simple-foot">
+                <p>New to EyeTrack? <a href="{% url 'register' %}">Create an account</a></p>
+                <p><a href="{% url 'resend_verification_email' %}">Resend verification link</a></p>
+            </div>
         </div>
     </div>
 </section>
