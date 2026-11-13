@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Security Solutions for Homes and Businesses | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Explore CCTV, smart locks, video door phones and biometric devices for homes, retail stores and offices. Plan professional installation with EyeTrack.{% endblock %}
 
@@ -52,27 +53,30 @@
         position: relative;
         isolation: isolate;
         overflow: hidden;
-        display: grid;
-        grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+        display: flex;
         align-items: center;
-        gap: clamp(2rem, 5vw, 4.5rem);
+        min-height: clamp(30rem, 46vw, 38rem);
         padding: clamp(2rem, 5.5vw, 4.75rem);
         border-radius: 1.75rem;
-        background:
-            radial-gradient(60% 80% at 100% 0%, rgba(42, 92, 168, .55), transparent 65%),
-            radial-gradient(45% 60% at 0% 100%, rgba(237, 9, 32, .16), transparent 70%),
-            linear-gradient(140deg, #060d28 0%, #0b174f 55%, #0a1a3d 100%);
-        box-shadow: 0 2rem 4rem -1.5rem rgba(6, 13, 40, .55), inset 0 1px 0 rgba(255, 255, 255, .08);
+        background: #060d28;
+        box-shadow: 0 2rem 4rem -1.5rem rgba(6, 13, 40, .55);
     }
-    /* fine grid texture, faded toward the edges */
+    .solutions-hero-content { position: relative; max-width: 40rem; }
+    /* full-bleed photo */
+    .solutions-hero-bg {
+        position: absolute; inset: 0; z-index: -2;
+        width: 100%; height: 100%;
+        object-fit: cover; object-position: 70% center;
+        transform: scale(1.04);
+        animation: solutions-zoom 18s ease-out forwards;
+    }
+    /* navy overlay: solid behind the text, opening up to show the photo on the right */
     .solutions-hub .solutions-hero::before {
         content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-        background-image:
-            linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px);
-        background-size: 44px 44px;
-        -webkit-mask-image: radial-gradient(ellipse 80% 70% at 70% 40%, #000 20%, transparent 75%);
-                mask-image: radial-gradient(ellipse 80% 70% at 70% 40%, #000 20%, transparent 75%);
+        background:
+            linear-gradient(90deg, rgba(6, 13, 40, .96) 0%, rgba(6, 13, 40, .88) 34%, rgba(8, 20, 70, .55) 62%, rgba(8, 20, 70, .15) 100%),
+            linear-gradient(0deg, rgba(6, 13, 40, .6) 0%, transparent 45%),
+            radial-gradient(40% 60% at 0% 100%, rgba(237, 9, 32, .22), transparent 70%);
     }
     /* hairline gradient border */
     .solutions-hub .solutions-hero::after {
@@ -131,61 +135,11 @@
     .solutions-hero-trust li { display: inline-flex; align-items: center; gap: .45rem; }
     .solutions-hero-trust .bi { color: #8fb6ff; }
 
-    /* glass "coverage plan" card */
-    .solutions-visual { position: relative; }
-    .solutions-visual-panel {
-        position: relative;
-        padding: 1rem;
-        border: 1px solid rgba(160, 196, 255, .22);
-        border-radius: 1.25rem;
-        background: linear-gradient(160deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .02));
-        -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-        box-shadow: 0 1.5rem 3rem -1rem rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .12);
-        transform: perspective(1200px) rotateY(-6deg) rotateX(3deg);
-        transition: transform .6s ease;
-    }
-    .solutions-visual:hover .solutions-visual-panel { transform: perspective(1200px) rotateY(0) rotateX(0); }
-    .solutions-visual-head {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: .15rem .35rem .85rem; color: #dbe6fb; font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-    }
-    .solutions-visual-head span:last-child {
-        display: inline-flex; align-items: center; gap: .4rem;
-        padding: .2rem .6rem; border-radius: 999px; background: rgba(46, 204, 113, .14); color: #7ef0ad; letter-spacing: .1em;
-    }
-    .solutions-visual-head span:last-child::before { content: ""; width: .4rem; height: .4rem; border-radius: 50%; background: #3ee08a; animation: solutions-pulse 1.8s ease-in-out infinite; }
-    .solutions-visual svg { display: block; width: 100%; height: auto; border-radius: .8rem; background: rgba(4, 10, 32, .55); }
-    .solutions-visual .cone { animation: solutions-cone 3.6s ease-in-out infinite; }
-    .solutions-visual .cone-2 { animation-delay: 1.2s; }
-    .solutions-visual .cone-3 { animation-delay: 2.4s; }
-    .solutions-visual .scan { animation: solutions-scan 4.5s linear infinite; }
-    .solutions-visual-chips { display: flex; flex-wrap: wrap; gap: .45rem; padding: .85rem .2rem .1rem; }
-    .solutions-visual-chips span {
-        padding: .3rem .7rem; border: 1px solid rgba(160, 196, 255, .2); border-radius: 999px;
-        background: rgba(255, 255, 255, .05); color: #c9d8f3; font-size: .74rem; font-weight: 600;
-    }
-    .solutions-visual-badge {
-        position: absolute; left: -1.25rem; bottom: -3.4rem;
-        display: flex; align-items: center; gap: .65rem;
-        padding: .7rem 1rem .7rem .75rem;
-        border-radius: .9rem; background: #fff; color: #0b174f;
-        box-shadow: 0 1rem 2.25rem -.5rem rgba(0, 0, 0, .45);
-        font-size: .82rem; font-weight: 700; line-height: 1.2;
-        animation: solutions-float 5s ease-in-out infinite;
-    }
-    .solutions-visual-badge .bi {
-        display: grid; place-items: center; width: 2.1rem; height: 2.1rem; border-radius: .6rem;
-        background: #fdecee; color: #ed0920; font-size: 1.05rem;
-    }
-    .solutions-visual-badge small { display: block; color: #5b6b86; font-weight: 500; font-size: .72rem; }
     @keyframes solutions-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-    @keyframes solutions-cone { 0%, 100% { fill-opacity: .16; } 50% { fill-opacity: .42; } }
-    @keyframes solutions-scan { from { transform: translateY(0); } to { transform: translateY(280px); } }
-    @keyframes solutions-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @keyframes solutions-zoom { to { transform: scale(1); } }
     @media (prefers-reduced-motion: reduce) {
-        .solutions-hero-pill::before, .solutions-visual-head span:last-child::before,
-        .solutions-visual .cone, .solutions-visual .scan, .solutions-visual-badge { animation: none; }
-        .solutions-visual-panel { transform: none; }
+        .solutions-hero-pill::before, .solutions-hero-bg { animation: none; }
+        .solutions-hero-bg { transform: none; }
     }
     .solutions-hub .solutions-section-heading { margin-bottom: 1.1rem; }
     .solutions-hub .solutions-section-heading h2 { color: var(--solutions-ink); letter-spacing: -.035em; }
@@ -224,15 +178,18 @@
     .solutions-hub .solutions-cta .btn { background: #163767; color: #fff; }
     .solutions-hub .solutions-cta .btn:hover { background: #0b182b; }
     #security-use-cases { scroll-margin-top: 7rem; }
-    @media (max-width: 991px) {
-        .solutions-hub .solutions-hero { grid-template-columns: minmax(0, 1fr); }
-        .solutions-visual { max-width: 30rem; width: 100%; }
+    @media (max-width: 767px) {
+        .solutions-hub .solutions-hero { align-items: flex-end; min-height: 34rem; }
+        .solutions-hero-bg { object-position: 65% top; }
+        .solutions-hub .solutions-hero::before {
+            background:
+                linear-gradient(0deg, rgba(6, 13, 40, .97) 0%, rgba(6, 13, 40, .9) 48%, rgba(6, 13, 40, .45) 78%, rgba(6, 13, 40, .25) 100%),
+                radial-gradient(60% 40% at 0% 100%, rgba(237, 9, 32, .22), transparent 70%);
+        }
     }
     @media (max-width: 575px) {
-        .solutions-hub .solutions-hero { border-radius: 1.25rem; padding: 1.75rem 1.25rem; }
+        .solutions-hub .solutions-hero { border-radius: 1.25rem; padding: 9rem 1.25rem 1.75rem; }
         .solutions-hub .solutions-hero .btn { flex: 1 1 100%; }
-        .solutions-visual-panel { transform: none; padding: .7rem; }
-        .solutions-visual-badge { position: relative; left: auto; bottom: auto; margin-top: .9rem; animation: none; }
     }
 </style>
 {% endblock %}
@@ -240,7 +197,8 @@
 {% block content %}
 <div class="solutions-page solutions-hub pb-4">
     <section class="solutions-hero mb-5" aria-labelledby="solutions-title">
-        <div>
+        <img class="solutions-hero-bg" src="{% static 'img/solutions-hero-bg.webp' %}" alt="" width="1672" height="941" fetchpriority="high" decoding="async">
+        <div class="solutions-hero-content">
             <p class="solutions-hero-pill mb-4">EyeTrack Security Solutions</p>
             <h1 id="solutions-title" class="mb-3">Find the right security setup for <em>your space.</em></h1>
             <p class="solutions-hero-lead mb-4">Start with what you need to protect. Explore suitable equipment, then talk to our team about placement, coverage and installation.</p>
@@ -253,44 +211,6 @@
                 <li><i class="bi bi-tools" aria-hidden="true"></i>Professional installation</li>
                 <li><i class="bi bi-bullseye" aria-hidden="true"></i>Coverage planned for your space</li>
             </ul>
-        </div>
-        <div class="solutions-visual" aria-hidden="true">
-            <div class="solutions-visual-panel">
-                <div class="solutions-visual-head"><span>Coverage plan</span><span>Live</span></div>
-                <svg viewBox="0 0 400 280" fill="none" focusable="false">
-                    <defs>
-                        <pattern id="solutions-plan-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                            <path d="M20 0H0V20" stroke="#8bb9ef" stroke-opacity=".12"/>
-                        </pattern>
-                        <linearGradient id="solutions-scan-grad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0" stop-color="#7fb2ff" stop-opacity="0"/>
-                            <stop offset="1" stop-color="#7fb2ff" stop-opacity=".35"/>
-                        </linearGradient>
-                        <clipPath id="solutions-plan-clip"><rect width="400" height="280" rx="12"/></clipPath>
-                    </defs>
-                    <rect width="400" height="280" rx="12" fill="url(#solutions-plan-grid)"/>
-                    <path d="M48 224V52H349V224H48ZM160 52V140M160 171V224M160 139H271M300 139H349M257 139V224"
-                          stroke="#a9c7ee" stroke-width="2.5" stroke-linejoin="round"/>
-                    <path class="cone" d="M78 75 141 95 96 145Z" fill="#5d9cff" stroke="#88bcff" stroke-dasharray="4 4"/>
-                    <path class="cone cone-2" d="M321 75 250 98 304 145Z" fill="#5d9cff" stroke="#88bcff" stroke-dasharray="4 4"/>
-                    <path class="cone cone-3" d="M280 203 309 158 333 201Z" fill="#ff5a6b" stroke="#ff8c98" stroke-dasharray="4 4"/>
-                    <path d="M78 75H194V195H280M194 75H321" stroke="#88bcff" stroke-opacity=".55" stroke-dasharray="5 6"/>
-                    <g fill="#0b1d45" stroke="#c4dcff" stroke-width="2">
-                        <circle cx="78" cy="75" r="8"/><circle cx="321" cy="75" r="8"/>
-                        <rect x="183" y="184" width="22" height="22" rx="5"/>
-                    </g>
-                    <circle cx="280" cy="203" r="8" fill="#3a0b14" stroke="#ff8c98" stroke-width="2"/>
-                    <circle cx="194" cy="195" r="3" fill="#c4dcff"/>
-                    <g clip-path="url(#solutions-plan-clip)">
-                        <rect class="scan" y="-60" width="400" height="60" fill="url(#solutions-scan-grad)"/>
-                    </g>
-                </svg>
-                <div class="solutions-visual-chips"><span>Entrance</span><span>Perimeter</span><span>Interior</span><span>Recorder</span></div>
-            </div>
-            <div class="solutions-visual-badge">
-                <i class="bi bi-shield-check" aria-hidden="true"></i>
-                <span>Expert site planning<small>Placement &amp; coverage advice</small></span>
-            </div>
         </div>
     </section>
 
