@@ -5,7 +5,11 @@
     width: 100vw;
     margin-left: calc(50% - 50vw);
     margin-top: -1.5rem;               /* cancel the page container's .pt-4 */
-    margin-bottom: clamp(28px, 4vw, 40px);
+    margin-bottom: 48px;
+    /* same size as the Services / Solutions heroes */
+    min-height: clamp(420px, 52vw, 560px);
+    display: flex;
+    align-items: center;
     background:
         linear-gradient(90deg, rgba(5, 12, 36, .96), rgba(5, 12, 36, .82) 48%, rgba(5, 12, 36, .22)),
         #0b174f url("../img/home-hero-cctv.webp") right 28% / cover no-repeat;
@@ -14,7 +18,7 @@
 .sp-hero__inner {
     width: min(1180px, 100% - 32px);
     margin-inline: auto;
-    padding-block: clamp(64px, 8vw, 112px);
+    padding-block: 56px;
 }
 
 .sp-kicker {
@@ -28,9 +32,9 @@
 body .sp-hero .sp-hero__title {
     margin: 0 0 14px;
     font-weight: 700;
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.1;
-    letter-spacing: -.02em;
+    font-size: clamp(2.1rem, 3.8vw, 3.2rem);
+    line-height: 1.12;
+    letter-spacing: -.03em;
     color: #fff !important;
 }
 .sp-hero__lede {
@@ -69,6 +73,11 @@ body .sp-hero .sp-hero__title {
     color: rgba(222, 230, 255, .75);
 }
 
+@media (max-width: 767.98px) {
+    .sp-hero { min-height: clamp(360px, 72vw, 440px); align-items: flex-end; margin-bottom: 36px; }
+    .sp-hero__inner { padding-block: clamp(96px, 24vw, 160px) 32px; }
+    body .sp-hero .sp-hero__title { font-size: clamp(1.75rem, 6vw, 2.5rem); }
+}
 @media (max-width: 575.98px) {
     .sp-hero {
         background-image:

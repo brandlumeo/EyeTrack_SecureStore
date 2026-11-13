@@ -129,15 +129,6 @@
         background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .28); color: #fff;
     }
     .solutions-hub .solutions-hero .btn-ghost:hover { background: #fff; color: #0b174f; transform: translateY(-2px); }
-    .solutions-hero-trust {
-        display: flex; flex-wrap: wrap; gap: .5rem 1.1rem;
-        width: max-content; max-width: min(640px, calc(100vw - 32px));
-        margin: 1.5rem 0 0; padding: 1.1rem 0 0; list-style: none;
-        border-top: 1px solid rgba(255, 255, 255, .12);
-        color: rgba(222, 232, 250, .78); font-size: .84rem;
-    }
-    .solutions-hero-trust li { display: inline-flex; align-items: center; gap: .45rem; }
-    .solutions-hero-trust .bi { color: #8fb6ff; }
 
     @keyframes solutions-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
     @keyframes solutions-zoom { to { transform: scale(1); } }
@@ -211,11 +202,6 @@
                 <a href="#security-use-cases" class="btn btn-primary-cta">Explore solutions <i class="bi bi-arrow-down-short ms-1" aria-hidden="true"></i></a>
                 <a href="{% url 'services_page' %}" class="btn btn-ghost">Plan installation</a>
             </div>
-            <ul class="solutions-hero-trust">
-                <li><i class="bi bi-house-door" aria-hidden="true"></i>Homes, retail &amp; offices</li>
-                <li><i class="bi bi-tools" aria-hidden="true"></i>Professional installation</li>
-                <li><i class="bi bi-bullseye" aria-hidden="true"></i>Coverage planned for your space</li>
-            </ul>
         </div>
     </section>
 
