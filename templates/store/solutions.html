@@ -55,13 +55,16 @@
         overflow: hidden;
         display: flex;
         align-items: center;
-        min-height: clamp(30rem, 46vw, 38rem);
-        padding: clamp(2rem, 5.5vw, 4.75rem);
-        border-radius: 1.75rem;
+        /* full-bleed, same size as the Services hero */
+        width: 100vw;
+        margin: -1.5rem 0 48px calc(50% - 50vw);
+        min-height: clamp(420px, 52vw, 560px);
+        padding: 56px max(16px, calc((100vw - 1180px) / 2));
+        border-radius: 0;
         background: #060d28;
-        box-shadow: 0 2rem 4rem -1.5rem rgba(6, 13, 40, .55);
     }
-    .solutions-hero-content { position: relative; max-width: 40rem; }
+    .solutions-hub .solutions-hero::after { display: none; }
+    .solutions-hero-content { position: relative; max-width: 560px; }
     /* full-bleed photo */
     .solutions-hero-bg {
         position: absolute; inset: 0; z-index: -2;
@@ -101,10 +104,10 @@
     }
     .solutions-hub .solutions-hero h1 {
         max-width: 16ch;
-        font-size: clamp(2.2rem, 4.6vw, 4.1rem);
-        font-weight: 750;
-        line-height: 1.04;
-        letter-spacing: -.045em;
+        font-size: clamp(2.1rem, 3.8vw, 3.2rem);
+        font-weight: 700;
+        line-height: 1.12;
+        letter-spacing: -.03em;
         text-wrap: balance;
     }
     .solutions-hub .solutions-hero h1 em {
@@ -127,10 +130,11 @@
     }
     .solutions-hub .solutions-hero .btn-ghost:hover { background: #fff; color: #0b174f; transform: translateY(-2px); }
     .solutions-hero-trust {
-        display: flex; flex-wrap: wrap; gap: .6rem 1.5rem;
-        margin: 2rem 0 0; padding: 1.4rem 0 0; list-style: none;
+        display: flex; flex-wrap: wrap; gap: .5rem 1.1rem;
+        width: max-content; max-width: min(640px, calc(100vw - 32px));
+        margin: 1.5rem 0 0; padding: 1.1rem 0 0; list-style: none;
         border-top: 1px solid rgba(255, 255, 255, .12);
-        color: rgba(222, 232, 250, .78); font-size: .88rem;
+        color: rgba(222, 232, 250, .78); font-size: .84rem;
     }
     .solutions-hero-trust li { display: inline-flex; align-items: center; gap: .45rem; }
     .solutions-hero-trust .bi { color: #8fb6ff; }
@@ -179,7 +183,8 @@
     .solutions-hub .solutions-cta .btn:hover { background: #0b182b; }
     #security-use-cases { scroll-margin-top: 7rem; }
     @media (max-width: 767px) {
-        .solutions-hub .solutions-hero { align-items: flex-end; min-height: 34rem; }
+        .solutions-hub .solutions-hero { align-items: flex-end; min-height: clamp(360px, 72vw, 440px); padding-block: clamp(96px, 24vw, 160px) 32px; }
+        .solutions-hub .solutions-hero h1 { font-size: clamp(1.75rem, 6vw, 2.5rem); }
         .solutions-hero-bg { object-position: 65% top; }
         .solutions-hub .solutions-hero::before {
             background:
@@ -188,7 +193,7 @@
         }
     }
     @media (max-width: 575px) {
-        .solutions-hub .solutions-hero { border-radius: 1.25rem; padding: 9rem 1.25rem 1.75rem; }
+        .solutions-hub .solutions-hero { margin-bottom: 36px; }
         .solutions-hub .solutions-hero .btn { flex: 1 1 100%; }
     }
 </style>
@@ -199,7 +204,7 @@
     <section class="solutions-hero mb-5" aria-labelledby="solutions-title">
         <img class="solutions-hero-bg" src="{% static 'img/solutions-hero-bg.webp' %}" alt="" width="1672" height="941" fetchpriority="high" decoding="async">
         <div class="solutions-hero-content">
-            <p class="solutions-hero-pill mb-4">EyeTrack Security Solutions</p>
+            <p class="solutions-hero-pill mb-3">EyeTrack Security Solutions</p>
             <h1 id="solutions-title" class="mb-3">Find the right security setup for <em>your space.</em></h1>
             <p class="solutions-hero-lead mb-4">Start with what you need to protect. Explore suitable equipment, then talk to our team about placement, coverage and installation.</p>
             <div class="d-flex flex-wrap gap-2">
