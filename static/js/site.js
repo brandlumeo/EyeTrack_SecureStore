@@ -1109,18 +1109,53 @@
             }
             return lines.slice(0, 12);
         };
+        // "Key: Value" lines in a description (e.g. "SKU: LAT-5420-I5", "Processor: Core i5")
+        // become their own labelled rows; everything else stays as plain description text.
+        const specLinePattern = /^([A-Za-z][A-Za-z0-9 &/().+-]{0,28}?)\s*:\s*(\S.*)$/;
+        const splitDescription = (text) => {
+            const notes = [];
+            const specs = new Map();
+            descriptionLines(text).forEach((line) => {
+                const match = line.match(specLinePattern);
+                if (match && !/^https?$/i.test(match[1])) {
+                    const key = match[1].trim().replace(/\s+/g, ' ');
+                    const label = key.charAt(0).toUpperCase() + key.slice(1);
+                    if (!specs.has(label.toLowerCase())) specs.set(label.toLowerCase(), { label, value: match[2].trim() });
+                } else {
+                    notes.push(line);
+                }
+            });
+            return { notes, specs };
+        };
         const descriptionRows = (items) => {
-            const perItem = items.map((item) => descriptionLines(item.description));
-            const count = Math.max(1, ...perItem.map((lines) => lines.length));
-            return Array.from({ length: count }, (_, index) => ({
-                label: index === 0 ? 'Description' : '',
-                value: perItem.map((lines) => {
-                    const line = lines[index];
-                    const content = line ? escapeHtml(line) : (index === 0 ? '-' : '');
-                    return `<td class="compare-data-cell">${content}</td>`;
-                }).join(''),
-                className: index === 0 ? 'compare-desc-row' : 'compare-desc-row compare-desc-more',
-            }));
+            const parsed = items.map((item) => splitDescription(item.description));
+            const rows = [];
+            // Plain description text: one line per row, label only on the first.
+            const noteCount = Math.max(...parsed.map((p) => p.notes.length));
+            for (let index = 0; index < noteCount; index += 1) {
+                rows.push({
+                    label: index === 0 ? 'Description' : '',
+                    value: parsed.map((p) => `<td class="compare-data-cell">${p.notes[index] ? escapeHtml(p.notes[index]) : ''}</td>`).join(''),
+                    className: index === 0 ? 'compare-desc-row' : 'compare-desc-row compare-desc-more',
+                });
+            }
+            // Spec rows, in the order the keys first appear across the products.
+            const keys = [];
+            parsed.forEach((p) => p.specs.forEach((spec, key) => { if (!keys.some((k) => k.key === key)) keys.push({ key, label: spec.label }); }));
+            keys.forEach(({ key, label }) => {
+                rows.push({
+                    label,
+                    value: parsed.map((p) => {
+                        const spec = p.specs.get(key);
+                        return `<td class="compare-data-cell">${spec ? escapeHtml(spec.value) : '-'}</td>`;
+                    }).join(''),
+                    className: 'compare-desc-spec',
+                });
+            });
+            if (!rows.length) {
+                rows.push({ label: 'Description', value: parsed.map(() => '<td class="compare-data-cell">-</td>').join(''), className: 'compare-desc-row' });
+            }
+            return rows;
         };
 
         const getStockBadgeClass = (stock) => {
@@ -1398,6 +1433,10 @@
                 'Audio Support': 'mic', 'Audio Communication': 'mic', 'AI Detection': 'cpu', 'Warranty': 'shield-check',
                 'Screen Size': 'display', 'Unlock Method': 'unlock', 'Mobile App Support': 'phone',
                 'Installation Type': 'tools', 'Description': 'card-text',
+                'SKU': 'upc-scan', 'Brand': 'tag', 'Model': 'tag', 'Processor': 'cpu', 'RAM': 'memory', 'Memory': 'memory',
+                'Storage': 'device-ssd', 'Screen': 'display', 'Display': 'display', 'Graphics': 'gpu-card',
+                'Condition': 'stars', 'Battery': 'battery-half', 'OS': 'windows', 'Operating System': 'windows',
+                'Weight': 'box', 'Ports': 'usb-symbol', 'Color': 'palette', 'Colour': 'palette',
             };
             const labelHtml = (label) => (label
                 ? `<i class="bi bi-${specIcons[label] || 'dot'}" aria-hidden="true"></i><span>${label}</span>`
