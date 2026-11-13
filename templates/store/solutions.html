@@ -47,30 +47,146 @@
     .solutions-card a { color: var(--solutions-blue); font-weight: 700; }
     .solutions-page a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
     .solutions-hub { max-width: 82rem; margin-inline: auto; }
+    /* ---- Premium hero ---- */
     .solutions-hub .solutions-hero {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
         display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr);
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
         align-items: center;
-        gap: clamp(1.5rem, 4vw, 4rem);
-        background: radial-gradient(ellipse at top right, #214b79, transparent 70%), #0b182b;
+        gap: clamp(2rem, 5vw, 4.5rem);
+        padding: clamp(2rem, 5.5vw, 4.75rem);
+        border-radius: 1.75rem;
+        background:
+            radial-gradient(60% 80% at 100% 0%, rgba(42, 92, 168, .55), transparent 65%),
+            radial-gradient(45% 60% at 0% 100%, rgba(237, 9, 32, .16), transparent 70%),
+            linear-gradient(140deg, #060d28 0%, #0b174f 55%, #0a1a3d 100%);
+        box-shadow: 0 2rem 4rem -1.5rem rgba(6, 13, 40, .55), inset 0 1px 0 rgba(255, 255, 255, .08);
+    }
+    /* fine grid texture, faded toward the edges */
+    .solutions-hub .solutions-hero::before {
+        content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+        background-image:
+            linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px);
+        background-size: 44px 44px;
+        -webkit-mask-image: radial-gradient(ellipse 80% 70% at 70% 40%, #000 20%, transparent 75%);
+                mask-image: radial-gradient(ellipse 80% 70% at 70% 40%, #000 20%, transparent 75%);
+    }
+    /* hairline gradient border */
+    .solutions-hub .solutions-hero::after {
+        content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+        border-radius: inherit; padding: 1px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, .04) 40%, rgba(237, 9, 32, .35));
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor; mask-composite: exclude;
+    }
+    .solutions-hero-pill {
+        display: inline-flex; align-items: center; gap: .55rem;
+        padding: .4rem .9rem .4rem .7rem;
+        border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px;
+        background: rgba(255, 255, 255, .06);
+        -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+        color: #dbe6fb; font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+    }
+    .solutions-hero-pill::before {
+        content: ""; width: .5rem; height: .5rem; border-radius: 50%;
+        background: #ff2d42; box-shadow: 0 0 0 4px rgba(255, 45, 66, .2);
+        animation: solutions-pulse 2.2s ease-in-out infinite;
     }
     .solutions-hub .solutions-hero h1 {
-        font-size: clamp(2rem, 4.5vw, 4.2rem);
-        line-height: 1.06;
+        max-width: 16ch;
+        font-size: clamp(2.2rem, 4.6vw, 4.1rem);
+        font-weight: 750;
+        line-height: 1.04;
         letter-spacing: -.045em;
         text-wrap: balance;
     }
-    .solutions-hub .solutions-hero .eyebrow { color: #afcff4; }
-    .solutions-hub .solutions-hero .btn-light { background: #fff; color: #142b4b; }
-    .solutions-hub .solutions-hero .btn-outline-light { border-color: #9cbce2; color: #fff; }
-    .solutions-hub .solutions-hero .btn-outline-light:hover { background: #fff; color: #142b4b; }
-    .solutions-visual {
-        padding: clamp(.65rem, 2.4vw, 1.4rem);
-        border: 1px solid #7093bb66;
-        border-radius: 1rem;
-        background: #07192f80;
+    .solutions-hub .solutions-hero h1 em {
+        font-style: normal;
+        background: linear-gradient(100deg, #ffffff 0%, #9fc3ff 45%, #ff6b7a 100%);
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent; color: transparent;
     }
-    .solutions-visual svg { display: block; width: 100%; height: auto; }
+    .solutions-hub .solutions-hero .solutions-hero-lead {
+        max-width: 50ch; color: rgba(222, 232, 250, .82); font-size: clamp(1rem, 1.2vw, 1.1rem); line-height: 1.65;
+    }
+    .solutions-hub .solutions-hero .btn { border-radius: 999px; padding: .8rem 1.6rem; font-weight: 700; transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease; }
+    .solutions-hub .solutions-hero .btn-primary-cta {
+        background: #ed0920; border: 1px solid #ed0920; color: #fff;
+        box-shadow: 0 .75rem 1.75rem -.5rem rgba(237, 9, 32, .55);
+    }
+    .solutions-hub .solutions-hero .btn-primary-cta:hover { background: #c90619; border-color: #c90619; transform: translateY(-2px); }
+    .solutions-hub .solutions-hero .btn-ghost {
+        background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .28); color: #fff;
+    }
+    .solutions-hub .solutions-hero .btn-ghost:hover { background: #fff; color: #0b174f; transform: translateY(-2px); }
+    .solutions-hero-trust {
+        display: flex; flex-wrap: wrap; gap: .6rem 1.5rem;
+        margin: 2rem 0 0; padding: 1.4rem 0 0; list-style: none;
+        border-top: 1px solid rgba(255, 255, 255, .12);
+        color: rgba(222, 232, 250, .78); font-size: .88rem;
+    }
+    .solutions-hero-trust li { display: inline-flex; align-items: center; gap: .45rem; }
+    .solutions-hero-trust .bi { color: #8fb6ff; }
+
+    /* glass "coverage plan" card */
+    .solutions-visual { position: relative; }
+    .solutions-visual-panel {
+        position: relative;
+        padding: 1rem;
+        border: 1px solid rgba(160, 196, 255, .22);
+        border-radius: 1.25rem;
+        background: linear-gradient(160deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .02));
+        -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+        box-shadow: 0 1.5rem 3rem -1rem rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .12);
+        transform: perspective(1200px) rotateY(-6deg) rotateX(3deg);
+        transition: transform .6s ease;
+    }
+    .solutions-visual:hover .solutions-visual-panel { transform: perspective(1200px) rotateY(0) rotateX(0); }
+    .solutions-visual-head {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: .15rem .35rem .85rem; color: #dbe6fb; font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    }
+    .solutions-visual-head span:last-child {
+        display: inline-flex; align-items: center; gap: .4rem;
+        padding: .2rem .6rem; border-radius: 999px; background: rgba(46, 204, 113, .14); color: #7ef0ad; letter-spacing: .1em;
+    }
+    .solutions-visual-head span:last-child::before { content: ""; width: .4rem; height: .4rem; border-radius: 50%; background: #3ee08a; animation: solutions-pulse 1.8s ease-in-out infinite; }
+    .solutions-visual svg { display: block; width: 100%; height: auto; border-radius: .8rem; background: rgba(4, 10, 32, .55); }
+    .solutions-visual .cone { animation: solutions-cone 3.6s ease-in-out infinite; }
+    .solutions-visual .cone-2 { animation-delay: 1.2s; }
+    .solutions-visual .cone-3 { animation-delay: 2.4s; }
+    .solutions-visual .scan { animation: solutions-scan 4.5s linear infinite; }
+    .solutions-visual-chips { display: flex; flex-wrap: wrap; gap: .45rem; padding: .85rem .2rem .1rem; }
+    .solutions-visual-chips span {
+        padding: .3rem .7rem; border: 1px solid rgba(160, 196, 255, .2); border-radius: 999px;
+        background: rgba(255, 255, 255, .05); color: #c9d8f3; font-size: .74rem; font-weight: 600;
+    }
+    .solutions-visual-badge {
+        position: absolute; left: -1.25rem; bottom: -3.4rem;
+        display: flex; align-items: center; gap: .65rem;
+        padding: .7rem 1rem .7rem .75rem;
+        border-radius: .9rem; background: #fff; color: #0b174f;
+        box-shadow: 0 1rem 2.25rem -.5rem rgba(0, 0, 0, .45);
+        font-size: .82rem; font-weight: 700; line-height: 1.2;
+        animation: solutions-float 5s ease-in-out infinite;
+    }
+    .solutions-visual-badge .bi {
+        display: grid; place-items: center; width: 2.1rem; height: 2.1rem; border-radius: .6rem;
+        background: #fdecee; color: #ed0920; font-size: 1.05rem;
+    }
+    .solutions-visual-badge small { display: block; color: #5b6b86; font-weight: 500; font-size: .72rem; }
+    @keyframes solutions-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+    @keyframes solutions-cone { 0%, 100% { fill-opacity: .16; } 50% { fill-opacity: .42; } }
+    @keyframes solutions-scan { from { transform: translateY(0); } to { transform: translateY(280px); } }
+    @keyframes solutions-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @media (prefers-reduced-motion: reduce) {
+        .solutions-hero-pill::before, .solutions-visual-head span:last-child::before,
+        .solutions-visual .cone, .solutions-visual .scan, .solutions-visual-badge { animation: none; }
+        .solutions-visual-panel { transform: none; }
+    }
     .solutions-hub .solutions-section-heading { margin-bottom: 1.1rem; }
     .solutions-hub .solutions-section-heading h2 { color: var(--solutions-ink); letter-spacing: -.035em; }
     .solutions-hub .solutions-card { box-shadow: 0 .7rem 1.8rem #1839530d; }
@@ -108,9 +224,15 @@
     .solutions-hub .solutions-cta .btn { background: #163767; color: #fff; }
     .solutions-hub .solutions-cta .btn:hover { background: #0b182b; }
     #security-use-cases { scroll-margin-top: 7rem; }
-    @media (max-width: 767px) {
+    @media (max-width: 991px) {
         .solutions-hub .solutions-hero { grid-template-columns: minmax(0, 1fr); }
-        .solutions-visual { max-width: 25rem; }
+        .solutions-visual { max-width: 30rem; width: 100%; }
+    }
+    @media (max-width: 575px) {
+        .solutions-hub .solutions-hero { border-radius: 1.25rem; padding: 1.75rem 1.25rem; }
+        .solutions-hub .solutions-hero .btn { flex: 1 1 100%; }
+        .solutions-visual-panel { transform: none; padding: .7rem; }
+        .solutions-visual-badge { position: relative; left: auto; bottom: auto; margin-top: .9rem; animation: none; }
     }
 </style>
 {% endblock %}
@@ -119,33 +241,56 @@
 <div class="solutions-page solutions-hub pb-4">
     <section class="solutions-hero mb-5" aria-labelledby="solutions-title">
         <div>
-        <p class="eyebrow mb-3">EyeTrack Security Solutions</p>
-        <h1 id="solutions-title" class="mb-3">Find the right security setup for your space.</h1>
-        <p class="mb-4">Start with what you need to protect. Explore suitable equipment, then talk to our team about placement, coverage and installation.</p>
-        <div class="d-flex flex-wrap gap-2">
-            <a href="#security-use-cases" class="btn btn-light px-4">Explore solutions</a>
-            <a href="{% url 'services_page' %}" class="btn btn-outline-light px-4">Plan installation</a>
-        </div>
+            <p class="solutions-hero-pill mb-4">EyeTrack Security Solutions</p>
+            <h1 id="solutions-title" class="mb-3">Find the right security setup for <em>your space.</em></h1>
+            <p class="solutions-hero-lead mb-4">Start with what you need to protect. Explore suitable equipment, then talk to our team about placement, coverage and installation.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="#security-use-cases" class="btn btn-primary-cta">Explore solutions <i class="bi bi-arrow-down-short ms-1" aria-hidden="true"></i></a>
+                <a href="{% url 'services_page' %}" class="btn btn-ghost">Plan installation</a>
+            </div>
+            <ul class="solutions-hero-trust">
+                <li><i class="bi bi-house-door" aria-hidden="true"></i>Homes, retail &amp; offices</li>
+                <li><i class="bi bi-tools" aria-hidden="true"></i>Professional installation</li>
+                <li><i class="bi bi-bullseye" aria-hidden="true"></i>Coverage planned for your space</li>
+            </ul>
         </div>
         <div class="solutions-visual" aria-hidden="true">
-            <svg viewBox="0 0 400 280" fill="none" focusable="false">
-                <defs>
-                    <pattern id="solutions-plan-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                        <path d="M20 0H0V20" stroke="#8bb9ef" stroke-opacity=".16"/>
-                    </pattern>
-                </defs>
-                <rect width="400" height="280" rx="10" fill="url(#solutions-plan-grid)"/>
-                <path d="M48 224V52H349V224H48ZM160 52V140M160 171V224M160 139H271M300 139H349M257 139V224"
-                      stroke="#9fbee4" stroke-width="2" stroke-linejoin="round"/>
-                <path d="M78 75 141 95 96 145Z M321 75 250 98 304 145Z M280 203 309 158 333 201Z"
-                      fill="#64a8f2" fill-opacity=".28" stroke="#88bcff" stroke-dasharray="4 4"/>
-                <path d="M78 75H194V195H280M194 75H321" stroke="#88bcff" stroke-opacity=".6" stroke-dasharray="5 6"/>
-                <g fill="#0e2845" stroke="#b6d6ff" stroke-width="2">
-                    <circle cx="78" cy="75" r="8"/><circle cx="321" cy="75" r="8"/><circle cx="280" cy="203" r="8"/>
-                    <rect x="183" y="184" width="22" height="22" rx="5"/>
-                </g>
-                <circle cx="194" cy="195" r="3" fill="#b6d6ff"/>
-            </svg>
+            <div class="solutions-visual-panel">
+                <div class="solutions-visual-head"><span>Coverage plan</span><span>Live</span></div>
+                <svg viewBox="0 0 400 280" fill="none" focusable="false">
+                    <defs>
+                        <pattern id="solutions-plan-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M20 0H0V20" stroke="#8bb9ef" stroke-opacity=".12"/>
+                        </pattern>
+                        <linearGradient id="solutions-scan-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" stop-color="#7fb2ff" stop-opacity="0"/>
+                            <stop offset="1" stop-color="#7fb2ff" stop-opacity=".35"/>
+                        </linearGradient>
+                        <clipPath id="solutions-plan-clip"><rect width="400" height="280" rx="12"/></clipPath>
+                    </defs>
+                    <rect width="400" height="280" rx="12" fill="url(#solutions-plan-grid)"/>
+                    <path d="M48 224V52H349V224H48ZM160 52V140M160 171V224M160 139H271M300 139H349M257 139V224"
+                          stroke="#a9c7ee" stroke-width="2.5" stroke-linejoin="round"/>
+                    <path class="cone" d="M78 75 141 95 96 145Z" fill="#5d9cff" stroke="#88bcff" stroke-dasharray="4 4"/>
+                    <path class="cone cone-2" d="M321 75 250 98 304 145Z" fill="#5d9cff" stroke="#88bcff" stroke-dasharray="4 4"/>
+                    <path class="cone cone-3" d="M280 203 309 158 333 201Z" fill="#ff5a6b" stroke="#ff8c98" stroke-dasharray="4 4"/>
+                    <path d="M78 75H194V195H280M194 75H321" stroke="#88bcff" stroke-opacity=".55" stroke-dasharray="5 6"/>
+                    <g fill="#0b1d45" stroke="#c4dcff" stroke-width="2">
+                        <circle cx="78" cy="75" r="8"/><circle cx="321" cy="75" r="8"/>
+                        <rect x="183" y="184" width="22" height="22" rx="5"/>
+                    </g>
+                    <circle cx="280" cy="203" r="8" fill="#3a0b14" stroke="#ff8c98" stroke-width="2"/>
+                    <circle cx="194" cy="195" r="3" fill="#c4dcff"/>
+                    <g clip-path="url(#solutions-plan-clip)">
+                        <rect class="scan" y="-60" width="400" height="60" fill="url(#solutions-scan-grad)"/>
+                    </g>
+                </svg>
+                <div class="solutions-visual-chips"><span>Entrance</span><span>Perimeter</span><span>Interior</span><span>Recorder</span></div>
+            </div>
+            <div class="solutions-visual-badge">
+                <i class="bi bi-shield-check" aria-hidden="true"></i>
+                <span>Expert site planning<small>Placement &amp; coverage advice</small></span>
+            </div>
         </div>
     </section>
 
