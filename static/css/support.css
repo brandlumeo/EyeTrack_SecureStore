@@ -86,3 +86,24 @@ body .sp-hero .sp-hero__title {
     }
     .sp-actions .sp-btn { flex: 1 1 100%; }
 }
+
+/* Self-Help Resources rows: light-theme colours. The old dark-theme hover in
+   site.css turned the text white on the white card, so it vanished on hover/tap. */
+.compact-row {
+    color: #0b174f;
+    background: #f7f9fc;
+    border-color: #e3e9f2;
+}
+.compact-row span { color: #0b174f; }
+.compact-row strong { color: #ed0920; font-size: .82rem; font-weight: 700; }
+.compact-row:hover,
+.compact-row:focus-visible,
+.compact-row:active {
+    color: #0b174f;
+    background: #eef3fa;
+    border-color: #c9d6ea;
+}
+.compact-row:hover span,
+.compact-row:focus-visible span,
+.compact-row:active span { color: #0b174f; }
+.compact-row:focus-visible { outline: 2px solid #0b174f; outline-offset: 2px; }
