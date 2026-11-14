@@ -6,36 +6,23 @@ Eyetrack Solutions.{% endblock %}
 {% block extra_head %}
 {# Built in the view from the same list as the questions below, so Google's FAQ data always matches the page. #}
 <script type="application/ld+json">{{ faq_jsonld }}</script>
-<link href="{% static 'css/faq.css' %}?v=1" rel="stylesheet">
+<link href="{% static 'css/faq.css' %}?v=2" rel="stylesheet">
 {% endblock %}
 {% block content %}
 <div class="fq">
     {# ==== HERO ==== #}
     <section class="fq-hero" aria-labelledby="fqTitle">
         <div class="fq-hero__inner">
-            <p class="fq-hero__kicker">Help Centre <span aria-hidden="true">&middot;</span> Frequently Asked Questions</p>
-            <h1 class="fq-hero__title" id="fqTitle">How can we <span>help</span> you?</h1>
-            <p class="fq-hero__lede">Clear answers on secure payments, professional installation, warranty and 24/7 technical support.</p>
+            <h1 class="fq-hero__title" id="fqTitle">Frequently asked questions</h1>
+            <p class="fq-hero__lede">Find answers about orders, installation, and support.</p>
 
             <form class="fq-search" role="search" onsubmit="return false">
                 <i class="bi bi-search" aria-hidden="true"></i>
                 <label class="visually-hidden" for="fqSearch">Search the FAQ</label>
-                <input type="search" id="fqSearch" class="fq-search__input" placeholder="Search questions — e.g. warranty, UPI, installation time" autocomplete="off">
+                <input type="search" id="fqSearch" class="fq-search__input" placeholder="Search questions" autocomplete="off">
                 <span class="fq-search__count" id="fqCount" aria-live="polite">{{ faq_total }} answers</span>
             </form>
 
-            <nav class="fq-chips" aria-label="FAQ topics">
-                {% for section in faq_sections %}
-                <a href="#fq-{{ section.id }}" class="fq-chip"><i class="bi {{ section.icon }}" aria-hidden="true"></i>{{ section.title }}<span>{{ section.count }}</span></a>
-                {% endfor %}
-            </nav>
-
-            <ul class="fq-facts" aria-label="Service highlights">
-                <li><i class="bi bi-headset" aria-hidden="true"></i>24/7 tech support</li>
-                <li><i class="bi bi-lock-fill" aria-hidden="true"></i>100% secure payments</li>
-                <li><i class="bi bi-tools" aria-hidden="true"></i>On-site installation</li>
-                <li><i class="bi bi-arrow-repeat" aria-hidden="true"></i>AMC maintenance plans</li>
-            </ul>
         </div>
     </section>
 
