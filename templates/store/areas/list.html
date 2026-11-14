@@ -1,10 +1,21 @@
 {% extends 'store/solutions.html' %}
+{% load static %}
 {% block title %}Areas We Serve: CCTV Installation in Kozhikode, Kannur and Malappuram | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Eyetrack Solutions installs CCTV and security systems across Kozhikode, Kannur and Malappuram districts, and delivers products anywhere in India.{% endblock %}
 
 {% block extra_head %}
 {{ block.super }}
-<style>.solutions-hub .area-hero { grid-template-columns: minmax(0, 1fr); } .solutions-hub .area-hero p { max-width: 62ch; }</style>
+<style>
+    .solutions-hub .area-hero p { max-width: 62ch; }
+    .area-hero .solutions-hero-bg {
+        object-position: right 42%;
+        transform: none;
+        animation: none;
+    }
+    @media (max-width: 767.98px) {
+        .area-hero .solutions-hero-bg { object-position: right top; }
+    }
+</style>
 <script type="application/ld+json">
 {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
   {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
@@ -15,7 +26,8 @@
 {% block content %}
 <div class="solutions-page solutions-hub pb-4">
     <section class="solutions-hero area-hero mb-5" aria-labelledby="areas-title">
-        <div>
+        <img class="solutions-hero-bg" src="{% static 'img/cctv-installation-hero.png' %}" alt="" width="736" height="535" fetchpriority="high">
+        <div class="solutions-hero-content">
             <p class="eyebrow mb-3">Areas we serve</p>
             <h1 id="areas-title" class="mb-3">CCTV installation in north Kerala</h1>
             <p class="mb-0">We install CCTV and security systems across Kozhikode, Kannur and Malappuram districts. Products ship free anywhere in India, in about {{ delivery_days }} days.</p>
