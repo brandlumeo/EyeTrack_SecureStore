@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load media_tags %}
 {% block title %}Your Cart | Eyetrack Solutions{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 {% block extra_head %}
@@ -25,7 +26,7 @@
                 <li class="ct-item">
                     <a href="{% url 'product_detail' product.slug %}" class="ct-thumb">
                         {% if product.image %}
-                        <img loading="lazy" decoding="async" src="{{ product.image.url }}" alt="{{ product.name }}">
+                        <img loading="lazy" decoding="async" src="{{ product.image|thumb:400 }}" alt="{{ product.name }}">
                         {% else %}
                         <i class="bi bi-image" aria-hidden="true"></i>
                         {% endif %}

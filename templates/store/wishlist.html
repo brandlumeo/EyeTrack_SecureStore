@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load media_tags %}
 
 {% block title %}My Wishlist — EyeTrack Solutions{% endblock %}
 
@@ -32,7 +33,7 @@
         <li class="wl-item" id="wishlist-card-{{ product.id }}">
             <a href="{% url 'product_detail' product.slug %}" class="wl-thumb">
                 {% if product.image %}
-                <img loading="lazy" decoding="async" src="{{ product.image.url }}" alt="{{ product.name }}">
+                <img loading="lazy" decoding="async" src="{{ product.image|thumb:400 }}" alt="{{ product.name }}">
                 {% else %}
                 <i class="bi bi-camera-video" aria-hidden="true"></i>
                 {% endif %}

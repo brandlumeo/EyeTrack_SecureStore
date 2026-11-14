@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load media_tags %}
 {% block title %}{{ product.name }} | Eyetrack Solutions{% endblock %}
 {% block meta_description %}{{ seo_description }}{% endblock %}
 {% block og_type %}product{% endblock %}
@@ -83,7 +84,7 @@
                 <span class="pd-stage-tag pd-stage-tag--out">Out of stock</span>
                 {% endif %}
                 {% if product.image %}
-                <img decoding="async" src="{{ product.image.url }}" id="main-detail-image" alt="{{ product.name }}">
+                <img decoding="async" src="{{ product.image|thumb:1200 }}" id="main-detail-image" alt="{{ product.name }}">
                 {% else %}
                 <div class="pd-stage-empty"><i class="bi bi-image"></i></div>
                 {% endif %}
@@ -93,13 +94,13 @@
             {% if product.gallery_images.exists %}
             <div class="thumbnail-grid pd-thumbs">
                 {% if product.image %}
-                <button type="button" class="thumbnail-item active" data-src="{{ product.image.url }}" aria-label="View image 1">
-                    <img loading="lazy" decoding="async" src="{{ product.image.url }}" alt="{{ product.name }}">
+                <button type="button" class="thumbnail-item active" data-src="{{ product.image|thumb:1200 }}" aria-label="View image 1">
+                    <img loading="lazy" decoding="async" src="{{ product.image|thumb:400 }}" alt="{{ product.name }}">
                 </button>
                 {% endif %}
                 {% for item in product.gallery_images.all %}
-                <button type="button" class="thumbnail-item" data-src="{{ item.image.url }}" aria-label="View image {{ forloop.counter|add:1 }}">
-                    <img loading="lazy" decoding="async" src="{{ item.image.url }}" alt="{{ product.name }}, photo {{ forloop.counter|add:1 }}">
+                <button type="button" class="thumbnail-item" data-src="{{ item.image|thumb:1200 }}" aria-label="View image {{ forloop.counter|add:1 }}">
+                    <img loading="lazy" decoding="async" src="{{ item.image|thumb:400 }}" alt="{{ product.name }}, photo {{ forloop.counter|add:1 }}">
                 </button>
                 {% endfor %}
             </div>
@@ -657,7 +658,7 @@
                 <article class="product-card h-100 d-flex flex-column reveal" data-href="{% url 'product_detail' rp.slug %}">
                     <div class="product-image-wrap">
                         {% if rp.image %}
-                        <img loading="lazy" decoding="async" src="{{ rp.image.url }}" alt="{{ rp.name }}" class="product-image">
+                        <img loading="lazy" decoding="async" src="{{ rp.image|thumb:400 }}" {% srcset rp.image %} sizes="(max-width: 767px) 50vw, (max-width: 991px) 33vw, 300px" alt="{{ rp.name }}" class="product-image">
                         {% else %}
                         <div class="product-image placeholder-image">No Image</div>
                         {% endif %}

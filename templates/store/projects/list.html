@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load media_tags %}
 
 {% block title %}Our CCTV Installation Projects | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Completed CCTV and security installations by Eyetrack Solutions for homes, shops, offices, schools and factories across Kozhikode and Kerala.{% endblock %}
@@ -32,7 +33,7 @@
     {% for p in projects %}
     <a href="{{ p.get_absolute_url }}" class="project-card">
         <div class="project-card-media">
-            <img src="{{ p.cover_image.url }}" alt="{{ p.title }}" loading="lazy" decoding="async">
+            <img src="{{ p.cover_image|thumb:800 }}" {% srcset p.cover_image %} sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 360px" alt="{{ p.title }}" loading="lazy" decoding="async">
             <span class="project-badge">{{ p.get_site_type_display }}</span>
         </div>
         <div class="project-card-body">
