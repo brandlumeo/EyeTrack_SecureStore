@@ -254,19 +254,6 @@
 .hero-3d__slides button[aria-pressed="true"] i { transform: scaleX(1); }
 .hero-3d.is-ticking .hero-3d__slides button[aria-pressed="true"] i { animation: h3d-progress var(--h3d-interval) linear both; }
 .hero-3d.is-halted .hero-3d__slides button[aria-pressed="true"] i { animation-play-state: paused; }
-.hero-3d__pause {
-    width: 32px;
-    height: 32px;
-    display: grid;
-    place-items: center;
-    padding: 0;
-    border: 1px solid #cdd5e3;
-    border-radius: 50%;
-    background: #fff;
-    color: var(--h3d-navy);
-    font-size: .9rem;
-}
-.hero-3d__pause:hover { border-color: var(--h3d-navy); }
 
 .hero-3d button:focus-visible,
 .hero-3d a:focus-visible { outline: 3px solid #ff8a97; outline-offset: 3px; }
@@ -307,7 +294,6 @@
     .hero-3d .hero-3d__caption .hero-3d__btn { min-height: 44px; padding: 0 20px; font-size: .88rem; letter-spacing: 0; }
     .hero-3d__arrow { top: 16px; width: 44px; height: 44px; font-size: 1rem; transform: none; }
     .hero-3d__arrow:hover { transform: none; }
-    .hero-3d__pause:not([hidden]) { width: 44px; height: 44px; }
 }
 @media (max-width: 380px) {
     .hero-3d__caption h2 { font-size: 1.55rem !important; }

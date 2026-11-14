@@ -7,7 +7,6 @@
     const slides = hero.querySelectorAll('.hero-3d__slide');
     const navigation = hero.querySelector('.hero-3d__navigation');
     const dots = navigation.querySelectorAll('.hero-3d__slides button');
-    const pause = navigation.querySelector('[data-hero-pause]');
     const status = navigation.querySelector('[data-hero-status]');
     const arrows = hero.querySelectorAll('.hero-3d__arrow');
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -17,7 +16,6 @@
     let timer = 0;
     let remaining = INTERVAL;
     let startedAt = 0;
-    let paused = false;
 
     hero.style.setProperty('--h3d-interval', `${INTERVAL}ms`);
 
@@ -44,13 +42,10 @@
         remaining = INTERVAL;
     };
 
-    const halted = () => paused || motion.matches || document.hidden || hero.matches(':hover, :focus-within');
+    const halted = () => motion.matches || document.hidden || hero.matches(':hover, :focus-within');
 
     const schedule = () => {
         clearTimeout(timer);
-        pause.hidden = motion.matches;
-        pause.setAttribute('aria-label', paused ? 'Play slideshow' : 'Pause slideshow');
-        pause.innerHTML = `<i class="bi bi-${paused ? 'play' : 'pause'}-fill" aria-hidden="true"></i>`;
         if (halted()) {
             if (startedAt) remaining = Math.max(0, remaining - (performance.now() - startedAt));
             startedAt = 0;
@@ -75,10 +70,6 @@
     dots.forEach((dot, i) => dot.addEventListener('click', () => go(i)));
     hero.querySelector('[data-hero-prev]').addEventListener('click', () => go(current - 1));
     hero.querySelector('[data-hero-next]').addEventListener('click', () => go(current + 1));
-    pause.addEventListener('click', () => {
-        paused = !paused;
-        schedule();
-    });
 
     // swipe on touch screens
     let startX = null;
