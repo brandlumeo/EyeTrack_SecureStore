@@ -1117,7 +1117,7 @@ document.addEventListener('DOMContentLoaded', function () {
         name: "{{ product.name|escapejs }}",
         price: "{{ product.price }}",
         slug: "{{ product.slug|escapejs }}",
-        image: "{% if product.image %}{{ product.image.url }}{% endif %}",
+        image: "{% if product.image %}{{ product.image|thumb:400 }}{% endif %}",
         category: "{{ product.category.name|escapejs }}"
     };
 
@@ -1145,7 +1145,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="col-6 col-md-4 col-lg-3">
                     <a href="/product/${p.slug}/" class="rv-card">
                         ${p.image
-                            ? `<img loading="lazy" decoding="async" src="${p.image}" class="rv-img" alt="${p.name}">`
+                            ? `<img loading="lazy" decoding="async" src="${p.image}" class="rv-img" alt="${p.name}" onerror="this.outerHTML='<div class=&quot;rv-img-placeholder&quot;><i class=&quot;bi bi-image&quot;></i></div>'">`
                             : `<div class="rv-img-placeholder"><i class="bi bi-image"></i></div>`}
                         <div class="rv-body">
                             <div class="rv-cat">${p.category}</div>
