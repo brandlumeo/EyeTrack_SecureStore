@@ -779,7 +779,7 @@
     </style>
 
     {% block extra_head %}{% endblock %}
-    <link href="{% static 'css/theme-red-navy.css' %}?v=9" rel="stylesheet">
+    <link href="{% static 'css/theme-red-navy.css' %}?v=10" rel="stylesheet">
     <link href="{% static 'css/hero.css' %}?v=20" rel="stylesheet">
     {% block page_css %}{% endblock %}
     {% include 'includes/mobile_layout.html' %}
@@ -883,13 +883,13 @@
                                 {% endfor %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><h6 class="dropdown-header">Packages &amp; Services</h6></li>
-                                <li><a class="dropdown-item" href="{% url 'product_list' %}#packages"><i class="bi bi-box-seam"></i>Ready-made CCTV kits</a></li>
-                                <li><a class="dropdown-item" href="{% url 'services_page' %}"><i class="bi bi-tools"></i>Installation plans</a></li>
-                                <li><a class="dropdown-item" href="{% url 'home_security' %}"><i class="bi bi-house-heart"></i>Home security</a></li>
-                                <li><a class="dropdown-item" href="{% url 'system_builder' %}"><i class="bi bi-magic"></i>Build your system</a></li>
-                                <li><a class="dropdown-item" href="{% url 'tools_hub' %}"><i class="bi bi-calculator"></i>Storage &amp; lens calculators</a></li>
-                                <li><a class="dropdown-item" href="{% url 'project_list' %}"><i class="bi bi-images"></i>Our projects</a></li>
-                                <li><a class="dropdown-item shop-simple-survey" href="{% url 'quote_request' %}"><i class="bi bi-calendar-check"></i>Free site survey</a></li>
+                                <li><a class="dropdown-item" href="{% url 'product_list' %}#packages">Ready-made CCTV kits</a></li>
+                                <li><a class="dropdown-item" href="{% url 'services_page' %}">Installation plans</a></li>
+                                <li><a class="dropdown-item" href="{% url 'home_security' %}">Home security</a></li>
+                                <li><a class="dropdown-item" href="{% url 'system_builder' %}">Build your system</a></li>
+                                <li><a class="dropdown-item" href="{% url 'tools_hub' %}">Storage &amp; lens calculators</a></li>
+                                <li><a class="dropdown-item" href="{% url 'project_list' %}">Our projects</a></li>
+                                <li><a class="dropdown-item shop-simple-survey" href="{% url 'quote_request' %}">Free site survey</a></li>
                             </ul>
                         </li>
                         <li class="nav-item"><a
@@ -992,7 +992,7 @@
                         <p class="mobile-nav-heading">Product Categories</p>
                         {% for cat in categories %}
                         <a href="{% url 'products_by_category' cat.slug %}" class="mobile-nav-link">
-                            <i class="bi {{ cat.icon }}"></i> <span>{{ cat.name }}</span>
+                            <span>{{ cat.name }}</span>
                         </a>
                         {% endfor %}
                     </div>
@@ -1636,7 +1636,7 @@
             <div class="mob-shop-handle"></div>
             <div class="mob-shop-header">
                 <div class="mob-shop-header-left">
-                    <span class="mob-shop-header-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+
                     <span class="mob-shop-header-title">Shop</span>
                 </div>
                 <button type="button" class="mob-shop-close" id="mobShopClose" aria-label="Close">
@@ -1646,37 +1646,29 @@
             <div class="mob-shop-body">
                 <!-- Browse All -->
                 <a href="{% url 'product_list' %}" class="mob-shop-all-link">
-                    <span class="mob-shop-all-icon"><i class="bi bi-grid-1x2-fill"></i></span>
                     <span class="mob-shop-all-info">
                         <strong>All Products</strong>
                         <small>Browse the complete catalog</small>
                     </span>
-                    <i class="bi bi-arrow-right"></i>
                 </a>
                 <p class="mob-shop-section-label">Product Categories</p>
                 <div class="mob-shop-cat-list">
                     {% for cat in categories %}
                     <a href="{% url 'products_by_category' cat.slug %}" class="mob-shop-cat-link">
-                        <span class="mob-shop-cat-icon"><i class="bi {{ cat.icon }}"></i></span>
                         <span class="mob-shop-cat-info">
                             <strong>{{ cat.name }}</strong>
                             <small>Explore solutions</small>
                         </span>
-                        <i class="bi bi-chevron-right mob-shop-cat-arrow"></i>
                     </a>
                     {% endfor %}
                 </div>
                 <p class="mob-shop-section-label">Services</p>
                 <a href="{% url 'services_page' %}" class="mob-shop-cat-link">
-                    <span class="mob-shop-cat-icon"><i class="bi bi-tools"></i></span>
                     <span class="mob-shop-cat-info"><strong>Installation Services</strong><small>Professional
                             setup</small></span>
-                    <i class="bi bi-chevron-right mob-shop-cat-arrow"></i>
                 </a>
                 <a href="{% url 'support_page' %}" class="mob-shop-cat-link">
-                    <span class="mob-shop-cat-icon"><i class="bi bi-headset"></i></span>
                     <span class="mob-shop-cat-info"><strong>Support Center</strong><small>Get help fast</small></span>
-                    <i class="bi bi-chevron-right mob-shop-cat-arrow"></i>
                 </a>
             </div>
         </div>

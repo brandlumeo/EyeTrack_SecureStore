@@ -1265,3 +1265,29 @@ body .cat-nav-pill:not(:has(.cat-nav-count))::after { content: "Soon"; font-size
 #siteNav .search-result-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; line-height: 1.3; }
 #siteNav .search-result-all { display: flex; align-items: center; justify-content: center; gap: .4rem; margin-top: .25rem; padding: .7rem; border-top: 1px solid var(--stroke); color: var(--navy-deep) !important; font-size: .85rem; font-weight: 650; }
 #siteNav .search-result-all:hover { background: var(--surface-2); color: var(--red) !important; }
+
+/* Keep navigation labels readable while a link is pressed or a menu is open. */
+.header-shell .premium-nav .premium-link,
+.header-shell .premium-nav .premium-link:is(:focus, :active, .show) {
+    color: #0b174f !important;
+}
+.header-shell .premium-nav .premium-link:is(:hover, .active, .is-section-active) {
+    color: #b40d23 !important;
+}
+.header-shell .premium-nav .premium-link:is(:focus, :active, .show),
+.header-shell .dropdown-menu .dropdown-item:is(:focus, :active, .active),
+.mobile-nav-link:is(:focus, :active, .active),
+.mobile-bottom-dock .dock-item:not(.dock-item--quote):is(:focus, :active, .active),
+.mob-shop-all-link:is(:focus, :active),
+.mob-shop-cat-link:is(:focus, :active) {
+    background: #edf2f8 !important;
+    color: #0b174f !important;
+}
+.header-shell .premium-nav .premium-link:focus-visible,
+.header-shell .dropdown-menu .dropdown-item:focus-visible,
+.mobile-nav-link:focus-visible,
+.mobile-bottom-dock .dock-item:focus-visible,
+.mob-shop-panel a:focus-visible {
+    outline: 2px solid #a90f24;
+    outline-offset: -2px;
+}
