@@ -1266,6 +1266,67 @@ body .cat-nav-pill:not(:has(.cat-nav-count))::after { content: "Soon"; font-size
 #siteNav .search-result-all { display: flex; align-items: center; justify-content: center; gap: .4rem; margin-top: .25rem; padding: .7rem; border-top: 1px solid var(--stroke); color: var(--navy-deep) !important; font-size: .85rem; font-weight: 650; }
 #siteNav .search-result-all:hover { background: var(--surface-2); color: var(--red) !important; }
 
+/* ===== "Added to Cart" drawer: light theme ===== */
+/* sits above the product page's sticky add-to-cart bar (z-index 2300) */
+#quickCartDrawer { z-index: 2400 !important; }
+body:has(#quickCartDrawer.show, #quickCartDrawer.showing) .offcanvas-backdrop { z-index: 2350 !important; background: #050b24; }
+body:has(#quickCartDrawer.show, #quickCartDrawer.showing) .offcanvas-backdrop.show { opacity: .55; }
+#quickCartDrawer.quick-cart-drawer {
+    width: min(400px, 94vw);
+    background: #fff !important;
+    border-left: 1px solid var(--stroke) !important;
+    color: var(--navy) !important;
+    box-shadow: -16px 0 40px rgba(11, 23, 79, .18);
+}
+#quickCartDrawer .offcanvas-header {
+    padding: 22px 22px 18px;
+    border-bottom: 1px solid var(--stroke) !important;
+}
+#quickCartDrawer .offcanvas-title {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--navy) !important; font-size: 1.15rem; font-weight: 650; letter-spacing: -.01em;
+}
+#quickCartDrawer .offcanvas-title::before {
+    content: "\F26E"; /* bootstrap-icons check-lg */
+    font-family: "bootstrap-icons"; font-weight: 400;
+    display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(46, 204, 113, .16); color: #17663d; font-size: .95rem;
+    box-shadow: 0 0 0 4px rgba(46, 204, 113, .08);
+}
+#quickCartDrawer .btn-close { filter: none !important; opacity: .75; }
+#quickCartDrawer .btn-close:hover { opacity: 1; }
+#quickCartDrawer .offcanvas-body { padding: 20px 22px 22px; }
+#quickCartDrawer .quick-cart-item {
+    gap: 14px; padding: 14px;
+    border-radius: 16px;
+    background: #f4f7fb !important;
+    border: 1px solid var(--stroke) !important;
+    box-shadow: inset 0 1px 0 #f4f7fb;
+}
+#quickCartDrawer .quick-cart-thumb-wrap {
+    border-radius: 12px; overflow: hidden;
+    background: #fff !important; border: 0 !important;
+}
+#quickCartDrawer .quick-cart-thumb-fallback { background: #edf2f8 !important; color: #12366a !important; }
+#quickCartDrawer .quick-cart-name { color: var(--navy) !important; font-weight: 600; line-height: 1.35; }
+#quickCartDrawer .quick-cart-price { color: #a71328 !important; font-weight: 700; }
+#quickCartDrawer .quick-cart-qty {
+    display: inline-block; padding: 2px 9px; border-radius: 999px;
+    background: #edf2f8; color: #344768 !important; font-size: .76rem;
+}
+#quickCartDrawer .quick-cart-message { color: #455777 !important; font-size: .88rem; }
+#quickCartDrawer .btn-premium-cta {
+    min-height: 48px; border-radius: 12px !important;
+    background: #ed0920 !important; border: 1px solid #ed0920 !important; color: #fff !important;
+    box-shadow: 0 12px 26px -10px rgba(237, 9, 32, .6) !important;
+}
+#quickCartDrawer .btn-premium-cta:hover { background: #c90619 !important; border-color: #c90619 !important; }
+#quickCartDrawer .btn-outline-light {
+    min-height: 48px; border-radius: 12px !important;
+    background: #f4f7fb !important; border: 1px solid var(--stroke) !important; color: var(--navy) !important;
+}
+#quickCartDrawer .btn-outline-light:hover { background: #fff !important; color: #0b174f !important; }
+
 /* Keep navigation labels readable while a link is pressed or a menu is open. */
 .header-shell .premium-nav .premium-link,
 .header-shell .premium-nav .premium-link:is(:focus, :active, .show) {
@@ -1291,3 +1352,14 @@ body .cat-nav-pill:not(:has(.cat-nav-count))::after { content: "Soon"; font-size
     outline: 2px solid #a90f24;
     outline-offset: -2px;
 }
+
+
+/* Action feedback uses a light surface on every storefront page. */
+#premiumActionToast {
+    background: #fff;
+    color: var(--navy);
+    border: 1px solid #a8b6cc;
+    box-shadow: 0 8px 24px rgba(11, 23, 79, .18);
+}
+#premiumActionToast .bi-check-circle-fill { color: #17663d !important; }
+#premiumActionToast .bi-x-circle-fill { color: #a71328 !important; }
