@@ -1,4 +1,5 @@
 {% extends 'store/tools/base_tools.html' %}
+{% load media_tags %}
 
 {% block title %}CCTV System Builder | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Answer six quick questions and get a recommended CCTV camera plan, recorder, hard disk size and installed package for your home or business.{% endblock %}
@@ -144,7 +145,7 @@
             <div class="plan-products">
                 {% for p in products %}
                 <a href="{% url 'product_detail' p.slug %}" class="plan-product">
-                    {% if p.image %}<img src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy">{% endif %}
+                    {% if p.image %}<img src="{{ p.image|thumb:400 }}" alt="{{ p.name }}" loading="lazy">{% endif %}
                     <span>{{ p.name|truncatechars:48 }}</span>
                     <span class="price">&#8377;{{ p.price }}</span>
                 </a>

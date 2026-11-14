@@ -25,3 +25,4 @@ templates/admin_dashboard/test_dashboard.html
 templates/store/product_list_CORRECTED_FINAL.html
 templates/store/product_list_FIXED.html
 templates/store/test_file.html
+media/thumbs/

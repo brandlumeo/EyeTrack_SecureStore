@@ -1,4 +1,5 @@
 {% extends 'store/solutions.html' %}
+{% load media_tags %}
 {% block title %}CCTV Installation in {{ area.name }} | Eyetrack Solutions{% endblock %}
 {% block meta_description %}CCTV cameras, video door phones, smart locks and biometric systems installed across {{ area.name }} district, Kerala. Free site survey from Eyetrack Solutions.{% endblock %}
 {% block og_title %}CCTV Installation in {{ area.name }} | Eyetrack Solutions{% endblock %}
@@ -118,7 +119,7 @@
             {% for p in projects %}
             <div class="col-md-4">
                 <a href="{% url 'project_detail' p.slug %}" class="solutions-card area-project h-100 text-decoration-none">
-                    {% if p.cover_image %}<img src="{{ p.cover_image.url }}" alt="{{ p.title }}" loading="lazy" decoding="async">{% endif %}
+                    {% if p.cover_image %}<img src="{{ p.cover_image|thumb:800 }}" {% srcset p.cover_image %} sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 360px" alt="{{ p.title }}" loading="lazy" decoding="async">{% endif %}
                     <h3 class="h5">{{ p.title }}</h3>
                     <p class="mb-0">{{ p.location }}</p>
                 </a>

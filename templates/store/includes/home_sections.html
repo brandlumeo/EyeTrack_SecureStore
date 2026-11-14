@@ -1,3 +1,4 @@
+{% load media_tags %}
 {# ==== READY-MADE CCTV PACKAGES ==== #}
 <section class="home-section mb-5 reveal" id="packages" aria-labelledby="packagesTitle">
     <div class="home-section-head">
@@ -113,7 +114,7 @@
     <div class="install-gallery">
         {% for p in featured_projects %}
         <a href="{{ p.get_absolute_url }}" class="install-shot" title="{{ p.title }}">
-            <img src="{{ p.cover_image.url }}" alt="{{ p.title }}" loading="lazy" decoding="async">
+            <img src="{{ p.cover_image|thumb:800 }}" {% srcset p.cover_image %} sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 360px" alt="{{ p.title }}" loading="lazy" decoding="async">
             <figcaption>{{ p.get_site_type_display }} &middot; {{ p.location }}</figcaption>
         </a>
         {% endfor %}
@@ -131,7 +132,7 @@
     <div class="install-gallery">
         {% for photo in installation_photos %}
         <figure class="install-shot">
-            <img src="{{ photo.image.url }}" alt="Completed CCTV installation by Eyetrack Solutions" loading="lazy" decoding="async">
+            <img src="{{ photo.image|thumb:400 }}" {% srcset photo.image %} sizes="(max-width: 767px) 50vw, 300px" alt="Completed CCTV installation by Eyetrack Solutions" loading="lazy" decoding="async">
             <figcaption>{{ photo.uploaded_at|date:"M Y" }}</figcaption>
         </figure>
         {% endfor %}

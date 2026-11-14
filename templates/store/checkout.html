@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load media_tags %}
 {% block title %}Checkout | Eyetrack Solutions{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 {% block content %}
@@ -417,7 +418,7 @@
                 {% for item in products %}
                 <div class="co-item">
                     <span class="co-item-visual" aria-hidden="true">
-                        {% if item.product.image %}<img src="{{ item.product.image.url }}" alt="" width="48" height="48">
+                        {% if item.product.image %}<img src="{{ item.product.image|thumb:400 }}" alt="" width="48" height="48">
                         {% else %}<i class="bi bi-box-seam"></i>{% endif %}
                     </span>
                     <div>

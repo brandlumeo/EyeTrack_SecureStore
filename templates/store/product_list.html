@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load media_tags %}
 
 {# ==== META TAGS & SEO ==== #}
 {% block title %}{{ seo_title }}{% endblock %}
@@ -274,7 +275,7 @@
                         <div class="product-image-wrap">
                             <a href="{% url 'product_detail' product.slug %}" class="d-block w-100 h-100">
                                 {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image"{% if is_landing or forloop.counter > 3 %} loading="lazy"{% endif %} decoding="async">
+                                <img src="{{ product.image|thumb:400 }}" {% srcset product.image %} sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 360px" alt="{{ product.name }}" class="product-image"{% if is_landing or forloop.counter > 3 %} loading="lazy"{% endif %} decoding="async">
                                 {% else %}
                                 <div class="product-image placeholder-image d-flex align-items-center justify-content-center">
                                     <i class="bi bi-camera-video text-white-50" style="font-size: 3rem;"></i>
@@ -498,7 +499,7 @@
                 <a href="{% url 'product_detail' product.slug %}" class="featured-pick-row">
                     <div class="fp-thumb">
                         {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" decoding="async">
+                        <img src="{{ product.image|thumb:400 }}" alt="{{ product.name }}" loading="lazy" decoding="async">
                         {% else %}
                         <i class="bi bi-camera-video"></i>
                         {% endif %}

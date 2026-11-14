@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load media_tags %}
 
 {% block title %}{{ project.title }} | Eyetrack Solutions Projects{% endblock %}
 {% block meta_description %}{{ project.summary }}{% endblock %}
@@ -25,7 +26,7 @@
     <h1 class="home-section-title">{{ project.title }}</h1>
 </header>
 
-<div class="project-hero"><img src="{{ project.cover_image.url }}" alt="{{ project.title }}"></div>
+<div class="project-hero"><img src="{{ project.cover_image|thumb:1200 }}" {% srcset project.cover_image %} sizes="100vw" alt="{{ project.title }}"></div>
 
 <div class="project-facts">
     <div class="project-fact"><span>Property</span><strong>{{ project.get_site_type_display }}</strong></div>
@@ -45,7 +46,7 @@
         <div class="project-gallery">
             {% for img in project.images.all %}
             <figure>
-                <a href="{{ img.image.url }}" target="_blank" rel="noopener"><img src="{{ img.image.url }}" alt="{{ img.caption|default:project.title }}" loading="lazy" decoding="async"></a>
+                <a href="{{ img.image.url }}" target="_blank" rel="noopener"><img src="{{ img.image|thumb:800 }}" {% srcset img.image %} sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 360px" alt="{{ img.caption|default:project.title }}" loading="lazy" decoding="async"></a>
                 {% if img.caption %}<figcaption>{{ img.caption }}</figcaption>{% endif %}
             </figure>
             {% endfor %}
@@ -96,7 +97,7 @@
     <div class="project-grid">
         {% for p in related %}
         <a href="{{ p.get_absolute_url }}" class="project-card">
-            <div class="project-card-media"><img src="{{ p.cover_image.url }}" alt="{{ p.title }}" loading="lazy"></div>
+            <div class="project-card-media"><img src="{{ p.cover_image|thumb:800 }}" {% srcset p.cover_image %} sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 360px" alt="{{ p.title }}" loading="lazy"></div>
             <div class="project-card-body"><strong>{{ p.title }}</strong><small>{{ p.location }}</small></div>
         </a>
         {% endfor %}
