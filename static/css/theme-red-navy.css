@@ -869,6 +869,15 @@ body .premium-footer .pf-bottom a { font-size: .73rem; }
 .premium-footer .pf-brand-link small { font-size: .64rem; }
 
 /* Simple Shop dropdown: one clear list, no promotional panel. */
+.header-shell #categoryDropdown:is(.show, [aria-expanded="true"]) {
+    color: #0b174f !important;
+    background-color: #edf2f8 !important;
+    position: relative;
+    z-index: 1;
+}
+.header-shell #categoryDropdown::after {
+    content: none;
+}
 .header-shell .shop-simple-menu {
     min-width: 230px;
     width: max-content;
