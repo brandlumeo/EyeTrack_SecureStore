@@ -35,6 +35,20 @@
             padding-block: 1rem;
         }
         .mobile-footer-tools .btn { min-height: 44px; }
+        .mobile-footer-tools .mobile-footer-backtop {
+            display: inline-grid;
+            place-items: center;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: #ff6b7a;
+            color: #0b174f !important;
+        }
+        .mobile-footer-tools .mobile-footer-backtop:is(:hover, :focus-visible, :active) {
+            background: #ff9aa5;
+        }
         .mobile-footer-tools summary::-webkit-details-marker { display: none; }
         .mobile-help-options {
             display: flex;
