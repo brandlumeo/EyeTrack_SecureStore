@@ -46,10 +46,11 @@
 .process-step,
 .testimonial-card,
 .quote-card {
-    border: 1px solid rgba(249, 250, 251, 0.1);
-    background: linear-gradient(180deg, rgba(249, 250, 251, 0.06), rgba(26, 35, 51, 0.3));
+    /* theme tokens, so cards are clean white on the light theme (was a dark-theme tint that looked muddy grey) */
+    border: 1px solid var(--stroke);
+    background: var(--card);
     border-radius: var(--radius-lg);
-    box-shadow: inset 0 1px 0 rgba(249, 250, 251, 0.05), 0 12px 28px rgba(0, 0, 0, 0.16);
+    box-shadow: var(--shadow-soft);
 }
 
 /* ---- What are you protecting? ---- */
@@ -188,28 +189,94 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    padding: 1.25rem;
+    gap: 0.45rem;
+    padding: 1.5rem 1.35rem 1.4rem;
+    overflow: visible;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
+
+/* red accent bar that grows on hover */
+.process-step::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 1.35rem;
+    width: 2.5rem;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+}
+
+.process-step:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-strong);
+    border-color: var(--accent-glow, var(--stroke));
+}
+
+.process-step:hover::before { width: calc(100% - 2.7rem); }
 
 .process-num {
     position: absolute;
-    top: 1rem;
-    right: 1.1rem;
+    top: 1.25rem;
+    right: 1.25rem;
     font-family: var(--ets-font-heading, "Sora", "Segoe UI", sans-serif);
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: rgba(249, 250, 251, 0.08);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    background: var(--surface-2);
+    border: 1px solid var(--stroke);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
 }
+
+.process-num::before { content: "STEP "; }
 
 .process-step > i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.9rem;
     color: var(--accent);
-    font-size: 1.5rem;
-    margin-bottom: 0.25rem;
+    background: var(--accent-glow, rgba(237, 9, 32, 0.1));
+    font-size: 1.35rem;
+    margin-bottom: 0.6rem;
+    transition: background 0.25s ease, color 0.25s ease;
 }
 
-.process-step strong { color: var(--text); }
-.process-step small { color: var(--text-soft); line-height: 1.5; }
+.process-step:hover > i {
+    background: var(--accent);
+    color: var(--text-on-accent, #fff);
+}
+
+.process-step strong { color: var(--text); font-size: 1.08rem; }
+.process-step small { color: var(--text-soft); line-height: 1.55; font-size: 0.92rem; }
+
+/* arrow between steps on wide screens */
+@media (min-width: 992px) {
+    .process-step:not(:last-child)::after {
+        content: "\F133"; /* bootstrap-icons arrow-right-circle-fill */
+        font-family: "bootstrap-icons";
+        position: absolute;
+        top: 50%;
+        right: -0.5rem;
+        transform: translate(50%, -50%);
+        z-index: 2;
+        font-size: 1.35rem;
+        line-height: 1;
+        color: var(--accent);
+        background: var(--card);
+        border-radius: 50%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .process-step, .process-step::before, .process-step > i { transition: none; }
+    .process-step:hover { transform: none; }
+}
 
 /* ---- Installation gallery ---- */
 .install-gallery {
