@@ -1844,6 +1844,35 @@ def solutions_page(request):
     return render(request, "store/solutions.html")
 
 
+# Home security plan: each coverage zone and the catalogue category that serves it.
+HOME_SECURITY_ZONE_CATEGORIES = {
+    "gate": "homegate-automation",
+    "around": "cctv-installation",
+    "door": "smart-locks",
+}
+
+
+def home_security_page(request):
+    from support.forms import QuoteRequestForm
+
+    products = (
+        Product.objects.filter(is_available=True, category__slug__in=HOME_SECURITY_ZONE_CATEGORIES.values())
+        .select_related("category")
+        .order_by("-stock", "-created_at")
+    )
+    by_category = {}
+    for product in products:
+        bucket = by_category.setdefault(product.category.slug, [])
+        if len(bucket) < 3:
+            bucket.append(product)
+
+    context = {
+        "zone_products": {zone: by_category.get(slug, []) for zone, slug in HOME_SECURITY_ZONE_CATEGORIES.items()},
+        "quote_form": QuoteRequestForm(initial={"site_type": "home"}),
+    }
+    return render(request, "store/home_security.html", context)
+
+
 def about_page(request):
     return render(request, "store/about.html")
 

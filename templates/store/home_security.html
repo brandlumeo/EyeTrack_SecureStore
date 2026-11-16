@@ -1,59 +1,616 @@
 {% extends 'store/solutions.html' %}
-{% block title %}Home Security Solutions | Eyetrack Solutions{% endblock %}
-{% block meta_description %}Plan CCTV coverage, video door phones and smart locks for your home. Explore equipment and request installation planning from EyeTrack.{% endblock %}
+{% load static media_tags %}
+{% block title %}Home Security Systems – CCTV, Video Door Phones &amp; Smart Locks | Eyetrack Solutions{% endblock %}
+{% block meta_description %}Plan home security in three layers: a video door phone at the gate, CCTV around the house and a smart lock on the main door. Book a free site survey with EyeTrack.{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<style>
+    /* ===== Home security page (scoped to .hs) ===== */
+    .hs {
+        --hs-ink: #0b174f;
+        --hs-ink-2: #142b4b;
+        --hs-muted: #4b5d78;
+        --hs-line: #dbe3ee;
+        --hs-soft: #f3f6fb;
+        --hs-blue: #204c85;
+        --hs-red: #ed0920;
+        --hs-red-dark: #c7081c;
+        --hs-radius: 1.1rem;
+        --hs-shadow: 0 .75rem 2rem rgba(11, 23, 79, .07);
+        color: var(--hs-muted);
+    }
+    .hs section[id] { scroll-margin-top: 7rem; }
+    .hs h2, .hs h3, .hs h4 { color: var(--hs-ink); letter-spacing: -.02em; }
+    .hs-eyebrow {
+        display: inline-flex; align-items: center; gap: .5rem; margin-bottom: .6rem;
+        color: var(--hs-red); font-size: .74rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+    }
+    .hs-eyebrow::before { content: ""; width: 1.4rem; height: 2px; border-radius: 2px; background: currentColor; }
+    .hs-head { max-width: 46rem; margin-bottom: clamp(1.25rem, 3vw, 2rem); }
+    .hs-h2, .hs-head h2 { font-size: clamp(1.6rem, 3vw, 2.35rem); font-weight: 800; line-height: 1.15; margin-bottom: .6rem; }
+    .hs-head p { margin: 0; font-size: 1.02rem; line-height: 1.65; }
+    .hs-block { margin-bottom: clamp(3rem, 7vw, 5rem); }
+    .hs a:focus-visible, .hs button:focus-visible { outline: 2px solid var(--hs-blue); outline-offset: 3px; }
+
+    /* ---- Hero ---- */
+    .hs .solutions-hero { margin-bottom: 0; }
+    .solutions-hub.hs .solutions-hero h1 { max-width: 19ch; }
+    .hs-crumbs { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 1.1rem; padding: 0; list-style: none; font-size: .82rem; }
+    .hs-crumbs li { color: rgba(222, 232, 250, .7); }
+    .hs-crumbs li + li::before { content: "/"; margin-right: .4rem; color: rgba(222, 232, 250, .4); }
+    .hs-crumbs a { color: #dbe6fb; text-decoration: none; }
+    .hs-crumbs a:hover { color: #fff; text-decoration: underline; }
+    .hs-crumbs a:focus-visible { outline-color: #fff; }
+    .hs .solutions-hero .btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+    /* ---- Trust strip (overlaps hero bottom) ---- */
+    .hs-trust {
+        position: relative; z-index: 2;
+        display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin: -2.25rem auto clamp(3rem, 7vw, 4.5rem); max-width: 1180px;
+        border: 1px solid var(--hs-line); border-radius: var(--hs-radius);
+        background: #fff; box-shadow: 0 1.25rem 2.5rem rgba(11, 23, 79, .1);
+    }
+    .hs-trust-item { display: flex; align-items: center; gap: .8rem; padding: 1.1rem 1.25rem; }
+    .hs-trust-item + .hs-trust-item { border-left: 1px solid var(--hs-line); }
+    .hs-trust-item i {
+        flex-shrink: 0; display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: .7rem;
+        background: #fff0f2; color: var(--hs-red); font-size: 1.1rem;
+    }
+    .hs-trust-item strong { display: block; color: var(--hs-ink); font-size: .92rem; line-height: 1.25; }
+    .hs-trust-item span { display: block; font-size: .78rem; line-height: 1.35; }
+
+    /* ---- Coverage planner ---- */
+    .hs-planner { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(1rem, 2.5vw, 2rem); align-items: start; }
+    .hs-map {
+        position: relative; margin: 0; padding: clamp(.75rem, 2vw, 1.25rem);
+        border: 1px solid var(--hs-line); border-radius: var(--hs-radius);
+        background: linear-gradient(180deg, #f6f9fd, #edf2f9); box-shadow: var(--hs-shadow);
+    }
+    .hs-map-stage { position: relative; }
+    .hs-map svg { display: block; width: 100%; height: auto; }
+    .hs-map figcaption { margin-top: .6rem; font-size: .8rem; text-align: center; }
+    /* zone emphasis */
+    .hs-map .z { transition: opacity .3s ease; }
+    .hs-map.has-active .z { opacity: .28; }
+    .hs-map[data-active="gate"] .z-gate,
+    .hs-map[data-active="around"] .z-around,
+    .hs-map[data-active="door"] .z-door { opacity: 1; }
+    .hs-map .cone { fill: #ed0920; opacity: .1; transition: opacity .3s ease; }
+    .hs-map[data-active="around"] .cone { opacity: .22; }
+    .hs-hotspot {
+        position: absolute; transform: translate(-50%, -50%);
+        display: grid; place-items: center; width: 2.1rem; height: 2.1rem; padding: 0;
+        border: 3px solid #fff; border-radius: 50%;
+        background: var(--hs-ink); color: #fff; font-size: .85rem; font-weight: 800; line-height: 1;
+        box-shadow: 0 .4rem 1rem rgba(11, 23, 79, .3); cursor: pointer;
+        transition: background-color .2s ease, transform .2s ease;
+    }
+    .hs-hotspot::after {
+        content: ""; position: absolute; inset: -7px; border-radius: 50%;
+        border: 2px solid var(--hs-red); opacity: 0;
+    }
+    .hs-hotspot:hover { transform: translate(-50%, -50%) scale(1.08); }
+    .hs-hotspot[aria-pressed="true"] { background: var(--hs-red); }
+    .hs-hotspot[aria-pressed="true"]::after { animation: hs-ping 1.8s ease-out infinite; }
+    @keyframes hs-ping { 0% { opacity: .9; transform: scale(.8); } 100% { opacity: 0; transform: scale(1.5); } }
+
+    .hs-tabs[hidden] { display: none; }
+    .hs-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; margin-bottom: 1rem; }
+    .hs-tab {
+        display: flex; align-items: center; gap: .6rem; padding: .7rem .8rem; text-align: left;
+        border: 1px solid var(--hs-line); border-radius: .85rem; background: #fff; color: var(--hs-ink);
+        font-size: .86rem; font-weight: 700; line-height: 1.2; cursor: pointer;
+        transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+    }
+    .hs-tab:hover { border-color: #b9c8dc; }
+    .hs-tab-num {
+        flex-shrink: 0; display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%;
+        background: var(--hs-soft); color: var(--hs-ink); font-size: .78rem; font-weight: 800;
+    }
+    .hs-tab small { display: block; color: var(--hs-muted); font-size: .72rem; font-weight: 600; }
+    .hs-tab[aria-selected="true"] { border-color: var(--hs-ink); box-shadow: 0 0 0 1px var(--hs-ink) inset; }
+    .hs-tab[aria-selected="true"] .hs-tab-num { background: var(--hs-red); color: #fff; }
+
+    .hs-panel {
+        padding: clamp(1.15rem, 2.5vw, 1.6rem);
+        border: 1px solid var(--hs-line); border-radius: var(--hs-radius); background: #fff; box-shadow: var(--hs-shadow);
+    }
+    .hs-panel + .hs-panel { margin-top: 1rem; }
+    .hs-js .hs-panel + .hs-panel { margin-top: 0; }
+    .hs-panel-kicker { margin-bottom: .25rem; color: var(--hs-red); font-size: .74rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .hs .hs-panel h3 { font-size: 1.35rem; font-weight: 800; margin-bottom: .5rem; }
+    .hs-panel > p { line-height: 1.65; }
+    .hs-checklist { display: grid; gap: .5rem; margin: 0 0 1.25rem; padding: 0; list-style: none; }
+    .hs-checklist li { display: flex; gap: .6rem; font-size: .92rem; line-height: 1.45; }
+    .hs-checklist li::before {
+        content: "\F26E"; font-family: "bootstrap-icons"; flex-shrink: 0;
+        display: grid; place-items: center; width: 1.25rem; height: 1.25rem; margin-top: .05rem; border-radius: 50%;
+        background: #e9f6ee; color: #17663d; font-size: .9rem;
+    }
+    .hs-checklist-title { margin-bottom: .55rem; color: var(--hs-ink); font-size: .8rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+
+    .hs-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: .65rem; margin-bottom: 1rem; }
+    .hs-product {
+        display: flex; align-items: center; gap: .65rem; padding: .55rem;
+        border: 1px solid var(--hs-line); border-radius: .8rem; background: #fff;
+        color: var(--hs-ink); text-decoration: none; transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .hs-product:hover { border-color: #b9c8dc; box-shadow: 0 .5rem 1.2rem rgba(11, 23, 79, .08); color: var(--hs-ink); }
+    .hs-product img, .hs-product-ph {
+        flex-shrink: 0; width: 3.4rem; height: 3.4rem; border-radius: .55rem; object-fit: contain; background: var(--hs-soft);
+    }
+    .hs-product-ph { display: grid; place-items: center; color: var(--hs-blue); font-size: 1.2rem; }
+    .hs-product-name {
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        font-size: .8rem; font-weight: 700; line-height: 1.3;
+    }
+    .hs-product-price { display: block; margin-top: .15rem; color: var(--hs-red); font-size: .82rem; font-weight: 800; }
+    .hs-link {
+        display: inline-flex; align-items: center; gap: .4rem;
+        color: var(--hs-blue); font-weight: 800; font-size: .92rem; text-decoration: none;
+        border-bottom: 1px solid #adc5e0; padding-bottom: .1rem;
+    }
+    .hs-link:hover { color: var(--hs-ink); border-color: currentColor; }
+    .hs-link i { transition: transform .2s ease; }
+    .hs-link:hover i { transform: translateX(3px); }
+
+    /* ---- Process ---- */
+    .hs-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; counter-reset: hs-step; }
+    .hs-step {
+        position: relative; padding: 1.35rem 1.25rem 1.25rem;
+        border: 1px solid var(--hs-line); border-radius: var(--hs-radius); background: #fff; box-shadow: var(--hs-shadow);
+    }
+    .hs-step:not(:last-child)::after {
+        content: ""; position: absolute; top: 2.55rem; right: -1rem; width: 1rem; height: 2px; background: var(--hs-line);
+    }
+    .hs-step-icon {
+        display: grid; place-items: center; width: 2.6rem; height: 2.6rem; margin-bottom: .9rem; border-radius: .8rem;
+        background: var(--hs-ink); color: #fff; font-size: 1.15rem;
+    }
+    .hs-step-num { position: absolute; top: 1.2rem; right: 1.25rem; color: #c7d3e3; font-size: 1.6rem; font-weight: 800; line-height: 1; }
+    .hs .hs-step h3 { font-size: 1.02rem; font-weight: 800; margin-bottom: .35rem; }
+    .hs-step p { margin: 0; font-size: .88rem; line-height: 1.55; }
+
+    /* ---- Tools band ---- */
+    .hs-tools {
+        display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.6fr); gap: clamp(1.25rem, 3vw, 2.5rem); align-items: center;
+        padding: clamp(1.5rem, 4vw, 2.75rem); border-radius: calc(var(--hs-radius) + .2rem);
+        background: radial-gradient(60% 120% at 100% 0%, rgba(237, 9, 32, .2), transparent 60%), linear-gradient(125deg, #081329, #163767);
+        color: rgba(222, 232, 250, .82);
+    }
+    .hs-tools h2 { color: #fff; font-size: clamp(1.5rem, 2.6vw, 2rem); font-weight: 800; }
+    .hs-tools .hs-eyebrow { color: #ff8b97; }
+    .hs-tool-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+    .hs-tool {
+        display: flex; gap: .85rem; align-items: flex-start; padding: 1rem;
+        border: 1px solid rgba(255, 255, 255, .14); border-radius: .9rem; background: rgba(255, 255, 255, .05);
+        color: #fff; text-decoration: none; transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
+    }
+    .hs-tool:hover { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .3); color: #fff; transform: translateY(-2px); }
+    .hs-tool:focus-visible { outline-color: #fff !important; }
+    .hs-tool i { flex-shrink: 0; display: grid; place-items: center; width: 2.3rem; height: 2.3rem; border-radius: .65rem; background: rgba(255, 255, 255, .1); font-size: 1.05rem; }
+    .hs-tool strong { display: block; font-size: .95rem; }
+    .hs-tool span { display: block; color: rgba(222, 232, 250, .75); font-size: .8rem; line-height: 1.4; }
+
+    /* ---- Survey ---- */
+    .hs-survey { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(1.25rem, 3vw, 2.5rem); align-items: start; }
+    .hs-ready { margin: 1.25rem 0; padding: 1.1rem 1.2rem; border: 1px dashed #b9c8dc; border-radius: .9rem; background: var(--hs-soft); }
+    .hs-ready .hs-checklist { margin: 0; }
+    .hs-contact { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .hs-contact .btn { border-radius: 999px; padding: .6rem 1.2rem; font-weight: 700; }
+    .hs-btn-outline { border: 1px solid var(--hs-line); background: #fff; color: var(--hs-ink); }
+    .hs-btn-outline:hover { border-color: var(--hs-ink); background: var(--hs-ink); color: #fff; }
+    .hs-btn-wa { border: 1px solid #1f9d55; background: #fff; color: #17663d; }
+    .hs-btn-wa:hover { background: #1f9d55; color: #fff; }
+    .hs-form-card {
+        padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--hs-line); border-top: 4px solid var(--hs-red);
+        border-radius: var(--hs-radius); background: #fff !important; box-shadow: 0 1.25rem 2.5rem rgba(11, 23, 79, .09);
+    }
+    .hs .hs-form-card h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: .25rem; }
+    .hs-form-card > p { font-size: .9rem; margin-bottom: 1.25rem; }
+    .hs-form-card .quote-label { color: var(--hs-ink-2); }
+    .hs-form-card .premium-input { background: #fff; border: 1px solid var(--hs-line); color: var(--hs-ink); }
+    .hs-form-card .premium-input:focus { border-color: var(--hs-blue); box-shadow: 0 0 0 .2rem rgba(32, 76, 133, .15); }
+    .hs-form-card .btn-premium-cta { border-radius: 999px; }
+
+    /* ---- FAQ ---- */
+    .hs-faq { max-width: 52rem; }
+    .hs-faq .accordion-item { border: 1px solid var(--hs-line); border-radius: .9rem !important; overflow: hidden; background: #fff; }
+    .hs-faq .accordion-item + .accordion-item { margin-top: .6rem; }
+    .hs-faq .accordion-button { padding: 1rem 1.2rem; background: #fff; color: var(--hs-ink); font-weight: 700; box-shadow: none; }
+    .hs-faq .accordion-button:not(.collapsed) { color: var(--hs-red); background: #fff; }
+    .hs-faq .accordion-button:focus-visible { outline: 2px solid var(--hs-blue); outline-offset: -2px; }
+    .hs-faq .accordion-body { padding: 0 1.2rem 1.1rem; line-height: 1.65; }
+    .hs-faq .accordion-body a { color: var(--hs-blue); font-weight: 700; }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 991px) {
+        .hs-trust { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .hs-trust-item:nth-child(3) { border-left: 0; }
+        .hs-trust-item:nth-child(n+3) { border-top: 1px solid var(--hs-line); }
+        .hs-planner, .hs-survey, .hs-tools { grid-template-columns: 1fr; }
+        .hs-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .hs-step:nth-child(2)::after { display: none; }
+    }
+    @media (max-width: 575px) {
+        .hs-trust { margin-top: -1.5rem; }
+        .hs-crumbs { display: none; }
+        .hs-trust-item { padding: .85rem .9rem; gap: .6rem; }
+        .hs-trust-item i { width: 2rem; height: 2rem; font-size: .95rem; }
+        .hs-trust-item span { display: none; }
+        .hs-tabs { grid-template-columns: 1fr; }
+        .hs-steps { grid-template-columns: 1fr; }
+        .hs-step::after { display: none; }
+        .hs-tool-grid { grid-template-columns: 1fr; }
+        .hs-hotspot { width: 1.8rem; height: 1.8rem; font-size: .78rem; border-width: 2px; }
+        .hs-contact .btn { flex: 1 1 auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .hs-hotspot[aria-pressed="true"]::after { animation: none; }
+        .hs-map .z, .hs-tool, .hs-link i { transition: none; }
+    }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "How many cameras does a home usually need?", "acceptedAnswer": {"@type": "Answer", "text": "Many homes start with about four cameras: the gate, the front door, the driveway or parking, and the back or side entrance. Larger plots and villas often need more. The free site survey confirms the right number for your home."}},
+    {"@type": "Question", "name": "Can I watch my home cameras on my phone?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Most CCTV recorders and IP cameras can be viewed through the brand's phone app. Phone access is set up at handover, and our viewing guides explain the setup for each brand."}},
+    {"@type": "Question", "name": "Do I need internet for CCTV at home?", "acceptedAnswer": {"@type": "Answer", "text": "No for recording: cameras record to the recorder on site without internet. You need an internet connection only to watch live or recorded video when you are away from home."}},
+    {"@type": "Question", "name": "Will a smart lock fit my door?", "acceptedAnswer": {"@type": "Answer", "text": "It depends on the door's material, its thickness and the lock that is fitted today. Note these details before choosing a lock, or ask us to check them during the site survey."}},
+    {"@type": "Question", "name": "What happens during the free site survey?", "acceptedAnswer": {"@type": "Answer", "text": "We visit your home, walk the entrances and outdoor areas, check lighting and cable routes, and suggest where each camera and device should go. You then receive a plan and a quote, with no obligation."}}
+  ]
+}
+</script>
+{% endblock %}
 
 {% block content %}
-<div class="solutions-page">
-    <nav aria-label="Breadcrumb" class="mb-3">
-        <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="{% url 'solutions_page' %}">Solutions</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Home security</li>
+<div class="solutions-page solutions-hub hs pb-4">
+
+    {# ===== HERO ===== #}
+    <section class="solutions-hero" aria-labelledby="hs-title">
+        <img class="solutions-hero-bg" src="{% static 'img/home-hero-cctv.webp' %}" alt="" width="1672" height="941" fetchpriority="high" decoding="async">
+        <div class="solutions-hero-content">
+            <nav aria-label="Breadcrumb">
+                <ol class="hs-crumbs">
+                    <li><a href="{% url 'product_list' %}">Home</a></li>
+                    <li><a href="{% url 'solutions_page' %}">Solutions</a></li>
+                    <li aria-current="page">Home security</li>
+                </ol>
+            </nav>
+            <p class="solutions-hero-pill mb-3">Home security</p>
+            <h1 id="hs-title" class="mb-3">See who’s at the gate. <em>Secure every door.</em></h1>
+            <p class="solutions-hero-lead mb-4">A complete home plan in three layers: a video door phone for visitors, CCTV around the house and a smart lock on the main door, planned and installed by our team.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="#survey" class="btn btn-primary-cta">Book free site survey <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i></a>
+                <a href="#coverage" class="btn btn-ghost">See the coverage plan</a>
+            </div>
+        </div>
+    </section>
+
+    {# ===== TRUST STRIP ===== #}
+    <ul class="hs-trust list-unstyled" aria-label="Why plan with EyeTrack">
+        <li class="hs-trust-item"><i class="bi bi-clipboard2-check" aria-hidden="true"></i><div><strong>Free site survey</strong><span>We visit and plan placement</span></div></li>
+        <li class="hs-trust-item"><i class="bi bi-person-badge" aria-hidden="true"></i><div><strong>Verified technicians</strong><span>Professional installation</span></div></li>
+        <li class="hs-trust-item"><i class="bi bi-phone" aria-hidden="true"></i><div><strong>Phone access</strong><span>Set up at handover</span></div></li>
+        <li class="hs-trust-item"><i class="bi bi-headset" aria-hidden="true"></i><div><strong>After-install support</strong><span>Raise a service request any time</span></div></li>
+    </ul>
+
+    {# ===== COVERAGE PLANNER ===== #}
+    <section id="coverage" class="hs-block" aria-labelledby="hs-coverage-title">
+        <header class="hs-head">
+            <p class="hs-eyebrow">Your coverage plan</p>
+            <h2 id="hs-coverage-title">Protect your home in three layers</h2>
+            <p>Tap a zone on the house to see what it covers, what to check before you buy and the equipment that fits.</p>
+        </header>
+
+        <div class="hs-planner" data-hs-planner>
+            <figure class="hs-map" data-hs-map>
+                <div class="hs-map-stage">
+                    <svg viewBox="0 0 640 400" role="img" aria-labelledby="hs-map-title">
+                        <title id="hs-map-title">Illustration of a home with three security zones: the gate, the area around the house and the main door</title>
+                        <defs>
+                            <linearGradient id="hs-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3ecf8"/><stop offset="1" stop-color="#f6f9fd"/></linearGradient>
+                        </defs>
+                        <rect width="640" height="400" rx="16" fill="url(#hs-sky)"/>
+                        <circle cx="560" cy="62" r="22" fill="#fff" opacity=".9"/>
+                        <!-- ground -->
+                        <rect y="330" width="640" height="70" fill="#d8e2ee"/>
+                        <path d="M0 330 H640" stroke="#c3d0e0" stroke-width="2"/>
+                        <!-- trees -->
+                        <g fill="#b9cce2"><circle cx="600" cy="282" r="26"/><circle cx="622" cy="300" r="18"/><rect x="598" y="296" width="5" height="34" fill="#9fb4cc"/></g>
+
+                        <!-- ZONE 2: around the house (camera cones + cameras) -->
+                        <g class="z z-around">
+                            <path class="cone" d="M262 206 L120 330 L300 330 Z"/>
+                            <path class="cone" d="M578 206 L470 330 L640 330 L640 300 Z"/>
+                        </g>
+
+                        <!-- driveway -->
+                        <path d="M118 400 L170 330 L250 330 L240 400 Z" fill="#c8d4e3"/>
+
+                        <!-- house -->
+                        <g>
+                            <rect x="250" y="196" width="330" height="134" fill="#ffffff" stroke="#9fb1c9" stroke-width="2"/>
+                            <path d="M228 200 L415 92 L602 200 Z" fill="#0b174f"/>
+                            <path d="M228 200 L415 92 L602 200" fill="none" stroke="#08113b" stroke-width="3" stroke-linejoin="round"/>
+                            <rect x="282" y="226" width="62" height="48" rx="3" fill="#dfe9f6" stroke="#9fb1c9" stroke-width="2"/>
+                            <path d="M313 226 V274 M282 250 H344" stroke="#9fb1c9" stroke-width="2"/>
+                            <rect x="486" y="226" width="62" height="48" rx="3" fill="#dfe9f6" stroke="#9fb1c9" stroke-width="2"/>
+                            <path d="M517 226 V274 M486 250 H548" stroke="#9fb1c9" stroke-width="2"/>
+                            <rect x="396" y="132" width="38" height="34" rx="3" fill="#dfe9f6" stroke="#36508a" stroke-width="2"/>
+                            <rect x="370" y="322" width="90" height="8" fill="#c3d0e0"/>
+                        </g>
+
+                        <!-- ZONE 3: main door + smart lock -->
+                        <g class="z z-door">
+                            <rect x="386" y="244" width="58" height="80" rx="3" fill="#7b4a2b" stroke="#5c361e" stroke-width="2"/>
+                            <rect x="392" y="250" width="46" height="32" rx="2" fill="none" stroke="#a06a45" stroke-width="2"/>
+                            <rect x="392" y="288" width="46" height="30" rx="2" fill="none" stroke="#a06a45" stroke-width="2"/>
+                            <rect x="429" y="276" width="9" height="24" rx="2" fill="#111827"/>
+                            <circle cx="433.5" cy="282" r="2" fill="#38bdf8"/>
+                            <rect x="420" y="290" width="14" height="4" rx="2" fill="#111827"/>
+                        </g>
+
+                        <!-- ZONE 2 cameras -->
+                        <g class="z z-around" fill="#ffffff" stroke="#0b174f" stroke-width="2">
+                            <rect x="252" y="200" width="22" height="11" rx="4"/><circle cx="262" cy="211" r="3" fill="#0b174f"/>
+                            <rect x="566" y="200" width="22" height="11" rx="4"/><circle cx="578" cy="211" r="3" fill="#0b174f"/>
+                        </g>
+
+                        <!-- ZONE 1: gate, fence and video door phone -->
+                        <g class="z z-gate">
+                            <g stroke="#7d91ad" stroke-width="3">
+                                <path d="M16 296 H96 M16 314 H96"/>
+                                <path d="M24 288 V330 M44 288 V330 M64 288 V330 M84 288 V330"/>
+                            </g>
+                            <rect x="96" y="266" width="16" height="64" fill="#9fb1c9"/>
+                            <rect x="176" y="266" width="16" height="64" fill="#9fb1c9"/>
+                            <g stroke="#0b174f" stroke-width="3" fill="none">
+                                <path d="M114 282 H174 M114 322 H174 M114 282 V322 M144 282 V322 M174 282 V322"/>
+                                <path d="M124 282 V322 M134 282 V322 M154 282 V322 M164 282 V322" stroke-width="1.5"/>
+                            </g>
+                            <rect x="178" y="278" width="12" height="18" rx="2" fill="#111827"/>
+                            <circle cx="184" cy="284" r="2.5" fill="#38bdf8"/>
+                        </g>
+                    </svg>
+                    <button type="button" class="hs-hotspot" style="left:29%;top:62%" data-hs-zone="gate" aria-pressed="false" aria-label="Zone 1: Gate and visitors">1</button>
+                    <button type="button" class="hs-hotspot" style="left:41%;top:44%" data-hs-zone="around" aria-pressed="false" aria-label="Zone 2: Around the house">2</button>
+                    <button type="button" class="hs-hotspot" style="left:71%;top:63%" data-hs-zone="door" aria-pressed="false" aria-label="Zone 3: Main door">3</button>
+                </div>
+                <figcaption>Tap a number to explore each zone.</figcaption>
+            </figure>
+
+            <div>
+                <div class="hs-tabs" role="tablist" aria-label="Home security zones" hidden data-hs-tabs>
+                    <button type="button" class="hs-tab" role="tab" id="hs-tab-gate" aria-controls="hs-zone-gate" aria-selected="false" data-hs-zone="gate"><span class="hs-tab-num">1</span><span>Gate &amp; visitors<small>Video door phone</small></span></button>
+                    <button type="button" class="hs-tab" role="tab" id="hs-tab-around" aria-controls="hs-zone-around" aria-selected="false" data-hs-zone="around"><span class="hs-tab-num">2</span><span>Around the house<small>CCTV cameras</small></span></button>
+                    <button type="button" class="hs-tab" role="tab" id="hs-tab-door" aria-controls="hs-zone-door" aria-selected="false" data-hs-zone="door"><span class="hs-tab-num">3</span><span>Main door<small>Smart lock</small></span></button>
+                </div>
+
+                <article class="hs-panel" id="hs-zone-gate" aria-labelledby="hs-tab-gate" data-hs-panel="gate">
+                    <p class="hs-panel-kicker">Zone 1 · Video door phone</p>
+                    <h3>Gate &amp; visitors</h3>
+                    <p>See and speak to visitors before you open the gate, from an indoor monitor or, on supported models, your phone.</p>
+                    <p class="hs-checklist-title">Check before you buy</p>
+                    <ul class="hs-checklist">
+                        <li>Where the outdoor unit will mount: gate pillar or front door</li>
+                        <li>Cable distance from the gate to the indoor monitor</li>
+                        <li>Whether you want to answer calls on your phone</li>
+                        <li>Rain and sun cover for the outdoor unit</li>
+                    </ul>
+                    {% if zone_products.gate %}
+                    <div class="hs-products">
+                        {% for product in zone_products.gate %}{% include 'store/includes/_hs_product.html' %}{% endfor %}
+                    </div>
+                    {% endif %}
+                    <a class="hs-link" href="{% url 'products_by_category' 'homegate-automation' %}">Browse video door phones <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                </article>
+
+                <article class="hs-panel" id="hs-zone-around" aria-labelledby="hs-tab-around" data-hs-panel="around">
+                    <p class="hs-panel-kicker">Zone 2 · CCTV cameras</p>
+                    <h3>Around the house</h3>
+                    <p>Cover the gate, driveway, parking and side or back entrances, then watch live or play back recordings from anywhere.</p>
+                    <p class="hs-checklist-title">Check before you buy</p>
+                    <ul class="hs-checklist">
+                        <li>Approaches to cover: gate, driveway, parking, back door</li>
+                        <li>Lighting at night at each spot</li>
+                        <li>Weather exposure and mounting height</li>
+                        <li>Where the recorder sits and how many days to keep footage</li>
+                    </ul>
+                    {% if zone_products.around %}
+                    <div class="hs-products">
+                        {% for product in zone_products.around %}{% include 'store/includes/_hs_product.html' %}{% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="d-flex flex-wrap gap-3">
+                        <a class="hs-link" href="{% url 'products_by_category' 'cctv-installation' %}">Browse CCTV cameras <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                        <a class="hs-link" href="{% url 'storage_calculator' %}">Work out recording storage <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </article>
+
+                <article class="hs-panel" id="hs-zone-door" aria-labelledby="hs-tab-door" data-hs-panel="door">
+                    <p class="hs-panel-kicker">Zone 3 · Smart lock</p>
+                    <h3>Main door</h3>
+                    <p>Open the door with a fingerprint, PIN or card, depending on the model, and stop worrying about spare keys.</p>
+                    <p class="hs-checklist-title">Check before you buy</p>
+                    <ul class="hs-checklist">
+                        <li>Door material: wood, steel or UPVC</li>
+                        <li>Door thickness</li>
+                        <li>Lock fitted today and which way the handle turns</li>
+                        <li>Who needs access: family, staff or guests</li>
+                    </ul>
+                    {% if zone_products.door %}
+                    <div class="hs-products">
+                        {% for product in zone_products.door %}{% include 'store/includes/_hs_product.html' %}{% endfor %}
+                    </div>
+                    {% endif %}
+                    <a class="hs-link" href="{% url 'products_by_category' 'smart-locks' %}">Browse smart locks <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    {# ===== HOW IT WORKS ===== #}
+    <section class="hs-block" aria-labelledby="hs-steps-title">
+        <header class="hs-head">
+            <p class="hs-eyebrow">How it works</p>
+            <h2 id="hs-steps-title">From first call to a fully working system</h2>
+        </header>
+        <ol class="hs-steps">
+            <li class="hs-step">
+                <span class="hs-step-num" aria-hidden="true">01</span>
+                <span class="hs-step-icon"><i class="bi bi-chat-dots" aria-hidden="true"></i></span>
+                <h3>Tell us about your home</h3>
+                <p>Share your property type, PIN code and the areas you want covered. It takes a minute.</p>
+            </li>
+            <li class="hs-step">
+                <span class="hs-step-num" aria-hidden="true">02</span>
+                <span class="hs-step-icon"><i class="bi bi-house-check" aria-hidden="true"></i></span>
+                <h3>Free site survey</h3>
+                <p>We visit, check entrances, lighting and cable routes, and suggest where each device should go.</p>
+            </li>
+            <li class="hs-step">
+                <span class="hs-step-num" aria-hidden="true">03</span>
+                <span class="hs-step-icon"><i class="bi bi-tools" aria-hidden="true"></i></span>
+                <h3>Professional installation</h3>
+                <p>A verified technician mounts, wires and tests everything on the date you choose.</p>
+            </li>
+            <li class="hs-step">
+                <span class="hs-step-num" aria-hidden="true">04</span>
+                <span class="hs-step-icon"><i class="bi bi-phone-vibrate" aria-hidden="true"></i></span>
+                <h3>Handover &amp; support</h3>
+                <p>We set up phone access, show you how it works and stay available for support after installation.</p>
+            </li>
         </ol>
-    </nav>
-    <section class="solutions-hero mb-4" aria-labelledby="home-security-title">
-        <p class="eyebrow mb-3">Home security</p>
-        <h1 id="home-security-title" class="mb-3">Start with the places that matter at home.</h1>
-        <p class="mb-4">Plan how you’ll see visitors, monitor the areas around your home and control who can enter.</p>
-        <div class="d-flex flex-wrap gap-2">
-            <a href="#home-coverage" class="btn btn-light px-4">Explore the coverage plan</a>
-            <a href="{% url 'services_page' %}" class="btn btn-outline-light px-4">Plan installation</a>
+    </section>
+
+    {# ===== PLANNING TOOLS ===== #}
+    <section class="hs-block hs-tools" aria-labelledby="hs-tools-title">
+        <div>
+            <p class="hs-eyebrow">Plan it yourself</p>
+            <h2 id="hs-tools-title">Free tools to plan your setup</h2>
+            <p class="mb-0">Size your system, compare cameras and see how much storage you need before you talk to us.</p>
+        </div>
+        <div class="hs-tool-grid">
+            <a class="hs-tool" href="{% url 'system_builder' %}"><i class="bi bi-diagram-3" aria-hidden="true"></i><div><strong>System builder</strong><span>Build a camera and recorder package step by step</span></div></a>
+            <a class="hs-tool" href="{% url 'camera_guide' %}"><i class="bi bi-camera-video" aria-hidden="true"></i><div><strong>Camera guide</strong><span>Find the right camera type for each spot</span></div></a>
+            <a class="hs-tool" href="{% url 'storage_calculator' %}"><i class="bi bi-device-hdd" aria-hidden="true"></i><div><strong>Storage calculator</strong><span>Estimate hard-disk size for the days you want to keep</span></div></a>
+            <a class="hs-tool" href="{% url 'guide_list' %}"><i class="bi bi-phone" aria-hidden="true"></i><div><strong>Phone viewing guides</strong><span>Set up your camera app, brand by brand</span></div></a>
         </div>
     </section>
 
-    <section id="home-coverage" class="mb-4" aria-labelledby="home-coverage-title">
-        <h2 id="home-coverage-title" class="h3 mb-3">A simple coverage plan</h2>
-        <div class="row g-3">
-            <div class="col-md-4">
-                <section class="solutions-card h-100">
-                    <i class="bi bi-door-open mb-3" aria-hidden="true"></i>
-                    <h2>01 · Front door</h2>
-                    <p>Choose a video door phone to see and speak with visitors. Check whether you need an indoor monitor or phone access.</p>
-                    <a class="mt-auto" href="{% url 'products_by_category' 'homegate-automation' %}">Browse video door phones</a>
-                </section>
+    {# ===== SURVEY FORM ===== #}
+    <section id="survey" class="hs-block hs-survey" aria-labelledby="hs-survey-title">
+        <div>
+            <p class="hs-eyebrow">Free site survey</p>
+            <h2 id="hs-survey-title" class="hs-h2 mb-3">Let us plan your home security</h2>
+            <p>Share a few details and we’ll call to schedule a visit. There’s no obligation to buy.</p>
+            <div class="hs-ready">
+                <p class="hs-checklist-title">Helpful to have ready</p>
+                <ul class="hs-checklist">
+                    <li>Your PIN code and area</li>
+                    <li>House, villa or apartment</li>
+                    <li>The spots you want to see or secure</li>
+                </ul>
             </div>
-            <div class="col-md-4">
-                <section class="solutions-card h-100">
-                    <i class="bi bi-camera-video mb-3" aria-hidden="true"></i>
-                    <h2>02 · Outdoor approaches</h2>
-                    <p>Mark the gate, driveway and side entrances you want to see. Check lighting, weather exposure and where power or cabling can reach.</p>
-                    <a class="mt-auto" href="{% url 'products_by_category' 'cctv-installation' %}">Browse CCTV cameras</a>
-                </section>
+            <div class="hs-contact">
+                {% if BUSINESS_PHONE %}<a href="tel:{{ BUSINESS_PHONE }}" class="btn hs-btn-outline"><i class="bi bi-telephone me-2" aria-hidden="true"></i>Call us</a>{% endif %}
+                {% if BUSINESS_WHATSAPP %}<a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer" class="btn hs-btn-wa"><i class="bi bi-whatsapp me-2" aria-hidden="true"></i>WhatsApp</a>{% endif %}
             </div>
-            <div class="col-md-4">
-                <section class="solutions-card h-100">
-                    <i class="bi bi-lock mb-3" aria-hidden="true"></i>
-                    <h2>03 · Controlled entry</h2>
-                    <p>Pick the door you want to secure and check its material, thickness and lock type before choosing a smart lock.</p>
-                    <a class="mt-auto" href="{% url 'products_by_category' 'smart-locks' %}">Browse smart locks</a>
-                </section>
-            </div>
+        </div>
+        <div class="hs-form-card">
+            <h3>Book your free site survey</h3>
+            <p>We usually call back to fix a convenient time.</p>
+            {% include 'support/includes/quote_form.html' with form=quote_form %}
         </div>
     </section>
 
-    <section class="solutions-card" aria-labelledby="home-install-title">
-        <h2 id="home-install-title">Ready to plan an installation?</h2>
-        <p>Have your PIN code, property type and the areas you want covered ready. This helps the team discuss camera placement, recording and installation options with you.</p>
-        <a href="{% url 'services_page' %}">Go to Installation Services</a>
+    {# ===== FAQ ===== #}
+    <section class="hs-block mb-4" aria-labelledby="hs-faq-title">
+        <header class="hs-head">
+            <p class="hs-eyebrow">Questions</p>
+            <h2 id="hs-faq-title">Home security FAQs</h2>
+        </header>
+        <div class="accordion hs-faq" id="hsFaq">
+            <div class="accordion-item">
+                <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hsFaq1" aria-expanded="false" aria-controls="hsFaq1">How many cameras does a home usually need?</button></h3>
+                <div id="hsFaq1" class="accordion-collapse collapse" data-bs-parent="#hsFaq"><div class="accordion-body">Many homes start with about four cameras: the gate, the front door, the driveway or parking, and the back or side entrance. Larger plots and villas often need more. The free site survey confirms the right number for your home.</div></div>
+            </div>
+            <div class="accordion-item">
+                <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hsFaq2" aria-expanded="false" aria-controls="hsFaq2">Can I watch my home cameras on my phone?</button></h3>
+                <div id="hsFaq2" class="accordion-collapse collapse" data-bs-parent="#hsFaq"><div class="accordion-body">Yes. Most CCTV recorders and IP cameras can be viewed through the brand’s phone app. Phone access is set up at handover, and our <a href="{% url 'guide_list' %}">viewing guides</a> explain the setup for each brand.</div></div>
+            </div>
+            <div class="accordion-item">
+                <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hsFaq3" aria-expanded="false" aria-controls="hsFaq3">Do I need internet for CCTV at home?</button></h3>
+                <div id="hsFaq3" class="accordion-collapse collapse" data-bs-parent="#hsFaq"><div class="accordion-body">Not for recording: cameras record to the recorder on site without internet. You need an internet connection only to watch live or recorded video when you are away from home.</div></div>
+            </div>
+            <div class="accordion-item">
+                <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hsFaq4" aria-expanded="false" aria-controls="hsFaq4">Will a smart lock fit my door?</button></h3>
+                <div id="hsFaq4" class="accordion-collapse collapse" data-bs-parent="#hsFaq"><div class="accordion-body">It depends on the door’s material, its thickness and the lock that is fitted today. Note these details before choosing a lock, or ask us to check them during the site survey.</div></div>
+            </div>
+            <div class="accordion-item">
+                <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hsFaq5" aria-expanded="false" aria-controls="hsFaq5">What happens during the free site survey?</button></h3>
+                <div id="hsFaq5" class="accordion-collapse collapse" data-bs-parent="#hsFaq"><div class="accordion-body">We visit your home, walk the entrances and outdoor areas, check lighting and cable routes, and suggest where each camera and device should go. You then receive a plan and a quote, with no obligation.</div></div>
+            </div>
+        </div>
     </section>
 </div>
+
+<script>
+(function () {
+    var planner = document.querySelector('[data-hs-planner]');
+    if (!planner) return;
+    var map = planner.querySelector('[data-hs-map]');
+    var tablist = planner.querySelector('[data-hs-tabs]');
+    var tabs = Array.prototype.slice.call(planner.querySelectorAll('.hs-tab'));
+    var hotspots = Array.prototype.slice.call(planner.querySelectorAll('.hs-hotspot'));
+    var panels = Array.prototype.slice.call(planner.querySelectorAll('[data-hs-panel]'));
+
+    // Progressive enhancement: without JS every zone is listed; with JS they become tabs.
+    planner.classList.add('hs-js');
+    tablist.hidden = false;
+    map.classList.add('has-active');
+    panels.forEach(function (p) { p.setAttribute('role', 'tabpanel'); p.tabIndex = 0; });
+
+    function select(zone, focusTab) {
+        map.setAttribute('data-active', zone);
+        tabs.forEach(function (t) {
+            var on = t.getAttribute('data-hs-zone') === zone;
+            t.setAttribute('aria-selected', on ? 'true' : 'false');
+            t.tabIndex = on ? 0 : -1;
+            if (on && focusTab) t.focus();
+        });
+        hotspots.forEach(function (h) { h.setAttribute('aria-pressed', h.getAttribute('data-hs-zone') === zone ? 'true' : 'false'); });
+        panels.forEach(function (p) { p.hidden = p.getAttribute('data-hs-panel') !== zone; });
+    }
+
+    tabs.forEach(function (t, i) {
+        t.addEventListener('click', function () { select(t.getAttribute('data-hs-zone')); });
+        t.addEventListener('keydown', function (e) {
+            var next = null;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = tabs[(i + 1) % tabs.length];
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = tabs[(i - 1 + tabs.length) % tabs.length];
+            else if (e.key === 'Home') next = tabs[0];
+            else if (e.key === 'End') next = tabs[tabs.length - 1];
+            if (next) { e.preventDefault(); select(next.getAttribute('data-hs-zone'), true); }
+        });
+    });
+    hotspots.forEach(function (h) {
+        h.addEventListener('click', function () {
+            var zone = h.getAttribute('data-hs-zone');
+            select(zone);
+            // On small screens the panel sits below the map: bring it into view.
+            if (window.matchMedia('(max-width: 991px)').matches) {
+                tablist.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    select('gate');
+})();
+</script>
 {% endblock %}

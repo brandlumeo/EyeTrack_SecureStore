@@ -1,0 +1,12 @@
+{% load media_tags %}{# Compact product link used on the home security page. Expects `product`. #}
+<a class="hs-product" href="{% url 'product_detail' product.slug %}">
+    {% if product.image %}
+    <img src="{{ product.image|thumb:400 }}" alt="" width="54" height="54" loading="lazy" decoding="async">
+    {% else %}
+    <span class="hs-product-ph" aria-hidden="true"><i class="bi bi-box-seam"></i></span>
+    {% endif %}
+    <span>
+        <span class="hs-product-name">{{ product.name }}</span>
+        {% if product.price %}<span class="hs-product-price">&#8377;{{ product.price|floatformat:"0g" }}</span>{% endif %}
+    </span>
+</a>
