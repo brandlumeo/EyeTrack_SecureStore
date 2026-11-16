@@ -68,6 +68,50 @@ class BuilderForm(forms.Form):
         return cleaned
 
 
+# Icons and one-line descriptions for the system builder's answer cards.
+BUILDER_OPTION_DETAILS = {
+    "site_type": {
+        "home": ("bi-house-door", "Independent house or villa"),
+        "apartment": ("bi-buildings", "Flat or apartment block"),
+        "shop": ("bi-shop", "Showroom, store or outlet"),
+        "office": ("bi-briefcase", "Workspace or reception"),
+        "factory": ("bi-boxes", "Yard, loading bay, storage"),
+        "school": ("bi-mortarboard", "Campus, gates, classrooms"),
+        "hospital": ("bi-hospital", "Wards, entrances, pharmacy"),
+        "other": ("bi-three-dots", "Something else"),
+    },
+    "night": {
+        "ir": ("bi-moon-stars", "Clear black-and-white video in the dark. Works with no light at all."),
+        "colour": ("bi-palette", "Shows clothing and vehicle colours at night. Needs a little ambient light."),
+    },
+    "audio": {
+        "no": ("bi-mic-mute", "Video only"),
+        "yes": ("bi-mic", "Hear what happens on camera"),
+    },
+    "days": {
+        7: ("bi-calendar-week", "Smallest hard disk"),
+        15: ("bi-calendar2-range", "A good balance"),
+        30: ("bi-calendar3", "Most popular"),
+    },
+    "cabling": {
+        "yes": ("bi-ethernet", "Most reliable picture and recording"),
+        "unsure": ("bi-question-circle", "We'll check on the site survey"),
+        "wireless": ("bi-wifi", "For finished interiors where wiring is hard"),
+    },
+}
+
+
+def _builder_options(form):
+    options = {}
+    for name, details in BUILDER_OPTION_DETAILS.items():
+        options[name] = [
+            {"value": value, "label": label, "icon": details.get(value, ("bi-circle", ""))[0],
+             "description": details.get(value, ("", ""))[1]}
+            for value, label in form.fields[name].choices
+        ]
+    return options
+
+
 def _initial_data(form_class):
     return {name: field.initial for name, field in form_class.base_fields.items()}
 
@@ -145,4 +189,5 @@ def system_builder(request):
         })
     return render(request, "store/tools/system_builder.html", {
         "form": form, "submitted": submitted, "plan": plan, "products": products, "quote_url": quote_url,
+        "options": _builder_options(form),
     })

@@ -233,6 +233,12 @@
         .hs-planner, .hs-survey, .hs-tools { grid-template-columns: 1fr; }
         .hs-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .hs-step:nth-child(2)::after { display: none; }
+        /* the site forces large h1-h3 sizes below 992px; keep this page's hierarchy */
+        .hs .hs-h2, .hs .hs-head h2, .hs .hs-tools h2 { font-size: clamp(1.5rem, 5.5vw, 1.9rem) !important; }
+        .hs .hs-step h3 { font-size: 1.05rem !important; }
+        .hs .hs-panel h3 { font-size: 1.3rem !important; }
+        .hs .hs-form-card h3 { font-size: 1.2rem !important; }
+        .hs .hs-faq .accordion-header { font-size: 1rem !important; }
     }
     @media (max-width: 575px) {
         .hs-trust { margin-top: -1.5rem; }
