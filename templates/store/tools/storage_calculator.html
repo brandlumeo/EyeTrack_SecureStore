@@ -1,93 +1,190 @@
 {% extends 'store/tools/base_tools.html' %}
+{% load static %}
 
 {% block title %}CCTV Storage & HDD Calculator | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Calculate how much hard disk storage your CCTV cameras need for 7, 15, 30 or 90 days of recording, by resolution, codec and frame rate.{% endblock %}
 
 {% block tool_content %}
-<header class="tools-hero">
-    <p class="eyebrow mb-2">Storage calculator</p>
-    <h1 class="home-section-title mb-3">How much hard disk does your CCTV need?</h1>
-    <p class="lead-copy">Pick your cameras and how long footage should be kept. We size the recorder&rsquo;s hard disk with 10% headroom.</p>
-</header>
+<div class="st">
+    <header class="st-hero">
+        <div>
+            <p class="st-pill">Storage calculator</p>
+            <h1>How much hard disk does your CCTV need?</h1>
+            <p class="st-lead">Pick your cameras and how long footage should be kept. We size the recorder’s hard disk with 10% headroom.</p>
+        </div>
+        <ul class="st-hero-points">
+            <li><i class="bi bi-lightning-charge" aria-hidden="true"></i>Updates as you change settings</li>
+            <li><i class="bi bi-hdd-stack" aria-hidden="true"></i>Standard drive sizes, 10% headroom</li>
+            <li><i class="bi bi-film" aria-hidden="true"></i>H.265 and H.264 compression</li>
+        </ul>
+    </header>
 
-<div class="row g-4">
-    <div class="col-lg-5">
-        <form method="get" action="{% url 'storage_calculator' %}" class="tool-panel" data-calc data-api="{% url 'storage_api' %}">
-            <h2>Your system</h2>
-            <div class="row g-3">
-                <div class="col-6 tool-field">
-                    <label for="id_cameras">Number of cameras</label>
-                    <input type="number" name="cameras" id="id_cameras" min="1" max="128" value="{{ form.cameras.value|default_if_none:4 }}" class="form-control premium-input" inputmode="numeric">
+    <div class="st-layout">
+        {# ===== INPUTS ===== #}
+        <form method="get" action="{% url 'storage_calculator' %}" class="st-panel st-form" data-calc data-api="{% url 'storage_api' %}" data-st-form>
+            <section class="st-group" aria-labelledby="st-g1">
+                <h2 id="st-g1" class="st-group-title"><span>1</span>Your cameras</h2>
+                <div class="st-field">
+                    <label class="st-label" for="id_cameras">Number of cameras</label>
+                    <div class="st-counter">
+                        <button type="button" data-st-step="-1" aria-label="Fewer cameras"><i class="bi bi-dash-lg" aria-hidden="true"></i></button>
+                        <input type="number" name="cameras" id="id_cameras" min="1" max="128" value="{{ form.cameras.value|default_if_none:4 }}" inputmode="numeric">
+                        <button type="button" data-st-step="1" aria-label="More cameras"><i class="bi bi-plus-lg" aria-hidden="true"></i></button>
+                    </div>
                 </div>
-                <div class="col-6 tool-field">
-                    <label for="id_resolution">Resolution</label>
-                    <select name="resolution" id="id_resolution" class="form-select premium-input">
-                        {% for value, label in form.fields.resolution.choices %}<option value="{{ value }}" {% if form.resolution.value|stringformat:"s" == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
-                    </select>
+                <fieldset class="st-field">
+                    <legend class="st-label">Resolution</legend>
+                    <div class="st-seg st-seg--4">
+                        {% for value, label in form.fields.resolution.choices %}
+                        <label class="st-opt"><input type="radio" name="resolution" value="{{ value }}" {% if form.resolution.value|stringformat:"s" == value %}checked{% endif %}><span><strong>{{ value }}</strong><small>{% if value == '2MP' %}1080p{% elif value == '4MP' %}2K{% elif value == '8MP' %}4K{% else %}3K{% endif %}</small></span></label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            </section>
+
+            <section class="st-group" aria-labelledby="st-g2">
+                <h2 id="st-g2" class="st-group-title"><span>2</span>Keep recordings for</h2>
+                <fieldset class="st-field mb-0">
+                    <legend class="visually-hidden">Keep recordings for</legend>
+                    <div class="st-seg st-seg--5">
+                        {% for value, label in form.fields.days.choices %}
+                        <label class="st-opt"><input type="radio" name="days" value="{{ value }}" {% if form.days.value|stringformat:"s" == value|stringformat:"s" %}checked{% endif %}><span><strong>{{ value }}</strong><small>days</small></span></label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            </section>
+
+            <section class="st-group" aria-labelledby="st-g3">
+                <h2 id="st-g3" class="st-group-title"><span>3</span>Recording settings</h2>
+                <fieldset class="st-field">
+                    <legend class="st-label">Compression</legend>
+                    <div class="st-seg st-seg--2">
+                        {% for value, label in form.fields.codec.choices %}
+                        <label class="st-opt"><input type="radio" name="codec" value="{{ value }}" {% if form.codec.value|stringformat:"s" == value %}checked{% endif %}><span><strong>{% if value == 'h265' %}H.265{% else %}H.264{% endif %}</strong><small>{% if value == 'h265' %}Recommended, about half the storage{% else %}Older recorders{% endif %}</small></span></label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+                <fieldset class="st-field">
+                    <legend class="st-label">Frame rate</legend>
+                    <div class="st-seg st-seg--4">
+                        {% for value, label in form.fields.fps.choices %}
+                        <label class="st-opt"><input type="radio" name="fps" value="{{ value }}" {% if form.fps.value|stringformat:"s" == value|stringformat:"s" %}checked{% endif %}><span><strong>{{ value }}</strong><small>fps</small></span></label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+                <div class="st-field">
+                    <div class="st-range-head"><label class="st-label mb-0" for="id_hours">Hours recorded per day</label><output for="id_hours" data-st-out="hours">{{ form.hours.value|default_if_none:24 }} h</output></div>
+                    <input type="range" class="st-range" name="hours" id="id_hours" min="1" max="24" step="1" value="{{ form.hours.value|default_if_none:24 }}">
                 </div>
-                <div class="col-6 tool-field">
-                    <label for="id_days">Keep recordings for</label>
-                    <select name="days" id="id_days" class="form-select premium-input">
-                        {% for value, label in form.fields.days.choices %}<option value="{{ value }}" {% if form.days.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>{% endfor %}
-                    </select>
+                <fieldset class="st-field">
+                    <legend class="st-label">Recording mode</legend>
+                    <div class="st-seg st-seg--2">
+                        {% for value, label in form.fields.mode.choices %}
+                        <label class="st-opt"><input type="radio" name="mode" value="{{ value }}" {% if form.mode.value|stringformat:"s" == value %}checked{% endif %}><span><strong>{{ label }}</strong><small>{% if value == 'continuous' %}Records all the time{% else %}Records only when there is movement{% endif %}</small></span></label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+                <div class="st-field mb-0" data-st-activity>
+                    <div class="st-range-head"><label class="st-label mb-0" for="id_activity">Activity (motion mode)</label><output for="id_activity" data-st-out="activity">{{ form.activity.value|default_if_none:30 }}%</output></div>
+                    <input type="range" class="st-range" name="activity" id="id_activity" min="5" max="100" step="5" value="{{ form.activity.value|default_if_none:30 }}">
+                    <span class="st-hint">Share of the day with movement in front of the cameras.</span>
                 </div>
-                <div class="col-6 tool-field">
-                    <label for="id_codec">Compression</label>
-                    <select name="codec" id="id_codec" class="form-select premium-input">
-                        {% for value, label in form.fields.codec.choices %}<option value="{{ value }}" {% if form.codec.value|stringformat:"s" == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
-                    </select>
-                </div>
-                <div class="col-6 tool-field">
-                    <label for="id_fps">Frame rate</label>
-                    <select name="fps" id="id_fps" class="form-select premium-input">
-                        {% for value, label in form.fields.fps.choices %}<option value="{{ value }}" {% if form.fps.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>{{ label }}</option>{% endfor %}
-                    </select>
-                </div>
-                <div class="col-6 tool-field">
-                    <label for="id_hours">Hours recorded per day</label>
-                    <input type="number" name="hours" id="id_hours" min="1" max="24" value="{{ form.hours.value|default_if_none:24 }}" class="form-control premium-input" inputmode="numeric">
-                </div>
-                <div class="col-6 tool-field">
-                    <label for="id_mode">Recording mode</label>
-                    <select name="mode" id="id_mode" class="form-select premium-input">
-                        {% for value, label in form.fields.mode.choices %}<option value="{{ value }}" {% if form.mode.value|stringformat:"s" == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
-                    </select>
-                </div>
-                <div class="col-6 tool-field">
-                    <label for="id_activity">Activity (motion mode) %</label>
-                    <input type="number" name="activity" id="id_activity" min="5" max="100" value="{{ form.activity.value|default_if_none:30 }}" class="form-control premium-input" inputmode="numeric">
-                    <span class="tool-hint">Share of the day with movement.</span>
-                </div>
-            </div>
-            {% if form.errors %}<div class="tool-error">{% for field, errs in form.errors.items %}{{ errs|striptags }} {% endfor %}</div>{% endif %}
-            <div class="tool-error d-none" data-calc-error></div>
-            <button type="submit" class="btn btn-premium-cta" data-calc-submit>Calculate</button>
+            </section>
+
+            {% if form.errors %}<div class="st-error">{% for field, errs in form.errors.items %}{{ errs|striptags }} {% endfor %}</div>{% endif %}
+            <div class="st-error d-none" data-calc-error role="alert"></div>
+            <button type="submit" class="st-btn st-btn--red" data-calc-submit><i class="bi bi-calculator" aria-hidden="true"></i>Calculate</button>
         </form>
-    </div>
 
-    <div class="col-lg-7">
-        <section class="tool-panel" aria-live="polite" aria-labelledby="storageResultTitle">
-            <h2 id="storageResultTitle">Estimated storage</h2>
-            {% if result %}
-            <div class="tool-stats">
-                <div class="tool-stat"><strong data-out="hdd">{{ result.hdd.drives }} &times; {{ result.hdd.size_tb }} TB</strong><span>Recommended hard disk</span></div>
-                <div class="tool-stat"><strong><span data-out="total_tb">{{ result.total_tb }}</span> TB</strong><span>Footage for <span data-out="days">{{ result.days }}</span> days</span></div>
-                <div class="tool-stat"><strong><span data-out="bandwidth_mbps">{{ result.bandwidth_mbps }}</span> Mbps</strong><span>Total recording bitrate</span></div>
+        {# ===== RESULT ===== #}
+        <section class="st-panel st-result" id="st-result" aria-live="polite" aria-labelledby="storageResultTitle">
+            <div class="st-result-head">
+                <h2 id="storageResultTitle" class="st-result-kicker">Recommended hard disk</h2>
+                <p class="st-result-big"><i class="bi bi-device-hdd" aria-hidden="true"></i><strong data-out="hdd">{% if result %}{{ result.hdd.drives }} &times; {{ result.hdd.size_tb }} TB{% else %}-{% endif %}</strong></p>
+                <p class="st-result-sub">for <span data-out="days">{% if result %}{{ result.days }}{% else %}-{% endif %}</span> days of recordings</p>
+                <div class="st-meter" data-st-meter>
+                    <div class="st-meter-bar"><span data-st-meter-fill style="width:0%"></span></div>
+                    <p class="st-meter-label" data-st-meter-label>&nbsp;</p>
+                </div>
             </div>
-            {% with line=result.lines.0 %}
-            <table class="tool-table">
-                <tbody>
-                    <tr><th scope="row">Bitrate per camera</th><td><span data-out="mbps_each">{{ line.mbps_each }}</span> Mbps</td></tr>
-                    <tr><th scope="row">Storage per camera per day</th><td><span data-out="gb_per_day_each">{{ line.gb_per_day_each }}</span> GB</td></tr>
-                    <tr><th scope="row">Total footage</th><td><span data-out="total_gb">{{ result.total_gb }}</span> GB</td></tr>
-                </tbody>
-            </table>
-            {% endwith %}
-            {% else %}
-            <p class="text-secondary">Fix the highlighted inputs to see the estimate.</p>
-            {% endif %}
-            <p class="tool-note">Typical bitrates for good-quality recording at 25 fps (H.265: 2MP 2 Mbps, 4MP 4 Mbps, 5MP 5 Mbps, 8MP 8 Mbps; H.264 roughly 1.5&ndash;2&times;). Busy scenes, night noise and smart codecs change real usage.</p>
+            <div class="st-result-body">
+                {% if not result %}<p class="st-error">Fix the highlighted inputs to see the estimate.</p>{% endif %}
+                <div class="st-stats">
+                    <div class="st-stat"><span class="st-stat-label">Footage to store</span><strong><span data-out="total_tb">{{ result.total_tb|default:"-" }}</span> TB</strong></div>
+                    <div class="st-stat"><span class="st-stat-label">Total recording bitrate</span><strong><span data-out="bandwidth_mbps">{{ result.bandwidth_mbps|default:"-" }}</span> Mbps</strong></div>
+                </div>
+                {% with line=result.lines.0 %}
+                <dl class="st-breakdown">
+                    <div><dt><i class="bi bi-camera-video" aria-hidden="true"></i>Bitrate per camera</dt><dd><span data-out="mbps_each">{{ line.mbps_each|default:"-" }}</span> Mbps</dd></div>
+                    <div><dt><i class="bi bi-calendar-day" aria-hidden="true"></i>Storage per camera per day</dt><dd><span data-out="gb_per_day_each">{{ line.gb_per_day_each|default:"-" }}</span> GB</dd></div>
+                    <div><dt><i class="bi bi-collection" aria-hidden="true"></i>Total footage</dt><dd><span data-out="total_gb">{{ result.total_gb|default:"-" }}</span> GB</dd></div>
+                </dl>
+                {% endwith %}
+                <div class="st-actions">
+                    <a href="{% url 'quote_request' %}" class="st-btn st-btn--red"><i class="bi bi-calendar-check" aria-hidden="true"></i>Get an installed price</a>
+                    <a href="{% url 'system_builder' %}" class="st-btn st-btn--ghost"><i class="bi bi-diagram-3" aria-hidden="true"></i>Plan the full system</a>
+                </div>
+                <p class="st-note">Typical bitrates for good-quality recording at 25 fps (H.265: 2MP 2 Mbps, 4MP 4 Mbps, 5MP 5 Mbps, 8MP 8 Mbps; H.264 roughly 1.5&ndash;2&times;). Busy scenes, night noise and smart codecs change real usage.</p>
+            </div>
         </section>
     </div>
+
+    {# Mobile: keep the answer in view while changing settings #}
+    <a href="#st-result" class="st-mini" data-st-mini aria-hidden="true" tabindex="-1">
+        <span><small>Recommended hard disk</small><strong data-out="hdd">{% if result %}{{ result.hdd.drives }} &times; {{ result.hdd.size_tb }} TB{% else %}-{% endif %}</strong></span>
+        <span class="st-mini-side"><span data-out="total_tb">{{ result.total_tb|default:"-" }}</span> TB footage <i class="bi bi-chevron-up" aria-hidden="true"></i></span>
+    </a>
+
+    {# ===== REFERENCE ===== #}
+    <section class="st-section" aria-labelledby="st-ref-title">
+        <header class="st-section-head">
+            <p class="st-eyebrow">Quick reference</p>
+            <h2 id="st-ref-title">Hard disk for {{ reference.cameras }} cameras</h2>
+            <p>Recommended drive with H.265, 25 fps and 24-hour continuous recording.</p>
+        </header>
+        <div class="st-panel st-table-wrap">
+            <table class="st-table">
+                <thead>
+                    <tr><th scope="col">Resolution</th>{% for d in reference.days %}<th scope="col">{{ d }} days</th>{% endfor %}</tr>
+                </thead>
+                <tbody>
+                    {% for row in reference.rows %}
+                    <tr><th scope="row">{{ row.resolution }}</th>{% for cell in row.cells %}<td>{{ cell }}</td>{% endfor %}</tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="st-section" aria-labelledby="st-tips-title">
+        <header class="st-section-head">
+            <p class="st-eyebrow">Good to know</p>
+            <h2 id="st-tips-title">What changes the storage you need</h2>
+        </header>
+        <div class="st-tips">
+            <article class="st-panel st-tip"><i class="bi bi-file-zip" aria-hidden="true"></i><h3>Compression</h3><p>H.265 needs roughly half the space of H.264 for the same picture, so the same drive keeps footage for longer.</p></article>
+            <article class="st-panel st-tip"><i class="bi bi-person-walking" aria-hidden="true"></i><h3>Motion recording</h3><p>Recording only when there is movement can cut storage a lot. Set the activity level to how busy the scene is.</p></article>
+            <article class="st-panel st-tip"><i class="bi bi-arrow-repeat" aria-hidden="true"></i><h3>Overwriting</h3><p>When the disk is full, the recorder overwrites the oldest footage. The drive is sized with 10% spare space for this.</p></article>
+        </div>
+    </section>
 </div>
+{{ storage_config|json_script:"st-config" }}
+{% endblock %}
+
+{% block tool_cta %}
+<aside class="st st-cta">
+    <div>
+        <strong>Want an expert to confirm it on site?</strong>
+        <p>Free site survey: we check angles, lighting and cable routes, then give a clear installed price.</p>
+    </div>
+    <div class="st-cta-actions">
+        <a href="{% url 'quote_request' %}" class="st-btn st-btn--red"><i class="bi bi-calendar-check" aria-hidden="true"></i>Book free site survey</a>
+        {% if BUSINESS_WHATSAPP %}<a href="https://wa.me/{{ BUSINESS_WHATSAPP }}" target="_blank" rel="noopener noreferrer" class="st-btn st-btn--wa"><i class="bi bi-whatsapp" aria-hidden="true"></i>WhatsApp</a>{% endif %}
+    </div>
+</aside>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'js/storage-calc.js' %}?v=1" defer></script>
 {% endblock %}

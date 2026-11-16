@@ -10,6 +10,9 @@ from support.models import QuoteRequest
 
 from .models import Product
 from .tools import (
+    BITRATE_MBPS,
+    HDD_HEADROOM,
+    HDD_SIZES_TB,
     RESOLUTION_LABELS,
     RESOLUTIONS,
     SENSOR_WIDTH_MM,
@@ -124,12 +127,27 @@ def _bound(form_class, request):
     return form_class(data), True
 
 
-def _calculator(request, form_class, template):
+def _calculator(request, form_class, template, extra=None):
     """Render a calculator; with no query yet, show the result for the default inputs."""
     form, submitted = _bound(form_class, request)
     calc = form if submitted else form_class(_initial_data(form_class))
     result = calc.estimate() if calc.is_valid() else None
-    return render(request, template, {"form": form, "result": result})
+    return render(request, template, {"form": form, "result": result, **(extra or {})})
+
+
+REFERENCE_DAYS = [7, 15, 30, 60, 90]
+
+
+def _storage_reference(cameras=4):
+    """Recommended drive for `cameras` cameras (H.265, 25 fps, 24 h) by resolution and retention."""
+    rows = []
+    for resolution in RESOLUTIONS:
+        cells = []
+        for days in REFERENCE_DAYS:
+            hdd = storage_estimate([CameraGroup(cameras, resolution)], days=days)["hdd"]
+            cells.append(f"{hdd['drives']} × {hdd['size_tb']} TB" if hdd["drives"] > 1 else f"{hdd['size_tb']} TB")
+        rows.append({"resolution": RESOLUTION_LABELS[resolution], "cells": cells})
+    return {"cameras": cameras, "days": REFERENCE_DAYS, "rows": rows}
 
 
 def tools_hub(request):
@@ -141,7 +159,11 @@ def camera_guide(request):
 
 
 def storage_calculator(request):
-    return _calculator(request, StorageForm, "store/tools/storage_calculator.html")
+    return _calculator(request, StorageForm, "store/tools/storage_calculator.html", extra={
+        "reference": _storage_reference(),
+        # Same constants the server uses, so the page can show the estimate instantly while the API confirms it.
+        "storage_config": {"bitrates": BITRATE_MBPS, "hdd_sizes": HDD_SIZES_TB, "headroom": HDD_HEADROOM},
+    })
 
 
 def lens_calculator(request):
