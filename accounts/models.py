@@ -6,6 +6,11 @@ class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile")
     phone_number = models.CharField(max_length=20, blank=True)
     profile_picture = models.ImageField(upload_to="profiles/", blank=True, null=True)
+    google_picture_url = models.URLField(
+        max_length=500,
+        blank=True,
+        help_text="Photo from the user's Google account; shown when no picture has been uploaded.",
+    )
     email_verified = models.BooleanField(default=False)
     phone_verified = models.BooleanField(default=False)
     fcm_token = models.CharField(max_length=255, blank=True, null=True, help_text="Firebase Cloud Messaging token for push notifications")
@@ -14,6 +19,16 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"Profile for {self.user.get_username()}"
+
+    @property
+    def avatar_url(self):
+        """The uploaded picture wins; otherwise the Google account photo; else empty."""
+        if self.profile_picture:
+            try:
+                return self.profile_picture.url
+            except ValueError:
+                pass
+        return self.google_picture_url or ""
 
 
 class Address(models.Model):

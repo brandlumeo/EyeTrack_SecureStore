@@ -776,6 +776,66 @@ def save_fcm_token(request):
         return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
+def _store_google_picture(user, picture_url):
+    """Remember the Google account photo so it can be shown when nothing is uploaded."""
+    picture_url = (picture_url or "").strip()
+    if not picture_url.startswith("https://") or len(picture_url) > 500:
+        return
+    profile = get_profile(user)
+    if profile.google_picture_url != picture_url:
+        profile.google_picture_url = picture_url
+        profile.save(update_fields=["google_picture_url", "updated_at"])
+
+
+PROFILE_PICTURE_MAX_BYTES = 2 * 1024 * 1024
+
+
+@login_required(login_url="login")
+@require_POST
+def profile_picture_update(request):
+    """Upload, replace or remove the account's profile picture (from the account sidebar)."""
+    from django.core.exceptions import ValidationError
+    from django.forms import ImageField as ImageFormField
+    from django.utils.http import url_has_allowed_host_and_scheme
+
+    profile = get_profile(request.user)
+    next_url = request.POST.get("next") or reverse("account_dashboard")
+    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        next_url = reverse("account_dashboard")
+
+    if request.POST.get("action") == "remove":
+        if profile.profile_picture:
+            profile.profile_picture.delete(save=False)
+            profile.profile_picture = None
+            profile.save(update_fields=["profile_picture", "updated_at"])
+        if profile.google_picture_url:
+            messages.success(request, "Uploaded picture removed. Your Google profile photo is shown instead.")
+        else:
+            messages.success(request, "Profile picture removed.")
+        return redirect(next_url)
+
+    upload = request.FILES.get("profile_picture")
+    if not upload:
+        messages.error(request, "Please choose an image to upload.")
+        return redirect(next_url)
+    if upload.size > PROFILE_PICTURE_MAX_BYTES:
+        messages.error(request, "That image is too large. The maximum size is 2 MB.")
+        return redirect(next_url)
+    try:
+        upload = ImageFormField().clean(upload)
+    except ValidationError:
+        messages.error(request, "Please upload a valid image (JPG, PNG or WebP).")
+        return redirect(next_url)
+
+    old_picture = profile.profile_picture.name if profile.profile_picture else ""
+    profile.profile_picture = upload
+    profile.save(update_fields=["profile_picture", "updated_at"])
+    if old_picture and old_picture != profile.profile_picture.name:
+        profile.profile_picture.storage.delete(old_picture)
+    messages.success(request, "Profile picture updated.")
+    return redirect(next_url)
+
+
 @csrf_exempt
 @require_POST
 def google_gsi_login(request):
@@ -830,6 +890,7 @@ def google_gsi_login(request):
         family_name = token_data.get("family_name", "")
         full_name = token_data.get("name", "")
         sub = token_data.get("sub")  # Google's unique user ID
+        picture = token_data.get("picture", "")
 
         if not email:
             return JsonResponse({"success": False, "message": "No email in Google credential."})
@@ -875,6 +936,8 @@ def google_gsi_login(request):
                     user.first_name = given_name[:150]
                     user.last_name = family_name[:150]
                     user.save(update_fields=["first_name", "last_name"])
+
+            _store_google_picture(user, picture)
 
         login(request, user, backend="django.contrib.auth.backends.ModelBackend")
         logger.info("GSI login success: %s (created=%s)", email, created)
@@ -969,7 +1032,9 @@ def firebase_login(request):
                         message="Your account has been created successfully via Google.",
                         notification_type=Notification.NotificationType.ALERT,
                     )
-                    
+
+                _store_google_picture(user, decoded_token.get("picture", ""))
+
             elif login_method == "phone":
                 if not phone_number:
                     return JsonResponse({"success": False, "message": "No phone number resolved."})

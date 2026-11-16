@@ -13,6 +13,7 @@ urlpatterns = [
     path("verify-email/resend/", views.resend_verification_email_view, name="resend_verification_email"),
     path("verify-email/<uidb64>/<token>/", views.verify_email, name="verify_email"),
     path("profile/", views.profile_view, name="profile"),
+    path("profile/picture/", views.profile_picture_update, name="profile_picture_update"),
     path("save-fcm-token/", views.save_fcm_token, name="save_fcm_token"),
     
     # Notifications

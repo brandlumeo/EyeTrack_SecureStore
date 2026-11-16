@@ -18,8 +18,8 @@
                     <div class="d-flex align-items-center gap-4">
                         <div class="position-relative">
                             <div id="profile-picture-container">
-                                {% if profile.profile_picture %}
-                                    <img loading="lazy" decoding="async" src="{{ profile.profile_picture.url }}" id="profile-picture-preview" alt="Profile" class="rounded-circle object-fit-cover border border-secondary border-opacity-25 shadow-sm" style="width: 100px; height: 100px;">
+                                {% if profile.avatar_url %}
+                                    <img loading="lazy" decoding="async" src="{{ profile.avatar_url }}" referrerpolicy="no-referrer" id="profile-picture-preview" alt="Profile" class="rounded-circle object-fit-cover border border-secondary border-opacity-25 shadow-sm" style="width: 100px; height: 100px;">
                                     <div id="profile-picture-placeholder" class="rounded-circle d-flex align-items-center justify-content-center border border-secondary border-opacity-25 shadow-sm d-none" style="width: 100px; height: 100px; background: rgba(255, 255, 255, 0.05); color: var(--text-soft);">
                                         <i class="bi bi-person-fill fs-1"></i>
                                     </div>

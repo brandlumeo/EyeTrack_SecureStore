@@ -1372,3 +1372,39 @@ body:has(#quickCartDrawer.show, #quickCartDrawer.showing) .offcanvas-backdrop.sh
 }
 #premiumActionToast .bi-check-circle-fill { color: #17663d !important; }
 #premiumActionToast .bi-x-circle-fill { color: #a71328 !important; }
+
+/* Account sidebar: profile picture with edit button */
+.account-avatar-wrap { position: relative; flex-shrink: 0; }
+.account-avatar-wrap .account-avatar { display: block; border-color: var(--stroke, #d6deea); box-shadow: 0 4px 14px rgba(11, 23, 79, .12); }
+.account-avatar-wrap .account-avatar[hidden] { display: none; }
+.account-avatar-wrap .account-avatar-fallback { display: inline-flex; background: var(--navy); color: #fff; border-color: var(--navy); }
+.account-avatar-wrap .account-avatar-fallback[hidden] { display: none; }
+.account-avatar-edit {
+    position: absolute; right: -2px; bottom: -2px;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--red); color: #fff; border: 2px solid #fff;
+    font-size: .78rem; line-height: 1; padding: 0; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(11, 23, 79, .25);
+    transition: background-color .15s ease, transform .15s ease;
+}
+.account-avatar-edit:hover { background: var(--red-hover); transform: scale(1.08); }
+.account-avatar-edit:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+.account-avatar-menu {
+    position: absolute; top: calc(100% + 8px); left: 0; z-index: 30;
+    min-width: 200px; padding: .35rem;
+    background: #fff; border: 1px solid var(--stroke, #d6deea); border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(11, 23, 79, .16);
+}
+.account-avatar-menu[hidden] { display: none; }
+.account-avatar-menu form { margin: 0; }
+.account-avatar-menu-item {
+    width: 100%; display: flex; align-items: center; gap: .55rem;
+    padding: .55rem .7rem; border: 0; border-radius: 8px;
+    background: transparent; color: var(--navy); font-size: .88rem; font-weight: 600; text-align: left;
+}
+.account-avatar-menu-item:hover, .account-avatar-menu-item:focus-visible { background: #f1f4f9; outline: none; }
+.account-avatar-menu-danger { color: var(--red); }
+.account-avatar-menu-hint { margin: .25rem .7rem .3rem; font-size: .74rem; color: var(--muted, #5b6785) !important; }
+.account-avatar-wrap.is-uploading .account-avatar,
+.account-avatar-wrap.is-uploading .account-avatar-fallback { opacity: .45; }
