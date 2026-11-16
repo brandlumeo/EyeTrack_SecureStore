@@ -66,7 +66,63 @@
 </section>
 
 {# ==== HOW IT WORKS ==== #}
-<section class="home-section mb-5 reveal" aria-labelledby="processTitle">
+<style>
+    .home-process .process-step {
+        background: #fff;
+        border: 1px solid #dae4f0;
+        border-radius: 1.1rem;
+        box-shadow: 0 .55rem 1.5rem #142b4b10;
+        padding: 1.4rem;
+    }
+    .home-process .process-step::before { content: none; }
+    .home-process .process-step strong { color: #142b4b; }
+    .home-process .process-step small { color: #455a74; }
+    .home-process .process-step > i {
+        display: grid;
+        place-items: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: .75rem;
+        background: #eaf1fb;
+        color: #204c85;
+    }
+    .home-process .process-num {
+        position: absolute;
+        top: 1.4rem;
+        right: 1.4rem;
+        color: #415c7b;
+        background: #f2f6fb;
+        border: 1px solid #dae4f0;
+        border-radius: 2rem;
+        padding: .2rem .55rem;
+        font-size: .72rem;
+        font-weight: 750;
+    }
+    .home-survey {
+        padding: clamp(1rem, 3vw, 2.25rem);
+        background: #eaf1fa;
+        border: 1px solid #d8e4f2;
+        border-radius: 1.25rem;
+    }
+    .home-survey .quote-card {
+        background: #fff;
+        border: 1px solid #d8e4f2;
+        border-radius: 1rem;
+        box-shadow: 0 .55rem 1.5rem #142b4b10;
+    }
+    .home-survey .survey-form-title { color: #142b4b; font-size: 1.25rem; }
+    .home-survey .quote-label { color: #263f5d; }
+    .home-survey .quote-card :is(input, select, textarea, button) { min-height: 44px; }
+    .home-survey .home-faq .accordion-item { border-color: #ccdbea; }
+    .home-survey .home-faq .accordion-button { color: #142b4b; min-height: 44px; }
+    .home-survey .home-faq .accordion-button::after { filter: none; }
+    @media (max-width: 575.98px) {
+        .home-process .process-step { padding: 1rem; }
+        .home-process .process-num { top: 1rem; right: 1rem; }
+        .home-survey .quote-card .tool-field { min-width: 0; }
+    }
+</style>
+<section class="home-section home-process mb-5 reveal" aria-labelledby="processTitle">
     <div class="home-section-head">
         <div>
             <p class="eyebrow mb-2">How it works</p>
@@ -199,6 +255,7 @@
         </div>
         <div class="col-lg-7">
             <div class="quote-card">
+                <h3 class="survey-form-title mb-3">Request a free site survey</h3>
                 {% include 'support/includes/quote_form.html' with form=quote_form %}
             </div>
         </div>
