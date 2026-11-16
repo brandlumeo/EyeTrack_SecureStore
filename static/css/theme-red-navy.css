@@ -1347,11 +1347,28 @@ body:has(#quickCartDrawer.show, #quickCartDrawer.showing) .offcanvas-backdrop.sh
 .header-shell .premium-nav .premium-link:is(:focus, :active, .show),
 .header-shell .dropdown-menu .dropdown-item:is(:focus, :active, .active),
 .mobile-nav-link:is(:focus, :active, .active),
-.mobile-bottom-dock .dock-item:not(.dock-item--quote):is(:focus, :active, .active),
-.mob-shop-all-link:is(:focus, :active),
-.mob-shop-cat-link:is(:focus, :active) {
+.mobile-bottom-dock .dock-item:not(.dock-item--quote):is(:focus, :active, .active) {
     background: #edf2f8 !important;
     color: #0b174f !important;
+}
+/* Mobile shop panel is dark navy: its links used to get the light #edf2f8 pressed background above,
+   which left their white titles invisible. Use a dark-panel highlight with a red-tinted title instead. */
+.mob-shop-all-link:is(:hover, :focus, :active),
+.mob-shop-cat-link:is(:hover, :focus, :active) {
+    background: rgba(255, 255, 255, .08) !important;
+    color: #ffffff !important;
+}
+.mob-shop-all-link:is(:hover, :focus, :active) .mob-shop-all-info strong,
+.mob-shop-cat-link:is(:hover, :focus, :active) .mob-shop-cat-info strong {
+    color: #ff8b97 !important;
+}
+.mob-shop-all-link:is(:hover, :focus, :active) .mob-shop-all-info small,
+.mob-shop-cat-link:is(:hover, :focus, :active) .mob-shop-cat-info small {
+    color: #d5deec !important;
+}
+.mob-shop-all-link:is(:hover, :focus, :active) > .bi-arrow-right,
+.mob-shop-cat-link:is(:hover, :focus, :active) .mob-shop-cat-arrow {
+    color: #ff8b97 !important;
 }
 .header-shell .premium-nav .premium-link:focus-visible,
 .header-shell .dropdown-menu .dropdown-item:focus-visible,
