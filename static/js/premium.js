@@ -1,4 +1,66 @@
-/* Premium UI layer: gentle scroll-reveal for content below the first screen.
+/* Premium UI layer: custom cursor (red dot + trailing ring) and gentle scroll-reveal. */
+
+/* ---- Custom cursor ----
+   Mouse/trackpad devices only. The native cursor is hidden only after the first mouse move,
+   so nothing changes if this script fails. Text fields and embedded frames keep the native cursor. */
+(function () {
+    'use strict';
+    var body = document.body;
+    if (!body || !body.classList.contains('p-ui') || !window.matchMedia) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    var root = document.documentElement;
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var dot = document.createElement('div');
+    var ring = document.createElement('div');
+    dot.className = 'p-cursor-dot';
+    ring.className = 'p-cursor-ring';
+    dot.setAttribute('aria-hidden', 'true');
+    ring.setAttribute('aria-hidden', 'true');
+    body.appendChild(ring);
+    body.appendChild(dot);
+
+    var mx = 0, my = 0, rx = 0, ry = 0, running = false, shown = false;
+    var INTERACTIVE = 'a[href], button, [role="button"], label, select, summary, .btn, input[type="submit"], input[type="button"], input[type="checkbox"], input[type="radio"], input[type="range"], [data-bs-toggle]';
+    var TEXT = 'input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="range"]):not([type="file"]), textarea, [contenteditable="true"]';
+
+    function place(el, x, y) { el.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)'; }
+    function loop() {
+        rx += (mx - rx) * 0.2;
+        ry += (my - ry) * 0.2;
+        place(ring, rx, ry);
+        if (Math.abs(mx - rx) > 0.1 || Math.abs(my - ry) > 0.1) {
+            requestAnimationFrame(loop);
+        } else {
+            running = false;
+        }
+    }
+
+    document.addEventListener('mousemove', function (e) {
+        mx = e.clientX; my = e.clientY;
+        place(dot, mx, my);
+        if (!shown) { shown = true; rx = mx; ry = my; place(ring, rx, ry); root.classList.add('p-cursor-on'); }
+        if (still) { rx = mx; ry = my; place(ring, rx, ry); return; }
+        if (!running) { running = true; requestAnimationFrame(loop); }
+    }, { passive: true });
+
+    document.addEventListener('mouseover', function (e) {
+        var t = e.target;
+        if (!(t instanceof Element)) return;
+        root.classList.toggle('p-cursor-text', !!t.closest(TEXT) || t.tagName === 'IFRAME');
+        root.classList.toggle('p-cursor-hover', !!t.closest(INTERACTIVE));
+    }, { passive: true });
+
+    document.addEventListener('mousedown', function () { root.classList.add('p-cursor-down'); }, { passive: true });
+    document.addEventListener('mouseup', function () { root.classList.remove('p-cursor-down'); }, { passive: true });
+    // Hide when the mouse leaves the window; show again on the next move.
+    document.addEventListener('mouseout', function (e) {
+        if (!e.relatedTarget) { root.classList.remove('p-cursor-on'); shown = false; }
+    }, { passive: true });
+    window.addEventListener('blur', function () { root.classList.remove('p-cursor-on'); shown = false; });
+})();
+
+/* ---- Scroll reveal ----
    Only runs on pages with body.p-ui, skips anything the site already animates (.reveal),
    and does nothing for people who prefer reduced motion. Content is never hidden without JS. */
 (function () {

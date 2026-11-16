@@ -230,6 +230,33 @@ body.p-ui .premium-footer .pf-socials a:hover { transform: translateY(-3px); }
     body.p-ui .p-reveal.is-in { opacity: 1; transform: none; }
 }
 
+/* ---------- Custom cursor (created by premium.js on mouse devices only) ---------- */
+.p-cursor-dot, .p-cursor-ring {
+    position: fixed; top: 0; left: 0; z-index: 2147483000;
+    width: 0; height: 0; pointer-events: none;
+    opacity: 0; transition: opacity .2s ease; will-change: transform;
+}
+.p-cursor-dot::before, .p-cursor-ring::before {
+    content: ""; position: absolute; border-radius: 50%;
+    transition: transform .25s cubic-bezier(.22, 1, .36, 1), background-color .25s ease, border-color .25s ease;
+}
+.p-cursor-dot::before { left: -4px; top: -4px; width: 8px; height: 8px; background: #ed0920; box-shadow: 0 0 0 2px rgba(255, 255, 255, .7); }
+.p-cursor-ring::before { left: -18px; top: -18px; width: 36px; height: 36px; border: 1.5px solid rgba(237, 9, 32, .55); }
+html.p-cursor-on .p-cursor-dot, html.p-cursor-on .p-cursor-ring { opacity: 1; }
+/* Over links and buttons: the ring grows and fills softly */
+html.p-cursor-hover .p-cursor-ring::before { transform: scale(1.55); background: rgba(237, 9, 32, .08); border-color: rgba(237, 9, 32, .85); }
+html.p-cursor-hover .p-cursor-dot::before { transform: scale(.75); }
+/* Pressing */
+html.p-cursor-down .p-cursor-ring::before { transform: scale(.8); background: rgba(237, 9, 32, .14); }
+html.p-cursor-hover.p-cursor-down .p-cursor-ring::before { transform: scale(1.3); }
+/* Text fields and embedded frames: hand back to the native cursor */
+html.p-cursor-text .p-cursor-dot, html.p-cursor-text .p-cursor-ring { opacity: 0 !important; }
+@media (hover: hover) and (pointer: fine) {
+    html.p-cursor-on:not(.p-cursor-text) body.p-ui,
+    html.p-cursor-on:not(.p-cursor-text) body.p-ui * { cursor: none !important; }
+}
+@media print { .p-cursor-dot, .p-cursor-ring { display: none !important; } }
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
     body.p-ui *, body.p-ui *::before, body.p-ui *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
