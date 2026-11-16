@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load media_tags %}
+{% load media_tags price_tags %}
 
 {# ==== META TAGS & SEO ==== #}
 {% block title %}{{ seo_title }}{% endblock %}
@@ -349,7 +349,7 @@
                             <div class="card-footer-premium">
                                 <div class="price-box">
                                     <span class="currency">&#8377;</span>
-                                    <span class="amount">{{ product.price|floatformat:0 }}</span>
+                                    <span class="amount">{{ product.price|inr }}</span>
                                     {% if product.installation_available and product.installation_charge > 0 %}
                                     <div class="install-badge-small"><i class="bi bi-wrench"></i> Setup: &#8377;{{ product.installation_charge|floatformat:0 }}</div>
                                     {% endif %}
@@ -505,10 +505,10 @@
                         {% endif %}
                     </div>
                     <div class="fp-info">
-                        <span class="fp-name">{{ product.name|truncatechars:42 }}</span>
+                        <span class="fp-name">{{ product.name }}</span>
                         <span class="fp-cat">{{ product.category.name }}</span>
                     </div>
-                    <span class="fp-price">&#8377;{{ product.price }}</span>
+                    <span class="fp-price">&#8377;{{ product.price|inr }}</span>
                 </a>
                 {% endfor %}
             </div>
@@ -528,8 +528,8 @@
                 {% for product in top_sellers|slice:":5" %}
                 <a href="{% url 'product_detail' product.slug %}" class="top-seller-row">
                     <span class="ts-rank">{{ forloop.counter }}</span>
-                    <span class="ts-name">{{ product.name|truncatechars:40 }}</span>
-                    <span class="ts-price">&#8377;{{ product.price }}</span>
+                    <span class="ts-name">{{ product.name }}</span>
+                    <span class="ts-price">&#8377;{{ product.price|inr }}</span>
                 </a>
                 {% endfor %}
             </div>
@@ -1878,8 +1878,9 @@
 .fp-info { flex: 1; min-width: 0; }
 .fp-name {
     display: block; font-size: 0.79rem; font-weight: 600;
-    color: rgba(255,255,255,0.82); white-space: nowrap;
-    overflow: hidden; text-overflow: ellipsis;
+    color: rgba(255,255,255,0.82);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 .fp-cat {
     display: block; font-size: 0.68rem; color: rgba(255,255,255,0.35);
@@ -1912,8 +1913,9 @@
 }
 .ts-name {
     flex: 1; font-size: 0.8rem; font-weight: 600;
-    color: rgba(255,255,255,0.78); white-space: nowrap;
-    overflow: hidden; text-overflow: ellipsis;
+    color: rgba(255,255,255,0.78);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 .ts-price { flex-shrink: 0; font-size: 0.8rem; font-weight: 700; color: #f59e0b; }
 

@@ -157,14 +157,22 @@
             </div>
             <blockquote>{% if t.subject %}<strong>{{ t.subject }}</strong> {% endif %}{{ t.review|truncatechars:220 }}</blockquote>
             <figcaption>
-                <span class="testimonial-avatar">{{ t.user.first_name|default:t.user.username|first|upper }}</span>
+                <span class="testimonial-avatar" aria-hidden="true">{{ t.user.first_name|default:t.user.username|first|upper }}</span>
                 <span>
-                    <strong>{{ t.user.first_name|default:t.user.username }}</strong>
+                    <strong>{{ t.user.first_name|default:t.user.username|capfirst }}</strong>
                     <small>Verified buyer &middot; <a href="{% url 'product_detail' t.product.slug %}">{{ t.product.name|truncatechars:32 }}</a></small>
                 </span>
             </figcaption>
         </figure>
         {% endfor %}
+        {% if testimonials|length < 3 %}
+        <a class="testimonial-card testimonial-cta" href="{% url 'order_history' %}">
+            <i class="bi bi-chat-heart" aria-hidden="true"></i>
+            <strong>Bought from us?</strong>
+            <span>Tell others how your cameras are working out. Rate a product from your orders &mdash; it takes a minute.</span>
+            <span class="testimonial-cta-link">Write a review <i class="bi bi-arrow-right"></i></span>
+        </a>
+        {% endif %}
     </div>
 </section>
 {% endif %}
