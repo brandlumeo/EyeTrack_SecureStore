@@ -102,10 +102,7 @@
     height: 100%;
     object-fit: cover;
     object-position: 65% center;
-    transform: scale(1.06);
-    transition: transform 6s ease-out;
 }
-.hero-3d__slide.is-current img { transform: scale(1); }
 /* soft shade on the left so the caption reads, like a printed banner */
 .hero-3d__slide::after {
     content: "";
@@ -324,8 +321,7 @@
     .hero-3d__arrow--next { right: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-    .hero-3d__track, .hero-3d__slide img { transition: none; }
-    .hero-3d__slide img { transform: none; }
+    .hero-3d__track { transition: none; }
     .hero-3d__strip-track { animation: none; }
     .hero-3d__slide.is-current .hero-3d__caption > * { animation: none; opacity: 1; transform: none; }
     .hero-3d.is-ticking .hero-3d__slides button[aria-pressed="true"] i { animation: none; }
