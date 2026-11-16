@@ -52,11 +52,18 @@
                 if (window.Swal) {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Thanks ' + data.name + '!',
+                        titleText: 'Survey request received',
                         text: text,
                         showCancelButton: true,
-                        confirmButtonText: 'Continue on WhatsApp',
-                        cancelButtonText: 'Done'
+                        confirmButtonText: '<i class="bi bi-whatsapp me-2" aria-hidden="true"></i>Continue on WhatsApp',
+                        cancelButtonText: 'Done',
+                        buttonsStyling: false,
+                        focusCancel: true,
+                        customClass: {
+                            popup: 'quote-confirmation',
+                            confirmButton: 'quote-confirm-action quote-confirm-whatsapp',
+                            cancelButton: 'quote-confirm-action quote-confirm-done'
+                        }
                     }).then(function (res) {
                         if (res.isConfirmed) window.open(data.whatsapp_url, '_blank', 'noopener');
                     });

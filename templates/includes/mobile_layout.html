@@ -1,4 +1,48 @@
 <style>
+    .quote-confirmation.swal2-popup {
+        width: min(100%, 29rem);
+        padding: clamp(1.25rem, 5vw, 2rem);
+        border: 1px solid #d6e2ef;
+        border-radius: 1.25rem;
+        background: #fff;
+        color: #142b4b;
+        box-shadow: 0 1.5rem 4rem #08172b40;
+    }
+    .quote-confirmation .swal2-icon {
+        margin: 0 auto .9rem;
+        font-size: .65rem;
+    }
+    .quote-confirmation .swal2-title {
+        padding: 0;
+        color: #142b4b;
+        font-size: clamp(1.35rem, 5vw, 1.8rem);
+        letter-spacing: -.025em;
+    }
+    .quote-confirmation .swal2-html-container {
+        margin: .65rem 0 0;
+        color: #435872;
+        font-size: .98rem;
+        line-height: 1.55;
+    }
+    .quote-confirmation .swal2-actions {
+        display: grid;
+        width: 100%;
+        gap: .55rem;
+        margin: 1.25rem 0 0;
+    }
+    .quote-confirmation .quote-confirm-action {
+        min-height: 44px;
+        border: 1px solid #ccd9e9;
+        border-radius: .65rem;
+        padding: .6rem 1rem;
+        font-weight: 700;
+    }
+    .quote-confirmation .quote-confirm-action:focus-visible {
+        outline: 2px solid #245991;
+        outline-offset: 3px;
+    }
+    .quote-confirmation .quote-confirm-whatsapp { background: #163767; color: #fff; }
+    .quote-confirmation .quote-confirm-done { background: #f2f6fb; color: #163767; }
     @media screen and (max-width: 991.98px) {
         .mobile-bottom-dock {
             display: grid;

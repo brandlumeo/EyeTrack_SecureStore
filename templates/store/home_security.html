@@ -3,6 +3,9 @@
 {% block title %}Home Security Systems – CCTV, Video Door Phones &amp; Smart Locks | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Plan home security in three layers: a video door phone at the gate, CCTV around the house and a smart lock on the main door. Book a free site survey with EyeTrack.{% endblock %}
 
+{# This page keeps its own design: opt out of the site-wide premium layer. #}
+{% block ui_class %}{% endblock %}
+
 {% block extra_head %}
 {{ block.super }}
 <style>
