@@ -618,3 +618,61 @@
     color: var(--accent);
     font-weight: 700;
 }
+
+/* ---- Areas we serve (links to /cctv-installation/<district>/) ---- */
+.areas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.area-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 1.35rem;
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius-lg);
+    background: var(--card);
+    box-shadow: var(--shadow-soft);
+    text-decoration: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.area-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-strong);
+    border-color: var(--accent);
+}
+
+.area-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.8rem;
+    color: var(--accent);
+    background: var(--accent-glow, rgba(237, 9, 32, 0.1));
+    font-size: 1.15rem;
+    margin-bottom: 0.3rem;
+}
+
+.area-card strong { color: var(--text); font-size: 1.05rem; }
+.area-card-towns { color: var(--text-soft); font-size: 0.9rem; line-height: 1.55; }
+.area-card-link { color: var(--accent); font-weight: 600; font-size: 0.92rem; margin-top: auto; padding-top: 0.35rem; }
+
+.install-areas, .svc-areas { color: var(--text-soft); font-size: 0.92rem; }
+.install-areas a, .svc-areas a, .project-fact a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.install-areas a:hover, .svc-areas a:hover, .project-fact a:hover { text-decoration: underline; }
+.svc-areas { margin: 0.75rem 0 0; }
+
+@media (max-width: 767.98px) {
+    .areas-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .area-card { transition: none; }
+    .area-card:hover { transform: none; }
+}

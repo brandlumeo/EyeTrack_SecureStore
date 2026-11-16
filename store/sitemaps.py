@@ -1,4 +1,5 @@
 from django.contrib.sitemaps import Sitemap
+from django.db.models import Max
 from django.urls import reverse
 
 from .models import Category, Product
@@ -55,7 +56,12 @@ class CategorySitemap(Sitemap):
     priority = 0.75
 
     def items(self):
-        return Category.objects.order_by("name")
+        # Empty categories are noindex (see views._catalog_seo), so keep them out of the sitemap too.
+        return (Category.objects.filter(products__is_available=True)
+                .annotate(last=Max("products__updated_at")).order_by("name"))
+
+    def lastmod(self, obj):
+        return obj.last
 
     def location(self, obj):
         return reverse("products_by_category", kwargs={"category_slug": obj.slug})

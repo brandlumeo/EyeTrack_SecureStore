@@ -1,4 +1,4 @@
-{% load media_tags %}
+{% load media_tags area_tags %}
 {# ==== READY-MADE CCTV PACKAGES ==== #}
 <section class="home-section mb-5 reveal" id="packages" aria-labelledby="packagesTitle">
     <div class="home-section-head">
@@ -176,6 +176,9 @@
     </div>
 </section>
 {% endif %}
+
+{# ==== AREAS WE SERVE: links to the local area pages ==== #}
+{% areas_served %}
 
 {# ==== FAQ + SITE SURVEY FORM ==== #}
 <section class="home-section home-survey mb-5 reveal" id="survey" aria-labelledby="surveyTitle">

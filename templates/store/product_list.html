@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load media_tags price_tags %}
+{% load media_tags price_tags area_tags %}
 
 {# ==== META TAGS & SEO ==== #}
 {% block title %}{{ seo_title }}{% endblock %}
@@ -451,6 +451,7 @@
 
 
 {% if is_landing %}{% include 'store/includes/home_sections.html' %}{% endif %}
+{% if category and not q %}<div class="container">{% areas_served category=category %}</div>{% endif %}
 
 {# ==== MOBILE FILTER DOCK ==== #}
 <div class="mobile-filter-dock d-lg-none">

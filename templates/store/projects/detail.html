@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load media_tags %}
+{% load media_tags area_tags %}
 
 {% block title %}{{ project.title }} | Eyetrack Solutions Projects{% endblock %}
 {% block meta_description %}{{ project.summary }}{% endblock %}
@@ -30,7 +30,7 @@
 
 <div class="project-facts">
     <div class="project-fact"><span>Property</span><strong>{{ project.get_site_type_display }}</strong></div>
-    <div class="project-fact"><span>Location</span><strong>{{ project.location }}</strong></div>
+    {% area_for project.location as project_area %}<div class="project-fact"><span>Location</span><strong>{% if project_area %}<a href="{{ project_area.url }}">{{ project.location }}</a>{% else %}{{ project.location }}{% endif %}</strong></div>
     {% if project.cameras_installed %}<div class="project-fact"><span>Cameras</span><strong>{{ project.cameras_installed }}</strong></div>{% endif %}
     {% if project.completed_on %}<div class="project-fact"><span>Completed</span><strong>{{ project.completed_on|date:"F Y" }}</strong></div>{% endif %}
 </div>

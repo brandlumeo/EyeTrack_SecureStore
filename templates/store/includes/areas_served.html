@@ -1,0 +1,21 @@
+{% if show %}
+<section class="home-section areas-served mb-5 reveal" aria-labelledby="areasServedTitle">
+    <div class="home-section-head">
+        <div>
+            <p class="eyebrow mb-2">Areas we serve</p>
+            <h2 class="home-section-title" id="areasServedTitle">{% if category %}{{ category.name }} installed across North Kerala{% else %}CCTV installation across North Kerala{% endif %}</h2>
+        </div>
+        <a href="{{ area_list_url }}" class="home-section-link">All areas <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="areas-grid">
+        {% for area in areas %}
+        <a class="area-card" href="{{ area.url }}">
+            <span class="area-card-icon" aria-hidden="true"><i class="bi bi-geo-alt-fill"></i></span>
+            <strong>CCTV installation in {{ area.name }}</strong>
+            <span class="area-card-towns">{{ area.towns|join:" · " }}{% if area.more %} · +{{ area.more }} more{% endif %}</span>
+            <span class="area-card-link">Free site survey in {{ area.name }} <i class="bi bi-arrow-right"></i></span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
