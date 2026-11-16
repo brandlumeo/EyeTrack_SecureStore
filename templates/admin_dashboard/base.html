@@ -3,6 +3,8 @@
 
 {% block title %}{{ page_title }} | Admin Dashboard{% endblock %}
 {% block body_class %}admin-workspace{% endblock %}
+{# The admin keeps its own design system: opt out of the storefront's premium UI layer (and custom cursor). #}
+{% block ui_class %}{% endblock %}
 
 {% block extra_head %}
 
@@ -679,6 +681,18 @@
     .admin-workspace .pagination .page-link { background: #fff; color: #183f7a; border-color: #dce5ef; }
     .admin-workspace .pagination .active > .page-link { background: #2457a6; color: #fff; border-color: #2457a6; }
     .admin-workspace :is(a, button):focus-visible { outline: 2px solid #2457a6; outline-offset: 3px; }
+
+    /* Buttons: keep text inside. The custom button classes above set 0.6rem 1.4rem padding,
+       which overrode Bootstrap's .btn-sm, so small and icon-only buttons came out too wide. */
+    .admin-workspace .admin-content .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: .35rem;
+        white-space: nowrap; flex-shrink: 0;
+    }
+    .admin-workspace .admin-content .btn > i { line-height: 1; }
+    .admin-workspace .admin-content .btn-sm:is(.btn-premium-cta, .btn-outline-light, .btn-soft-danger) {
+        padding: .45rem .9rem; font-size: .84rem; line-height: 1.25; border-radius: .5rem !important;
+    }
+    .admin-workspace .admin-content .btn-icon { width: 2.15rem; height: 2.15rem; padding: 0 !important; }
 
     @media (max-width: 767.98px) {
         .admin-workspace .admin-sidebar { position: static; max-height: 55vh; }

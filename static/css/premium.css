@@ -34,7 +34,10 @@
     --p-shadow-md: 0 4px 10px rgba(11, 23, 79, .05), 0 18px 40px rgba(11, 23, 79, .09);
     --p-shadow-red: 0 10px 24px -8px rgba(237, 9, 32, .55);
     --p-ease: cubic-bezier(.22, 1, .36, 1);
-    /* Existing theme tokens, re-pointed */
+}
+/* Existing theme font tokens, re-pointed only for pages in the premium layer
+   (opted-out pages such as home security and the admin keep their own fonts). */
+body.p-ui {
     --font-heading: var(--p-font-display);
     --font-premium: var(--p-font-display);
     --font-body: var(--p-font-body);
@@ -261,6 +264,59 @@ html.p-cursor-text .p-cursor-dot, html.p-cursor-text .p-cursor-ring { opacity: 0
 @media (prefers-reduced-motion: reduce) {
     body.p-ui *, body.p-ui *::before, body.p-ui *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
     body.p-ui :is(.btn, .product-card, .glass-card, .protect-card):hover { transform: none !important; }
+}
+
+/* ---------- Homepage trust strip: phone layout only (laptop/tablet unchanged) ---------- */
+@media (max-width: 767.98px) {
+    body.p-ui .trust-strip {
+        padding: 0 !important;
+        background: transparent !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+    body.p-ui .trust-strip-inner {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .6rem;
+    }
+    body.p-ui .trust-strip-inner::before {
+        content: "Why EyeTrack";
+        grid-column: 1 / -1;
+        display: block;
+        margin-bottom: .15rem;
+        padding-left: 1.9rem;
+        /* short red rule before the label, matching the site's other section labels */
+        background: linear-gradient(currentColor, currentColor) left center / 1.35rem 2px no-repeat;
+        color: var(--p-red);
+        font: 800 .7rem/1 var(--p-font-body);
+        letter-spacing: .16em; text-transform: uppercase;
+    }
+    body.p-ui .trust-divider { display: none !important; }
+    body.p-ui .trust-item {
+        display: flex; align-items: center; gap: .65rem;
+        min-width: 0; min-height: 3.6rem;
+        padding: .7rem .75rem !important;
+        border: 1px solid var(--p-line);
+        border-radius: var(--p-r-md);
+        background: #fff;
+        box-shadow: var(--p-shadow-xs);
+        color: var(--p-ink) !important;
+        font-size: .8rem !important;
+        font-weight: 650;
+        line-height: 1.25;
+        white-space: normal !important;
+    }
+    body.p-ui .trust-item i {
+        display: grid; place-items: center; flex-shrink: 0;
+        width: 2.15rem; height: 2.15rem;
+        border-radius: .65rem;
+        background: var(--p-red-soft);
+        color: var(--p-red) !important;
+        font-size: 1rem !important;
+    }
+    body.p-ui .trust-item span { min-width: 0; font-family: var(--p-font-body) !important; }
 }
 
 /* ---------- Mobile ---------- */
