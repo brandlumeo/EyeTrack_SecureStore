@@ -779,7 +779,7 @@
     </style>
 
     {% block extra_head %}{% endblock %}
-    <link href="{% static 'css/theme-red-navy.css' %}?v=17" rel="stylesheet">
+    <link href="{% static 'css/theme-red-navy.css' %}?v=16" rel="stylesheet">
     <link href="{% static 'css/hero.css' %}?v=22" rel="stylesheet">
     {# Premium UI layer: scoped to body.p-ui, so a page can opt out via {% block ui_class %} #}
     <link href="{% static 'css/premium.css' %}?v=3" rel="stylesheet">
@@ -830,21 +830,6 @@
                     <span class="brand-wordmark"><span class="brand-accent">EYETRACK</span> <span
                             class="brand-secondary">SOLUTIONS</span></span>
                 </a>
-                <!-- Mobile profile button (desktop uses the account menu in the nav) -->
-                {% if user.is_authenticated %}
-                {% with avatar=user.profile.avatar_url %}
-                <a href="{% url 'account_dashboard' %}" class="mobile-profile-btn d-lg-none ms-auto" aria-label="Your account" title="Your account">
-                    {% if avatar %}
-                    <img src="{{ avatar }}" alt="" width="38" height="38" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false;">
-                    {% endif %}
-                    <span class="mobile-profile-initial" {% if avatar %}hidden{% endif %}>{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
-                </a>
-                {% endwith %}
-                {% else %}
-                <a href="{% url 'login' %}" class="mobile-profile-btn mobile-profile-btn--guest d-lg-none ms-auto" aria-label="Log in to your account" title="Log in">
-                    <i class="bi bi-person" aria-hidden="true"></i>
-                </a>
-                {% endif %}
                 <!-- Premium Mobile Toggler -->
                 <button class="navbar-toggler border-0 shadow-none d-lg-none" type="button" data-bs-toggle="offcanvas"
                     data-bs-target="#premiumMobileMenu" aria-controls="premiumMobileMenu"
