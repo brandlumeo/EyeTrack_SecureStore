@@ -49,6 +49,7 @@ urlpatterns = [
 
     # Delivery Management
     path('delivery/', views.delivery_board, name='delivery_board'),
+    path('delivery/assign/<int:order_id>/', views.assign_delivery_agent, name='assign_delivery_agent'),
     path('delivery/agents/', views.delivery_agents_overview, name='delivery_agents'),
     path('delivery/agents/add/', views.delivery_agent_edit, name='delivery_agent_add'),
     path('delivery/agents/edit/<int:agent_id>/', views.delivery_agent_edit, name='delivery_agent_edit'),
