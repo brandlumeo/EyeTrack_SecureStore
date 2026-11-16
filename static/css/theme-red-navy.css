@@ -1390,21 +1390,21 @@ body:has(#quickCartDrawer.show, #quickCartDrawer.showing) .offcanvas-backdrop.sh
 }
 .account-avatar-edit:hover { background: var(--red-hover); transform: scale(1.08); }
 .account-avatar-edit:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
-.account-avatar-menu {
-    position: absolute; top: calc(100% + 8px); left: 0; z-index: 30;
-    min-width: 200px; padding: .35rem;
-    background: #fff; border: 1px solid var(--stroke, #d6deea); border-radius: 12px;
-    box-shadow: 0 12px 30px rgba(11, 23, 79, .16);
+.account-avatar-edit:focus-within { outline: 2px solid var(--navy); outline-offset: 2px; }
+.account-avatar-upload { margin: 0; }
+.account-avatar-input {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); border: 0; opacity: 0;
 }
-.account-avatar-menu[hidden] { display: none; }
-.account-avatar-menu form { margin: 0; }
-.account-avatar-menu-item {
-    width: 100%; display: flex; align-items: center; gap: .55rem;
-    padding: .55rem .7rem; border: 0; border-radius: 8px;
-    background: transparent; color: var(--navy); font-size: .88rem; font-weight: 600; text-align: left;
+.account-avatar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .9rem; margin-top: .45rem; }
+.account-avatar-actions form { margin: 0; display: inline; }
+.account-avatar-action {
+    padding: 0; border: 0; background: none; cursor: pointer;
+    font-size: .8rem; font-weight: 700; color: var(--navy-deep);
+    text-decoration: underline; text-underline-offset: 2px;
 }
-.account-avatar-menu-item:hover, .account-avatar-menu-item:focus-visible { background: #f1f4f9; outline: none; }
-.account-avatar-menu-danger { color: var(--red); }
-.account-avatar-menu-hint { margin: .25rem .7rem .3rem; font-size: .74rem; color: var(--muted, #5b6785) !important; }
+.account-avatar-action:hover { color: var(--red); }
+.account-avatar-action:disabled { opacity: .6; cursor: progress; text-decoration: none; }
+.account-avatar-action-danger { color: var(--red); }
 .account-avatar-wrap.is-uploading .account-avatar,
 .account-avatar-wrap.is-uploading .account-avatar-fallback { opacity: .45; }

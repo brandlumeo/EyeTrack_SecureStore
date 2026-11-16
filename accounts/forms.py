@@ -145,7 +145,9 @@ class EmailOrUsernameAuthenticationForm(PremiumFormMixin, forms.Form):
 
 
 class ProfileForm(PremiumFormMixin, forms.ModelForm):
-    first_name = forms.CharField(max_length=150)
+    # Not required: phone-login accounts start without a name, and requiring one silently
+    # blocked them from saving anything else on this page (such as a new profile picture).
+    first_name = forms.CharField(max_length=150, required=False)
     last_name = forms.CharField(max_length=150, required=False)
     email = forms.EmailField()
     phone_number = forms.CharField(max_length=20, required=False)
@@ -168,6 +170,12 @@ class ProfileForm(PremiumFormMixin, forms.ModelForm):
         if User.objects.filter(email__iexact=email).exclude(pk=self.user.pk).exists():
             raise ValidationError("Another account already uses this email address.")
         return email
+
+    def clean_profile_picture(self):
+        picture = self.cleaned_data.get("profile_picture")
+        if picture and getattr(picture, "size", 0) > 2 * 1024 * 1024 and picture is not self.instance.profile_picture:
+            raise ValidationError("That image is too large. The maximum size is 2 MB.")
+        return picture
 
     def save(self, commit=True):
         profile = super().save(commit=False)

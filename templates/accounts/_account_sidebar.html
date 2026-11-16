@@ -7,36 +7,32 @@
             {% endif %}
             <div class="account-avatar account-avatar-fallback" {% if avatar_url %}hidden{% endif %}>{{ request.user.first_name|default:request.user.username|slice:":1"|upper }}</div>
             {% endwith %}
-            <button type="button" class="account-avatar-edit" aria-label="Change profile picture" title="Change profile picture" aria-haspopup="true" aria-expanded="false" data-avatar-toggle>
-                <i class="bi bi-camera-fill" aria-hidden="true"></i>
-            </button>
-            <div class="account-avatar-menu" role="menu" hidden data-avatar-menu>
-                <form action="{% url 'profile_picture_update' %}" method="post" enctype="multipart/form-data" data-avatar-upload-form>
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                    <input type="file" name="profile_picture" accept="image/jpeg,image/png,image/webp,image/gif" hidden data-avatar-input>
-                    <button type="button" class="account-avatar-menu-item" role="menuitem" data-avatar-pick>
-                        <i class="bi bi-upload" aria-hidden="true"></i><span>{% if account_profile.avatar_url %}Change photo{% else %}Upload photo{% endif %}</span>
-                    </button>
-                </form>
-                {% if account_profile.profile_picture %}
-                <form action="{% url 'profile_picture_update' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                    <input type="hidden" name="action" value="remove">
-                    <button type="submit" class="account-avatar-menu-item account-avatar-menu-danger" role="menuitem">
-                        <i class="bi bi-trash3" aria-hidden="true"></i><span>{% if account_profile.google_picture_url %}Use Google photo{% else %}Remove photo{% endif %}</span>
-                    </button>
-                </form>
-                {% endif %}
-                <p class="account-avatar-menu-hint">JPG, PNG or WebP, up to 2 MB</p>
-            </div>
+            <form action="{% url 'profile_picture_update' %}" method="post" enctype="multipart/form-data" class="account-avatar-upload" data-avatar-upload-form>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <label class="account-avatar-edit" title="{% if account_profile.avatar_url %}Change{% else %}Upload{% endif %} profile picture (JPG, PNG or WebP, up to 2 MB)">
+                    <i class="bi bi-camera-fill" aria-hidden="true"></i>
+                    <span class="visually-hidden">{% if account_profile.avatar_url %}Change{% else %}Upload{% endif %} profile picture</span>
+                    <input type="file" name="profile_picture" accept="image/jpeg,image/png,image/webp,image/gif" class="account-avatar-input" data-avatar-input>
+                </label>
+            </form>
         </div>
         <div class="account-sidebar-meta">
             <h5 class="mb-0 fw-bold tracking-tight" style="color:#fff; font-size:1.05rem; letter-spacing:-0.01em;">{{ request.user.get_full_name|default:request.user.username }}</h5>
             <div class="d-flex align-items-center gap-2 mt-1">
                 <i class="bi bi-envelope-at" style="color:#f59e0b; opacity:0.8; font-size:0.82rem;"></i>
                 <p class="mb-0 small fw-medium" style="color:rgba(209,213,219,0.85); letter-spacing:0.2px; overflow-wrap:anywhere; word-break:break-word;">{{ request.user.email }}</p>
+            </div>
+            <div class="account-avatar-actions">
+                <button type="button" class="account-avatar-action" data-avatar-pick>{% if account_profile.avatar_url %}Change photo{% else %}Upload photo{% endif %}</button>
+                {% if account_profile.profile_picture %}
+                <form action="{% url 'profile_picture_update' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <input type="hidden" name="action" value="remove">
+                    <button type="submit" class="account-avatar-action account-avatar-action-danger">{% if account_profile.google_picture_url %}Use Google photo{% else %}Remove photo{% endif %}</button>
+                </form>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -67,27 +63,21 @@
 </aside>
 <script>
 (function () {
-    var wrap = document.currentScript.previousElementSibling.querySelector('.account-avatar-wrap');
+    var sidebar = document.currentScript.previousElementSibling;
+    var wrap = sidebar && sidebar.querySelector('.account-avatar-wrap');
     if (!wrap) return;
-    var toggle = wrap.querySelector('[data-avatar-toggle]');
-    var menu = wrap.querySelector('[data-avatar-menu]');
     var input = wrap.querySelector('[data-avatar-input]');
     var form = wrap.querySelector('[data-avatar-upload-form]');
-    function setOpen(open) {
-        menu.hidden = !open;
-        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    }
-    toggle.addEventListener('click', function (e) { e.stopPropagation(); setOpen(menu.hidden); });
-    wrap.querySelector('[data-avatar-pick]').addEventListener('click', function () { setOpen(false); input.click(); });
-    document.addEventListener('click', function (e) { if (!wrap.contains(e.target)) setOpen(false); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+    var pick = sidebar.querySelector('[data-avatar-pick]');
+    if (pick) pick.addEventListener('click', function () { input.click(); });
     input.addEventListener('change', function () {
         var file = input.files && input.files[0];
         if (!file) return;
-        if (!/^image\//.test(file.type)) { alert('Please choose an image file (JPG, PNG or WebP).'); input.value = ''; return; }
+        if (file.type && !/^image\//.test(file.type)) { alert('Please choose an image file (JPG, PNG or WebP).'); input.value = ''; return; }
         if (file.size > 2 * 1024 * 1024) { alert('That image is too large. The maximum size is 2 MB.'); input.value = ''; return; }
         wrap.classList.add('is-uploading');
-        form.submit();
+        if (pick) { pick.disabled = true; pick.textContent = 'Uploading…'; }
+        HTMLFormElement.prototype.submit.call(form);
     });
 })();
 </script>
