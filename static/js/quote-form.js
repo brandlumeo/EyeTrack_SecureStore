@@ -51,15 +51,24 @@
                 var text = 'Our team will call you shortly to schedule your free site survey.';
                 if (window.Swal) {
                     Swal.fire({
+                        iconHtml: '<svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="m8 16 5 5 11-11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
                         icon: 'success',
                         titleText: 'Survey request received',
-                        text: text,
+                        html: '<p class="quote-confirm-greeting"></p>' +
+                            '<p class="quote-confirm-copy">Your safer space starts here. We\'ll call you shortly to arrange your free site survey.</p>' +
+                            '<div class="quote-confirm-next"><span class="quote-confirm-step" aria-hidden="true">01</span><div><strong>Next, a quick call</strong><span>We\'ll discuss your property and find a convenient time to visit.</span></div></div>',
+                        footer: '<i class="bi bi-shield-check" aria-hidden="true"></i> Free site survey &middot; No obligation',
+                        didOpen: function (popup) {
+                            var name = (data.name || '').trim();
+                            popup.querySelector('.quote-confirm-greeting').textContent = name ? 'Thank you, ' + name + '.' : 'Thank you for choosing Eyetrack.';
+                        },
                         showCancelButton: true,
                         confirmButtonText: '<i class="bi bi-whatsapp me-2" aria-hidden="true"></i>Continue on WhatsApp',
                         cancelButtonText: 'Done',
                         buttonsStyling: false,
                         focusCancel: true,
                         customClass: {
+                            container: 'quote-confirm-backdrop',
                             popup: 'quote-confirmation',
                             confirmButton: 'quote-confirm-action quote-confirm-whatsapp',
                             cancelButton: 'quote-confirm-action quote-confirm-done'

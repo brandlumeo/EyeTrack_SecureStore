@@ -1,48 +1,109 @@
 <style>
+    .quote-confirm-backdrop.swal2-container {
+        padding: 1rem;
+        background: rgb(9 23 42 / 58%);
+        backdrop-filter: blur(6px);
+    }
     .quote-confirmation.swal2-popup {
         width: min(100%, 29rem);
-        padding: clamp(1.25rem, 5vw, 2rem);
-        border: 1px solid #d6e2ef;
-        border-radius: 1.25rem;
-        background: #fff;
+        padding: clamp(1.25rem, 5vw, 2.25rem);
+        border: 1px solid #ffffff;
+        border-radius: 1.75rem;
+        background: linear-gradient(160deg, #f1faf7 0, #fff 38%);
         color: #142b4b;
-        box-shadow: 0 1.5rem 4rem #08172b40;
+        box-shadow: 0 2rem 6rem #08172b4d, inset 0 1px 0 #ffffff;
     }
     .quote-confirmation .swal2-icon {
-        margin: 0 auto .9rem;
-        font-size: .65rem;
+        width: 4rem;
+        height: 4rem;
+        margin: .25rem auto 1.5rem;
+        border: 1px solid #c5e8da;
+        background: #e4f5ed;
+        color: #147552;
+        box-shadow: 0 0 0 8px #f2faf6;
     }
-    .quote-confirmation .swal2-title {
+    body .quote-confirmation .swal2-title {
         padding: 0;
         color: #142b4b;
-        font-size: clamp(1.35rem, 5vw, 1.8rem);
-        letter-spacing: -.025em;
+        font-size: clamp(1.4rem, 5vw, 1.75rem);
+        letter-spacing: -.035em;
+        line-height: 1.2;
     }
     .quote-confirmation .swal2-html-container {
-        margin: .65rem 0 0;
+        margin: 1rem 0 0;
         color: #435872;
-        font-size: .98rem;
-        line-height: 1.55;
+        font-size: .9rem;
+        line-height: 1.65;
+        padding: 0;
+        overflow-wrap: anywhere;
     }
+    .quote-confirm-greeting { margin: 0 0 .35rem; font-weight: 600; }
+    .quote-confirm-copy { margin: 0; color: #607086; }
+    .quote-confirm-next {
+        display: flex;
+        align-items: flex-start;
+        gap: .8rem;
+        margin-top: 1.4rem;
+        padding: 1rem;
+        border: 1px solid #e3e9ef;
+        border-radius: 1rem;
+        background: #f7f9fb;
+        text-align: left;
+    }
+    .quote-confirm-step {
+        display: grid;
+        place-items: center;
+        flex: 0 0 2rem;
+        height: 2rem;
+        border: 1px solid #dde5ed;
+        border-radius: 50%;
+        background: #fff;
+        color: #536780;
+        font-size: .7rem;
+        font-weight: 700;
+    }
+    .quote-confirm-next strong { display: block; font-size: .85rem; color: #142b4b; }
+    .quote-confirm-next div > span { display: block; margin-top: .2rem; font-size: .8rem; color: #607086; }
     .quote-confirmation .swal2-actions {
         display: grid;
         width: 100%;
-        gap: .55rem;
-        margin: 1.25rem 0 0;
+        gap: .6rem;
+        margin: 1.5rem 0 0;
     }
     .quote-confirmation .quote-confirm-action {
-        min-height: 44px;
-        border: 1px solid #ccd9e9;
-        border-radius: .65rem;
-        padding: .6rem 1rem;
-        font-weight: 700;
+        min-height: 48px;
+        margin: 0;
+        border: 1px solid transparent;
+        border-radius: .85rem;
+        padding: .8rem 1rem;
+        font-size: .9rem;
+        font-weight: 600;
+        line-height: 1.4;
+        cursor: pointer;
+        transition: background-color .18s ease, box-shadow .18s ease;
     }
     .quote-confirmation .quote-confirm-action:focus-visible {
         outline: 2px solid #245991;
         outline-offset: 3px;
     }
-    .quote-confirmation .quote-confirm-whatsapp { background: #163767; color: #fff; }
-    .quote-confirmation .quote-confirm-done { background: #f2f6fb; color: #163767; }
+    .quote-confirmation .quote-confirm-whatsapp { background: #147552; color: #fff; box-shadow: 0 5px 12px #1475521a; }
+    .quote-confirmation .quote-confirm-whatsapp:hover { background: #105e42; }
+    .quote-confirmation .quote-confirm-done { background: #fff; border-color: #e3e9ef; color: #536780; }
+    .quote-confirmation .quote-confirm-done:hover { background: #f2f6fb; }
+    .quote-confirmation .swal2-footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: .4rem;
+        margin: 1.25rem 0 0;
+        padding: 0;
+        border: 0;
+        color: #68798b;
+        font-size: .72rem;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .quote-confirmation, .quote-confirmation .quote-confirm-action { animation: none !important; transition: none; }
+    }
     @media screen and (max-width: 991.98px) {
         .mobile-bottom-dock {
             display: grid;
