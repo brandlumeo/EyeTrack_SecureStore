@@ -1425,3 +1425,40 @@ body:has(#quickCartDrawer.show, #quickCartDrawer.showing) .offcanvas-backdrop.sh
 .account-avatar-action-danger { color: var(--red); }
 .account-avatar-wrap.is-uploading .account-avatar,
 .account-avatar-wrap.is-uploading .account-avatar-fallback { opacity: .45; }
+
+/* Mobile header: profile button beside the menu toggle (hidden on desktop via .d-lg-none) */
+.header-shell .mobile-profile-btn {
+    display: inline-grid; place-items: center; flex-shrink: 0;
+    width: 40px; height: 40px; margin-right: .5rem;
+    border: 2px solid var(--stroke, #dce4ef); border-radius: 50%;
+    background: #fff; color: var(--navy); overflow: hidden;
+    text-decoration: none; transition: border-color .2s ease, box-shadow .2s ease;
+}
+.header-shell .mobile-profile-btn:hover,
+.header-shell .mobile-profile-btn:focus-visible { border-color: var(--red); box-shadow: 0 0 0 3px rgba(237, 9, 32, .12); color: var(--navy); }
+.header-shell .mobile-profile-btn img { width: 100%; height: 100%; object-fit: cover; }
+.header-shell .mobile-profile-btn img[hidden],
+.header-shell .mobile-profile-btn .mobile-profile-initial[hidden] { display: none; }
+.header-shell .mobile-profile-initial {
+    display: grid; place-items: center; width: 100%; height: 100%;
+    background: var(--navy); color: #fff; font-weight: 700; font-size: 1rem;
+}
+.header-shell .mobile-profile-btn--guest i { font-size: 1.2rem; }
+@media (min-width: 992px) { .header-shell .mobile-profile-btn { display: none !important; } }
+
+/* Phones/tablets: the bottom dock lives inside <header>. A backdrop-filter on the header makes it the
+   containing block for that position:fixed dock, so the dock was drawn over the header (hiding the logo,
+   menu toggle and profile button) instead of at the bottom of the screen. No blur on small screens. */
+@media (max-width: 991.98px) {
+    body .header-shell,
+    body .header-shell.is-scrolled,
+    body.p-ui .header-shell,
+    body.p-ui .header-shell.is-scrolled {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        background: #ffffff !important;
+    }
+    /* The menu toggle's bars were white (made for the old dark header): navy on the white header */
+    .header-shell .navbar-toggler .toggler-bar { background: var(--navy); }
+    .header-shell .navbar-toggler:hover .toggler-bar { background: var(--red); }
+}
