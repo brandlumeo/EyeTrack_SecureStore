@@ -1,6 +1,6 @@
 /* Services page: calm, editorial layout in the shared red/navy identity. */
 .svc-page { --svc-line:#dfe6f0; --svc-muted:#52617a; padding:0 0 10px; }
-.svc-hero { position:relative; isolation:isolate; overflow:hidden; width:100vw; margin:-1.5rem 0 48px calc(50% - 50vw); min-height:clamp(420px,52vw,560px); display:flex; align-items:center; background:#0b174f url("../img/services-hero-bg.webp") center / cover no-repeat; color:#fff; }
+.svc-hero { position:relative; isolation:isolate; overflow:hidden; width:100vw; margin:-1.5rem 0 48px calc(50% - 50vw); min-height:clamp(420px,52vw,560px); display:flex; align-items:center; background:#0b174f; color:#fff; }
 .svc-hero::before { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,rgba(6,13,40,.92) 0%,rgba(6,13,40,.72) 38%,rgba(6,13,40,.18) 75%,rgba(6,13,40,.05) 100%),linear-gradient(0deg,rgba(6,13,40,.45),transparent 40%); }
 .svc-hero-inner { width:min(1180px,100% - 32px); margin-inline:auto; padding-block:56px; }
 .svc-hero-inner > * { max-width:560px; }
@@ -72,7 +72,7 @@ body .svc-page .svc-hero .svc-text-link:hover { color:#ffb3bb; }
 
 @media (max-width:767.98px) {
     .svc-hero { min-height:clamp(360px,72vw,440px); }
-    .svc-hero { background-position:78% top; }
+    .svc-hero-image { object-position:78% top; }
     .svc-hero-inner { padding-block:clamp(96px,24vw,160px) 32px; }
     body .svc-page .svc-hero h1 { font-size:clamp(1.75rem,6vw,2.5rem); }
     .svc-booking { grid-template-columns:minmax(0,1fr); }
@@ -88,3 +88,6 @@ body .svc-page .svc-hero .svc-text-link:hover { color:#ffb3bb; }
     .svc-pin-group input { flex:auto; min-height:48px; }
 }
 
+
+.svc-hero-image { position:absolute; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; object-position:center; }
+@media(max-width:767.98px) { .svc-hero-image { object-position:78% top; } }
