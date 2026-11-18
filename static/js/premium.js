@@ -1,4 +1,4 @@
-/* Premium UI layer: custom cursor (red dot + trailing ring) and gentle scroll-reveal. */
+/* Premium UI layer: custom cursor (red dot) and gentle scroll-reveal. */
 
 /* ---- Custom cursor ----
    Mouse/trackpad devices only. The native cursor is hidden only after the first mouse move,
@@ -10,38 +10,19 @@
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
     var root = document.documentElement;
-    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var dot = document.createElement('div');
-    var ring = document.createElement('div');
     dot.className = 'p-cursor-dot';
-    ring.className = 'p-cursor-ring';
     dot.setAttribute('aria-hidden', 'true');
-    ring.setAttribute('aria-hidden', 'true');
-    body.appendChild(ring);
     body.appendChild(dot);
 
-    var mx = 0, my = 0, rx = 0, ry = 0, running = false, shown = false;
+    var shown = false;
     var INTERACTIVE = 'a[href], button, [role="button"], label, select, summary, .btn, input[type="submit"], input[type="button"], input[type="checkbox"], input[type="radio"], input[type="range"], [data-bs-toggle]';
     var TEXT = 'input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="range"]):not([type="file"]), textarea, [contenteditable="true"]';
 
     function place(el, x, y) { el.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)'; }
-    function loop() {
-        rx += (mx - rx) * 0.2;
-        ry += (my - ry) * 0.2;
-        place(ring, rx, ry);
-        if (Math.abs(mx - rx) > 0.1 || Math.abs(my - ry) > 0.1) {
-            requestAnimationFrame(loop);
-        } else {
-            running = false;
-        }
-    }
-
     document.addEventListener('mousemove', function (e) {
-        mx = e.clientX; my = e.clientY;
-        place(dot, mx, my);
-        if (!shown) { shown = true; rx = mx; ry = my; place(ring, rx, ry); root.classList.add('p-cursor-on'); }
-        if (still) { rx = mx; ry = my; place(ring, rx, ry); return; }
-        if (!running) { running = true; requestAnimationFrame(loop); }
+        place(dot, e.clientX, e.clientY);
+        if (!shown) { shown = true; root.classList.add('p-cursor-on'); }
     }, { passive: true });
 
     document.addEventListener('mouseover', function (e) {
