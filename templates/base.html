@@ -6,7 +6,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
-    <script>document.documentElement.classList.add('ui-booting');</script>
+    <script>
+        document.documentElement.classList.add('ui-booting');
+        function updateViewportWidth() {
+            document.documentElement.style.setProperty('--page-viewport-width', document.documentElement.clientWidth + 'px');
+        }
+        updateViewportWidth();
+        window.addEventListener('resize', updateViewportWidth, { passive: true });
+        window.addEventListener('load', updateViewportWidth, { once: true });
+    </script>
     {# Preloader: navy screen, glowing logo with scan line, wordmark + progress bar. Once per browser session, gone as soon as the page loads. #}
     <script>
         (function () {
@@ -782,7 +790,7 @@
     <link href="{% static 'css/theme-red-navy.css' %}?v=16" rel="stylesheet">
     <link href="{% static 'css/hero.css' %}?v=22" rel="stylesheet">
     {# Premium UI layer: scoped to body.p-ui, so a page can opt out via {% block ui_class %} #}
-    <link href="{% static 'css/premium.css' %}?v=4" rel="stylesheet">
+    <link href="{% static 'css/premium.css' %}?v=5" rel="stylesheet">
     {% block page_css %}{% endblock %}
     {% include 'includes/mobile_layout.html' %}
 </head>
@@ -1430,7 +1438,7 @@
         };
     </script>
     <script src="{% static 'js/site.js' %}?v=109" defer></script>
-    <script src="{% static 'js/premium.js' %}?v=3" defer></script>
+    <script src="{% static 'js/premium.js' %}?v=4" defer></script>
 
 
     <!-- SweetAlert2 JS -->

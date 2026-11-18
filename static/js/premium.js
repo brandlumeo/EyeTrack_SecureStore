@@ -1,45 +1,4 @@
-/* Premium UI layer: custom cursor (red dot) and gentle scroll-reveal. */
-
-/* ---- Custom cursor ----
-   Mouse/trackpad devices only. The native cursor is hidden only after the first mouse move,
-   so nothing changes if this script fails. Text fields and embedded frames keep the native cursor. */
-(function () {
-    'use strict';
-    var body = document.body;
-    if (!body || !body.classList.contains('p-ui') || !window.matchMedia) return;
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-
-    var root = document.documentElement;
-    var dot = document.createElement('div');
-    dot.className = 'p-cursor-dot';
-    dot.setAttribute('aria-hidden', 'true');
-    body.appendChild(dot);
-
-    var shown = false;
-    var INTERACTIVE = 'a[href], button, [role="button"], label, select, summary, .btn, input[type="submit"], input[type="button"], input[type="checkbox"], input[type="radio"], input[type="range"], [data-bs-toggle]';
-    var TEXT = 'input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="range"]):not([type="file"]), textarea, [contenteditable="true"]';
-
-    function place(el, x, y) { el.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)'; }
-    document.addEventListener('mousemove', function (e) {
-        place(dot, e.clientX, e.clientY);
-        if (!shown) { shown = true; root.classList.add('p-cursor-on'); }
-    }, { passive: true });
-
-    document.addEventListener('mouseover', function (e) {
-        var t = e.target;
-        if (!(t instanceof Element)) return;
-        root.classList.toggle('p-cursor-text', !!t.closest(TEXT) || t.tagName === 'IFRAME');
-        root.classList.toggle('p-cursor-hover', !!t.closest(INTERACTIVE));
-    }, { passive: true });
-
-    document.addEventListener('mousedown', function () { root.classList.add('p-cursor-down'); }, { passive: true });
-    document.addEventListener('mouseup', function () { root.classList.remove('p-cursor-down'); }, { passive: true });
-    // Hide when the mouse leaves the window; show again on the next move.
-    document.addEventListener('mouseout', function (e) {
-        if (!e.relatedTarget) { root.classList.remove('p-cursor-on'); shown = false; }
-    }, { passive: true });
-    window.addEventListener('blur', function () { root.classList.remove('p-cursor-on'); shown = false; });
-})();
+/* Premium UI layer: gentle scroll reveal. */
 
 /* ---- Scroll reveal ----
    Only runs on pages with body.p-ui, skips anything the site already animates (.reveal),

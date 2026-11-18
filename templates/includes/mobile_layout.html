@@ -1,4 +1,26 @@
 <style>
+    /* Full-bleed sections must exclude the browser scrollbar. */
+    :is(.svc-hero, .sp-hero, .au-hero, .solutions-hub .solutions-hero) {
+        width: var(--page-viewport-width, 100%);
+        margin-left: calc(50% - var(--page-viewport-width, 100%) / 2);
+    }
+    @media screen and (max-width: 991.98px) {
+        .main-shell :is(.svc-booking, .fq-body, .pf-main) > * { min-width: 0; }
+        .main-shell :is(input, select, textarea) { max-width: 100%; }
+        .main-shell :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]) {
+            font-size: 16px;
+        }
+        .premium-footer :is(.pf-column > a, .pf-bottom a) {
+            display: inline-flex;
+            align-items: center;
+            min-height: 44px;
+        }
+        .premium-footer .pf-column > a { display: flex; margin-bottom: 0; }
+        .premium-footer :is(.pf-contact-email, address) { overflow-wrap: anywhere; }
+        .fq-search { flex-wrap: wrap; }
+        .fq-search__input { font-size: 16px; min-height: 48px; }
+        .fq-search__count { margin-block: 4px; }
+    }
     .quote-confirm-backdrop.swal2-container {
         padding: 1rem;
         background: rgb(9 23 42 / 58%);

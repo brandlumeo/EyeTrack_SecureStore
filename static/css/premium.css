@@ -233,27 +233,12 @@ body.p-ui .premium-footer .pf-socials a:hover { transform: translateY(-3px); }
     body.p-ui .p-reveal.is-in { opacity: 1; transform: none; }
 }
 
-/* ---------- Custom cursor (created by premium.js on mouse devices only) ---------- */
-.p-cursor-dot {
-    position: fixed; top: 0; left: 0; z-index: 2147483000;
-    width: 0; height: 0; pointer-events: none;
-    opacity: 0; transition: opacity .2s ease; will-change: transform;
-}
-.p-cursor-dot::before {
-    content: ""; position: absolute; border-radius: 50%;
-    transition: transform .25s cubic-bezier(.22, 1, .36, 1), background-color .25s ease, border-color .25s ease;
-}
-.p-cursor-dot::before { left: -4px; top: -4px; width: 8px; height: 8px; background: #ed0920; }
-html.p-cursor-on .p-cursor-dot { opacity: 1; }
-/* Keep the dot compact over links and buttons. */
-html.p-cursor-hover .p-cursor-dot::before { transform: scale(.75); }
-/* Text fields and embedded frames: hand back to the native cursor */
-html.p-cursor-text .p-cursor-dot { opacity: 0 !important; }
+/* A single red dot follows the operating system pointer without a trailing layer. */
 @media (hover: hover) and (pointer: fine) {
-    html.p-cursor-on:not(.p-cursor-text) body.p-ui,
-    html.p-cursor-on:not(.p-cursor-text) body.p-ui * { cursor: none !important; }
+    body.p-ui, body.p-ui *, body.p-ui *::before, body.p-ui *::after {
+        cursor: url("../img/cursor-red-dot.svg") 4 4, auto !important;
+    }
 }
-@media print { .p-cursor-dot { display: none !important; } }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
