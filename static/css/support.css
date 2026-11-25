@@ -110,3 +110,16 @@ body .sp-hero .sp-hero__title {
 @media(max-width:575.98px) {
     .sp-hero::before { background:linear-gradient(rgba(5,12,36,.78), rgba(5,12,36,.94)); }
 }
+
+/* Priority matrix on phones: one card per priority instead of a table cut off at the screen edge. */
+@media(max-width:575.98px) {
+    .support-matrix { min-width: 0 !important; }
+    .support-matrix thead { display:none; }
+    .support-matrix, .support-matrix tbody, .support-matrix tr, .support-matrix td { display:block; width:100%; }
+    .support-matrix tr { padding:.85rem 1rem; border-bottom:1px solid var(--stroke, #dce4ef); }
+    .support-matrix tr:last-child { border-bottom:0; }
+    body .support-matrix tbody td { display:flex; justify-content:space-between; gap:1rem; padding:.2rem 0 !important; border:0 !important; text-align:right !important; }
+    .support-matrix td::before { content:attr(data-label); color:#5b6685; font-size:.8rem; font-weight:600; text-align:left; white-space:nowrap; }
+    .support-matrix td:first-child { padding-bottom:.35rem !important; text-align:left !important; }
+    .support-matrix td:first-child::before { display:none; }
+}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Page not found | Eyetrack Solutions{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+{% block extra_head %}
+<link href="{% static 'css/cart.css' %}?v=1" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class="ct">
+    <div class="ct-empty">
+        <i class="bi bi-signpost-split" aria-hidden="true"></i>
+        <h1 class="h2">We couldn't find that page</h1>
+        <p>The link may be old or mistyped. Try the shop, or tell us what you're looking for.</p>
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+            <a href="{% url 'product_list' %}" class="ct-btn ct-btn--inline">Go to the shop</a>
+            <a href="{% url 'quote_request' %}" class="btn btn-outline-light">Get a quote</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -8,6 +8,9 @@
 {% block extra_head %}
 {{ block.super }}
 <style>.solutions-hub .area-hero { grid-template-columns: minmax(0, 1fr); } .solutions-hub .area-hero p { max-width: 62ch; }
+    /* No background photo here: don't pull the banner up over the breadcrumb or keep room for a photo above the text. */
+    .solutions-hub .area-hero { margin-top: 0; min-height: 0; }
+    @media (max-width: 767px) { .solutions-hub .area-hero { align-items: flex-start; padding-block: 40px 32px; } }
     .solutions-page .breadcrumb-item a { color: var(--solutions-blue); font-weight: 600; text-decoration: none; }
     .solutions-page .breadcrumb-item.active { color: var(--solutions-muted); }</style>
 <style>

@@ -26,8 +26,9 @@
 .tools-crumbs a.active { border-color: var(--accent); color: var(--accent); }
 
 .tool-panel {
-    border: 1px solid rgba(249, 250, 251, 0.1);
-    background: linear-gradient(180deg, rgba(249, 250, 251, 0.06), rgba(26, 35, 51, 0.3));
+    border: 1px solid #dce4ef;
+    background: #ffffff;
+    box-shadow: 0 8px 24px -16px rgba(11, 23, 79, 0.25);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
 }
@@ -51,8 +52,8 @@
 .tool-stat {
     padding: 1rem;
     border-radius: var(--radius-md);
-    background: rgba(249, 250, 251, 0.04);
-    border: 1px solid rgba(249, 250, 251, 0.08);
+    background: #f7f9fc;
+    border: 1px solid #dce4ef;
 }
 .tool-stat strong {
     display: block;
@@ -61,7 +62,8 @@
     color: var(--accent);
     line-height: 1.15;
 }
-.tool-stat span { color: var(--muted); font-size: 0.8rem; }
+/* Only the caption under the number: the number itself is a <span> inside <strong>. */
+.tool-stat > span { display: block; color: var(--muted); font-size: 0.8rem; }
 .tool-stat--wide strong { font-size: 1.15rem; }
 
 .tool-table { width: 100%; font-size: 0.88rem; border-collapse: collapse; }
@@ -192,8 +194,8 @@
     margin-top: 2rem;
     padding: 1.25rem 1.5rem;
     border-radius: var(--radius-lg);
-    border: 1px solid rgba(245, 163, 0, 0.35);
-    background: linear-gradient(135deg, rgba(245, 163, 0, 0.12), rgba(26, 35, 51, 0.3));
+    border: 1px solid #f6c2c8;
+    background: linear-gradient(135deg, #fff5f6, #ffffff);
 }
 .tools-cta p { margin: 0; color: var(--text-soft); }
 .tools-cta strong { color: var(--text); display: block; font-size: 1.05rem; }

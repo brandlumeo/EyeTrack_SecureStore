@@ -1425,3 +1425,54 @@ body:has(#quickCartDrawer.show, #quickCartDrawer.showing) .offcanvas-backdrop.sh
 .account-avatar-action-danger { color: var(--red); }
 .account-avatar-wrap.is-uploading .account-avatar,
 .account-avatar-wrap.is-uploading .account-avatar-fallback { opacity: .45; }
+
+/* ==== Phones and tablets: layout fixes ==== */
+@media (max-width: 991.98px) {
+    /* The mobile menu bar sits over the top of the header. Pin it there explicitly: it used to land there
+       only because the header's backdrop-filter made the header the containing block of this fixed bar,
+       which not every browser does. */
+    body .header-shell .mobile-bottom-dock {
+        position: absolute !important;
+        top: auto; bottom: 0; left: 0; right: 0;
+    }
+    /* Cart count: keep the badge on the icon however wide each dock item is. */
+    .mobile-bottom-dock .dock-badge { right: auto; left: calc(50% + .35rem); }
+
+    /* Nothing is fixed to the bottom edge any more, so bars that used to clear the bottom menu sit flush. */
+    body > .premium-footer { padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); }
+    body.page-product-detail .sticky-detail-bar { bottom: 0 !important; }
+    .page-product-detail .product-detail-page { padding-bottom: calc(var(--product-detail-mobile-actionbar-height) + 1.5rem); }
+    .page-product-detail .floating-buttons { bottom: calc(var(--product-detail-mobile-actionbar-height) + .75rem) !important; }
+    .page-product-detail #chatbot-window { bottom: calc(var(--product-detail-mobile-actionbar-height) + 1rem) !important; }
+    .st-mini { bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important; }
+
+    /* Account pages: a dark gradient left over from the old dark theme was drawn over the page content. */
+    .account-layout::before { display: none; }
+    .account-nav-link-danger,
+    .account-nav-link-danger:hover,
+    .account-nav-link-danger:focus-visible {
+        background: #fff1f2 !important; border-color: #fecdd3 !important; color: #be123c !important; box-shadow: none;
+    }
+    .account-nav-link-danger::before { background: var(--red); }
+
+    /* Mobile search sheet: result names were white on the white sheet, and the input drew a second box. */
+    .mob-search-overlay.is-open { background: rgba(5, 11, 36, .55) !important; }
+    .mob-search-field { background: transparent !important; border: 0 !important; }
+    .mob-res-item { color: var(--navy) !important; border-bottom-color: var(--stroke) !important; }
+    .mob-res-name { color: var(--navy) !important; }
+    .mob-res-thumb { object-fit: contain; background: #fff !important; border-color: var(--stroke) !important; }
+}
+
+/* Tables: cell backgrounds from the old dark theme greyed out the light table. */
+body .premium-table tbody td { background: #ffffff !important; border-bottom-color: var(--stroke) !important; color: var(--navy); }
+body .premium-table tbody tr:hover td { background: #fff7f8 !important; }
+
+/* Compare page: the phone action bar is pointless with nothing to compare, and it fits on one row. */
+@media (max-width: 767.98px) {
+    .cmp-page:has(#comparePageEmpty:not(.d-none)) .mobile-page-actionbar { display: none !important; }
+    .cmp-page .mobile-page-actionbar {
+        flex-wrap: nowrap; background: #ffffff; border-color: var(--stroke); box-shadow: 0 10px 30px rgba(11, 23, 79, .18);
+    }
+    .cmp-page .mobile-page-meta { color: var(--navy); font-size: .78rem; }
+    .cmp-page .mobile-page-btn { padding: .38rem .55rem; font-size: .8rem; white-space: nowrap; }
+}

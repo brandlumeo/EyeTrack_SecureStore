@@ -3,7 +3,7 @@
 {% block title %}Support Center | Eyetrack Solutions{% endblock %}
 {% block meta_description %}Contact Eyetrack Solutions support for CCTV setup help, warranty guidance, troubleshooting, and rapid assistance.{% endblock %}
 {% block extra_head %}
-<link href="{% static 'css/support.css' %}?v=4" rel="stylesheet">
+<link href="{% static 'css/support.css' %}?v=5" rel="stylesheet">
 {% endblock %}
 {% block content %}
 <div class="support-page">
@@ -32,7 +32,7 @@
         <span class="small text-secondary">Transparent response expectations</span>
     </div>
     <div class="table-responsive">
-        <table class="premium-table align-middle mb-0">
+        <table class="premium-table support-matrix align-middle mb-0">
             <thead>
             <tr>
                 <th>Priority</th>
@@ -42,10 +42,10 @@
             </tr>
             </thead>
             <tbody>
-            <tr><td><strong>P1 - Critical</strong></td><td>Live monitoring outage</td><td style="text-align: center;">Within 2 hours</td><td style="text-align: center;">Same day</td></tr>
-            <tr><td><strong>P2 - High</strong></td><td>Recording/performance degradation</td><td style="text-align: center;">Within 4 hours</td><td style="text-align: center;">24 hours</td></tr>
-            <tr><td><strong>P3 - Medium</strong></td><td>Configuration adjustments</td><td style="text-align: center;">Within 8 hours</td><td style="text-align: center;">2 business days</td></tr>
-            <tr><td><strong>P4 - Low</strong></td><td>General guidance/training</td><td style="text-align: center;">Within 24 hours</td><td style="text-align: center;">3 business days</td></tr>
+            <tr><td data-label="Priority"><strong>P1 - Critical</strong></td><td data-label="Use case">Live monitoring outage</td><td data-label="Initial response" style="text-align: center;">Within 2 hours</td><td data-label="Resolution target" style="text-align: center;">Same day</td></tr>
+            <tr><td data-label="Priority"><strong>P2 - High</strong></td><td data-label="Use case">Recording/performance degradation</td><td data-label="Initial response" style="text-align: center;">Within 4 hours</td><td data-label="Resolution target" style="text-align: center;">24 hours</td></tr>
+            <tr><td data-label="Priority"><strong>P3 - Medium</strong></td><td data-label="Use case">Configuration adjustments</td><td data-label="Initial response" style="text-align: center;">Within 8 hours</td><td data-label="Resolution target" style="text-align: center;">2 business days</td></tr>
+            <tr><td data-label="Priority"><strong>P4 - Low</strong></td><td data-label="Use case">General guidance/training</td><td data-label="Initial response" style="text-align: center;">Within 24 hours</td><td data-label="Resolution target" style="text-align: center;">3 business days</td></tr>
             </tbody>
         </table>
     </div>

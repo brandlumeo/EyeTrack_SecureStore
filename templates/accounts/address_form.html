@@ -98,8 +98,13 @@
   gap: 0.75rem;
   align-items: flex-start;
 }
-.af-pincode-row .form-group { flex: 1; }
+.af-pincode-row .form-group { flex: 1; min-width: 0; }
 .af-pincode-row .af-location-btn { margin-top: 1.82rem; }
+/* Phones: the button sat beside the field and squeezed it to a few pixels; stack them. */
+@media (max-width: 575.98px) {
+  .af-pincode-row { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+  .af-pincode-row .af-location-btn { margin-top: 0; justify-content: center; }
+}
 
 /* ---------- Input labels & helpers ---------- */
 .af-label {
