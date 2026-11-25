@@ -151,6 +151,26 @@ body.p-ui :is(.btn-premium-cta, .btn-primary-cta, .btn-accent):hover {
 }
 body.p-ui :is(.btn-premium-cta, .btn-primary-cta, .btn-accent):hover::after { transform: translateX(120%); }
 
+/* Keep the navbar Cart pill clean and its count badge fully visible. */
+body.p-ui .header-shell .cart-btn {
+    overflow: visible;
+    background: #ed0920 !important;
+    border-color: #ed0920 !important;
+    text-decoration: none;
+    box-shadow: none !important;
+}
+body.p-ui .header-shell .cart-btn::before,
+body.p-ui .header-shell .cart-btn::after { content: none; }
+body.p-ui .header-shell .cart-btn:hover {
+    background: #c7081c !important;
+    border-color: #c7081c !important;
+    transform: none;
+}
+body.p-ui .header-shell .cart-btn:focus-visible {
+    outline: 2px solid #0b174f;
+    outline-offset: 3px;
+}
+
 body.p-ui :is(.btn-outline-light, .btn-outline-secondary, .btn-ghost) {
     background: #fff !important; border: 1px solid var(--p-line-strong) !important; color: var(--p-ink) !important;
     box-shadow: var(--p-shadow-xs);

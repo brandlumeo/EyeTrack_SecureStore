@@ -790,7 +790,7 @@
     <link href="{% static 'css/theme-red-navy.css' %}?v=16" rel="stylesheet">
     <link href="{% static 'css/hero.css' %}?v=22" rel="stylesheet">
     {# Premium UI layer: scoped to body.p-ui, so a page can opt out via {% block ui_class %} #}
-    <link href="{% static 'css/premium.css' %}?v=5" rel="stylesheet">
+    <link href="{% static 'css/premium.css' %}?v=6" rel="stylesheet">
     {% block page_css %}{% endblock %}
     {% include 'includes/mobile_layout.html' %}
 </head>
@@ -963,7 +963,7 @@
                                 <i class="bi bi-cart3 me-2 fs-6"></i>
                                 <span class="fw-medium">Cart</span>
                                 <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-dark"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white"
                                     data-cart-count
                                     style="font-size: 0.75rem; transform: translate(-30%, -30%) !important;">
                                     {{ cart_count }}
