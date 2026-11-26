@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load media_tags %}
 {% load static %}
 {% block title %}My Orders | Eyetrack Solutions{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
@@ -34,7 +35,7 @@
             <div class="ord-body">
                 <div class="ord-thumb">
                     {% if first_item.product.image %}
-                    <img loading="lazy" decoding="async" src="{{ first_item.product.image.url }}" alt="">
+                    <img loading="lazy" decoding="async" src="{{ first_item.product.image|thumb:400 }}" alt="">
                     {% else %}
                     <i class="bi bi-box-seam"></i>
                     {% endif %}

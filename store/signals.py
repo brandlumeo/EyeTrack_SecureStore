@@ -11,6 +11,9 @@ IMAGE_FIELDS = {
     "store.Project": ("cover_image",),
     "store.ProjectImage": ("image",),
     "orders.InstallationPhoto": ("image",),  # homepage "Recent installations"
+    "orders.Technician": ("photo",),  # order tracking
+    "support.ViewingGuide": ("image",),
+    "store.ReviewMedia": ("file",),  # review photos (videos are skipped)
 }
 
 

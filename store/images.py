@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 WIDTHS = (400, 800, 1200)
 QUALITY = 80
 THUMB_DIR = "thumbs"
+VIDEO_EXTS = (".mp4", ".mov", ".webm", ".m4v", ".avi", ".mkv", ".3gp")
 
 
 def thumb_name(name, width):
@@ -42,6 +43,8 @@ def make_thumbs(field_file, force=False):
     (or already present). Never raises: a bad file just gets no copies."""
     if not field_file or not field_file.name:
         return []
+    if os.path.splitext(field_file.name)[1].lower() in VIDEO_EXTS:
+        return []  # review videos share the field with photos
     storage = field_file.storage
     if not force and storage.exists(thumb_name(field_file.name, WIDTHS[0])):
         return sorted(available(field_file))  # already done; skip decoding the photo

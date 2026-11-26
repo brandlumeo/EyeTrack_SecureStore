@@ -208,14 +208,14 @@
                     data-product-id="{{ product.id }}" data-product-name="{{ product.name }}"
                     data-product-price="{{ product.price }}"
                     data-product-url="{% url 'product_detail' product.slug %}"
-                    data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}">
+                    data-product-image="{% if product.image %}{{ product.image|thumb:400 }}{% endif %}">
                     <i class="bi {% if product.id in wishlist_item_ids %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>Wishlist
                 </button>
                 <button type="button" class="pd-action compare-btn"
                     data-product-id="{{ product.id }}" data-product-name="{{ product.name }}"
                     data-product-price="{{ product.price }}"
                     data-product-url="{% url 'product_detail' product.slug %}"
-                    data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}">
+                    data-product-image="{% if product.image %}{{ product.image|thumb:400 }}{% endif %}">
                     <i class="bi bi-arrow-left-right"></i>Compare
                 </button>
                 <a href="https://wa.me/917994357565?text={{ product.name|urlencode }}%20-%20I'd%20like%20to%20know%20more%20about%20this%20product."
@@ -588,7 +588,7 @@
                                                 </div>
                                                 <video src="{{ media.file.url }}" class="w-100 h-100 object-fit-cover opacity-75"></video>
                                                 {% else %}
-                                                <img loading="lazy" decoding="async" src="{{ media.file.url }}" class="w-100 h-100 object-fit-cover" alt="Review photo">
+                                                <img loading="lazy" decoding="async" src="{{ media.file|thumb:400 }}" class="w-100 h-100 object-fit-cover" alt="Review photo">
                                                 {% endif %}
                                             </div>
                                             {% endfor %}
@@ -696,13 +696,13 @@
                             <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 wishlist-btn {% if rp.id in wishlist_item_ids %}is-active{% endif %}"
                                     data-product-id="{{ rp.id }}" data-product-name="{{ rp.name }}"
                                     data-product-price="{{ rp.price }}" data-product-url="{% url 'product_detail' rp.slug %}"
-                                    data-product-image="{% if rp.image %}{{ rp.image.url }}{% endif %}">
+                                    data-product-image="{% if rp.image %}{{ rp.image|thumb:400 }}{% endif %}">
                                 <i class="bi {% if rp.id in wishlist_item_ids %}bi-heart-fill{% else %}bi-heart{% endif %} me-1"></i>Wishlist
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-light flex-grow-1 compare-btn"
                                     data-product-id="{{ rp.id }}" data-product-name="{{ rp.name }}"
                                     data-product-price="{{ rp.price }}" data-product-url="{% url 'product_detail' rp.slug %}"
-                                    data-product-image="{% if rp.image %}{{ rp.image.url }}{% endif %}">
+                                    data-product-image="{% if rp.image %}{{ rp.image|thumb:400 }}{% endif %}">
                                 <i class="bi bi-diagram-3 me-1"></i>Compare
                             </button>
                         </div>

@@ -49,7 +49,7 @@
         <div class="hero-3d__track">
             <article class="hero-3d__slide" data-hero-story aria-roledescription="slide" aria-label="1 of 3">
                 <picture>
-                    <source media="(min-width: 992px)" srcset="{% static 'img/home-hero-cctv.png' %}">
+                    <source media="(min-width: 992px)" srcset="{% static 'img/home-hero-cctv-hd.webp' %}">
                     <img src="{% static 'img/home-hero-cctv.webp' %}" alt="CCTV cameras, a smart door lock, and live camera feeds on a monitor and phone." fetchpriority="high">
                 </picture>
                 <div class="hero-3d__caption">
@@ -69,7 +69,7 @@
                 </div>
             </article>
             <article class="hero-3d__slide" data-hero-story aria-roledescription="slide" aria-label="3 of 3">
-                <img src="{% static 'img/home-hero-laptop-lineup.png' %}" alt="Three open laptops displaying colorful landscapes on a desk." loading="lazy" decoding="async">
+                <img src="{% static 'img/home-hero-laptop-lineup.webp' %}" alt="Three open laptops displaying colorful landscapes on a desk." loading="lazy" decoding="async">
                 <div class="hero-3d__caption">
                     <p class="hero-3d__eyebrow">Laptops</p>
                     <h2>Ready for your workday.</h2>
@@ -295,14 +295,14 @@
                             <!-- Wishlist Toggle (Top Right) -->
                             <button class="wishlist-heart-toggle wishlist-btn {% if product.id in wishlist_item_ids %}is-active{% endif %}" 
                                 data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}"
-                                data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}" title="Wishlist" aria-label="Wishlist">
+                                data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image|thumb:400 }}{% endif %}" title="Wishlist" aria-label="Wishlist">
                                 <i class="bi {% if product.id in wishlist_item_ids %}bi-heart-fill text-danger{% else %}bi-heart{% endif %}"></i>
                             </button>
 
                             <!-- Compare Toggle (Below Wishlist) -->
                             <button class="compare-hover-btn compare-btn {% if product.id in compare_item_ids %}is-active{% endif %}" 
                                 data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}"
-                                data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}" data-product-category="{{ product.category.name }}" title="Compare" aria-label="Compare">
+                                data-product-url="{% url 'product_detail' product.slug %}" data-product-image="{% if product.image %}{{ product.image|thumb:400 }}{% endif %}" data-product-category="{{ product.category.name }}" title="Compare" aria-label="Compare">
                                 <i class="bi bi-diagram-3"></i>
                             </button>
 
@@ -362,7 +362,7 @@
                                     data-product-id="{{ product.id }}"
                                     data-product-name="{{ product.name|escapejs }}"
                                     data-product-price="{{ product.price }}"
-                                    data-product-image="{% if product.image %}{{ product.image.url }}{% endif %}"
+                                    data-product-image="{% if product.image %}{{ product.image|thumb:400 }}{% endif %}"
                                     data-product-url="{% url 'product_detail' product.slug %}"
                                     data-installation-available="{% if product.installation_available %}true{% else %}false{% endif %}"
                                     data-installation-charge="{{ product.installation_charge }}"

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load media_tags %}
 {% block title %}{{ guide.title }} | Eyetrack Solutions{% endblock %}
 {% block meta_description %}{{ guide.summary }}{% endblock %}
 {% block meta_robots %}{% if is_preview %}noindex, nofollow{% else %}index, follow{% endif %}{% endblock %}
@@ -30,7 +31,7 @@
             <ol class="guide-steps">{% for step in guide.step_list %}<li>{{ step }}</li>{% endfor %}</ol>
         </section>
 
-        {% if guide.image %}<img src="{{ guide.image.url }}" alt="{{ guide.title }}" class="img-fluid rounded-3 mb-4" loading="lazy">{% endif %}
+        {% if guide.image %}<img src="{{ guide.image|thumb:1200 }}" alt="{{ guide.title }}" class="img-fluid rounded-3 mb-4" loading="lazy">{% endif %}
 
         {% if guide.fixes %}
         <section class="glass-card p-4">

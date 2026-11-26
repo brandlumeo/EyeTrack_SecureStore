@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load media_tags %}
 {% block title %}Track Order {{ tracked_order.formatted_id }} | Eyetrack Solutions{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 {% block content %}
@@ -142,7 +143,7 @@
                                 <div class="tech-avatar">
                                     <div class="avatar-blob"></div>
                                     {% if installation_focus.booking.technician and installation_focus.booking.technician.photo %}
-                                        <img loading="lazy" decoding="async" src="{{ installation_focus.booking.technician.photo.url }}" alt="{{ installation_focus.booking.technician.name }}" class="tech-img">
+                                        <img loading="lazy" decoding="async" src="{{ installation_focus.booking.technician.photo|thumb:400 }}" alt="{{ installation_focus.booking.technician.name }}" class="tech-img">
                                     {% else %}
                                         <i class="bi bi-person-fill"></i>
                                     {% endif %}
@@ -234,7 +235,7 @@
                             <div class="col-6 col-md-3">
                                 <div class="proof-card glass-card p-2" data-bs-toggle="modal" data-bs-target="#photoModal{{ photo.id }}" style="cursor: zoom-in;">
                                     <div class="proof-img-container rounded-3 overflow-hidden position-relative" style="aspect-ratio: 1/1;">
-                                        <img loading="lazy" decoding="async" src="{{ photo.image.url }}" class="w-100 h-100 object-fit-cover transition-all" alt="{{ photo.get_label_display }}">
+                                        <img loading="lazy" decoding="async" src="{{ photo.image|thumb:400 }}" class="w-100 h-100 object-fit-cover transition-all" alt="{{ photo.get_label_display }}">
                                         <div class="proof-label position-absolute bottom-0 start-0 w-100 p-2 text-center" style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); font-size: 0.7rem; color: #fbbf24; font-weight: 600;">
                                             {{ photo.get_label_display|upper }}
                                         </div>
@@ -249,7 +250,7 @@
                                                 <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body p-0">
-                                                <img loading="lazy" decoding="async" src="{{ photo.image.url }}" class="w-100 h-100 object-fit-contain" alt="{{ photo.get_label_display }}">
+                                                <img loading="lazy" decoding="async" src="{{ photo.image|thumb:1200 }}" class="w-100 h-100 object-fit-contain" alt="{{ photo.get_label_display }}">
                                                 <div class="p-4 glass-panel border-0 rounded-0">
                                                     <h4 class="h5 mb-1 text-accent">{{ photo.get_label_display }}</h4>
                                                     <p class="small text-secondary mb-0">Captured on {{ photo.uploaded_at|date:"M d, Y at H:i" }} by Eyetrack Technician</p>
@@ -444,7 +445,7 @@
                                 <div class="d-flex flex-wrap flex-sm-nowrap gap-3 mb-3 pb-3 border-bottom border-secondary border-opacity-10 last-border-0">
                                     <div class="bg-dark rounded-3 border border-secondary border-opacity-25 p-1 shrink-0" style="width: 80px; height: 80px;">
                                         {% if item.product.image %}
-                                            <img loading="lazy" decoding="async" src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-100 h-100 object-fit-cover rounded-2">
+                                            <img loading="lazy" decoding="async" src="{{ item.product.image|thumb:400 }}" alt="{{ item.product.name }}" class="w-100 h-100 object-fit-cover rounded-2">
                                         {% else %}
                                             <div class="w-100 h-100 d-flex align-items-center justify-content-center text-secondary h3 mb-0"><i class="bi {{ item.product.category.icon }}"></i></div>
                                         {% endif %}
