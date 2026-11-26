@@ -247,12 +247,6 @@ body.p-ui .premium-footer .pf-column a:hover { transform: translateX(3px); }
 body.p-ui .premium-footer .pf-socials a { transition: transform .2s var(--p-ease), background-color .2s ease, border-color .2s ease; }
 body.p-ui .premium-footer .pf-socials a:hover { transform: translateY(-3px); }
 
-/* ---------- Scroll reveal (classes are added by premium.js only) ---------- */
-@media (prefers-reduced-motion: no-preference) {
-    body.p-ui .p-reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--p-ease), transform .7s var(--p-ease); transition-delay: var(--p-delay, 0ms); }
-    body.p-ui .p-reveal.is-in { opacity: 1; transform: none; }
-}
-
 /* A single red dot follows the operating system pointer without a trailing layer. */
 @media (hover: hover) and (pointer: fine) {
     body.p-ui, body.p-ui *, body.p-ui *::before, body.p-ui *::after {

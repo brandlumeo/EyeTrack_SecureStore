@@ -1526,39 +1526,6 @@
         render();
     };
 
-    const setupSkeletonLoading = () => {
-        const path = window.location.pathname;
-        const skeletonTargets = [];
-
-        if (path.includes('/cart/')) {
-            skeletonTargets.push(...document.querySelectorAll('.premium-table tbody tr, .summary-line, .compact-product'));
-        }
-        if (path.includes('/checkout/')) {
-            skeletonTargets.push(...document.querySelectorAll('.compact-row, .summary-line, .checkout-step'));
-        }
-        if (path === '/' || path.includes('/category/') || path.includes('/product/') || path.endsWith('/store/') || path.includes('/product/')) {
-            skeletonTargets.push(...document.querySelectorAll('.product-card, .mini-info-card, .compact-row, .compact-product'));
-        }
-
-        const uniqueTargets = Array.from(new Set(skeletonTargets)).slice(0, 18);
-        if (!uniqueTargets.length || prefersReducedMotion) {
-            return;
-        }
-
-        root.classList.add('has-skeleton');
-        uniqueTargets.forEach((el) => el.classList.add('skeleton-on-load'));
-
-        const hydrate = () => {
-            root.classList.add('is-hydrated');
-            window.setTimeout(() => {
-                root.classList.remove('has-skeleton');
-                uniqueTargets.forEach((el) => el.classList.remove('skeleton-on-load'));
-            }, 260);
-        };
-
-        window.setTimeout(hydrate, 540);
-    };
-
     const setupAjaxCatalog = () => {
         const gridCol = document.getElementById('catalogGridCol');
         if (!gridCol) return;
@@ -1647,7 +1614,6 @@
     const init = () => {
         const showToast = setupPremiumToast();
         markReady();
-        setupSkeletonLoading();
         setupPageTransitionHooks();
         setupCatalogFiltersLayout();
         setupMobileFilterUx();
