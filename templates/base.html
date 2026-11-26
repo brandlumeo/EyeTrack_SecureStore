@@ -790,7 +790,7 @@
     <link href="{% static 'css/theme-red-navy.css' %}?v=17" rel="stylesheet">
     <link href="{% static 'css/hero.css' %}?v=22" rel="stylesheet">
     {# Premium UI layer: scoped to body.p-ui, so a page can opt out via {% block ui_class %} #}
-    <link href="{% static 'css/premium.css' %}?v=6" rel="stylesheet">
+    <link href="{% static 'css/premium.css' %}?v=8" rel="stylesheet">
     {% block page_css %}{% endblock %}
     {% include 'includes/mobile_layout.html' %}
 </head>
@@ -925,7 +925,7 @@
                                 style="height: 38px; width: 38px; border-radius: 6px;" title="Notifications">
                                 <i class="bi bi-bell fs-6"></i>
                                 <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-dark d-none"
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white d-none"
                                     id="globalUnreadBadge" style="font-size: 0.65rem;">0</span>
                             </button>
                         </li>
