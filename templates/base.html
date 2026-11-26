@@ -787,7 +787,7 @@
     </style>
 
     {% block extra_head %}{% endblock %}
-    <link href="{% static 'css/theme-red-navy.css' %}?v=17" rel="stylesheet">
+    <link href="{% static 'css/theme-red-navy.css' %}?v=18" rel="stylesheet">
     <link href="{% static 'css/hero.css' %}?v=25" rel="stylesheet">
     {# Premium UI layer: scoped to body.p-ui, so a page can opt out via {% block ui_class %} #}
     <link href="{% static 'css/premium.css' %}?v=8" rel="stylesheet">
@@ -1058,7 +1058,7 @@
         <!-- Premium Mobile Bottom Dock -->
         <div class="mobile-bottom-dock d-lg-none">
             <a href="{% url 'product_list' %}" class="dock-item" id="dockHome">
-                <i class="bi bi-house-door"></i>
+                <img src="{% static 'img/company-logo-sm.webp' %}" width="36" height="40" alt="" class="dock-logo" decoding="async">
                 <span>Home</span>
             </a>
             <button type="button" class="dock-item" id="dockShop" aria-label="Open Shop Menu">

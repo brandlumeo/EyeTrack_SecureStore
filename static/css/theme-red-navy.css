@@ -1437,6 +1437,8 @@ body:has(#quickCartDrawer.show, #quickCartDrawer.showing) .offcanvas-backdrop.sh
     }
     /* Cart count: keep the badge on the icon however wide each dock item is. */
     .mobile-bottom-dock .dock-badge { right: auto; left: calc(50% + .35rem); }
+    /* Home shows the company logo in place of the house icon, at the same height as the other icons. */
+    .mobile-bottom-dock .dock-logo { display: block; width: auto; height: 1.6rem; object-fit: contain; }
 
     /* Nothing is fixed to the bottom edge any more, so bars that used to clear the bottom menu sit flush. */
     body > .premium-footer { padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); }
