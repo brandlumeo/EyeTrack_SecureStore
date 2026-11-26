@@ -1,8 +1,9 @@
 from django.urls import path
+from django.views.generic import RedirectView
 from . import download_views, guide_views, ticket_views, views
 
 urlpatterns = [
-    path('', views.faq_view, name='faq'),
+    path('', RedirectView.as_view(pattern_name='faq_page', permanent=True)),
     path('api/chatbot/', views.chatbot_api, name='chatbot_api'),
     path('guides/', guide_views.guide_list, name='guide_list'),
     path('guides/<slug:slug>/', guide_views.guide_detail, name='guide_detail'),

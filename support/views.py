@@ -12,18 +12,9 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from .forms import QuoteRequestForm
-from .models import FAQCategory, FAQ, QuoteRequest
+from .models import QuoteRequest
 
 logger = logging.getLogger(__name__)
-
-def faq_view(request):
-    faq_categories = FAQCategory.objects.prefetch_related('faqs').all()
-    # If no categories exist, provide some defaults for the first visit
-    if not faq_categories.exists():
-        _create_default_faqs()
-        faq_categories = FAQCategory.objects.prefetch_related('faqs').all()
-    
-    return render(request, 'support/faq.html', {'faq_categories': faq_categories})
 
 def chatbot_api(request):
     if request.method == 'POST':
@@ -67,32 +58,6 @@ def _get_chatbot_response(message):
 
     return ("I'm still learning! You can ask about DVR compatibility, installation services, or order tracking. "
             "For more complex queries, feel free to visit our FAQ page or contact our human support.")
-
-def _create_default_faqs():
-    # Helper to seed some initial data
-    cat_general, _ = FAQCategory.objects.get_or_create(name="General", icon="bi-info-circle", order=1)
-    cat_orders, _ = FAQCategory.objects.get_or_create(name="Orders & Shipping", icon="bi-truck", order=2)
-    cat_tech, _ = FAQCategory.objects.get_or_create(name="Technical Support", icon="bi-cpu", order=3)
-
-    FAQ.objects.get_or_create(
-        category=cat_tech,
-        question="Will these cameras work with my existing DVR?",
-        answer="Our HD-Analog cameras are compatible with most modern DVRs (Hikvision, CP PLUS, Dahua, etc.) that support AHD/TVI/CVI signals. IP cameras require an ONVIF-compliant NVR.",
-        order=1
-    )
-    FAQ.objects.get_or_create(
-        category=cat_orders,
-        question="How long does delivery take?",
-        answer="Orders are typically processed within 24 hours and delivered within 3-5 business days depending on your location.",
-        order=1
-    )
-    FAQ.objects.get_or_create(
-        category=cat_general,
-        question="Do you provide installation?",
-        answer="Yes, we offer professional installation services. You can select this option during checkout for eligible products.",
-        order=1
-    )
-
 
 def _quote_summary(lead):
     lines = [

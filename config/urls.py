@@ -19,7 +19,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import TemplateView
+from django.views.generic import RedirectView, TemplateView
 
 from store.sitemaps import CategorySitemap, ProductSitemap, ProjectSitemap, StaticViewSitemap, ViewingGuideSitemap, AreaSitemap
 from support import views as support_views
@@ -38,7 +38,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('admin-dashboard/', include('admin_dashboard.urls')),
     path('support/', include('support.urls')),
-    path('faq/', support_views.faq_view, name='faq'),
+    # Old FAQ page removed; keep the address working for old links and search results.
+    path('faq/', RedirectView.as_view(pattern_name='faq_page', permanent=True)),
     path('get-quote/', support_views.quote_request, name='quote_request'),
     path('', include('store.urls')),
     path('accounts/', include('accounts.urls')),
