@@ -15,7 +15,7 @@
         window.addEventListener('resize', updateViewportWidth, { passive: true });
         window.addEventListener('load', updateViewportWidth, { once: true });
     </script>
-    {# Preloader: navy screen, glowing logo with scan line, wordmark + progress bar. Once per browser session, gone as soon as the page loads. #}
+    {# Preloader: a camera lens. Red light orbiting the logo, shimmering wordmark, progress hairline; the screen lifts like a curtain once the page has loaded. Once per browser session. #}
     <script>
         (function () {
             try {
@@ -29,55 +29,99 @@
         #et-preloader { display: none; }
         html.pl-on #et-preloader {
             position: fixed; inset: 0; z-index: 99999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px;
             background:
-                radial-gradient(50% 45% at 50% 45%, rgba(42, 92, 168, .35), transparent 70%),
-                radial-gradient(40% 40% at 0% 100%, rgba(237, 9, 32, .14), transparent 70%),
-                linear-gradient(160deg, #060d28 0%, #0b174f 60%, #081334 100%);
-            transition: opacity .45s ease, visibility .45s ease;
+                radial-gradient(42% 36% at 50% 40%, rgba(46, 96, 200, .30), transparent 72%),
+                radial-gradient(36% 30% at 50% 42%, rgba(237, 9, 32, .10), transparent 70%),
+                radial-gradient(120% 90% at 50% 40%, #0d1c5c 0%, #081342 48%, #040a24 100%);
+            clip-path: inset(0 0 0 0);
+            transition: clip-path .7s cubic-bezier(.76, 0, .24, 1) .12s;
         }
-        #et-preloader.is-done { opacity: 0; visibility: hidden; }
-        #et-preloader .pl-mark {
-            position: relative; width: 190px; height: 190px;
-            display: grid; place-items: center;
-            border-radius: 46px;
-            background: linear-gradient(160deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .03));
-            border: 1px solid rgba(160, 196, 255, .22);
-            box-shadow: 0 0 0 10px rgba(255, 255, 255, .025), 0 20px 50px -12px rgba(0, 0, 0, .6);
-            overflow: hidden;
-            animation: et-pl-breathe 2.4s ease-in-out infinite;
+        /* faint dot grid, fading out towards the edges */
+        html.pl-on #et-preloader::before {
+            content: ""; position: absolute; inset: 0; pointer-events: none;
+            background-image: radial-gradient(rgba(255, 255, 255, .07) 1px, transparent 1.2px);
+            background-size: 24px 24px;
+            -webkit-mask-image: radial-gradient(55% 50% at 50% 42%, #000, transparent 75%);
+            mask-image: radial-gradient(55% 50% at 50% 42%, #000, transparent 75%);
         }
-        #et-preloader .pl-mark img { position: relative; width: 94px; height: auto; filter: drop-shadow(0 4px 14px rgba(237, 9, 32, .35)); }
-        /* red scan line sweeping over the logo */
-        #et-preloader .pl-mark::after {
-            content: ""; position: absolute; left: 0; right: 0; top: -30%; height: 30%;
-            background: linear-gradient(180deg, transparent, rgba(255, 60, 80, .32) 85%, rgba(255, 90, 110, .85));
-            animation: et-pl-scan 1.6s cubic-bezier(.5, 0, .5, 1) infinite;
+        #et-preloader.is-done { clip-path: inset(0 0 100% 0); pointer-events: none; }
+        #et-preloader > * { position: relative; transition: opacity .35s ease, transform .5s cubic-bezier(.76, 0, .24, 1); }
+        #et-preloader.is-done > * { opacity: 0; transform: translateY(-18px); }
+
+        #et-preloader .pl-lens {
+            width: 172px; height: 172px; display: grid; place-items: center;
+            animation: et-pl-in .9s cubic-bezier(.2, .8, .2, 1) both;
         }
+        #et-preloader .pl-lens > span { position: absolute; border-radius: 50%; pointer-events: none; }
+        #et-preloader .pl-ring {
+            inset: 0;
+            background: radial-gradient(circle at 50% 38%, rgba(255, 255, 255, .10), rgba(255, 255, 255, .015) 62%, transparent 72%);
+            border: 1px solid rgba(170, 198, 255, .20);
+            box-shadow: inset 0 0 36px rgba(70, 120, 230, .20), 0 24px 60px -18px rgba(0, 0, 0, .7), 0 0 70px -14px rgba(237, 9, 32, .32);
+        }
+        #et-preloader .pl-ring::after {
+            content: ""; position: absolute; inset: 16px; border-radius: 50%;
+            border: 1px dashed rgba(255, 255, 255, .10);
+            animation: et-pl-spin 18s linear infinite reverse;
+        }
+        #et-preloader .pl-orbit {
+            inset: -3px;
+            background: conic-gradient(from 0deg, transparent 0 62%, rgba(237, 9, 32, .15) 72%, #ed0920 94%, #ffb3bb 100%);
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+            filter: drop-shadow(0 0 6px rgba(237, 9, 32, .8));
+            animation: et-pl-spin 1.5s cubic-bezier(.55, .15, .45, .85) infinite;
+        }
+        #et-preloader .pl-lens img {
+            position: relative; width: 80px; height: auto;
+            filter: drop-shadow(0 6px 18px rgba(237, 9, 32, .35)) drop-shadow(0 2px 4px rgba(0, 0, 0, .4));
+            animation: et-pl-float 3s ease-in-out infinite;
+        }
+
+        #et-preloader .pl-word { display: grid; justify-items: center; gap: 10px; animation: et-pl-in .9s cubic-bezier(.2, .8, .2, 1) both .15s; }
         #et-preloader .pl-brand {
-            margin: 0; color: #fff; font: 700 1.22rem/1 'Poppins', system-ui, sans-serif; letter-spacing: .5em; text-indent: .5em;
-            animation: et-pl-fade .8s ease-out both .1s;
+            margin: 0; font: 600 1.3rem/1 'Poppins', system-ui, sans-serif; letter-spacing: .62em; text-indent: .62em;
+            color: #fff;
+            background: linear-gradient(100deg, #8fa3d8 0%, #8fa3d8 35%, #fff 50%, #8fa3d8 65%, #8fa3d8 100%) 0 0 / 250% 100%;
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+            animation: et-pl-shine 2.6s linear infinite;
         }
-        #et-preloader .pl-brand span { color: rgba(222, 232, 250, .55); font-weight: 500; }
+        #et-preloader .pl-sub {
+            margin: 0; display: flex; align-items: center; gap: 14px;
+            font: 500 .66rem/1 'Poppins', system-ui, sans-serif; letter-spacing: .55em; text-indent: .55em; color: rgba(214, 226, 250, .62);
+        }
+        #et-preloader .pl-sub::before, #et-preloader .pl-sub::after { content: ""; width: 30px; height: 1px; background: linear-gradient(90deg, transparent, rgba(237, 9, 32, .9)); }
+        #et-preloader .pl-sub::after { transform: scaleX(-1); }
+
         #et-preloader .pl-bar {
-            position: relative; width: 240px; height: 3px; border-radius: 2px; overflow: hidden;
-            background: rgba(255, 255, 255, .12);
+            width: 200px; height: 2px; border-radius: 2px; overflow: hidden; background: rgba(255, 255, 255, .10);
+            animation: et-pl-in .9s cubic-bezier(.2, .8, .2, 1) both .3s;
         }
-        #et-preloader .pl-bar::before {
-            content: ""; position: absolute; inset: 0; width: 40%; border-radius: inherit;
-            background: linear-gradient(90deg, transparent, #ed0920, #ff6b7a);
-            animation: et-pl-bar 1.2s ease-in-out infinite;
+        #et-preloader .pl-bar i {
+            display: block; width: 0; height: 100%; border-radius: inherit;
+            background: linear-gradient(90deg, #ed0920, #ff8593); box-shadow: 0 0 12px rgba(237, 9, 32, .8);
+            animation: et-pl-progress 2.8s cubic-bezier(.1, .55, .2, 1) forwards .2s;
         }
-        @keyframes et-pl-scan { to { top: 100%; } }
-        @keyframes et-pl-bar { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
-        @keyframes et-pl-breathe { 0%, 100% { box-shadow: 0 0 0 10px rgba(255, 255, 255, .025), 0 20px 50px -12px rgba(0, 0, 0, .6); } 50% { box-shadow: 0 0 0 16px rgba(255, 255, 255, .04), 0 20px 50px -12px rgba(0, 0, 0, .6); } }
-        @keyframes et-pl-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+        #et-preloader.is-done .pl-bar i { width: 100%; animation: none; transition: width .2s ease-out; }
+
+        @keyframes et-pl-spin { to { transform: rotate(360deg); } }
+        @keyframes et-pl-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes et-pl-shine { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+        @keyframes et-pl-progress { to { width: 88%; } }
+        @keyframes et-pl-in { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
         @media (max-width: 400px) {
-            #et-preloader .pl-brand { font-size: .95rem; letter-spacing: .34em; text-indent: .34em; }
+            #et-preloader .pl-lens { width: 146px; height: 146px; }
+            #et-preloader .pl-lens img { width: 68px; }
+            #et-preloader .pl-brand { font-size: 1.05rem; letter-spacing: .48em; text-indent: .48em; }
+            #et-preloader .pl-sub { letter-spacing: .42em; text-indent: .42em; }
+            #et-preloader .pl-bar { width: 160px; }
         }
         @media (prefers-reduced-motion: reduce) {
-            #et-preloader .pl-mark, #et-preloader .pl-brand { animation: none; }
-            #et-preloader .pl-mark::after, #et-preloader .pl-bar::before { animation-duration: 3s; }
+            #et-preloader *, #et-preloader *::before, #et-preloader *::after { animation: none !important; }
+            #et-preloader .pl-bar i { width: 60%; }
+            html.pl-on #et-preloader { transition: opacity .3s ease; }
+            #et-preloader.is-done { clip-path: none; opacity: 0; }
         }
     </style>
     <title>{% block title %}Eyetrack Solutions{% endblock %}</title>
@@ -797,9 +841,16 @@
 
 <body class="{% block ui_class %}p-ui{% endblock %} {% block body_class %}{% endblock %}">
     <div id="et-preloader" aria-hidden="true">
-        <div class="pl-mark"><img src="{% static 'img/logo-3d-sm.webp' %}" width="128" height="160" alt=""></div>
-        <p class="pl-brand">EYETRACK <span>SOLUTIONS</span></p>
-        <div class="pl-bar"></div>
+        <div class="pl-lens">
+            <span class="pl-ring"></span>
+            <span class="pl-orbit"></span>
+            <img src="{% static 'img/logo-3d-sm.webp' %}" width="128" height="160" alt="">
+        </div>
+        <div class="pl-word">
+            <p class="pl-brand">EYETRACK</p>
+            <p class="pl-sub">SOLUTIONS</p>
+        </div>
+        <div class="pl-bar"><i></i></div>
     </div>
     <script>
         (function () {
@@ -809,7 +860,7 @@
             function hide() {
                 if (done) return; done = true;
                 el.classList.add('is-done');
-                setTimeout(function () { root.classList.remove('pl-on'); el.remove(); }, 350);
+                setTimeout(function () { root.classList.remove('pl-on'); el.remove(); }, 900);
             }
             if (document.readyState === 'complete') hide(); else window.addEventListener('load', hide);
             setTimeout(hide, 3000);
