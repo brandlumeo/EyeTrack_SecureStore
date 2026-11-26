@@ -290,8 +290,11 @@
     .hero-3d__caption p:not(.hero-3d__eyebrow) { margin-bottom: 16px; font-size: .9rem; }
     .hero-3d .hero-3d__caption .hero-3d__btn { min-height: 44px; padding: 0 20px; font-size: .88rem; letter-spacing: 0; }
     /* Centred on the photo above the caption: at 50% they would sit on the heading. */
-    .hero-3d__arrow { top: 30%; width: 44px; height: 44px; font-size: 1rem; transform: translateY(-50%); }
-    .hero-3d__arrow:hover { transform: translateY(-50%); }
+    .hero-3d__arrow {
+        top: 30%; width: 36px; height: 36px; font-size: .85rem; transform: translateY(-50%);
+        background: #fff; color: #0b174f; box-shadow: none;
+    }
+    .hero-3d__arrow:hover { transform: translateY(-50%); background: #fff; }
 }
 @media (max-width: 380px) {
     .hero-3d__caption h2 { font-size: 1.55rem !important; }
