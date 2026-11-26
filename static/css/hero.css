@@ -289,12 +289,8 @@
     .hero-3d__caption h2 { margin-bottom: 8px; font-size: clamp(1.7rem, 7vw, 2.3rem) !important; }
     .hero-3d__caption p:not(.hero-3d__eyebrow) { margin-bottom: 16px; font-size: .9rem; }
     .hero-3d .hero-3d__caption .hero-3d__btn { min-height: 44px; padding: 0 20px; font-size: .88rem; letter-spacing: 0; }
-    /* Centred on the photo above the caption: at 50% they would sit on the heading. */
-    .hero-3d__arrow {
-        top: 30%; width: 36px; height: 36px; font-size: .85rem; transform: translateY(-50%);
-        background: #fff; color: #0b174f; box-shadow: none;
-    }
-    .hero-3d__arrow:hover { transform: translateY(-50%); background: #fff; }
+    /* No arrows on phones: slides change by swiping (and on their own). */
+    .hero-3d__arrow { display: none; }
 }
 @media (max-width: 380px) {
     .hero-3d__caption h2 { font-size: 1.55rem !important; }
@@ -319,10 +315,7 @@
     .hero-3d__eyebrow { margin-bottom: 8px; }
     .hero-3d__caption h2 { margin-bottom: 6px; font-size: clamp(1.5rem, 4.4vw, 2.1rem) !important; }
     .hero-3d__caption p:not(.hero-3d__eyebrow) { margin-bottom: 12px; font-size: .85rem; line-height: 1.45; }
-    .hero-3d__arrow { top: 50%; width: 40px; height: 40px; transform: translateY(-50%); }
-    .hero-3d__arrow:hover { transform: translateY(-50%); }
-    .hero-3d__arrow--prev { left: 14px; }
-    .hero-3d__arrow--next { right: 14px; }
+    .hero-3d__arrow { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
     .hero-3d__track { transition: none; }
