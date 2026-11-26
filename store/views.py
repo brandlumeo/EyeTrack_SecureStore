@@ -27,7 +27,7 @@ from orders.emails import send_order_invoice_email, send_order_placed_email, sen
 from orders.models import Order, OrderItem, Payment, Shipment
 from orders.stock import retake_stock_if_cancelled
 
-from . import serviceability
+from . import images, serviceability
 from .models import Category, Product, CameraSpecification, Wishlist, Review, ReviewMedia, Coupon, ServiceableArea, StockNotification, ReviewHelpful, Project
 from .forms import ReviewForm
 from .specs import (
@@ -75,7 +75,8 @@ def live_search(request):
             'url': reverse('product_detail', args=[p.slug]),
             'price': str(p.price),
             'category': p.category.name,
-            'image': p.image.url if p.image else ''
+            # Small copy for the 50px result thumbnails (falls back to the original upload).
+            'image': images.thumb_url(p.image, 400),
         })
     return JsonResponse({'results': results, 'total': matches.count(),
                          'all_url': reverse('product_list') + '?' + urlencode({'q': query})})
