@@ -106,6 +106,8 @@
         }, SAFETY);
         video.addEventListener('ended', showLogo, { once: true });
         video.addEventListener('error', showLogo, { once: true });
+        // a failed <source> fires its error on the <source>, not on the video
+        video.querySelectorAll('source').forEach((source) => source.addEventListener('error', showLogo, { once: true }));
         const play = video.play();
         if (play && typeof play.catch === 'function') play.catch(showLogo);
     };

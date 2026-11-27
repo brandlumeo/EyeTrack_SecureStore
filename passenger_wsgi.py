@@ -15,3 +15,15 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
+
+# LiteSpeed's wsgi.file_wrapper needs a real file descriptor, but WhiteNoise answers
+# Range requests (how browsers load video) with a sliced file that has none, so every
+# Range request crashed with "io.UnsupportedOperation: fileno" (HTTP 500). Drop the
+# file wrapper for those requests only; WhiteNoise then streams the slice itself.
+_django_application = application
+
+
+def application(environ, start_response):
+    if 'HTTP_RANGE' in environ:
+        environ.pop('wsgi.file_wrapper', None)
+    return _django_application(environ, start_response)
