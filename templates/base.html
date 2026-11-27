@@ -833,7 +833,9 @@
             source.src = source.getAttribute('data-src');
             video.preload = 'auto';
             video.load();
-            video.playbackRate = 1.25;
+            // play faster than recorded (6s -> about 3.4s); the default rate too, so a reload keeps it
+            video.defaultPlaybackRate = 1.75;
+            video.playbackRate = 1.75;
 
             function finish() {
                 if (stage === 'done') return;
