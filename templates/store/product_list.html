@@ -80,6 +80,30 @@
         </div>
         <button type="button" class="hero-3d__arrow hero-3d__arrow--prev" data-hero-prev aria-label="Previous slide" hidden><i class="bi bi-arrow-left" aria-hidden="true"></i></button>
         <button type="button" class="hero-3d__arrow hero-3d__arrow--next" data-hero-next aria-label="Next slide" hidden><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+        {# Brand intro (first homepage visit per session): video -> logo -> logo flies into the navbar. #}
+        <div class="hero-intro" data-hero-intro hidden>
+            <video class="hero-intro__video" muted playsinline preload="none" poster="{% static 'img/home-intro-poster.webp' %}" aria-hidden="true">
+                <source src="{% static 'video/home-intro.mp4' %}" type="video/mp4">
+            </video>
+            <div class="hero-intro__brand" aria-hidden="true">
+                <img class="hero-intro__logo" src="{% static 'img/logo-3d.webp' %}" width="482" height="601" alt="">
+                <p class="hero-intro__word"><span>EYETRACK</span> SOLUTIONS</p>
+            </div>
+            <button type="button" class="hero-intro__skip" data-hero-intro-skip>Skip intro <i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+        </div>
+        <script>
+            (function () {
+                var el = document.querySelector('[data-hero-intro]');
+                try {
+                    if (sessionStorage.getItem('et_intro') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.remove(); return; }
+                    sessionStorage.setItem('et_intro', '1');
+                } catch (e) { el.remove(); return; }
+                el.hidden = false;
+                el.querySelector('video').preload = 'auto';
+                el.closest('.hero-3d').classList.add('is-intro');
+                document.documentElement.classList.add('intro-on');
+            })();
+        </script>
     </div>
     <svg class="hero-3d__wave" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true"><path class="hero-3d__wave-accent" d="M0 26 C 160 4 280 4 420 26 S 700 50 860 26 S 1140 4 1300 26 S 1400 40 1440 30 L1440 64 L0 64 Z"/><path class="hero-3d__wave-front" d="M0 34 C 120 12 240 12 360 34 S 600 58 720 34 S 960 12 1080 34 S 1320 58 1440 34 L1440 64 L0 64 Z"/></svg>
 
@@ -92,7 +116,8 @@
         <span class="visually-hidden" data-hero-status role="status"></span>
     </div>
 </section>
-<script src="{% static 'js/hero.js' %}?v=17" defer></script>
+<script src="{% static 'js/hero.js' %}?v=18" defer></script>
+<script src="{% static 'js/hero-intro.js' %}?v=1" defer></script>
 
 {# ==== TRUST STRIP ==== #}
 <section class="trust-strip mb-5 reveal">
