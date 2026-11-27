@@ -42,7 +42,7 @@
         remaining = INTERVAL;
     };
 
-    const halted = () => motion.matches || document.hidden || hero.classList.contains('is-intro') || hero.matches(':hover, :focus-within');
+    const halted = () => motion.matches || document.hidden || document.documentElement.classList.contains('pl-on') || hero.matches(':hover, :focus-within');
 
     const schedule = () => {
         clearTimeout(timer);
@@ -90,7 +90,7 @@
     hero.addEventListener('focusout', () => setTimeout(schedule, 0));
     document.addEventListener('visibilitychange', schedule);
     motion.addEventListener('change', schedule);
-    hero.addEventListener('heroIntroEnd', schedule);
+    document.addEventListener('et:preloader-done', schedule);
 
     arrows.forEach((arrow) => { arrow.hidden = false; });
     navigation.hidden = false;

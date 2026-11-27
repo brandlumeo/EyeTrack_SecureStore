@@ -15,11 +15,11 @@
         window.addEventListener('resize', updateViewportWidth, { passive: true });
         window.addEventListener('load', updateViewportWidth, { once: true });
     </script>
-    {# Preloader: a camera lens. Red light orbiting the logo, shimmering wordmark, progress hairline; the screen lifts like a curtain once the page has loaded. Once per browser session. #}
+    {# Preloader: the brand video plays full screen, the logo appears over it, then the logo flies into the navbar logo as the page is revealed. Once per browser session; skipped for reduced motion. #}
     <script>
         (function () {
             try {
-                if (sessionStorage.getItem('et_pl')) return;
+                if (sessionStorage.getItem('et_pl') || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
                 sessionStorage.setItem('et_pl', '1');
             } catch (e) { return; }
             document.documentElement.classList.add('pl-on');
@@ -27,102 +27,69 @@
     </script>
     <style>
         #et-preloader { display: none; }
-        html.pl-on #et-preloader {
-            position: fixed; inset: 0; z-index: 99999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px;
-            background:
-                radial-gradient(42% 36% at 50% 40%, rgba(46, 96, 200, .30), transparent 72%),
-                radial-gradient(36% 30% at 50% 42%, rgba(237, 9, 32, .10), transparent 70%),
-                radial-gradient(120% 90% at 50% 40%, #0d1c5c 0%, #081342 48%, #040a24 100%);
-            clip-path: inset(0 0 0 0);
-            transition: clip-path .7s cubic-bezier(.76, 0, .24, 1) .12s;
+        html.pl-on, html.pl-on body { overflow: hidden; }
+        html.pl-on { scrollbar-gutter: stable; } /* no layout jump when the scrollbar returns */
+        /* is-done keeps it on screen for the final fade after pl-on is removed */
+        html.pl-on #et-preloader, html #et-preloader.is-done {
+            position: fixed; inset: 0; z-index: 2147483000; /* above the floating chat/WhatsApp buttons */
+            display: grid; place-items: center; overflow: hidden;
+            /* the video's own backdrop colour, so its edges disappear */
+            background-color: #f1f1ef;
+            transition: background-color .5s ease, opacity .45s ease;
         }
-        /* faint dot grid, fading out towards the edges */
-        html.pl-on #et-preloader::before {
-            content: ""; position: absolute; inset: 0; pointer-events: none;
-            background-image: radial-gradient(rgba(255, 255, 255, .07) 1px, transparent 1.2px);
-            background-size: 24px 24px;
-            -webkit-mask-image: radial-gradient(55% 50% at 50% 42%, #000, transparent 75%);
-            mask-image: radial-gradient(55% 50% at 50% 42%, #000, transparent 75%);
+        #et-preloader video {
+            position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+            -webkit-mask-image: radial-gradient(70% 72% at 50% 50%, #000 62%, transparent 100%);
+            mask-image: radial-gradient(70% 72% at 50% 50%, #000 62%, transparent 100%);
+            transition: opacity .9s ease, filter .9s ease, scale 1.4s cubic-bezier(.22, 1, .36, 1);
         }
-        #et-preloader.is-done { clip-path: inset(0 0 100% 0); pointer-events: none; }
-        #et-preloader > * { position: relative; transition: opacity .35s ease, transform .5s cubic-bezier(.76, 0, .24, 1); }
-        #et-preloader.is-done > * { opacity: 0; transform: translateY(-18px); }
-
-        #et-preloader .pl-lens {
-            width: 172px; height: 172px; display: grid; place-items: center;
-            animation: et-pl-in .9s cubic-bezier(.2, .8, .2, 1) both;
+        /* portrait screens: let the video overflow the sides so the eye stays large */
+        @media (max-aspect-ratio: 1/1) {
+            #et-preloader video { inset: auto; left: 50%; top: 50%; width: 175vw; height: auto; translate: -50% -50%; }
         }
-        #et-preloader .pl-lens > span { position: absolute; border-radius: 50%; pointer-events: none; }
-        #et-preloader .pl-ring {
-            inset: 0;
-            background: radial-gradient(circle at 50% 38%, rgba(255, 255, 255, .10), rgba(255, 255, 255, .015) 62%, transparent 72%);
-            border: 1px solid rgba(170, 198, 255, .20);
-            box-shadow: inset 0 0 36px rgba(70, 120, 230, .20), 0 24px 60px -18px rgba(0, 0, 0, .7), 0 0 70px -14px rgba(237, 9, 32, .32);
-        }
-        #et-preloader .pl-ring::after {
-            content: ""; position: absolute; inset: 16px; border-radius: 50%;
-            border: 1px dashed rgba(255, 255, 255, .10);
-            animation: et-pl-spin 18s linear infinite reverse;
-        }
-        #et-preloader .pl-orbit {
-            inset: -3px;
-            background: conic-gradient(from 0deg, transparent 0 62%, rgba(237, 9, 32, .15) 72%, #ed0920 94%, #ffb3bb 100%);
-            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-            mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-            filter: drop-shadow(0 0 6px rgba(237, 9, 32, .8));
-            animation: et-pl-spin 1.5s cubic-bezier(.55, .15, .45, .85) infinite;
-        }
-        #et-preloader .pl-lens img {
-            position: relative; width: 80px; height: auto;
-            filter: drop-shadow(0 6px 18px rgba(237, 9, 32, .35)) drop-shadow(0 2px 4px rgba(0, 0, 0, .4));
-            animation: et-pl-float 3s ease-in-out infinite;
-        }
-
-        #et-preloader .pl-word { display: grid; justify-items: center; gap: 10px; animation: et-pl-in .9s cubic-bezier(.2, .8, .2, 1) both .15s; }
+        #et-preloader.is-logo video { opacity: .16; filter: blur(8px); scale: 1.08; }
         #et-preloader .pl-brand {
-            margin: 0; font: 600 1.3rem/1 'Poppins', system-ui, sans-serif; letter-spacing: .62em; text-indent: .62em;
-            color: #fff;
-            background: linear-gradient(100deg, #8fa3d8 0%, #8fa3d8 35%, #fff 50%, #8fa3d8 65%, #8fa3d8 100%) 0 0 / 250% 100%;
-            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-            animation: et-pl-shine 2.6s linear infinite;
+            position: relative; display: grid; justify-items: center; gap: clamp(12px, 1.8vw, 22px);
+            opacity: 0; transform: scale(.55); cursor: pointer;
+            transition: opacity .55s ease, transform .9s cubic-bezier(.2, .9, .25, 1.12);
         }
-        #et-preloader .pl-sub {
-            margin: 0; display: flex; align-items: center; gap: 14px;
-            font: 500 .66rem/1 'Poppins', system-ui, sans-serif; letter-spacing: .55em; text-indent: .55em; color: rgba(214, 226, 250, .62);
+        #et-preloader.is-logo .pl-brand { opacity: 1; transform: none; }
+        #et-preloader .pl-brand::before {
+            content: ""; position: absolute; top: 50%; left: 50%; width: clamp(220px, 28vw, 360px); aspect-ratio: 1; border-radius: 50%;
+            transform: translate(-50%, -62%); pointer-events: none;
+            background: radial-gradient(circle, rgba(237, 9, 32, .16), rgba(237, 9, 32, 0) 68%);
+            transition: opacity .3s ease;
         }
-        #et-preloader .pl-sub::before, #et-preloader .pl-sub::after { content: ""; width: 30px; height: 1px; background: linear-gradient(90deg, transparent, rgba(237, 9, 32, .9)); }
-        #et-preloader .pl-sub::after { transform: scaleX(-1); }
-
-        #et-preloader .pl-bar {
-            width: 200px; height: 2px; border-radius: 2px; overflow: hidden; background: rgba(255, 255, 255, .10);
-            animation: et-pl-in .9s cubic-bezier(.2, .8, .2, 1) both .3s;
+        #et-preloader .pl-logo {
+            position: relative; width: auto; height: clamp(120px, 16vh, 190px);
+            filter: drop-shadow(0 18px 28px rgba(11, 23, 79, .28));
+            transform-origin: 50% 50%;
         }
-        #et-preloader .pl-bar i {
-            display: block; width: 0; height: 100%; border-radius: inherit;
-            background: linear-gradient(90deg, #ed0920, #ff8593); box-shadow: 0 0 12px rgba(237, 9, 32, .8);
-            animation: et-pl-progress 2.8s cubic-bezier(.1, .55, .2, 1) forwards .2s;
+        #et-preloader .pl-word {
+            position: relative; margin: 0; white-space: nowrap; color: #0b174f;
+            font: 700 clamp(1rem, 2.1vw, 1.6rem)/1 'Poppins', system-ui, sans-serif; letter-spacing: .34em; text-indent: .34em;
+            transition: opacity .35s ease, transform .45s ease, letter-spacing .6s ease;
         }
-        #et-preloader.is-done .pl-bar i { width: 100%; animation: none; transition: width .2s ease-out; }
-
-        @keyframes et-pl-spin { to { transform: rotate(360deg); } }
-        @keyframes et-pl-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-        @keyframes et-pl-shine { from { background-position: 100% 0; } to { background-position: -150% 0; } }
-        @keyframes et-pl-progress { to { width: 88%; } }
-        @keyframes et-pl-in { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
-        @media (max-width: 400px) {
-            #et-preloader .pl-lens { width: 146px; height: 146px; }
-            #et-preloader .pl-lens img { width: 68px; }
-            #et-preloader .pl-brand { font-size: 1.05rem; letter-spacing: .48em; text-indent: .48em; }
-            #et-preloader .pl-sub { letter-spacing: .42em; text-indent: .42em; }
-            #et-preloader .pl-bar { width: 160px; }
+        #et-preloader .pl-word span { color: #ed0920; }
+        #et-preloader .pl-skip {
+            position: absolute; top: max(16px, env(safe-area-inset-top)); right: 18px;
+            display: inline-flex; align-items: center; gap: .35rem; padding: .45rem .95rem;
+            border: 1px solid rgba(11, 23, 79, .18); border-radius: 999px; background: rgba(255, 255, 255, .75);
+            color: #0b174f; font: 600 .78rem/1 'Poppins', system-ui, sans-serif; letter-spacing: .04em; cursor: pointer;
+            transition: opacity .3s ease, background .2s ease, border-color .2s ease;
         }
-        @media (prefers-reduced-motion: reduce) {
-            #et-preloader *, #et-preloader *::before, #et-preloader *::after { animation: none !important; }
-            #et-preloader .pl-bar i { width: 60%; }
-            html.pl-on #et-preloader { transition: opacity .3s ease; }
-            #et-preloader.is-done { clip-path: none; opacity: 0; }
-        }
+        #et-preloader .pl-skip:hover, #et-preloader .pl-skip:focus-visible { background: #fff; border-color: rgba(237, 9, 32, .5); }
+        /* flight: the backdrop clears to reveal the page while the logo travels to the navbar */
+        html #et-preloader.is-flying { background-color: transparent; pointer-events: none; }
+        #et-preloader.is-flying video { opacity: 0; transition-duration: .45s; }
+        #et-preloader.is-flying .pl-word { opacity: 0; transform: translateY(10px); letter-spacing: .6em; }
+        #et-preloader.is-flying .pl-brand::before, #et-preloader.is-flying .pl-skip { opacity: 0; }
+        html #et-preloader.is-done { opacity: 0; pointer-events: none; }
+        /* navbar logo (desktop) / mobile menu Home logo wait for the flying logo, then land with a pop */
+        html.pl-on #siteHeader .brand-logo, html.pl-on #dockHome .dock-logo { opacity: 0; transform: scale(.6); }
+        #siteHeader .brand-logo, #dockHome .dock-logo { transition: opacity .3s ease, transform .5s cubic-bezier(.2, .9, .25, 1.4), box-shadow .5s ease, filter .5s ease; }
+        #siteHeader .brand-logo.is-landed { box-shadow: 0 0 0 3px rgba(237, 9, 32, .35), 0 8px 18px rgba(0, 0, 0, .2); }
+        #dockHome .dock-logo.is-landed { filter: drop-shadow(0 0 6px rgba(237, 9, 32, .6)); }
     </style>
     <title>{% block title %}Eyetrack Solutions{% endblock %}</title>
     <meta name="description"
@@ -840,30 +807,101 @@
 </head>
 
 <body class="{% block ui_class %}p-ui{% endblock %} {% block body_class %}{% endblock %}">
-    <div id="et-preloader" aria-hidden="true">
-        <div class="pl-lens">
-            <span class="pl-ring"></span>
-            <span class="pl-orbit"></span>
-            <img src="{% static 'img/logo-3d-sm.webp' %}" width="128" height="160" alt="">
+    <div id="et-preloader">
+        <video muted playsinline preload="none" data-poster="{% static 'img/home-intro-poster.webp' %}" aria-hidden="true">
+            <source data-src="{% static 'video/home-intro.mp4' %}" type="video/mp4">
+        </video>
+        <div class="pl-brand" aria-hidden="true">
+            <img class="pl-logo" data-src="{% static 'img/logo-3d.webp' %}" width="482" height="601" alt="">
+            <p class="pl-word"><span>EYETRACK</span> SOLUTIONS</p>
         </div>
-        <div class="pl-word">
-            <p class="pl-brand">EYETRACK</p>
-            <p class="pl-sub">SOLUTIONS</p>
-        </div>
-        <div class="pl-bar"><i></i></div>
+        <button type="button" class="pl-skip">Skip <i class="bi bi-chevron-right" aria-hidden="true"></i></button>
     </div>
     <script>
         (function () {
             var root = document.documentElement, el = document.getElementById('et-preloader');
             if (!root.classList.contains('pl-on')) { el.remove(); return; }
-            var done = false;
-            function hide() {
-                if (done) return; done = true;
-                el.classList.add('is-done');
-                setTimeout(function () { root.classList.remove('pl-on'); el.remove(); }, 900);
+
+            var video = el.querySelector('video'), source = video.querySelector('source');
+            var brand = el.querySelector('.pl-brand'), logo = el.querySelector('.pl-logo');
+            var stage = 'video', timers = [], target = null;
+            var later = function (fn, ms) { timers.push(setTimeout(fn, ms)); };
+
+            // assets load only when the preloader actually runs
+            logo.src = logo.getAttribute('data-src');
+            video.poster = video.getAttribute('data-poster');
+            source.src = source.getAttribute('data-src');
+            video.preload = 'auto';
+            video.load();
+
+            function finish() {
+                if (stage === 'done') return;
+                stage = 'done';
+                timers.forEach(clearTimeout);
+                try { video.pause(); } catch (e) { }
+                root.classList.remove('pl-on');
+                if (target) {
+                    target.classList.add('is-landed');
+                    setTimeout(function () { target.classList.remove('is-landed'); }, 700);
+                }
+                el.classList.add('is-flying', 'is-done');
+                setTimeout(function () { el.remove(); }, 500);
+                document.dispatchEvent(new Event('et:preloader-done'));
             }
-            if (document.readyState === 'complete') hide(); else window.addEventListener('load', hide);
-            setTimeout(hide, 3000);
+
+            // the visible logo to land on: desktop navbar, or the mobile menu's Home item
+            function findTarget() {
+                var list = document.querySelectorAll('#siteHeader .brand-logo, #dockHome .dock-logo');
+                for (var i = 0; i < list.length; i++) {
+                    var t = list[i], r = t.getBoundingClientRect();
+                    if (!t.offsetHeight || r.bottom < 0 || r.top > window.innerHeight) continue;
+                    var hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+                    if (hit && (hit === t || t.contains(hit) || hit.contains(t))) return t;
+                }
+                return null;
+            }
+
+            function fly() {
+                if (stage !== 'logo') return;
+                if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', fly, { once: true }); return; }
+                stage = 'fly';
+                el.classList.add('is-flying');   // also stops the overlay catching elementFromPoint
+                target = findTarget();
+                var from = logo.getBoundingClientRect();
+                if (!target || !from.height || typeof logo.animate !== 'function') { finish(); return; }
+                var to = target.getBoundingClientRect();
+                // the target is scaled down while it waits, so size by its layout box
+                var s = (target.offsetHeight * 0.86) / from.height;
+                var dx = (to.left + to.width / 2) - (from.left + from.width / 2);
+                var dy = (to.top + to.height / 2) - (from.top + from.height / 2);
+                var flight = logo.animate([
+                    { transform: 'translate(0, 0) scale(1) rotate(0deg)' },
+                    { transform: 'translate(' + dx * 0.42 + 'px, ' + dy * 0.3 + 'px) scale(' + (0.55 + s * 0.45) + ') rotate(-8deg)', offset: 0.45 },
+                    { transform: 'translate(' + dx + 'px, ' + dy + 'px) scale(' + s + ') rotate(0deg)' }
+                ], { duration: 1050, easing: 'cubic-bezier(.65, 0, .25, 1)', fill: 'forwards' });
+                flight.finished.then(finish, finish);
+                later(finish, 2500);
+            }
+
+            function showLogo() {
+                if (stage !== 'video') return;
+                stage = 'logo';
+                el.classList.add('is-logo');
+                later(fly, 1300);
+            }
+
+            video.addEventListener('ended', showLogo);
+            video.addEventListener('error', showLogo);
+            source.addEventListener('error', showLogo);
+            var play = video.play();
+            if (play && play.catch) play.catch(showLogo);
+            // slow connection: don't hold visitors on a still frame
+            later(function () { if (video.currentTime < 0.1) showLogo(); }, 3500);
+            later(function () { if (stage === 'video') showLogo(); }, 9000);
+            later(finish, 14000);
+
+            el.querySelector('.pl-skip').addEventListener('click', finish);
+            brand.addEventListener('click', function () { if (stage === 'logo') fly(); });
         })();
     </script>
     <div class="site-bg"></div>
