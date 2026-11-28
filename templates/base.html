@@ -15,7 +15,7 @@
         window.addEventListener('resize', updateViewportWidth, { passive: true });
         window.addEventListener('load', updateViewportWidth, { once: true });
     </script>
-    {# Preloader: the brand video plays full screen, the logo appears over it, then the logo flies into the navbar logo as the page is revealed. Once per browser session; skipped for reduced motion. #}
+    {# Preloader: the brand video (static/video/preloader.mp4) plays a little faster than recorded, then fades out. Once per browser session; skipped for reduced motion. #}
     <script>
         (function () {
             try {
@@ -33,65 +33,32 @@
         html.pl-on #et-preloader, html #et-preloader.is-done {
             position: fixed; inset: 0; z-index: 2147483000; /* above the floating chat/WhatsApp buttons */
             display: grid; place-items: center; overflow: hidden;
-            /* the video's own backdrop colour, so its edges disappear */
-            background-color: #f1f1ef;
-            transition: background-color .5s ease, opacity .45s ease;
+            /* the video's own dark-navy backdrop, so its edges disappear */
+            background: #01050b radial-gradient(ellipse at 50% 50%, #061626 0%, #030b15 45%, #01050b 75%);
+            transition: opacity .5s ease;
         }
-        /* a compact centred video, not full screen */
         #et-preloader video {
             position: absolute; left: 50%; top: 50%; translate: -50% -50%;
-            width: min(560px, 62vw); height: auto; aspect-ratio: 16 / 9; object-fit: contain;
-            -webkit-mask-image: radial-gradient(70% 72% at 50% 50%, #000 62%, transparent 100%);
-            mask-image: radial-gradient(70% 72% at 50% 50%, #000 62%, transparent 100%);
-            transition: opacity .6s ease, filter .6s ease, scale 1s cubic-bezier(.22, 1, .36, 1);
+            width: min(1100px, 96vw); height: auto; aspect-ratio: 16 / 9; object-fit: contain;
+            /* soft edges blend into the backdrop and hide the corner watermark */
+            -webkit-mask-image: radial-gradient(50% 50% at 50% 50%, #000 58%, transparent 92%);
+            mask-image: radial-gradient(50% 50% at 50% 50%, #000 58%, transparent 92%);
+            opacity: 0; transition: opacity .4s ease;
         }
-        /* portrait screens: most of the width, so it stays readable on phones */
+        #et-preloader.is-playing video { opacity: 1; }
+        /* portrait phones: let the eye fill the width */
         @media (max-aspect-ratio: 1/1) {
-            #et-preloader video { width: 92vw; }
+            #et-preloader video { width: 150vw; max-width: none; }
         }
-        #et-preloader.is-logo video { opacity: .16; filter: blur(8px); scale: 1.08; }
-        #et-preloader .pl-brand {
-            position: relative; display: grid; justify-items: center; gap: clamp(10px, 1.2vw, 14px);
-            opacity: 0; transform: scale(.55); cursor: pointer;
-            transition: opacity .4s ease, transform .65s cubic-bezier(.2, .9, .25, 1.12);
-        }
-        #et-preloader.is-logo .pl-brand { opacity: 1; transform: none; }
-        #et-preloader .pl-brand::before {
-            content: ""; position: absolute; top: 50%; left: 50%; width: clamp(150px, 18vw, 230px); aspect-ratio: 1; border-radius: 50%;
-            transform: translate(-50%, -62%); pointer-events: none;
-            background: radial-gradient(circle, rgba(237, 9, 32, .16), rgba(237, 9, 32, 0) 68%);
-            transition: opacity .3s ease;
-        }
-        #et-preloader .pl-logo {
-            position: relative; width: auto; height: clamp(78px, 10vh, 112px);
-            filter: drop-shadow(0 18px 28px rgba(11, 23, 79, .28));
-            transform-origin: 50% 50%;
-        }
-        #et-preloader .pl-word {
-            position: relative; margin: 0; white-space: nowrap; color: #0b174f;
-            font: 700 clamp(.8rem, 1.3vw, 1.05rem)/1 'Poppins', system-ui, sans-serif; letter-spacing: .34em; text-indent: .34em;
-            transition: opacity .35s ease, transform .45s ease, letter-spacing .6s ease;
-        }
-        #et-preloader .pl-word span { color: #ed0920; }
         #et-preloader .pl-skip {
             position: absolute; top: max(16px, env(safe-area-inset-top)); right: 18px;
             display: inline-flex; align-items: center; gap: .35rem; padding: .45rem .95rem;
-            border: 1px solid rgba(11, 23, 79, .18); border-radius: 999px; background: rgba(255, 255, 255, .75);
-            color: #0b174f; font: 600 .78rem/1 'Poppins', system-ui, sans-serif; letter-spacing: .04em; cursor: pointer;
-            transition: opacity .3s ease, background .2s ease, border-color .2s ease;
+            border: 1px solid rgba(255, 255, 255, .22); border-radius: 999px; background: rgba(255, 255, 255, .08);
+            color: #fff; font: 600 .78rem/1 'Poppins', system-ui, sans-serif; letter-spacing: .04em; cursor: pointer;
+            transition: background .2s ease, border-color .2s ease;
         }
-        #et-preloader .pl-skip:hover, #et-preloader .pl-skip:focus-visible { background: #fff; border-color: rgba(237, 9, 32, .5); }
-        /* flight: the backdrop clears to reveal the page while the logo travels to the navbar */
-        html #et-preloader.is-flying { background-color: transparent; pointer-events: none; }
-        #et-preloader.is-flying video { opacity: 0; transition-duration: .45s; }
-        #et-preloader.is-flying .pl-word { opacity: 0; transform: translateY(10px); letter-spacing: .6em; }
-        #et-preloader.is-flying .pl-brand::before, #et-preloader.is-flying .pl-skip { opacity: 0; }
+        #et-preloader .pl-skip:hover, #et-preloader .pl-skip:focus-visible { background: rgba(255, 255, 255, .18); border-color: rgba(237, 9, 32, .6); }
         html #et-preloader.is-done { opacity: 0; pointer-events: none; }
-        /* navbar logo (desktop) / mobile menu Home logo wait for the flying logo, then land with a pop */
-        html.pl-on #siteHeader .brand-logo, html.pl-on #dockHome .dock-logo { opacity: 0; transform: scale(.6); }
-        #siteHeader .brand-logo, #dockHome .dock-logo { transition: opacity .3s ease, transform .5s cubic-bezier(.2, .9, .25, 1.4), box-shadow .5s ease, filter .5s ease; }
-        #siteHeader .brand-logo.is-landed { box-shadow: 0 0 0 3px rgba(237, 9, 32, .35), 0 8px 18px rgba(0, 0, 0, .2); }
-        #dockHome .dock-logo.is-landed { filter: drop-shadow(0 0 6px rgba(237, 9, 32, .6)); }
     </style>
     <title>{% block title %}Eyetrack Solutions{% endblock %}</title>
     <meta name="description"
@@ -810,13 +777,9 @@
 
 <body class="{% block ui_class %}p-ui{% endblock %} {% block body_class %}{% endblock %}">
     <div id="et-preloader">
-        <video muted playsinline preload="none" data-poster="{% static 'img/home-intro-poster.webp' %}" aria-hidden="true">
-            <source data-src="{% static 'video/home-intro.mp4' %}" type="video/mp4">
+        <video muted playsinline preload="none" aria-hidden="true">
+            <source data-src="{% static 'video/preloader.mp4' %}" type="video/mp4">
         </video>
-        <div class="pl-brand" aria-hidden="true">
-            <img class="pl-logo" data-src="{% static 'img/logo-3d.webp' %}" width="482" height="601" alt="">
-            <p class="pl-word"><span>EYETRACK</span> SOLUTIONS</p>
-        </div>
         <button type="button" class="pl-skip">Skip <i class="bi bi-chevron-right" aria-hidden="true"></i></button>
     </div>
     <script>
@@ -825,88 +788,39 @@
             if (!root.classList.contains('pl-on')) { el.remove(); return; }
 
             var video = el.querySelector('video'), source = video.querySelector('source');
-            var brand = el.querySelector('.pl-brand'), logo = el.querySelector('.pl-logo');
-            var stage = 'video', timers = [], target = null;
+            var SPEED = 1.5; // a little faster than recorded: 6s -> about 4s
+            var timers = [], done = false;
             var later = function (fn, ms) { timers.push(setTimeout(fn, ms)); };
 
-            // assets load only when the preloader actually runs
-            logo.src = logo.getAttribute('data-src');
-            video.poster = video.getAttribute('data-poster');
+            // the video loads only when the preloader actually runs
             source.src = source.getAttribute('data-src');
             video.preload = 'auto';
             video.load();
-            // play faster than recorded (6s -> about 2.7s); the default rate too, so a reload keeps it
-            video.defaultPlaybackRate = 2.25;
-            video.playbackRate = 2.25;
+            video.defaultPlaybackRate = SPEED; // the default rate too, so a reload keeps it
+            video.playbackRate = SPEED;
 
             function finish() {
-                if (stage === 'done') return;
-                stage = 'done';
+                if (done) return;
+                done = true;
                 timers.forEach(clearTimeout);
                 try { video.pause(); } catch (e) { }
                 root.classList.remove('pl-on');
-                if (target) {
-                    target.classList.add('is-landed');
-                    setTimeout(function () { target.classList.remove('is-landed'); }, 700);
-                }
-                el.classList.add('is-flying', 'is-done');
-                setTimeout(function () { el.remove(); }, 500);
+                el.classList.add('is-done');
+                setTimeout(function () { el.remove(); }, 550);
                 document.dispatchEvent(new Event('et:preloader-done'));
             }
 
-            // the visible logo to land on: desktop navbar, or the mobile menu's Home item
-            function findTarget() {
-                var list = document.querySelectorAll('#siteHeader .brand-logo, #dockHome .dock-logo');
-                for (var i = 0; i < list.length; i++) {
-                    var t = list[i], r = t.getBoundingClientRect();
-                    if (!t.offsetHeight || r.bottom < 0 || r.top > window.innerHeight) continue;
-                    var hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
-                    if (hit && (hit === t || t.contains(hit) || hit.contains(t))) return t;
-                }
-                return null;
-            }
-
-            function fly() {
-                if (stage !== 'logo') return;
-                if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', fly, { once: true }); return; }
-                stage = 'fly';
-                el.classList.add('is-flying');   // also stops the overlay catching elementFromPoint
-                target = findTarget();
-                var from = logo.getBoundingClientRect();
-                if (!target || !from.height || typeof logo.animate !== 'function') { finish(); return; }
-                var to = target.getBoundingClientRect();
-                // the target is scaled down while it waits, so size by its layout box
-                var s = (target.offsetHeight * 0.86) / from.height;
-                var dx = (to.left + to.width / 2) - (from.left + from.width / 2);
-                var dy = (to.top + to.height / 2) - (from.top + from.height / 2);
-                var flight = logo.animate([
-                    { transform: 'translate(0, 0) scale(1) rotate(0deg)' },
-                    { transform: 'translate(' + dx * 0.42 + 'px, ' + dy * 0.3 + 'px) scale(' + (0.55 + s * 0.45) + ') rotate(-8deg)', offset: 0.45 },
-                    { transform: 'translate(' + dx + 'px, ' + dy + 'px) scale(' + s + ') rotate(0deg)' }
-                ], { duration: 800, easing: 'cubic-bezier(.65, 0, .25, 1)', fill: 'forwards' });
-                flight.finished.then(finish, finish);
-                later(finish, 1800);
-            }
-
-            function showLogo() {
-                if (stage !== 'video') return;
-                stage = 'logo';
-                el.classList.add('is-logo');
-                later(fly, 900);
-            }
-
-            video.addEventListener('ended', showLogo);
-            video.addEventListener('error', showLogo);
-            source.addEventListener('error', showLogo);
+            video.addEventListener('playing', function () { el.classList.add('is-playing'); });
+            video.addEventListener('ended', finish);
+            video.addEventListener('error', finish);
+            source.addEventListener('error', finish);
             var play = video.play();
-            if (play && play.catch) play.catch(showLogo);
-            // slow connection: don't hold visitors on a still frame
-            later(function () { if (video.currentTime < 0.1) showLogo(); }, 2500);
-            later(function () { if (stage === 'video') showLogo(); }, 7000);
-            later(finish, 10000);
+            if (play && play.catch) play.catch(finish);
+            // slow connection: don't hold visitors on a blank screen
+            later(function () { if (video.currentTime < 0.1) finish(); }, 2500);
+            later(finish, 8000);
 
             el.querySelector('.pl-skip').addEventListener('click', finish);
-            brand.addEventListener('click', function () { if (stage === 'logo') fly(); });
         })();
     </script>
     <div class="site-bg"></div>
