@@ -3,32 +3,57 @@
     <div class="home-section-head">
         <div>
             <h2 class="home-section-title" id="protectTitle">What are you protecting?</h2>
+            <p class="home-section-lead protect-lead">Pick your property type and we'll suggest the right cameras and setup.</p>
         </div>
     </div>
     <div class="protect-grid">
         <a href="{% url 'home_security' %}" class="protect-card">
-            <strong>Home &amp; Villa</strong>
-            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            <span class="protect-icon" aria-hidden="true"><i class="bi bi-house-door"></i></span>
+            <span class="protect-text">
+                <strong>Home &amp; Villa</strong>
+                <small>Gates, entrances and perimeter cover</small>
+            </span>
+            <i class="bi bi-arrow-right protect-arrow" aria-hidden="true"></i>
         </a>
         <a href="{% url 'quote_request' %}?site_type=apartment" class="protect-card" data-quote-prefill data-site-type="apartment">
-            <strong>Apartments</strong>
-            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            <span class="protect-icon" aria-hidden="true"><i class="bi bi-building"></i></span>
+            <span class="protect-text">
+                <strong>Apartments</strong>
+                <small>Lobbies, lifts, parking and corridors</small>
+            </span>
+            <i class="bi bi-arrow-right protect-arrow" aria-hidden="true"></i>
         </a>
         <a href="{% url 'quote_request' %}?site_type=shop" class="protect-card" data-quote-prefill data-site-type="shop">
-            <strong>Shops &amp; Retail</strong>
-            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            <span class="protect-icon" aria-hidden="true"><i class="bi bi-shop"></i></span>
+            <span class="protect-text">
+                <strong>Shops &amp; Retail</strong>
+                <small>Billing counters, aisles and storefronts</small>
+            </span>
+            <i class="bi bi-arrow-right protect-arrow" aria-hidden="true"></i>
         </a>
         <a href="{% url 'quote_request' %}?site_type=office" class="protect-card" data-quote-prefill data-site-type="office">
-            <strong>Offices</strong>
-            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            <span class="protect-icon" aria-hidden="true"><i class="bi bi-briefcase"></i></span>
+            <span class="protect-text">
+                <strong>Offices</strong>
+                <small>Access control, reception and workspaces</small>
+            </span>
+            <i class="bi bi-arrow-right protect-arrow" aria-hidden="true"></i>
         </a>
         <a href="{% url 'quote_request' %}?site_type=factory" class="protect-card" data-quote-prefill data-site-type="factory">
-            <strong>Factory &amp; Warehouse</strong>
-            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            <span class="protect-icon" aria-hidden="true"><i class="bi bi-buildings"></i></span>
+            <span class="protect-text">
+                <strong>Factory &amp; Warehouse</strong>
+                <small>Large sites, loading bays and stock</small>
+            </span>
+            <i class="bi bi-arrow-right protect-arrow" aria-hidden="true"></i>
         </a>
         <a href="{% url 'quote_request' %}?site_type=school" class="protect-card" data-quote-prefill data-site-type="school">
-            <strong>Schools &amp; Institutions</strong>
-            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            <span class="protect-icon" aria-hidden="true"><i class="bi bi-mortarboard"></i></span>
+            <span class="protect-text">
+                <strong>Schools &amp; Institutions</strong>
+                <small>Classrooms, campuses and gates</small>
+            </span>
+            <i class="bi bi-arrow-right protect-arrow" aria-hidden="true"></i>
         </a>
     </div>
 </section>
