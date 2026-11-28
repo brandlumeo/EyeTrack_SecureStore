@@ -40,7 +40,7 @@ class SpeedTests(TestCase):
             Product.objects.create(category=cat, name=f"Cam {n}", price="1000.00", stock=1, description="x", image=f"products/c{n}.jpg")
         home = self.client.get("/").content.decode()
         self.assertIn("img/company-logo-sm.webp", home)
-        self.assertNotIn("img/company-logo.png\" as=\"image\"", home)
+        self.assertNotIn("img/company-logo.webp\" as=\"image\"", home)
         self.assertNotIn('class="product-image" decoding', home)  # every homepage card image is lazy
         listing = self.client.get("/category/cctv-installation/").content.decode()
         self.assertEqual(listing.count('class="product-image" loading="lazy"'), 2)  # first 3 load straight away

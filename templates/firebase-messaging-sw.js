@@ -18,7 +18,7 @@ messaging.onBackgroundMessage((payload) => {
   const notificationTitle = payload.notification?.title || 'New Notification';
   const notificationOptions = {
     body: payload.notification?.body || '',
-    icon: '/static/image/logo.png'
+    icon: '/static/img/company-logo-sm.webp'
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);

@@ -57,7 +57,7 @@
         "currency": "{{ currency }}",
         "name": "EyeTrack Solutions",
         "description": "Payment for Order {{ order.formatted_id }}",
-        "image": "{% static 'img/company-logo.png' %}", // Updated to correct logo path
+        "image": "{% static 'img/company-logo.webp' %}", // Updated to correct logo path
         "order_id": "{{ razorpay_order_id }}",
         "handler": function (response){
             document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;

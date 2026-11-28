@@ -68,7 +68,9 @@ class TicketPhotoPrivacyTests(TestCase):
             self.client.login(username=user, password="StrongPass123!")
             r = self.client.get(self.url)
             self.assertEqual(r.status_code, 200, user)
-            self.assertTrue(self.drain(r).startswith(b"\x89PNG"))
+            body = self.drain(r)
+            self.assertTrue(body.startswith(b"RIFF") and body[8:12] == b"WEBP")  # stored as WebP
+            self.assertEqual(r["Content-Type"], "image/webp")
             self.assertIn("no-store", r["Cache-Control"])
             self.assertEqual(r["Content-Disposition"], "inline")
 

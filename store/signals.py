@@ -31,3 +31,36 @@ def _make(sender, instance, raw=False, **kwargs):
 
 for _label in IMAGE_FIELDS:
     post_save.connect(_make, sender=_label, dispatch_uid="store_thumbs_" + _label)
+
+
+# ---- Store every uploaded photo as WebP ----
+from django.db import models as _models  # noqa: E402
+from django.db.models.signals import pre_save  # noqa: E402
+
+# FileFields (not ImageFields) that also take photos; videos are left alone.
+EXTRA_PHOTO_FIELDS = {"store.ReviewMedia": ("file",)}
+
+
+def webp_targets():
+    """(model class, field names) for every field that stores photos."""
+    out = []
+    for model in apps.get_models():
+        fields = [f.name for f in model._meta.concrete_fields if isinstance(f, _models.ImageField)]
+        fields += [n for n in EXTRA_PHOTO_FIELDS.get(model._meta.label, ()) if n not in fields]
+        if fields:
+            out.append((model, tuple(fields)))
+    return out
+
+
+def _to_webp(sender, instance, raw=False, **kwargs):
+    if raw:
+        return
+    for field in _WEBP_FIELDS[sender]:
+        converted = images.webp_upload(getattr(instance, field))
+        if converted is not None:
+            setattr(instance, field, converted)  # saved via upload_to as <stem>.webp
+
+
+_WEBP_FIELDS = dict(webp_targets())
+for _model in _WEBP_FIELDS:
+    pre_save.connect(_to_webp, sender=_model, dispatch_uid="store_webp_" + _model._meta.label)

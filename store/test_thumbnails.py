@@ -48,7 +48,7 @@ class ThumbnailTests(TestCase):
                 self.assertEqual(im.width, w)
                 self.assertEqual(im.height, w * 3 // 4)
         self.assertTrue(pathlib.Path(p.image.path).exists())
-        self.assertTrue(p.image.name.endswith(".jpg"))
+        self.assertTrue(p.image.name.endswith(".webp"))  # uploads are stored as WebP
 
     def test_small_photos_are_not_upscaled(self):
         p = self.product(image=photo(size=(500, 500)))
@@ -102,3 +102,40 @@ class ThumbnailTests(TestCase):
         p.stock = 1
         p.save()
         self.assertEqual(path.stat().st_mtime_ns, before)
+
+
+@override_settings(MEDIA_ROOT=MEDIA)
+class WebpConversionTests(TestCase):
+    def setUp(self):
+        self.cat = Category.objects.create(name="Locks", slug="locks")
+
+    def test_uploads_are_stored_as_webp(self):
+        p = Product.objects.create(category=self.cat, name="Lock", price="9.00", stock=1, description="x",
+                                   image=photo("lock.png", (600, 600), "PNG", "RGBA"))
+        self.assertTrue(p.image.name.startswith("products/lock"))
+        self.assertTrue(p.image.name.endswith(".webp"))
+        with Image.open(p.image.path) as im:
+            self.assertEqual(im.format, "WEBP")
+            self.assertEqual(im.mode, "RGBA")  # transparency kept
+
+    def test_command_converts_existing_uploads(self):
+        p = Product.objects.create(category=self.cat, name="Old", price="9.00", stock=1, description="x")
+        old = pathlib.Path(MEDIA) / "products" / "old-cam.jpg"
+        old.parent.mkdir(parents=True, exist_ok=True)
+        old.write_bytes(photo().read())
+        Product.objects.filter(pk=p.pk).update(image="products/old-cam.jpg")  # as if uploaded before
+
+        call_command("convert_to_webp", "--dry-run", stdout=io.StringIO())
+        p.refresh_from_db()
+        self.assertEqual(p.image.name, "products/old-cam.jpg")
+
+        call_command("convert_to_webp", stdout=io.StringIO())
+        p.refresh_from_db()
+        self.assertEqual(p.image.name, "products/old-cam.webp")
+        with Image.open(p.image.path) as im:
+            self.assertEqual(im.format, "WEBP")
+        self.assertTrue(old.exists())  # original kept by default
+        self.assertTrue((pathlib.Path(MEDIA) / images.thumb_name(p.image.name, 400)).exists())
+
+        call_command("convert_to_webp", "--delete-originals", stdout=io.StringIO())  # nothing left to do
+        self.assertTrue(old.exists())

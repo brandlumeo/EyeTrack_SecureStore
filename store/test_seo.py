@@ -30,7 +30,7 @@ class CatalogSeoTests(TestCase):
         r = self.client.get("/")
         self.assertEqual(meta(r, "robots"), "index, follow, max-image-preview:large")
         self.assertIn("Kozhikode", r.content.decode().split("<title>")[1].split("</title>")[0])
-        self.assertTrue(meta(r, "og:image").endswith(".jpg"))
+        self.assertTrue(meta(r, "og:image").endswith(".webp"))
         self.assertIn("img/home-hero-cctv.webp", r.content.decode())  # light WebP hero, not the 2 MB PNG
         self.assertNotIn("home-hero-cctv.png", r.content.decode())
         graph = next(b for b in json_ld(r) if "@graph" in b)["@graph"]

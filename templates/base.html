@@ -112,7 +112,7 @@
     <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
     <meta property="og:locale" content="en_US">
     {% block social_image_meta %}
-    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.jpg' %}">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.webp' %}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="CCTV cameras, smart lock and live camera view on a monitor and phone">
@@ -124,7 +124,7 @@
     <meta name="twitter:description"
         content="{% block twitter_description %}{% block twitter_description_fallback %}Premium CCTV products, installation support, and secure commerce experience.{% endblock %}{% endblock %}">
     {% block twitter_image_meta %}
-    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.jpg' %}">
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.webp' %}">
     {% endblock %}
     <meta name="author" content="Eyetrack Solutions">
     <meta name="theme-color" content="#12366a">
@@ -151,8 +151,8 @@
           "@id": "{{ request.scheme }}://{{ request.get_host }}/#business",
           "name": "Eyetrack Solutions",
           "url": "{{ request.scheme }}://{{ request.get_host }}/",
-          "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/company-logo.png' %}",
-          "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.jpg' %}",
+          "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/company-logo.webp' %}",
+          "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/og-default.webp' %}",
           "description": "CCTV cameras, smart locks, video door phones and biometric systems with professional installation in Kozhikode, Kerala.",
           "email": "info@etsgrp.in",
           "telephone": "+91 7994357565",
